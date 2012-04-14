@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/global.css"?>
+
+<!DOCTYPE window SYSTEM "chrome://kmoney/locale/preferences.dtd">
+
+<prefwindow type="prefwindow" id="KmoneyPreferences"
+  windowtype="Browser:Preferences" title="&prefwinTitle;"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  style="">
+
+  <script type="application/x-javascript" src="globals.js"/>  
+  <script type="application/x-javascript">
+  <![CDATA[
+    window.addEventListener("load", km_setCurrentSettings, false);
+  ]]>
+  </script>
+
+  <prefpane id="main-options" label="&paneMain.title;">
+    <preferences>
+      <preference id="pref-openWithLastDb" 
+        name="extensions.kmoney.openWithLastDb" type="bool"/>
+      <preference id="pref-promptForLastDb" 
+        name="extensions.kmoney.promptForLastDb" type="bool"/>
+      <preference id="pref-autoBackup" 
+        name="extensions.kmoney.autoBackup" type="string"/>
+      <preference id="pref-sqliteFileExtensions" 
+        name="extensions.kmoney.sqliteFileExtensions" type="string"/>
+    </preferences>
+      <groupbox>
+      <caption label="&whenKMStarts;"/>
+      <checkbox id="cb-openWithLastDb" 
+        label="&pref-openWithLastDb.label;"
+        accesskey="&pref-openWithLastDb.ak;"
+        preference="pref-openWithLastDb" 
+        checked="true"/>
+      <checkbox id="cb-promptForLastDb" 
+        label="&pref-promptForLastDb.label;"
+        accesskey="&pref-promptForLastDb.ak;"
+        preference="pref-promptForLastDb" 
+        checked="true"/>
+      </groupbox>
+      <hbox>
+        <label style="padding-top:3px" 
+            accesskey="&pref-autoBackup.ak;"
+            control="ml-autoBackup" 
+            value="&pref-autoBackup.label;"/>
+        <spacer flex="1"/>
+        <menulist id="ml-autoBackup" sizetopopup="always" preference="pref-autoBackup">
+          <menupopup>
+            <menuitem label="&pref-autoBackup.off;" value="off"/>
+            <menuitem label="&pref-autoBackup.on;" value="on"/>
+            <menuitem label="&pref-autoBackup.prompt;" value="prompt"/>
+          </menupopup>
+        </menulist>
+      </hbox>
+      <hbox>
+        <label value="&pref-sqliteFileExtensions.label;" style="padding-top:5px" accesskey="&pref-sqliteFileExtensions.ak;" control="tb-sqliteFileExtensions"/>
+            <spacer flex="1"/>
+        <textbox id="tb-sqliteFileExtensions" flex="1" preference="pref-sqliteFileExtensions"/>
+        </hbox>
+      </prefpane>
+  <prefpane id="confirm-options" label="&panePrompts.title;">
+  </prefpane>
+</prefwindow>

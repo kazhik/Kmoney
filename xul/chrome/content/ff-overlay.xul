@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://kmoney/skin/overlay.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://kmoney/locale/overlay.dtd">
+<overlay id="kmoney-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <script type="application/x-javascript" src="chrome://Kmoney/content/overlay.js"/>  
+  <script type="application/x-javascript">
+  <![CDATA[
+    // Register handlers to maintain extension life cycle.
+    window.addEventListener("load", net.kazhik.kmoney.start, false);
+    window.addEventListener("unload", net.kazhik.kmoney.shutdown, false);
+  ]]>
+  </script>
+  <stringbundleset id="stringbundleset">
+    <stringbundle id="kmoney-strings" src="chrome://kmoney/locale/overlay.properties"/>
+  </stringbundleset>
+  <menupopup id="menu_ToolsPopup">
+    <menuitem oncommand="net.kazhik.kmoney.open()"
+      label="Kmoney" id="menuitem-kmoney"
+      insertafter="devToolsSeparator" class="menuitem-iconic"
+      accesskey="K"/>
+  </menupopup>
+  
+  
+</overlay>

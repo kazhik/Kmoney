@@ -1,0 +1,53 @@
+<!ENTITY window.title     "Kmoney">
+<!-- menu -->
+<!ENTITY menu.database          "データベース">
+<!ENTITY menu.database.accesskey          "D">
+<!ENTITY menu.database.new          "新規">
+<!ENTITY menu.database.new.accesskey          "N">
+<!ENTITY menu.database.open          "開く">
+<!ENTITY menu.database.open.accesskey          "O">
+<!ENTITY menu.database.close          "閉じる">
+<!ENTITY menu.database.close.accesskey          "C">
+<!ENTITY menu.database.exit          "終了">
+<!ENTITY menu.database.exit.accesskey          "X">
+
+<!ENTITY menu.edit          "編集">
+<!ENTITY menu.edit.accesskey          "E">
+
+<!ENTITY menu.view          "表示">
+<!ENTITY menu.view.accesskey          "V">
+
+<!ENTITY menu.chart          "Chart">
+<!ENTITY menu.chart.accesskey          "C">
+
+<!ENTITY menu.setting          "設定">
+<!ENTITY menu.setting.accesskey          "S">
+
+<!ENTITY menu.help          "ヘルプ">
+<!ENTITY menu.help.accesskey          "S">
+<!ENTITY menu.help.aboutextension "Kmoneyについて">
+<!ENTITY menu.help.aboutextension.ak "A">
+
+<!-- tab -->
+<!ENTITY tab.cash          "現金">
+<!ENTITY tab.bank          "銀行口座">
+<!ENTITY tab.creditcard          "クレジットカード">
+<!ENTITY tab.emoney          "電子マネー">
+
+<!-- edit -->
+<!ENTITY edit.date          "日付">
+<!ENTITY edit.income          "収入">
+<!ENTITY edit.expense          "支出">
+<!ENTITY edit.item          "費目">
+<!ENTITY edit.detail          "詳細">
+<!ENTITY edit.amount          "金額">
+<!ENTITY edit.user          "名前">
+<!ENTITY edit.internal          "内部">
+<!ENTITY edit.bank          "銀行">
+<!ENTITY edit.creditcard          "クレジットカード">
+<!ENTITY edit.emoney          "電子マネー">
+
+<!-- button -->
+<!ENTITY button.add          "追加">
+<!ENTITY button.update          "更新">
+<!ENTITY button.reset          "リセット">

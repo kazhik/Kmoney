@@ -1,0 +1,54 @@
+<!ENTITY window.title     "Kmoney">
+
+<!-- menu -->
+<!ENTITY menu.database			"Database">
+<!ENTITY menu.database.accesskey          "D">
+<!ENTITY menu.database.new          "New">
+<!ENTITY menu.database.new.accesskey          "N">
+<!ENTITY menu.database.open          "Open">
+<!ENTITY menu.database.open.accesskey          "O">
+<!ENTITY menu.database.close          "Close">
+<!ENTITY menu.database.close.accesskey          "C">
+<!ENTITY menu.database.exit          "Exit">
+<!ENTITY menu.database.exit.accesskey          "X">
+
+<!ENTITY menu.edit          "Edit">
+<!ENTITY menu.edit.accesskey          "E">
+
+<!ENTITY menu.view          "View">
+<!ENTITY menu.view.accesskey          "V">
+
+<!ENTITY menu.chart          "Chart">
+<!ENTITY menu.chart.accesskey          "C">
+
+<!ENTITY menu.setting          "Setting">
+<!ENTITY menu.setting.accesskey          "S">
+
+<!ENTITY menu.help          "Help">
+<!ENTITY menu.help.accesskey          "S">
+<!ENTITY menu.help.aboutextension "About Kmoney">
+<!ENTITY menu.help.aboutextension.ak "A">
+
+<!-- tab -->
+<!ENTITY tab.cash          "Cash">
+<!ENTITY tab.bank          "Bank">
+<!ENTITY tab.creditcard          "CreditCard">
+<!ENTITY tab.emoney          "E-Money">
+
+<!-- edit -->
+<!ENTITY edit.date          "Date">
+<!ENTITY edit.income          "Income">
+<!ENTITY edit.expense          "Expense">
+<!ENTITY edit.item          "Item">
+<!ENTITY edit.detail          "Detail">
+<!ENTITY edit.amount          "Amount">
+<!ENTITY edit.user          "Name">
+<!ENTITY edit.internal          "Internal">
+<!ENTITY edit.bank          "Bank">
+<!ENTITY edit.creditcard          "CreditCard">
+<!ENTITY edit.emoney          "E-Money">
+
+<!-- button -->
+<!ENTITY button.add          "Add">
+<!ENTITY button.update          "Update">
+<!ENTITY button.reset          "Reset">

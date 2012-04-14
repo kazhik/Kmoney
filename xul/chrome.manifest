@@ -1,0 +1,5 @@
+content   kmoney                 chrome/content/
+skin      kmoney   classic/1.0   chrome/skin/
+locale    kmoney   en-US         chrome/locale/en-US/
+locale    kmoney   ja         chrome/locale/ja/
+overlay	chrome://browser/content/browser.xul	chrome://kmoney/content/ff-overlay.xul

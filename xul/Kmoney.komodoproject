@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Komodo Project File - DO NOT EDIT -->
+<project id="893f6492-3787-4994-939a-bc601d20f166" kpf_version="5" name="Kmoney.komodoproject">
+<preference-set idref="893f6492-3787-4994-939a-bc601d20f166">
+  <boolean id="configured">1</boolean>
+  <string id="koextgen.target">firefox</string>
+</preference-set>
+</project>
