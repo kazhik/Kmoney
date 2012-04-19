@@ -4,6 +4,7 @@ EMoneyTable.superclass = TreeDataTable.prototype;
 
 function EMoneyTable() {
   this.mDb = null;
+  this.mMoneyList = null;
   
 };
 EMoneyTable.prototype.initialize = function(db) {
@@ -19,11 +20,12 @@ EMoneyTable.prototype.load = function() {
     + "A.income as " + km_getLStr("column.income") + ", "
     + "A.expense as " + km_getLStr("column.expense") + ", "
     + "A.money_id, "
-    + "D.name as " + km_getLStr("column.card_name") + ", "
+    + "D.name as " + km_getLStr("column.emoney_name") + ", "
     + "A.user_id, "
     + "C.name as " + km_getLStr("column.user_name") + ", "
     + "A.source, "
-    + "A.internal as " + km_getLStr("column.internal") + " "
+    + "A.internal as " + km_getLStr("column.internal") + ", "
+    + "A.rowid "
     + "from km_emoney_trns A "
     + "inner join km_item B "
     + " on A.item_id = B.rowid "
@@ -38,53 +40,59 @@ EMoneyTable.prototype.load = function() {
   var columns = this.mDb.getColumns();
   this.createColumns(columns, 0, []);
   EMoneyTable.superclass.hideColumns.call(this, 'km_cols_emoney',
-    ['item_id', 'user_id', 'money_id', 'source']);
+    ['item_id', 'user_id', 'money_id', 'source', 'rowid']);
   this.PopulateEMoneyList();
   this.PopulateTableData(records, columns, types);
   this.ShowTable(true);
   
 };
 EMoneyTable.prototype.onSelect = function() {
-  $$('transactionDate').value = this.getColumnValue(0);
-  $$('item').value = this.getColumnValue(1);
-  $$('detail').value = this.getColumnValue(3);
+  $$('km_edit_transactionDate').value = this.getColumnValue(0);
+  $$('km_edit_item').value = this.getColumnValue(1);
+  $$('km_edit_detail').value = this.getColumnValue(3);
   var amount = this.getColumnValue(4);
   if (Number(amount) == 0) {
     amount = this.getColumnValue(5);
-    $$('income_expense').selectedItem = $$('expense');
+    $$('income_expense').selectedItem = $$('km_edit_expense');
   } else {
-    $$('income_expense').selectedItem = $$('income');
+    $$('income_expense').selectedItem = $$('km_edit_income');
   }
-  $$('amount').value = amount;
-  $$('emoney').value = this.getColumnValue(6);
-  $$('user').value = this.getColumnValue(8);
-}
+  $$('km_edit_amount').value = amount;
+  $$('km_edit_emoney').value = this.getColumnValue(6);
+  $$('km_edit_user').value = this.getColumnValue(8);
+};
 EMoneyTable.prototype.PopulateEMoneyList = function() {
-    $$("emoney").removeAllItems();
-    
-    this.mDb.selectQuery("select rowid, name from km_emoney_info");
-    var records = this.mDb.getRecords();
-    
-    for (var i = 0; i < records.length; i++) {
-      $$("emoney").appendItem(records[i][1], records[i][0]);
-    }
-    
-    $$("emoney").selectedIndex = 0;
+    this.mDb.selectQuery("select rowid, name, user_id from km_emoney_info");
+    this.mMoneyList = this.mDb.getRecords();
+
+    this.onUserSelect();    
     
   };
+EMoneyTable.prototype.onUserSelect = function() {
+    $$("km_edit_emoney").removeAllItems();
+    var userId = $$('km_edit_user').value;
+
+    for (var i = 0; i < this.mMoneyList.length; i++) {
+      if (this.mMoneyList[i][2] == userId) {
+        $$("km_edit_emoney").appendItem(this.mMoneyList[i][1], this.mMoneyList[i][0]);
+      }
+    }
+    $$("km_edit_emoney").selectedIndex = 0;
+  
+};
 
 EMoneyTable.prototype.addRecord = function() {
   var incomeValue;
   var expenseValue;
-  if ($$('income').selected) {
-    incomeValue = $$('amount').value;
+  if ($$('km_edit_income').selected) {
+    incomeValue = $$('km_edit_amount').value;
     expenseValue = 0;
   } else {
     incomeValue = 0;
-    expenseValue = $$('amount').value;
+    expenseValue = $$('km_edit_amount').value;
   }
   var internalValue;
-  if ($$('internal').checked) {
+  if ($$('km_edit_internal').checked) {
     internalValue = 1;
   } else {
     internalValue = 0;
@@ -101,16 +109,56 @@ EMoneyTable.prototype.addRecord = function() {
     + "internal, "
     + "source "
     + ") values ( "
-    + "'" + $$('transactionDate').value + "', "
+    + "'" + $$('km_edit_transactionDate').value + "', "
     + incomeValue + ", "
     + expenseValue + ", "
-    + $$('item').value + ", "
-    + "'" + $$('detail').value + "', "
-    + $$('user').value + ", "
-    + $$('emoney').value + ", "
+    + $$('km_edit_item').value + ", "
+    + "'" + $$('km_edit_detail').value + "', "
+    + $$('km_edit_user').value + ", "
+    + $$('km_edit_emoney').value + ", "
     + "datetime('now'), "
     + "0, "
     + "1)"];
   this.mDb.executeTransaction(sql);
+  this.load();
+};
+EMoneyTable.prototype.updateRecord = function() {
+  var incomeValue;
+  var expenseValue;
+  if ($$('km_edit_income').selected) {
+    incomeValue = $$('km_edit_amount').value;
+    expenseValue = 0;
+  } else {
+    incomeValue = 0;
+    expenseValue = $$('km_edit_amount').value;
+  }
+  var internalValue;
+  if ($$('km_edit_internal').checked) {
+    internalValue = 1;
+  } else {
+    internalValue = 0;
+  }
+  var sql = ["update km_emoney_trns "
+    + "set "
+    + "transaction_date = " + "'" + $$('km_edit_transactionDate').value + "', "
+    + "income = " + incomeValue + ", "
+    + "expense = " + expenseValue + ", "
+    + "item_id = " + $$('km_edit_item').value + ", "
+    + "detail = " + "'" + $$('km_edit_detail').value + "', "
+    + "user_id = " + $$('km_edit_user').value + ", "
+    + "money_id = " + $$('km_edit_emoney').value + ", "
+    + "last_update_date = datetime('now'), "
+    + "internal = " + $$('km_edit_internal').value + ", "
+    + "source = 1 "
+    + "where rowid = " + this.getColumnValue(12)];
+  this.mDb.executeTransaction(sql);
+  this.load();
+};
+
+EMoneyTable.prototype.deleteRecord = function() {
+  var sql = "delete from km_emoney_trns where rowid = " + this.getColumnValue(12);
+  this.mDb.executeTransaction(sql);
+  
+  this.load();
 };
 

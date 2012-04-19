@@ -29,6 +29,9 @@
 <!ENTITY menu.help.aboutextension "About Kmoney">
 <!ENTITY menu.help.aboutextension.ak "A">
 
+<!ENTITY menu.help.deleteSelected "Delete">
+<!ENTITY menu.help.deleteSelected.ak "D">
+
 <!-- tab -->
 <!ENTITY tab.cash          "Cash">
 <!ENTITY tab.bank          "Bank">

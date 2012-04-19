@@ -91,31 +91,6 @@ KmDatabaseTreeView.prototype = {
   getColumnProperties: function(colid, col, properties){},
 
   cycleHeader: function(col) {
-    if (this.mTreeId == "browse-tree") {
-      var index  = col.id; 
-      var colname = this.aColumns[index][0];
-      var aSortInfo = SQLiteManager.changeSortOrder(colname);
-
-      var sBgColor = "black";
-      for(var i = 0; i < aSortInfo.length; i++) {
-        if (aSortInfo[i][0] == colname) {
-          switch (aSortInfo[i][1]) {
-            case "asc":
-              sBgColor = "green";
-              break;
-            case "desc":
-              sBgColor = "red";
-              break;
-          }
-        }
-      }
-
-      col.element.setAttribute("style", "color:" + sBgColor);
-
-      //the following function repopulates the data in the view by calling this view's init function indirectly via TreeDataTable's PopulateTableData function
-      SQLiteManager.loadTabBrowse(false);
-    }
-    else
       this.SortColumn(col);
   },
 
@@ -240,6 +215,7 @@ TreeDataTable.prototype = {
     treecol.setAttribute("id", sId);
     treecol.setAttribute("width", iWidth);
     treecol.setAttribute("minwidth", 60);
+    treecol.setAttribute("persist", "width");
     //Issue #378
     //treecol.setAttribute("context", 'mp-data-treecol');
     if (sBgColor != null)
@@ -252,7 +228,7 @@ TreeDataTable.prototype = {
     splitter.setAttribute("class", "tree-splitter");
     splitter.setAttribute("resizebefore", "closest");
     splitter.setAttribute("resizeafter", "grow");
-    splitter.setAttribute("oncommand", "SQLiteManager.saveBrowseTreeColState(this)");
+//    splitter.setAttribute("oncommand", "SQLiteManager.saveBrowseTreeColState(this)");
     treecols.appendChild(splitter);
   },
 
@@ -321,8 +297,6 @@ TreeDataTable.prototype = {
         for (var j = 0; j < colLabels.length; j++) {
           if (children[i].getAttribute('label') == colLabels[j]) {
             children[i].setAttribute('hidden', 'true');
-//            children[i].setAttribute('width', 0);
-//            children[i].setAttribute('minwidth', 0);
           }
         }
       }

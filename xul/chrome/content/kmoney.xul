@@ -1,173 +1,150 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://kmoney/locale/kmoney.dtd">
-
-<window id="kmoney"
- persist="screenX screenY width height sizemode"
- orient="vertical"
- onload="Startup()"
- onunload="Shutdown()"
- xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
- xmlns:html="http://www.w3.org/1999/xhtml"
- xmlns:h="http://www.w3.org/1999/xhtml">
-
-  <script type="application/x-javascript" src="globals.js"/>
-  <script type="application/x-javascript" src="treeDataTable.js"/>
-  <script type="application/x-javascript" src="CashTable.js"/>
-  <script type="application/x-javascript" src="CreditCardTable.js"/>
-  <script type="application/x-javascript" src="EMoneyTable.js"/>
-  <script type="application/x-javascript" src="kmoney.js"/>
-
-  <commandset id="km-cmdset">
-    <command id="kmc-newDb" oncommand="Kmoney.newDatabase()" />
-    <command id="kmc-openDb" />
-<!--
-    <command id="kmc-newDb" oncommand="Kmoney.newDatabase()" tooltiptext="&menu.db.new;"/>
--->
-  </commandset>
-  	<vbox id="km_main">
+<window id="km_mainwindow" title="&window.title;" persist="screenX screenY width height sizemode" orient="vertical"
+onload="Startup()" onunload="Shutdown()" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml">
+    <script type="application/x-javascript" src="globals.js" />
+    <script type="application/x-javascript" src="treeDataTable.js" />
+    <script type="application/x-javascript" src="CashTable.js" />
+    <script type="application/x-javascript" src="BankTable.js" />
+    <script type="application/x-javascript" src="CreditCardTable.js" />
+    <script type="application/x-javascript" src="EMoneyTable.js" />
+    <script type="application/x-javascript" src="kmoney.js" />
+    <commandset id="km-cmdset">
+        <command id="kmc-newDb" />
+        <command id="kmc-openDb" />
+    </commandset>
+    <popupset>
+        <menupopup id="mp-editTableRow">
+            <menuitem id="mp-editTableRow-mi-delete" label="&menu.deleteSelected;"
+            accesskey="&menu.deleteSelected.ak;" />
+        </menupopup>
+    </popupset>
+    <vbox id="km_main">
         <toolbox>
             <menubar id="km_menubar">
                 <menu id="km_menu_database" label="&menu.database;" accesskey="&menu.database.accesskey;">
                     <menupopup>
-                        <menuitem label="&menu.database.new;" accesskey="&menu.database.new.accesskey;" command="kmc-newDb"/>
-                        <menuitem label="&menu.database.open;" accesskey="&menu.database.open.accesskey;" command="kmc-openDb"/>
+                        <menuitem label="&menu.database.new;" accesskey="&menu.database.new.accesskey;"
+                        command="kmc-newDb" />
+                        <menuitem label="&menu.database.open;" accesskey="&menu.database.open.accesskey;"
+                        command="kmc-openDb" />
                         <menuseparator/>
-                        <menuitem label="&menu.database.exit;" accesskey="&menu.database.exit.accesskey;" oncommand="window.close()"/>
+                        <menuitem label="&menu.database.exit;" accesskey="&menu.database.exit.accesskey;"
+                        oncommand="window.close()" />
                     </menupopup>
                 </menu>
                 <menu id="km_menu_edit" label="&menu.edit;" accesskey="&menu.edit.accesskey;">
-                    <menupopup>
-                    </menupopup>
+                    <menupopup></menupopup>
                 </menu>
                 <menu id="km_menu_setting" label="&menu.setting;" accesskey="&menu.setting.accesskey;">
-                    <menupopup>
-                    </menupopup>
+                    <menupopup></menupopup>
                 </menu>
                 <menu id="km_menu_help" label="&menu.help;" accesskey="&menu.help.accesskey;">
                     <menupopup>
-		            <menuitem label="&menu.help.aboutextension;"
-				      accesskey="&menu.help.aboutextension.ak;"
-				      oncommand="window.openDialog(KmGlobals.chromes.aboutKM,'about','chrome, centerscreen, modal, dialog');"/>
+                        <menuitem label="&menu.help.aboutextension;" accesskey="&menu.help.aboutextension.ak;"
+                        oncommand="window.openDialog(KmGlobals.chromes.aboutKM,'about','chrome, centerscreen, modal, dialog');"
+                        />
                     </menupopup>
                 </menu>
             </menubar>
-        </toolbox>		
-	<tabbox id="km_tabbox">
-		<tabs id="km_tabs">
-			<tab id="km_tab_cash" label="&tab.cash;" persist="selected" />
-			<tab id="km_tab_bank" label="&tab.bank;" persist="selected" />
-			<tab id="km_tab_creditcard" label="&tab.creditcard;" persist="selected" />
-			<tab id="km_tab_emoney" label="&tab.emoney;" persist="selected" />
-		</tabs>
-		<tabpanels>
-			<tabpanel flex="1">
-				<vbox flex="1">
-				    <tree id="km_tree_cash" style="min-height:20em" 
-					  flex="1" seltype="single" enableColumnDrag="false">
-					<treecols id="km_cols_cash">
-					</treecols>
-				      <treechildren />
-				    </tree>
-				</vbox>
-				
-			</tabpanel>
-			<tabpanel flex="1">
-				<vbox flex="1">
-				    <tree id="km_tree_bank" style="min-height:20em" 
-					  flex="1" seltype="single" enableColumnDrag="false">
-					<treecols id="km_cols_bank">
-					</treecols>
-				      <treechildren />
-				    </tree>
-				</vbox>
-				
-			</tabpanel>
-			<tabpanel flex="1">
-				<vbox flex="1">
-				    <tree id="km_tree_creditcard" style="min-height:20em" 
-					  flex="1" seltype="single" enableColumnDrag="false">
-					<treecols id="km_cols_creditcard">
-					</treecols>
-				      <treechildren />
-				    </tree>
-				</vbox>
-				
-			</tabpanel>
-			<tabpanel flex="1">
-				<vbox flex="1">
-				    <tree id="km_tree_emoney" style="min-height:20em" 
-					  flex="1" seltype="single" enableColumnDrag="false">
-					<treecols id="km_cols_emoney">
-					</treecols>
-				      <treechildren />
-				    </tree>
-				</vbox>
-				
-			</tabpanel>
-		</tabpanels>
-	</tabbox>
-	<vbox>
-		<hbox align="center">
-			<label control="transactionDate" value="&edit.date;" />
-			<datepicker id="transactionDate" type="popup" />
-			<groupbox>
-				<radiogroup id="income_expense" orient="horizontal">  
-				  <radio id="income" label="&edit.income;"/>  
-				  <radio id="expense" label="&edit.expense;" selected="true" />  
-				</radiogroup>
-			</groupbox>
-			<label control="item" value="&edit.item;" />
-			<menulist id="item">
-				<menupopup>
-					<menuitem>dummy</menuitem>
-				</menupopup>
-			</menulist>
-			<label control="detail" value="&edit.detail;" />
-			<textbox id="detail" size="20" />
-		</hbox>
-		<hbox align="center">
-			<label control="amount" value="&edit.amount;" />
-			<textbox id="amount" size="7" />
-			<label control="user" value="&edit.user;" />
-			<menulist id="user">
-				<menupopup>
-					<menuitem>dummy</menuitem>
-				</menupopup>
-			</menulist>
-			<checkbox id="internal" label="&edit.internal;" />
-			
-			<hbox id="bankbox" align="center">
-			<label control="bank" value="&edit.bank;" />
-			<menulist id="bank">
-				<menupopup>
-					<menuitem>dummy</menuitem>
-				</menupopup>
-			</menulist>
-			</hbox>
-			<hbox id="creditcardbox" align="center">
-			<label control="creditcard" value="&edit.creditcard;" />
-			<menulist id="creditcard">
-				<menupopup>
-					<menuitem>dummy</menuitem>
-				</menupopup>
-			</menulist>
-			</hbox>
-			<hbox id="emoneybox" align="center">
-			<label control="emoney" value="&edit.emoney;" />
-			<menulist id="emoney">
-				<menupopup>
-					<menuitem>dummy</menuitem>
-				</menupopup>
-			</menulist>
-			</hbox>
-		</hbox>
-		<hbox align="right">
-			<button id="km_button_add" label="&button.add;" />
-			<button id="km_button_update" label="&button.update;" />
-			<button id="km_button_reset" label="&button.reset;" />
-		</hbox>
-	</vbox>
+        </toolbox>
+        <tabbox id="km_tabbox">
+            <tabs id="km_tabs">
+                <tab id="km_tab_cash" label="&tab.cash;" persist="selected" />
+                <tab id="km_tab_bank" label="&tab.bank;" persist="selected" />
+                <tab id="km_tab_creditcard" label="&tab.creditcard;" persist="selected" />
+                <tab id="km_tab_emoney" label="&tab.emoney;" persist="selected" />
+            </tabs>
+            <tabpanels>
+                <tabpanel flex="1">
+                    <vbox flex="1">
+                        <tree id="km_tree_cash" style="min-height:20em" flex="1" seltype="single"
+                        enableColumnDrag="false">
+                            <treecols id="km_cols_cash"></treecols>
+                            <treechildren context="mp-editTableRow" />
+                        </tree>
+                    </vbox>
+                </tabpanel>
+                <tabpanel flex="1">
+                    <vbox flex="1">
+                        <tree id="km_tree_bank" style="min-height:20em" flex="1" seltype="single"
+                        enableColumnDrag="false">
+                            <treecols id="km_cols_bank"></treecols>
+                            <treechildren context="mp-editTableRow" />
+                        </tree>
+                    </vbox>
+                </tabpanel>
+                <tabpanel flex="1">
+                    <vbox flex="1">
+                        <tree id="km_tree_creditcard" style="min-height:20em" flex="1" seltype="single"
+                        enableColumnDrag="false">
+                            <treecols id="km_cols_creditcard"></treecols>
+                            <treechildren context="mp-editTableRow" />
+                        </tree>
+                    </vbox>
+                </tabpanel>
+                <tabpanel flex="1">
+                    <vbox flex="1">
+                        <tree id="km_tree_emoney" style="min-height:20em" flex="1" seltype="single"
+                        enableColumnDrag="false">
+                            <treecols id="km_cols_emoney"></treecols>
+                            <treechildren context="mp-editTableRow" />
+                        </tree>
+                    </vbox>
+                </tabpanel>
+            </tabpanels>
+        </tabbox>
+        <vbox>
+            <hbox align="center">
+                <label control="km_edit_transactionDate" value="&edit.date;" />
+                <datepicker id="km_edit_transactionDate" type="popup" />
+                <groupbox>
+                    <radiogroup id="income_expense" orient="horizontal">
+                        <radio id="km_edit_income" label="&edit.income;" />
+                        <radio id="km_edit_expense" label="&edit.expense;" selected="true" />
+                    </radiogroup>
+                </groupbox>
+                <label control="km_edit_item" value="&edit.item;" />
+                <menulist id="km_edit_item">
+                    <menupopup></menupopup>
+                </menulist>
+                <label control="km_edit_detail" value="&edit.detail;" />
+                <textbox id="km_edit_detail" size="20" />
+            </hbox>
+            <hbox align="center">
+                <label control="km_edit_amount" value="&edit.amount;" />
+                <textbox id="km_edit_amount" size="7" />
+                <label control="km_edit_user" value="&edit.user;" />
+                <menulist id="km_edit_user">
+                    <menupopup></menupopup>
+                </menulist>
+                <checkbox id="km_edit_internal" label="&edit.internal;" />
+                <hbox id="bankbox" align="center">
+                    <label control="km_edit_bank" value="&edit.bank;" />
+                    <menulist id="km_edit_bank">
+                        <menupopup></menupopup>
+                    </menulist>
+                </hbox>
+                <hbox id="creditcardbox" align="center">
+                    <label control="km_edit_creditcard" value="&edit.creditcard;" />
+                    <menulist id="km_edit_creditcard">
+                        <menupopup></menupopup>
+                    </menulist>
+                </hbox>
+                <hbox id="emoneybox" align="center">
+                    <label control="km_edit_emoney" value="&edit.emoney;" />
+                    <menulist id="km_edit_emoney">
+                        <menupopup></menupopup>
+                    </menulist>
+                </hbox>
+            </hbox>
+            <hbox align="right">
+                <button id="km_button_add" label="&button.add;" />
+                <button id="km_button_update" label="&button.update;" />
+                <button id="km_button_reset" label="&button.reset;" />
+            </hbox>
+        </vbox>
     </vbox>
-    <statusbar id="km_statusbar">
-    </statusbar>  
+    <statusbar id="km_statusbar"></statusbar>
 </window>

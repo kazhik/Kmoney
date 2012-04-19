@@ -28,6 +28,9 @@
 <!ENTITY menu.help.aboutextension "Kmoneyについて">
 <!ENTITY menu.help.aboutextension.ak "A">
 
+<!ENTITY menu.deleteSelected "削除">
+<!ENTITY menu.deleteSelected.ak "D">
+
 <!-- tab -->
 <!ENTITY tab.cash          "現金">
 <!ENTITY tab.bank          "銀行口座">

@@ -1,16 +1,16 @@
-CashTable.prototype = new TreeDataTable("km_tree_cash");
-CashTable.constructor = CashTable;
-CashTable.superclass = TreeDataTable.prototype;
+BankTable.prototype = new TreeDataTable("km_tree_bank");
+BankTable.constructor = BankTable;
+BankTable.superclass = TreeDataTable.prototype;
 
-function CashTable() {
+function BankTable() {
   this.mDb = null;
-  
+  this.mBankList = null;
 };
-CashTable.prototype.initialize = function(db) {
+BankTable.prototype.initialize = function(db) {
   this.mDb = db;
-  CashTable.superclass.init.call(this);
+  BankTable.superclass.init.call(this);
 };
-CashTable.prototype.load = function() {
+BankTable.prototype.load = function() {
   var sql = "select "
     + "A.transaction_date as " + km_getLStr("column.transaction_date") + ", "
     + "A.item_id, "
@@ -18,28 +18,34 @@ CashTable.prototype.load = function() {
     + "A.detail as " + km_getLStr("column.detail") + ", "
     + "A.income as " + km_getLStr("column.income") + ", "
     + "A.expense as " + km_getLStr("column.expense") + ", "
+    + "A.bank_id, "
+    + "D.name as " + km_getLStr("column.bank_name") + ", "
     + "A.user_id, "
     + "C.name as " + km_getLStr("column.user_name") + ", "
+    + "A.source, "
     + "A.internal as " + km_getLStr("column.internal") + ", "
     + "A.rowid "
-    + "from km_realmoney_trns A "
+    + "from km_bank_trns A "
     + "inner join km_item B "
     + " on A.item_id = B.rowid "
     + "inner join km_user C "
     + " on A.user_id = C.id "
+    + "inner join km_bank_info D "
+    + " on A.bank_id = D.rowid "
     + "order by A.transaction_date";
   this.mDb.selectQuery(sql);
   var records = this.mDb.getRecords();
   var types = this.mDb.getRecordTypes();
   var columns = this.mDb.getColumns();
-  
   this.createColumns(columns, 0, []);
-  CashTable.superclass.hideColumns.call(this, 'km_cols_cash', ['item_id', 'user_id', 'internal', 'rowid']);
+  BankTable.superclass.hideColumns.call(this, 'km_cols_bank',
+    ['item_id', 'user_id', 'bank_id', 'source', 'rowid']);
+  this.PopulateBankList();
   this.PopulateTableData(records, columns, types);
   this.ShowTable(true);
   
 };
-CashTable.prototype.onSelect = function() {
+BankTable.prototype.onSelect = function() {
   $$('km_edit_transactionDate').value = this.getColumnValue(0);
   $$('km_edit_item').value = this.getColumnValue(1);
   $$('km_edit_detail').value = this.getColumnValue(3);
@@ -51,9 +57,29 @@ CashTable.prototype.onSelect = function() {
     $$('income_expense').selectedItem = $$('km_edit_income');
   }
   $$('km_edit_amount').value = amount;
-  $$('km_edit_user').value = this.getColumnValue(6);
+  $$('km_edit_bank').value = this.getColumnValue(6);
+  $$('km_edit_user').value = this.getColumnValue(8);
 }
-CashTable.prototype.addRecord = function() {
+BankTable.prototype.PopulateBankList = function() {
+    this.mDb.selectQuery("select rowid, name, user_id from km_bank_info");
+    this.mBankList = this.mDb.getRecords();
+
+    this.onUserSelect();
+};
+BankTable.prototype.onUserSelect = function() {
+    $$("km_edit_bank").removeAllItems();
+    var userId = $$('km_edit_user').value;
+
+    for (var i = 0; i < this.mBankList.length; i++) {
+      if (this.mBankList[i][2] == userId) {
+        $$("km_edit_bank").appendItem(this.mBankList[i][1], this.mBankList[i][0]);
+      }
+    }
+    $$("km_edit_bank").selectedIndex = 0;
+  
+};
+
+BankTable.prototype.addRecord = function() {
   var incomeValue;
   var expenseValue;
   if ($$('km_edit_income').selected) {
@@ -69,16 +95,16 @@ CashTable.prototype.addRecord = function() {
   } else {
     internalValue = 0;
   }
-  
-  var sql = ["insert into km_realmoney_trns ("
+  var sql = ["insert into km_bank_trns ("
     + "transaction_date, "
     + "income, "
     + "expense, "
     + "item_id, "
     + "detail, "
     + "user_id, "
-    + "internal, "
+    + "bank_id, "
     + "last_update_date, "
+    + "internal, "
     + "source "
     + ") values ( "
     + "'" + $$('km_edit_transactionDate').value + "', "
@@ -87,14 +113,14 @@ CashTable.prototype.addRecord = function() {
     + $$('km_edit_item').value + ", "
     + "'" + $$('km_edit_detail').value + "', "
     + $$('km_edit_user').value + ", "
-    + internalValue + ", "
+    + $$('km_edit_bank').value + ", "
     + "datetime('now'), "
+    + "0, "
     + "1)"];
   this.mDb.executeTransaction(sql);
-  
   this.load();
 };
-CashTable.prototype.updateRecord = function() {
+BankTable.prototype.updateRecord = function() {
   var incomeValue;
   var expenseValue;
   if ($$('km_edit_income').selected) {
@@ -110,7 +136,7 @@ CashTable.prototype.updateRecord = function() {
   } else {
     internalValue = 0;
   }
-  var sql = ["update km_realmoney_trns "
+  var sql = ["update km_bank_trns "
     + "set "
     + "transaction_date = " + "'" + $$('km_edit_transactionDate').value + "', "
     + "income = " + incomeValue + ", "
@@ -118,17 +144,19 @@ CashTable.prototype.updateRecord = function() {
     + "item_id = " + $$('km_edit_item').value + ", "
     + "detail = " + "'" + $$('km_edit_detail').value + "', "
     + "user_id = " + $$('km_edit_user').value + ", "
+    + "bank_id = " + $$('km_edit_bank').value + ", "
     + "last_update_date = datetime('now'), "
     + "internal = " + $$('km_edit_internal').value + ", "
     + "source = 1 "
-    + "where rowid = " + this.getColumnValue(9)];
+    + "where rowid = " + this.getColumnValue(12)];
   this.mDb.executeTransaction(sql);
   this.load();
 };
 
-CashTable.prototype.deleteRecord = function() {
-  var sql = "delete from km_realmoney_trns where rowid = " + this.getColumnValue(9);
+BankTable.prototype.deleteRecord = function() {
+  var sql = "delete from km_bank_trns where rowid = " + this.getColumnValue(12);
   this.mDb.executeTransaction(sql);
   
   this.load();
 };
+
