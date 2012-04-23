@@ -1,6 +1,5 @@
 "use strict";
 Components.utils.import("chrome://kmoney/content/sqlite.js");
-Components.utils.import("chrome://kmoney/content/tokenize.js");
 Components.utils.import("chrome://kmoney/content/appInfo.js");
 
 KmGlobals.disableChrome();
@@ -15,6 +14,7 @@ function Kmoney() {
     this.emoneyTree = null;
     this.maFileExt = [];
     this.listeners = [];
+    this.graph = null;
 };
 
 function Startup() {
@@ -33,11 +33,13 @@ Kmoney.prototype.Startup = function () {
     this.creditcardTree = new CreditCardTable();
     this.emoneyTree = new EMoneyTable();
     this.bankTree = new BankTable();
+    this.graph = new GraphView();
 
     this.cashTree.initialize(this.mDb);
     this.creditcardTree.initialize(this.mDb);
     this.emoneyTree.initialize(this.mDb);
     this.bankTree.initialize(this.mDb);
+    this.graph.initialize(this.mDb);
 
     this.addEventListeners();
     var bOpenLastDb = true;
@@ -137,6 +139,13 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('creditcardbox').hidden = true;
         $$('emoneybox').hidden = false;
         break;
+    case 'km_tab_graph':
+        this.graph.load();
+        $$('km_edit1').hidden = true;
+        $$('km_edit2').hidden = true;
+        $$('km_edit_buttons').hidden = true;
+        $$('km_graph_viewchanger').hidden = false;
+        break;
     }
 };
 Kmoney.prototype.onTabSelected = function (e) {
@@ -217,16 +226,18 @@ Kmoney.prototype.openLastDb = function () {
 };
 
 Kmoney.prototype.PopulateItemList = function () {
-    $$('km_edit_item').removeAllItems();
-
     this.mDb.selectQuery("select rowid, name from km_item");
     var records = this.mDb.getRecords();
 
+    $$('km_edit_item').removeAllItems();
+    $$('km_graph_item').removeAllItems();
+    $$('km_graph_item').appendItem('All', 0);
     for (var i = 0; i < records.length; i++) {
         $$('km_edit_item').appendItem(records[i][1], records[i][0]);
+        $$('km_graph_item').appendItem(records[i][1], records[i][0]);
     }
-
     $$('km_edit_item').selectedIndex = 0;
+    $$('km_graph_item').selectedIndex = 0;
 
 };
 Kmoney.prototype.PopulateUserList = function () {

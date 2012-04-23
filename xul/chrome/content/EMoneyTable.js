@@ -13,18 +13,18 @@ EMoneyTable.prototype.initialize = function(db) {
 };
 EMoneyTable.prototype.load = function() {
   var sql = "select "
-    + "A.transaction_date as " + km_getLStr("column.transaction_date") + ", "
+    + "A.transaction_date, "
     + "A.item_id, "
-    + "B.name as " + km_getLStr("column.item_name") + ", "
-    + "A.detail as " + km_getLStr("column.detail") + ", "
-    + "A.income as " + km_getLStr("column.income") + ", "
-    + "A.expense as " + km_getLStr("column.expense") + ", "
+    + "B.name, "
+    + "A.detail, "
+    + "A.income, "
+    + "A.expense, "
     + "A.money_id, "
-    + "D.name as " + km_getLStr("column.emoney_name") + ", "
+    + "D.name, "
     + "A.user_id, "
-    + "C.name as " + km_getLStr("column.user_name") + ", "
+    + "C.name, "
     + "A.source, "
-    + "A.internal as " + km_getLStr("column.internal") + ", "
+    + "A.internal, "
     + "A.rowid "
     + "from km_emoney_trns A "
     + "inner join km_item B "
@@ -38,9 +38,6 @@ EMoneyTable.prototype.load = function() {
   var records = this.mDb.getRecords();
   var types = this.mDb.getRecordTypes();
   var columns = this.mDb.getColumns();
-  this.createColumns(columns, 0, []);
-  EMoneyTable.superclass.hideColumns.call(this, 'km_cols_emoney',
-    ['item_id', 'user_id', 'money_id', 'source', 'rowid']);
   this.PopulateEMoneyList();
   this.PopulateTableData(records, columns, types);
   this.ShowTable(true);

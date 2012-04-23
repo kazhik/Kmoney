@@ -1,0 +1,21 @@
+@namespace html "http://www.w3.org/1999/xhtml";
+
+
+/*tree*/
+treechildren::-moz-tree-cell-text(selected) {
+  font-weight: bold;
+}
+
+/*tree in structure sidebar*/
+treechildren::-moz-tree-cell(dbObjTable1) {
+  background-color: #ccffcc;
+}
+treechildren::-moz-tree-cell(dbObjTable1 selected) {
+  background-color: #339933;
+}
+
+/*tree in browse and execute tabs*/
+treechildren::-moz-tree-cell(tabledata) {
+  border-right: 1px solid black;
+}
+

@@ -23,6 +23,16 @@
 
 <!ENTITY menu.setting          "Setting">
 <!ENTITY menu.setting.accesskey          "S">
+<!ENTITY menu.setting.user          "User">
+<!ENTITY menu.setting.user.accesskey          "U">
+<!ENTITY menu.setting.item          "Item">
+<!ENTITY menu.setting.item.accesskey          "I">
+<!ENTITY menu.setting.bank          "Bank">
+<!ENTITY menu.setting.bank.accesskey          "B">
+<!ENTITY menu.setting.creditcard          "CreditCard">
+<!ENTITY menu.setting.creditcard.accesskey          "C">
+<!ENTITY menu.setting.emoney          "EMoney">
+<!ENTITY menu.setting.emoney.accesskey          "E">
 
 <!ENTITY menu.help          "Help">
 <!ENTITY menu.help.accesskey          "S">
@@ -33,10 +43,22 @@
 <!ENTITY menu.help.deleteSelected.ak "D">
 
 <!-- tab -->
+<!ENTITY tab.graph          "Graph">
 <!ENTITY tab.cash          "Cash">
 <!ENTITY tab.bank          "Bank">
 <!ENTITY tab.creditcard          "CreditCard">
 <!ENTITY tab.emoney          "E-Money">
+
+<!-- column -->
+<!ENTITY column.date          "Date">
+<!ENTITY column.income          "Income">
+<!ENTITY column.expense          "Expense">
+<!ENTITY column.item          "Item">
+<!ENTITY column.detail          "Detail">
+<!ENTITY column.user          "Name">
+<!ENTITY column.bankname          "BankName">
+<!ENTITY column.cardname          "CardName">
+<!ENTITY column.emoneyname          "EMoneyName">
 
 <!-- edit -->
 <!ENTITY edit.date          "Date">
@@ -53,5 +75,8 @@
 
 <!-- button -->
 <!ENTITY button.add          "Add">
+<!ENTITY button.add.accesskey          "A">
 <!ENTITY button.update          "Update">
+<!ENTITY button.update.accesskey          "U">
 <!ENTITY button.reset          "Reset">
+<!ENTITY button.reset.accesskey          "R">

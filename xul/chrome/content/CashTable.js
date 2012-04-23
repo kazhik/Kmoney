@@ -12,15 +12,15 @@ CashTable.prototype.initialize = function(db) {
 };
 CashTable.prototype.load = function() {
   var sql = "select "
-    + "A.transaction_date as " + km_getLStr("column.transaction_date") + ", "
+    + "A.transaction_date, "
     + "A.item_id, "
-    + "B.name as " + km_getLStr("column.item_name") + ", "
-    + "A.detail as " + km_getLStr("column.detail") + ", "
-    + "A.income as " + km_getLStr("column.income") + ", "
-    + "A.expense as " + km_getLStr("column.expense") + ", "
+    + "B.name, "
+    + "A.detail, "
+    + "A.income, "
+    + "A.expense, "
     + "A.user_id, "
-    + "C.name as " + km_getLStr("column.user_name") + ", "
-    + "A.internal as " + km_getLStr("column.internal") + ", "
+    + "C.name, "
+    + "A.internal, "
     + "A.rowid "
     + "from km_realmoney_trns A "
     + "inner join km_item B "
@@ -33,8 +33,6 @@ CashTable.prototype.load = function() {
   var types = this.mDb.getRecordTypes();
   var columns = this.mDb.getColumns();
   
-  this.createColumns(columns, 0, []);
-  CashTable.superclass.hideColumns.call(this, 'km_cols_cash', ['item_id', 'user_id', 'internal', 'rowid']);
   this.PopulateTableData(records, columns, types);
   this.ShowTable(true);
   

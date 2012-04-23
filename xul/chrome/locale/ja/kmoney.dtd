@@ -22,6 +22,16 @@
 
 <!ENTITY menu.setting          "設定">
 <!ENTITY menu.setting.accesskey          "S">
+<!ENTITY menu.setting.user          "ユーザー">
+<!ENTITY menu.setting.user.accesskey          "U">
+<!ENTITY menu.setting.item          "費目">
+<!ENTITY menu.setting.item.accesskey          "I">
+<!ENTITY menu.setting.bank          "銀行">
+<!ENTITY menu.setting.bank.accesskey          "B">
+<!ENTITY menu.setting.creditcard          "クレジットカード">
+<!ENTITY menu.setting.creditcard.accesskey          "C">
+<!ENTITY menu.setting.emoney          "電子マネー">
+<!ENTITY menu.setting.emoney.accesskey          "E">
 
 <!ENTITY menu.help          "ヘルプ">
 <!ENTITY menu.help.accesskey          "S">
@@ -32,10 +42,22 @@
 <!ENTITY menu.deleteSelected.ak "D">
 
 <!-- tab -->
+<!ENTITY tab.graph          "グラフ">
 <!ENTITY tab.cash          "現金">
 <!ENTITY tab.bank          "銀行口座">
 <!ENTITY tab.creditcard          "クレジットカード">
 <!ENTITY tab.emoney          "電子マネー">
+
+<!-- column -->
+<!ENTITY column.date          "日付">
+<!ENTITY column.income          "収入">
+<!ENTITY column.expense          "支出">
+<!ENTITY column.item          "費目">
+<!ENTITY column.detail          "詳細">
+<!ENTITY column.user          "名前">
+<!ENTITY column.bankname          "銀行名">
+<!ENTITY column.cardname          "カード名">
+<!ENTITY column.emoneyname          "電子マネー名">
 
 <!-- edit -->
 <!ENTITY edit.date          "日付">
@@ -52,5 +74,8 @@
 
 <!-- button -->
 <!ENTITY button.add          "追加">
+<!ENTITY button.add.accesskey          "A">
 <!ENTITY button.update          "更新">
+<!ENTITY button.update.accesskey          "U">
 <!ENTITY button.reset          "リセット">
+<!ENTITY button.reset.accesskey          "R">

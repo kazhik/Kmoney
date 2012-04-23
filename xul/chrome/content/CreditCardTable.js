@@ -12,15 +12,15 @@ CreditCardTable.prototype.initialize = function(db) {
 };
 CreditCardTable.prototype.load = function() {
   var sql = "select "
-    + "A.transaction_date as " + km_getLStr("column.transaction_date") + ", "
+    + "A.transaction_date, "
     + "A.item_id, "
-    + "B.name as " + km_getLStr("column.item_name") + ", "
-    + "A.detail as " + km_getLStr("column.detail") + ", "
-    + "A.expense as " + km_getLStr("column.expense") + ", "
+    + "B.name, "
+    + "A.detail, "
+    + "A.expense, "
     + "A.card_id, "
-    + "D.name as " + km_getLStr("column.card_name") + ", "
+    + "D.name, "
     + "A.user_id, "
-    + "C.name as " + km_getLStr("column.user_name") + ", "
+    + "C.name, "
     + "A.rowid "
     + "from km_creditcard_trns A "
     + "inner join km_item B "
@@ -34,8 +34,6 @@ CreditCardTable.prototype.load = function() {
   var records = this.mDb.getRecords();
   var types = this.mDb.getRecordTypes();
   var columns = this.mDb.getColumns();
-  this.createColumns(columns, 0, []);
-  CreditCardTable.superclass.hideColumns.call(this, 'km_cols_creditcard', ['item_id', 'user_id', 'card_id', 'rowid']);
   this.PopulateCardList();
   this.PopulateTableData(records, columns, types);
   this.ShowTable(true);

@@ -3,16 +3,24 @@
 <window id="km_mainwindow" title="&window.title;" persist="screenX screenY width height sizemode" orient="vertical"
 onload="Startup()" onunload="Shutdown()" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml">
+    <script type="application/x-javascript" src="raphael.js" />
+    <script type="application/x-javascript" src="ico.js" />
     <script type="application/x-javascript" src="globals.js" />
     <script type="application/x-javascript" src="treeDataTable.js" />
     <script type="application/x-javascript" src="CashTable.js" />
     <script type="application/x-javascript" src="BankTable.js" />
     <script type="application/x-javascript" src="CreditCardTable.js" />
     <script type="application/x-javascript" src="EMoneyTable.js" />
+    <script type="application/x-javascript" src="GraphView.js" />
     <script type="application/x-javascript" src="kmoney.js" />
     <commandset id="km-cmdset">
         <command id="kmc-newDb" />
         <command id="kmc-openDb" />
+        <command id="kmc-setuser" />
+        <command id="kmc-setitem" />
+        <command id="kmc-setbank" />
+        <command id="kmc-setcreditcard" />
+        <command id="kmc-setemoney" />
     </commandset>
     <popupset>
         <menupopup id="mp-editTableRow">
@@ -38,7 +46,23 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                     <menupopup></menupopup>
                 </menu>
                 <menu id="km_menu_setting" label="&menu.setting;" accesskey="&menu.setting.accesskey;">
-                    <menupopup></menupopup>
+                    <menupopup>
+                        <menuitem label="&menu.setting.user;"
+								accesskey="&menu.setting.user.accesskey;"
+								command="kmc-setuser" />
+                        <menuitem label="&menu.setting.item;"
+								accesskey="&menu.setting.item.accesskey;"
+								command="kmc-setitem" />
+                        <menuitem label="&menu.setting.bank;"
+								accesskey="&menu.setting.bank.accesskey;"
+								command="kmc-setbank" />
+                        <menuitem label="&menu.setting.creditcard;"
+								accesskey="&menu.setting.creditcard.accesskey;"
+								command="kmc-setcreditcard" />
+                        <menuitem label="&menu.setting.emoney;"
+								accesskey="&menu.setting.emoney.accesskey;"
+								command="kmc-setemoney" />
+					</menupopup>
                 </menu>
                 <menu id="km_menu_help" label="&menu.help;" accesskey="&menu.help.accesskey;">
                     <menupopup>
@@ -51,6 +75,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
         </toolbox>
         <tabbox id="km_tabbox">
             <tabs id="km_tabs">
+                <tab id="km_tab_graph" label="&tab.graph;" persist="selected" />
                 <tab id="km_tab_cash" label="&tab.cash;" persist="selected" />
                 <tab id="km_tab_bank" label="&tab.bank;" persist="selected" />
                 <tab id="km_tab_creditcard" label="&tab.creditcard;" persist="selected" />
@@ -58,10 +83,35 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
             </tabs>
             <tabpanels>
                 <tabpanel flex="1">
+                    <vbox id="km_graph" flex="1">
+                    </vbox>
+                </tabpanel>
+                <tabpanel flex="1">
                     <vbox flex="1">
                         <tree id="km_tree_cash" style="min-height:20em" flex="1" seltype="single"
                         enableColumnDrag="false">
-                            <treecols id="km_cols_cash"></treecols>
+                            <treecols id="km_cols_cash">
+								<treecol id="0" label="&column.date;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="1" label="item_id" width="60" hidden="true" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="2" label="&column.item;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="3" label="&column.detail;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="4" label="&column.income;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="5" label="&column.expense;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="6" label="user_id" width="60" hidden="true" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="7" label="&column.user;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="8" label="internal" width="60" hidden="true" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="9" label="rowid" width="60" hidden="true" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+							</treecols>
                             <treechildren context="mp-editTableRow" />
                         </tree>
                     </vbox>
@@ -70,7 +120,34 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                     <vbox flex="1">
                         <tree id="km_tree_bank" style="min-height:20em" flex="1" seltype="single"
                         enableColumnDrag="false">
-                            <treecols id="km_cols_bank"></treecols>
+                            <treecols id="km_cols_bank">
+								<treecol id="0" label="&column.date;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="1" label="item_id" width="60" hidden="true" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="2" label="&column.item;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="3" label="&column.detail;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="4" label="&column.income;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="5" label="&column.expense;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="6" label="bank_id" width="60" hidden="true" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="7" label="&column.bankname;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="8" label="user_id" width="60" hidden="true" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="9" label="&column.user;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="10" label="source" width="60" hidden="true" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="11" label="internal" width="60" hidden="true" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="12" label="rowid" width="60" hidden="true" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+							</treecols>
                             <treechildren context="mp-editTableRow" />
                         </tree>
                     </vbox>
@@ -79,7 +156,29 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                     <vbox flex="1">
                         <tree id="km_tree_creditcard" style="min-height:20em" flex="1" seltype="single"
                         enableColumnDrag="false">
-                            <treecols id="km_cols_creditcard"></treecols>
+                            <treecols id="km_cols_creditcard">
+								<treecol id="0" label="&column.date;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="1" label="item_id" width="60" hidden="true" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="2" label="&column.item;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="3" label="&column.detail;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="4" label="&column.expense;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="5" label="card_id" width="60" hidden="true" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="6" label="&column.cardname;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="7" label="user_id" width="60" hidden="true" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="8" label="&column.user;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="9" label="rowid" width="60" hidden="true" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								
+							</treecols>
                             <treechildren context="mp-editTableRow" />
                         </tree>
                     </vbox>
@@ -88,7 +187,34 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                     <vbox flex="1">
                         <tree id="km_tree_emoney" style="min-height:20em" flex="1" seltype="single"
                         enableColumnDrag="false">
-                            <treecols id="km_cols_emoney"></treecols>
+                            <treecols id="km_cols_emoney">
+								<treecol id="0" label="&column.date;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="1" label="item_id" width="60" hidden="true" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="2" label="&column.item;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="3" label="&column.detail;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="4" label="&column.income;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="5" label="&column.expense;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="6" label="money_id" width="60" hidden="true" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="7" label="&column.emoneyname;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="8" label="user_id" width="60" hidden="true" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="9" label="&column.user;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="10" label="source" width="60" hidden="true" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="11" label="internal" width="60" hidden="true" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="12" label="rowid" width="60" hidden="true" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+							</treecols>
                             <treechildren context="mp-editTableRow" />
                         </tree>
                     </vbox>
@@ -96,10 +222,10 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
             </tabpanels>
         </tabbox>
         <vbox>
-            <hbox align="center">
+            <hbox id="km_edit1" align="center">
                 <label control="km_edit_transactionDate" value="&edit.date;" />
                 <datepicker id="km_edit_transactionDate" type="popup" />
-                <groupbox>
+                <groupbox id="km_income_expense_group">
                     <radiogroup id="income_expense" orient="horizontal">
                         <radio id="km_edit_income" label="&edit.income;" />
                         <radio id="km_edit_expense" label="&edit.expense;" selected="true" />
@@ -112,7 +238,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 <label control="km_edit_detail" value="&edit.detail;" />
                 <textbox id="km_edit_detail" size="20" />
             </hbox>
-            <hbox align="center">
+            <hbox id="km_edit2" align="center">
                 <label control="km_edit_amount" value="&edit.amount;" />
                 <textbox id="km_edit_amount" size="7" />
                 <label control="km_edit_user" value="&edit.user;" />
@@ -139,11 +265,17 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                     </menulist>
                 </hbox>
             </hbox>
-            <hbox align="right">
-                <button id="km_button_add" label="&button.add;" />
-                <button id="km_button_update" label="&button.update;" />
-                <button id="km_button_reset" label="&button.reset;" />
+            <hbox id="km_edit_buttons" align="right">
+                <button id="km_button_add" accesskey="&button.add.accesskey;" label="&button.add;" />
+                <button id="km_button_update" accesskey="&button.update.accesskey;" label="&button.update;" />
+                <button id="km_button_reset" accesskey="&button.reset.accesskey;" label="&button.reset;" />
             </hbox>
+			<hbox id="km_graph_viewchanger" align="center" hidden="true">
+                <label control="km_graph_item" value="&edit.item;" />
+                <menulist id="km_graph_item">
+                    <menupopup></menupopup>
+                </menulist>
+			</hbox>
         </vbox>
     </vbox>
     <statusbar id="km_statusbar"></statusbar>
