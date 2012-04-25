@@ -80,3 +80,10 @@
 <!ENTITY button.update.accesskey          "U">
 <!ENTITY button.reset          "Reset">
 <!ENTITY button.reset.accesskey          "R">
+
+<!ENTITY first "First">
+<!ENTITY previous "Previous">
+<!ENTITY next "Next">
+<!ENTITY last "Last">
+<!ENTITY to "to">
+<!ENTITY of "of">

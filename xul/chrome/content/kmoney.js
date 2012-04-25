@@ -85,6 +85,18 @@ Kmoney.prototype.addEventListeners = function () {
 
     this.listeners['km_edit_user.select'] = this.onUserSelect.bind(this);
     $$('km_edit_user').addEventListener("select", this.listeners['km_edit_user.select']);
+
+    this.listeners['km_btn_first.command'] = this.jump.bind(this, 'first');
+    $$('km_btn_first').addEventListener("command", this.listeners['km_btn_first.command']);
+
+    this.listeners['km_btn_previous.command'] = this.jump.bind(this, 'prev');
+    $$('km_btn_previous').addEventListener("command", this.listeners['km_btn_previous.command']);
+
+    this.listeners['km_btn_next.command'] = this.jump.bind(this, 'next');
+    $$('km_btn_next').addEventListener("command", this.listeners['km_btn_next.command']);
+
+    this.listeners['km_btn_last.command'] = this.jump.bind(this, 'last');
+    $$('km_btn_last').addEventListener("command", this.listeners['km_btn_last.command']);
 };
 
 Kmoney.prototype.removeEventListeners = function () {
@@ -93,12 +105,21 @@ Kmoney.prototype.removeEventListeners = function () {
     $$('km_button_add').removeEventListener("command", this.listeners['km_button_add.command']);
     $$('km_button_update').removeEventListener("command", this.listeners['km_button_update.command']);
     $$('km_button_reset').removeEventListener("command", this.listeners['km_button_reset.command']);
+    $$('km_btn_first').removeEventListener("command", this.listeners['km_btn_first.command']);
+    $$('km_btn_previous').removeEventListener("command", this.listeners['km_btn_previous.command']);
+    $$('km_btn_next').removeEventListener("command", this.listeners['km_btn_next.command']);
+    $$('km_btn_last').removeEventListener("command", this.listeners['km_btn_last.command']);
+
     $$('km_tree_cash').removeEventListener("select", this.listeners['km_tree_cash.select']);
     $$('km_tree_creditcard').removeEventListener("select", this.listeners['km_tree_creditcard.select']);
     $$('km_tree_emoney').removeEventListener("select", this.listeners['km_tree_emoney.select']);
     $$('km_tree_bank').removeEventListener("select", this.listeners['km_tree_bank.select']);
     $$('mp-editTableRow-mi-delete').removeEventListener("command", this.listeners['mp-editTableRow-mi-delete.command']);
     $$('km_edit_user').removeEventListener("select", this.listeners['km_edit_user.select']);
+};
+
+Kmoney.prototype.jump = function (direction) {
+    km_log(direction);
 };
 
 Kmoney.prototype.onCashSelect = function () {

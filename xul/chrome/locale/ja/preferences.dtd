@@ -35,7 +35,7 @@
 <!ENTITY pref-showMainToolbarDebug.label "Show the Debug toolbar">
 <!ENTITY pref-notificationDuration.label "Duration (in seconds) of notification messages">
 <!ENTITY pref-notificationDuration.ak "D">
-<!ENTITY pref-displayNumRecords.label "表示するレコード数 (参照と検索タブ)">
+<!ENTITY pref-displayNumRecords.label "表示するレコード数">
 <!ENTITY pref-displayNumRecords.ak "N">
 <!ENTITY pref-sqlTextboxRows.label "SQL を入力するテキストボックスの行数 (SQL 実行タブ)">
 <!ENTITY pref-sqlTextboxRows.ak "R">

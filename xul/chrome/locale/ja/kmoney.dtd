@@ -79,3 +79,10 @@
 <!ENTITY button.update.accesskey          "U">
 <!ENTITY button.reset          "リセット">
 <!ENTITY button.reset.accesskey          "R">
+
+<!ENTITY first "最初">
+<!ENTITY previous "前">
+<!ENTITY next "次">
+<!ENTITY last "最後">
+<!ENTITY to "-">
+<!ENTITY of "/">

@@ -36,6 +36,8 @@ CashTable.prototype.load = function() {
   this.PopulateTableData(records, columns, types);
   this.ShowTable(true);
   
+  $$('km_from_value').value = 1;
+  $$('km_to_value').value = records.length;
 };
 CashTable.prototype.onSelect = function() {
   $$('km_edit_transactionDate').value = this.getColumnValue(0);

@@ -4,14 +4,27 @@
 
 <!DOCTYPE dialog SYSTEM "chrome://kmoney/locale/about.dtd">
 
-<dialog title="&about; Kmoney" orient="vertical" autostretch="always" onload="sizeToContent()" buttons="accept" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<dialog title="&about; Kmoney" orient="vertical" autostretch="always"
+        onload="fillAboutValues()"
+        buttons="accept"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="application/x-javascript" src="globals.js" />
+  <script type="application/x-javascript">
+    function fillAboutValues() {
+      document.getElementById("about-version").setAttribute("value", KmAppInfo.getVersion());
+    }
+  </script>  
+
   <groupbox align="center" orient="horizontal">
     <vbox>
-      <text value="Kmoney" style="font-weight: bold; font-size: x-large;"/>
-      <text value="&version; 1.0"/>
+      <label value="Kmoney" class="text-link" href="https://github.com/kazhik/Kmoney"
+            style="font-weight: bold; font-size: x-large;"/>
+      <text value="&version; "/>
+      <text id="about-version"/>
       <separator class="thin"/>
       <text value="&createdBy;" style="font-weight: bold;"/>
-      <text value="kazhik"/>
+      <text value="kazhik" />
       <separator class="thin"/>
     </vbox>
   </groupbox>

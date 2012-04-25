@@ -27,6 +27,8 @@
         name="extensions.kmoney.autoBackup" type="string"/>
       <preference id="pref-sqliteFileExtensions" 
         name="extensions.kmoney.sqliteFileExtensions" type="string"/>
+      <preference id="pref-displayNumRecords"
+        name="extensions.kmoney.displayNumRecords" type="int"/>
     </preferences>
       <groupbox>
       <caption label="&whenKMStarts;"/>
@@ -59,6 +61,11 @@
         <label value="&pref-sqliteFileExtensions.label;" style="padding-top:5px" accesskey="&pref-sqliteFileExtensions.ak;" control="tb-sqliteFileExtensions"/>
             <spacer flex="1"/>
         <textbox id="tb-sqliteFileExtensions" flex="1" preference="pref-sqliteFileExtensions"/>
+        </hbox>
+        <hbox>
+        <label value="&pref-displayNumRecords.label;" style="padding-top:5px" accesskey="&pref-displayNumRecords.ak;" control="tb-displayNumRecords"/>
+        <spacer flex="1"/>
+        <textbox id="tb-displayNumRecords" type="number" min="0" preference="pref-displayNumRecords"/>
         </hbox>
       </prefpane>
   <prefpane id="confirm-options" label="&panePrompts.title;">

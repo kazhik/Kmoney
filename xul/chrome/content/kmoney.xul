@@ -222,60 +222,71 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
             </tabpanels>
         </tabbox>
         <vbox>
-            <hbox id="km_edit1" align="center">
-                <label control="km_edit_transactionDate" value="&edit.date;" />
-                <datepicker id="km_edit_transactionDate" type="popup" />
-                <groupbox id="km_income_expense_group">
-                    <radiogroup id="income_expense" orient="horizontal">
-                        <radio id="km_edit_income" label="&edit.income;" />
-                        <radio id="km_edit_expense" label="&edit.expense;" selected="true" />
-                    </radiogroup>
-                </groupbox>
-                <label control="km_edit_item" value="&edit.item;" />
-                <menulist id="km_edit_item">
-                    <menupopup></menupopup>
-                </menulist>
-                <label control="km_edit_detail" value="&edit.detail;" />
-                <textbox id="km_edit_detail" size="20" />
-            </hbox>
-            <hbox id="km_edit2" align="center">
-                <label control="km_edit_amount" value="&edit.amount;" />
-                <textbox id="km_edit_amount" size="7" />
-                <label control="km_edit_user" value="&edit.user;" />
-                <menulist id="km_edit_user">
-                    <menupopup></menupopup>
-                </menulist>
-                <checkbox id="km_edit_internal" label="&edit.internal;" />
-                <hbox id="bankbox" align="center">
-                    <label control="km_edit_bank" value="&edit.bank;" />
-                    <menulist id="km_edit_bank">
-                        <menupopup></menupopup>
-                    </menulist>
-                </hbox>
-                <hbox id="creditcardbox" align="center">
-                    <label control="km_edit_creditcard" value="&edit.creditcard;" />
-                    <menulist id="km_edit_creditcard">
-                        <menupopup></menupopup>
-                    </menulist>
-                </hbox>
-                <hbox id="emoneybox" align="center">
-                    <label control="km_edit_emoney" value="&edit.emoney;" />
-                    <menulist id="km_edit_emoney">
-                        <menupopup></menupopup>
-                    </menulist>
-                </hbox>
-            </hbox>
-            <hbox id="km_edit_buttons" align="right">
-                <button id="km_button_add" accesskey="&button.add.accesskey;" label="&button.add;" />
-                <button id="km_button_update" accesskey="&button.update.accesskey;" label="&button.update;" />
-                <button id="km_button_reset" accesskey="&button.reset.accesskey;" label="&button.reset;" />
-            </hbox>
-			<hbox id="km_graph_viewchanger" align="center" hidden="true">
-                <label control="km_graph_item" value="&edit.item;" />
-                <menulist id="km_graph_item">
-                    <menupopup></menupopup>
-                </menulist>
-			</hbox>
+				<hbox id="km_navigate" align="center">
+				  <button id="km_btn_first" label="&lt;&lt;" tooltiptext="&first;"/>
+				  <button id="km_btn_previous" label="&lt;" tooltiptext="&previous;"/>
+				  <label id="km_from_value" style="padding-top:5px;font-weight:bold;"/>
+				  <label value="&to;" style="padding-top:5px"/>
+				  <label id="km_to_value" style="padding-top:5px;font-weight:bold;"/>
+				  <label value="&of;" style="padding-top:5px"/>
+				  <label id="km_total" style="padding-top:5px;font-weight:bold;"/>
+				  <button id="km_btn_next" label="&gt;" tooltiptext="&next;" />
+				  <button id="km_btn_last" label="&gt;&gt;" tooltiptext="&last;" />
+				</hbox>
+				<hbox id="km_edit1" align="center">
+					<label control="km_edit_transactionDate" value="&edit.date;" />
+					<datepicker id="km_edit_transactionDate" type="popup" />
+					<groupbox id="km_income_expense_group">
+						<radiogroup id="income_expense" orient="horizontal">
+							<radio id="km_edit_income" label="&edit.income;" />
+							<radio id="km_edit_expense" label="&edit.expense;" selected="true" />
+						</radiogroup>
+					</groupbox>
+					<label control="km_edit_item" value="&edit.item;" />
+					<menulist id="km_edit_item">
+						<menupopup></menupopup>
+					</menulist>
+					<label control="km_edit_detail" value="&edit.detail;" />
+					<textbox id="km_edit_detail" size="20" />
+				</hbox>
+				<hbox id="km_edit2" align="center">
+					<label control="km_edit_amount" value="&edit.amount;" />
+					<textbox id="km_edit_amount" size="7" />
+					<label control="km_edit_user" value="&edit.user;" />
+					<menulist id="km_edit_user">
+						<menupopup></menupopup>
+					</menulist>
+					<checkbox id="km_edit_internal" label="&edit.internal;" />
+					<hbox id="bankbox" align="center">
+						<label control="km_edit_bank" value="&edit.bank;" />
+						<menulist id="km_edit_bank">
+							<menupopup></menupopup>
+						</menulist>
+					</hbox>
+					<hbox id="creditcardbox" align="center">
+						<label control="km_edit_creditcard" value="&edit.creditcard;" />
+						<menulist id="km_edit_creditcard">
+							<menupopup></menupopup>
+						</menulist>
+					</hbox>
+					<hbox id="emoneybox" align="center">
+						<label control="km_edit_emoney" value="&edit.emoney;" />
+						<menulist id="km_edit_emoney">
+							<menupopup></menupopup>
+						</menulist>
+					</hbox>
+				</hbox>
+				<hbox id="km_edit_buttons" align="right">
+					<button id="km_button_add" accesskey="&button.add.accesskey;" label="&button.add;" />
+					<button id="km_button_update" accesskey="&button.update.accesskey;" label="&button.update;" />
+					<button id="km_button_reset" accesskey="&button.reset.accesskey;" label="&button.reset;" />
+				</hbox>
+				<hbox id="km_graph_viewchanger" align="center" hidden="true">
+					<label control="km_graph_item" value="&edit.item;" />
+					<menulist id="km_graph_item">
+						<menupopup></menupopup>
+					</menulist>
+				</hbox>
         </vbox>
     </vbox>
     <statusbar id="km_statusbar"></statusbar>

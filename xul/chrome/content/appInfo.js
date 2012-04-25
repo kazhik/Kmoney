@@ -12,14 +12,6 @@ var KmAppInfo = {
   extVersion: "",
   extCreator: "kazhik",
 
-  webpages: {
-    home: "https://github.com/kazhik/Kmoney/",
-    issueNew: "http://code.google.com/p/sqlite-manager/issues/entry",
-    sqliteHome: "http://www.sqlite.org/",
-    sqliteLang: "http://www.sqlite.org/lang.html",
-    mpl: "http://www.mozilla.org/MPL/MPL-1.1.html"
-  },
-
   setVersion: function() {
     if (this.appInfo.ID == extId) {
       this.extVersion = this.appInfo.version;

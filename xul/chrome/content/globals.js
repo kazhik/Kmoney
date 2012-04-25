@@ -292,7 +292,7 @@ function km_alert(sTitle, sMessage) {
 function km_log(sMsg) {
   var aConsoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
 
-  aConsoleService.logStringMessage("SQLiteManager: " + sMsg);
+  aConsoleService.logStringMessage("Kmoney: " + sMsg);
 }
 
 KmGlobals.confirmBeforeExecuting = function(aQ, sMessage, confirmPrefName) {
@@ -325,105 +325,6 @@ function km_setCurrentSettings() {
   km_setDataTreeStyleControls();
 }
 
-///////////////////////////////////////////////
-function km_setDataTreeStyle(sType) {
-  if (sType == "none") {
-    var obj = KmGlobals.getJsonPref("jsonDataTreeStyle");
-    obj.setting = 'none';
-    sPref = JSON.stringify(obj);
-    km_prefsBranch.setCharPref("jsonDataTreeStyle", sPref);
-    return;
-  }
-  if (sType == "default") {
-    km_prefsBranch.clearUserPref("jsonDataTreeStyle");
-    km_setDataTreeStyleControls();
-    return;
-  }
-  if (sType == "user") {
-    var sPref = setMktPreferences('datatree-options');
-    km_prefsBranch.setCharPref("jsonDataTreeStyle", sPref);
-    return;
-  }
-}
-
-function km_setDataTreeStyleControls() {
-  var obj = KmGlobals.getJsonPref("jsonDataTreeStyle");
-  if (obj.setting == 'none') {
-    $$('btnTreeStyleApply').setAttribute('disabled', true);
-  }
-  else {
-    $$('btnTreeStyleApply').removeAttribute('disabled');
-  }
-
-  gMktPreferences.dataTreeStyle = obj;
-//  applyMktPreferences('datatree-options');
-}
-
-//this function applies mktpreferences to descendants of element whose id=sId and which have the attribute 'mktpref'
-function applyMktPreferences(sId) {
-  var pElt = $$(sId);
-  var aElt = pElt.querySelectorAll("[mktpref]");
-  for (var i = 0; i < aElt.length; i++) {
-    var mktpref = aElt[i].getAttribute('mktpref');
-    var val = getMktPref(mktpref);
-//    if (val == null)
-//      continue;
-    switch (aElt[i].localName.toLowerCase()) {
-      case 'colorpicker':
-        if (val == null)
-          aElt[i].color = '';
-        else
-          aElt[i].color = val;
-        break;
-      default:
-        aElt[i].value = val;
-        break;
-    }
-  }
-}
-
-function setMktPreferences(sId) {
-  var pElt = $$(sId);
-  var aElt = pElt.querySelectorAll("[mktpref]");
-  for (var i = 0; i < aElt.length; i++) {
-    var mktpref = aElt[i].getAttribute('mktpref');
-    var val = "";
-    switch (aElt[i].localName.toLowerCase()) {
-      case 'colorpicker':
-        val = aElt[i].color;
-        break;
-      default:
-        val = aElt[i].value;
-        break;
-    }
-    setMktPref(mktpref, val);
-  }
-  return JSON.stringify(gMktPreferences.dataTreeStyle);
-}
-
-function setMktPref(str, val) {
-  var o = gMktPreferences;
-  var parts = str.split('.');
-  var len = parts.length;
-  for (var i = 0; i < len - 1; i++) {
-    o = o[parts[i]] = o[parts[i]] || {};
-  }
-  o[parts[i]] = val;
-  return o;
-}
-
-function getMktPref(str) {
-  var o = gMktPreferences;
-  var parts = str.split('.');
-  var len = parts.length;
-  for (var i = 0; i < len; i++) {
-    if (o[parts[i]])
-      o = o[parts[i]];
-    else
-      return null;
-  }
-  return o;
-}
 
 Date.prototype.yyyymmdd = function() {
   var yyyy = this.getFullYear().toString();
