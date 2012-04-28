@@ -4,13 +4,18 @@ CashTable.superclass = TreeDataTable.prototype;
 
 function CashTable() {
   this.mDb = null;
-  
 };
 CashTable.prototype.initialize = function(db) {
   this.mDb = db;
   CashTable.superclass.init.call(this);
 };
-CashTable.prototype.load = function() {
+CashTable.prototype.load = function(direction) {
+  if (this.getRowCount() === 0) {
+    var count = this.mDb.getRowCount('km_realmoney_trns', '');
+    this.setRowCount(count);
+    $$('km_total').value = count;
+  }
+  this.setOffset(direction);
   var sql = "select "
     + "A.transaction_date, "
     + "A.item_id, "
@@ -27,7 +32,9 @@ CashTable.prototype.load = function() {
     + " on A.item_id = B.rowid "
     + "inner join km_user C "
     + " on A.user_id = C.id "
-    + "order by A.transaction_date";
+    + "order by A.transaction_date "
+    + "limit " + this.mLimit + " offset " + this.mOffset;
+  km_log(sql);
   this.mDb.selectQuery(sql);
   var records = this.mDb.getRecords();
   var types = this.mDb.getRecordTypes();
@@ -35,9 +42,9 @@ CashTable.prototype.load = function() {
   
   this.PopulateTableData(records, columns, types);
   this.ShowTable(true);
-  
-  $$('km_from_value').value = 1;
-  $$('km_to_value').value = records.length;
+    
+  $$('km_from_value').value = this.getFromValue();
+  $$('km_to_value').value = this.getToValue();
 };
 CashTable.prototype.onSelect = function() {
   $$('km_edit_transactionDate').value = this.getColumnValue(0);

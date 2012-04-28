@@ -1,6 +1,7 @@
 function GraphView() {
   this.mDb = null;
   this.mBankList = null;
+  this.mGraph = null;
 };
 GraphView.prototype.initialize = function(db) {
   this.mDb = db;
@@ -25,27 +26,15 @@ GraphView.prototype.load = function() {
       valueArray.shift();
     }
   }
-  new Ico.BarGraph(
-      $$('km_graph'),
-      { expense: valueArray},
-      { colours: { expense: '#990000' },
-        show_vertical_labels: false,
-        labels: labelArray,
-        bar_labels: true }
-      );
-/*
-new Ico.LineGraph($$('drawerea'), {
-    one: [30, 5, 1, 10, 15, 18, 20, 25, 1],
-    two: [10, 9, 3, 30, 1, 10, 5, 33, 33],
-    three: [5, 4, 10, 1, 30, 11, 33, 12, 22]
-  }, {
-    markers: 'circle',
-    colours: { one: '#990000', two: '#009900', three: '#000099'},
-    labels: ['one', 'two', 'three', 'four',
-             'five', 'six', 'seven', 'eight', 'nine'],
-    meanline: true,
-    grid: true
+
+  if (this.mGraph === null) {
+    this.mGraph = new Ico.BarGraph(
+        $$('km_graph'),
+        { expense: valueArray},
+        { colours: { expense: '#990000' },
+          show_vertical_labels: false,
+          labels: labelArray,
+          bar_labels: true }
+        );
   }
-  );
-*/
 }

@@ -137,6 +137,9 @@ KmDatabaseTreeView.prototype = {
 function TreeDataTable(sTreeId) {
   this.mTreeId = sTreeId;
   this.treeTable = null; // Tree containing listing of current table
+  this.mLimit = 100;
+  this.mOffset = 0;
+  this.mCount = 0;
 }
 
 TreeDataTable.prototype = {
@@ -172,6 +175,42 @@ TreeDataTable.prototype = {
     this.treeView.init(aTableData, aColumns, aTypes);
     
     this.treeTable.boxObject.ensureRowIsVisible(this.treeTable.view.rowCount - 1);
+  },
+  setOffset: function(direction) {
+    if (direction === 'first') {
+      this.mOffset = 0;
+    } else if (direction === 'prev') {
+      this.mOffset -= this.mLimit;
+      if (this.mOffset < 0) {
+        this.mOffset = 0;
+      }
+    } else if (direction === 'next') {
+      if (this.mOffset + this.mLimit < this.mCount) {
+        this.mOffset += this.mLimit;
+      }
+    } else if (direction === 'last') {
+      if (this.mCount % this.mLimit === 0) {
+        this.mOffset = (this.mLimit * (Math.floor(this.mCount / this.mLimit) - 1));
+      } else {
+        this.mOffset = (this.mLimit * Math.floor(this.mCount / this.mLimit));
+      }
+    }
+  },
+  getRowCount: function() {
+    return this.mCount;
+  },
+  setRowCount: function(count) {
+    this.mCount = count;
+  },
+  getFromValue: function() {
+    return this.mOffset + 1;
+  },
+  getToValue: function() {
+    if (this.mOffset + this.mLimit < this.mCount) {
+      return this.mOffset + this.mLimit;
+    } else {
+      return this.mCount;
+    }
   },
   getColumnValue: function(columnIdx) {
     var col = this.treeTable.columns.getColumnAt(columnIdx);

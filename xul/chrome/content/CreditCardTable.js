@@ -10,7 +10,13 @@ CreditCardTable.prototype.initialize = function(db) {
   this.mDb = db;
   CreditCardTable.superclass.init.call(this);
 };
-CreditCardTable.prototype.load = function() {
+CreditCardTable.prototype.load = function(direction) {
+  if (this.getRowCount() === 0) {
+    var count = this.mDb.getRowCount('km_creditcard_trns', '');
+    this.setRowCount(count);
+    $$('km_total').value = count;
+  }
+  this.setOffset(direction);
   var sql = "select "
     + "A.transaction_date, "
     + "A.item_id, "
@@ -29,7 +35,8 @@ CreditCardTable.prototype.load = function() {
     + " on A.user_id = C.id "
     + "inner join km_creditcard_info D "
     + " on A.card_id = D.rowid "
-    + "order by A.transaction_date";
+    + "order by A.transaction_date "
+    + "limit " + this.mLimit + " offset " + this.mOffset;
   this.mDb.selectQuery(sql);
   var records = this.mDb.getRecords();
   var types = this.mDb.getRecordTypes();
@@ -38,6 +45,8 @@ CreditCardTable.prototype.load = function() {
   this.PopulateTableData(records, columns, types);
   this.ShowTable(true);
   
+  $$('km_from_value').value = this.getFromValue();
+  $$('km_to_value').value = this.getToValue();
 };
 CreditCardTable.prototype.onSelect = function() {
   $$('km_edit_transactionDate').value = this.getColumnValue(0);

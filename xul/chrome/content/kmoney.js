@@ -119,7 +119,10 @@ Kmoney.prototype.removeEventListeners = function () {
 };
 
 Kmoney.prototype.jump = function (direction) {
-    km_log(direction);
+    var tree = this.getSelectedTree();
+    if (typeof tree.load === 'function') {
+        tree.load(direction);
+    }
 };
 
 Kmoney.prototype.onCashSelect = function () {
@@ -137,28 +140,44 @@ Kmoney.prototype.onEMoneySelect = function () {
 Kmoney.prototype.loadTable = function (tabId) {
     switch (tabId) {
     case 'km_tab_cash':
-        this.cashTree.load();
+        this.cashTree.load('last');
         $$('bankbox').hidden = true;
         $$('creditcardbox').hidden = true;
         $$('emoneybox').hidden = true;
+        $$('km_edit1').hidden = false;
+        $$('km_edit2').hidden = false;
+        $$('km_edit_buttons').hidden = false;
+        $$('km_graph_viewchanger').hidden = true;
         break;
     case 'km_tab_bank':
-        this.bankTree.load();
+        this.bankTree.load('last');
         $$('bankbox').hidden = false;
         $$('creditcardbox').hidden = true;
         $$('emoneybox').hidden = true;
+        $$('km_edit1').hidden = false;
+        $$('km_edit2').hidden = false;
+        $$('km_edit_buttons').hidden = false;
+        $$('km_graph_viewchanger').hidden = true;
         break;
     case 'km_tab_creditcard':
-        this.creditcardTree.load();
+        this.creditcardTree.load('last');
         $$('bankbox').hidden = true;
         $$('creditcardbox').hidden = false;
         $$('emoneybox').hidden = true;
+        $$('km_edit1').hidden = false;
+        $$('km_edit2').hidden = false;
+        $$('km_edit_buttons').hidden = false;
+        $$('km_graph_viewchanger').hidden = true;
         break;
     case 'km_tab_emoney':
-        this.emoneyTree.load();
+        this.emoneyTree.load('last');
         $$('bankbox').hidden = true;
         $$('creditcardbox').hidden = true;
         $$('emoneybox').hidden = false;
+        $$('km_edit1').hidden = false;
+        $$('km_edit2').hidden = false;
+        $$('km_edit_buttons').hidden = false;
+        $$('km_graph_viewchanger').hidden = true;
         break;
     case 'km_tab_graph':
         this.graph.load();
@@ -295,79 +314,57 @@ Kmoney.prototype.closeDatabase = function (bAlert) {
     return true;
 };
 
-Kmoney.prototype.addRecord = function () {
-    switch ($$('km_tabbox').selectedTab.id) {
-    case 'km_tab_cash':
-        this.cashTree.addRecord();
-        break;
-    case 'km_tab_bank':
-        this.bankTree.addRecord();
-        break;
-    case 'km_tab_creditcard':
-        this.creditcardTree.addRecord();
-        break;
-    case 'km_tab_emoney':
-        this.emoneyTree.addRecord();
-        break;
-    }
-};
-Kmoney.prototype.updateRecord = function () {
-    switch ($$('km_tabbox').selectedTab.id) {
-    case 'km_tab_cash':
-        this.cashTree.updateRecord();
-        break;
-    case 'km_tab_bank':
-        this.bankTree.updateRecord();
-        break;
-    case 'km_tab_creditcard':
-        this.creditcardTree.updateRecord();
-        break;
-    case 'km_tab_emoney':
-        this.emoneyTree.updateRecord();
-        break;
-    }
-};
 Kmoney.prototype.reset = function () {
     var now = new Date();
     $$('km_edit_transactionDate').value = now.yyyymmdd();
     $$('km_edit_detail').value = "";
     $$('km_edit_amount').value = "";
 };
-Kmoney.prototype.onUserSelect = function () {
-    switch ($$('km_tabbox').selectedTab.id) {
-    case 'km_tab_cash':
-        break;
-    case 'km_tab_bank':
-        this.bankTree.onUserSelect();
-        break;
-    case 'km_tab_creditcard':
-        this.creditcardTree.onUserSelect();
-        break;
-    case 'km_tab_emoney':
-        this.emoneyTree.onUserSelect();
-        break;
+Kmoney.prototype.addRecord = function () {
+    var tree = this.getSelectedTree();
+    if (typeof tree.addRecord === 'function') {
+        tree.addRecord();
     }
 };
-Kmoney.prototype.updataRecord = function () {
-
+Kmoney.prototype.updateRecord = function () {
+    var tree = this.getSelectedTree();
+    if (typeof tree.updateRecord === 'function') {
+        tree.updateRecord();
+    }
+};
+Kmoney.prototype.onUserSelect = function () {
+    var tree = this.getSelectedTree();
+    if (typeof tree.onUserSelect === 'function') {
+        tree.onUserSelect();
+    }
 };
 Kmoney.prototype.deleteRecord = function () {
+    var tree = this.getSelectedTree();
+    if (typeof tree.deleteRecord === 'function') {
+        tree.deleteRecord();
+    }
+};
+Kmoney.prototype.getSelectedTree = function () {
+    var tab = null;
     switch ($$('km_tabbox').selectedTab.id) {
     case 'km_tab_cash':
-        this.cashTree.deleteRecord();
+        tab = this.cashTree;
         break;
     case 'km_tab_bank':
+        tab = this.bankTree;
         break;
     case 'km_tab_creditcard':
-        this.creditcardTree.deleteRecord();
+        tab = this.creditcardTree;
         break;
     case 'km_tab_emoney':
-        this.emoneyTree.deleteRecord();
+        tab = this.emoneyTree;
+        break;
+    case 'km_tab_graph':
+        tab = this.graph;
         break;
     }
-
+    return tab;
 };
-
 //this object handles MRU using one preference 'jsonMruData'
 KmGlobals.mru = {
     mbInit: false,

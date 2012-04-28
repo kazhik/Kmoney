@@ -11,7 +11,13 @@ EMoneyTable.prototype.initialize = function(db) {
   this.mDb = db;
   EMoneyTable.superclass.init.call(this);
 };
-EMoneyTable.prototype.load = function() {
+EMoneyTable.prototype.load = function(direction) {
+  if (this.getRowCount() === 0) {
+    var count = this.mDb.getRowCount('km_emoney_trns', '');
+    this.setRowCount(count);
+    $$('km_total').value = count;
+  }
+  this.setOffset(direction);
   var sql = "select "
     + "A.transaction_date, "
     + "A.item_id, "
@@ -33,14 +39,19 @@ EMoneyTable.prototype.load = function() {
     + " on A.user_id = C.id "
     + "inner join km_emoney_info D "
     + " on A.money_id = D.rowid "
-    + "order by A.transaction_date";
+    + "order by A.transaction_date "
+    + "limit " + this.mLimit + " offset " + this.mOffset;
   this.mDb.selectQuery(sql);
   var records = this.mDb.getRecords();
   var types = this.mDb.getRecordTypes();
   var columns = this.mDb.getColumns();
+
   this.PopulateEMoneyList();
   this.PopulateTableData(records, columns, types);
   this.ShowTable(true);
+  
+  $$('km_from_value').value = this.getFromValue();
+  $$('km_to_value').value = this.getToValue();
   
 };
 EMoneyTable.prototype.onSelect = function() {
