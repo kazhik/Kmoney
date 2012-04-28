@@ -97,6 +97,10 @@ Kmoney.prototype.addEventListeners = function () {
 
     this.listeners['km_btn_last.command'] = this.jump.bind(this, 'last');
     $$('km_btn_last').addEventListener("command", this.listeners['km_btn_last.command']);
+
+    this.listeners['km_graph_item.command'] = this.onGraphItemChanged.bind(this);
+    $$('km_graph_item').addEventListener("command", this.listeners['km_graph_item.command']);
+
 };
 
 Kmoney.prototype.removeEventListeners = function () {
@@ -116,6 +120,8 @@ Kmoney.prototype.removeEventListeners = function () {
     $$('km_tree_bank').removeEventListener("select", this.listeners['km_tree_bank.select']);
     $$('mp-editTableRow-mi-delete').removeEventListener("command", this.listeners['mp-editTableRow-mi-delete.command']);
     $$('km_edit_user').removeEventListener("select", this.listeners['km_edit_user.select']);
+
+    $$('km_graph_item').removeEventListener("command", this.listeners['km_graph_item.command']);
 };
 
 Kmoney.prototype.jump = function (direction) {
@@ -124,7 +130,9 @@ Kmoney.prototype.jump = function (direction) {
         tree.load(direction);
     }
 };
-
+Kmoney.prototype.onGraphItemChanged = function() {
+    this.graph.load();
+}
 Kmoney.prototype.onCashSelect = function () {
     this.cashTree.onSelect();
 };
@@ -148,6 +156,7 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_edit2').hidden = false;
         $$('km_edit_buttons').hidden = false;
         $$('km_graph_viewchanger').hidden = true;
+        $$('km_navigate').hidden = false;
         break;
     case 'km_tab_bank':
         this.bankTree.load('last');
@@ -158,6 +167,7 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_edit2').hidden = false;
         $$('km_edit_buttons').hidden = false;
         $$('km_graph_viewchanger').hidden = true;
+        $$('km_navigate').hidden = false;
         break;
     case 'km_tab_creditcard':
         this.creditcardTree.load('last');
@@ -168,6 +178,7 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_edit2').hidden = false;
         $$('km_edit_buttons').hidden = false;
         $$('km_graph_viewchanger').hidden = true;
+        $$('km_navigate').hidden = false;
         break;
     case 'km_tab_emoney':
         this.emoneyTree.load('last');
@@ -178,6 +189,7 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_edit2').hidden = false;
         $$('km_edit_buttons').hidden = false;
         $$('km_graph_viewchanger').hidden = true;
+        $$('km_navigate').hidden = false;
         break;
     case 'km_tab_graph':
         this.graph.load();
@@ -185,6 +197,7 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_edit2').hidden = true;
         $$('km_edit_buttons').hidden = true;
         $$('km_graph_viewchanger').hidden = false;
+        $$('km_navigate').hidden = true;
         break;
     }
 };
@@ -271,7 +284,7 @@ Kmoney.prototype.PopulateItemList = function () {
 
     $$('km_edit_item').removeAllItems();
     $$('km_graph_item').removeAllItems();
-    $$('km_graph_item').appendItem('All', 0);
+    $$('km_graph_item').appendItem(km_getLStr("graph.item.all"), 0);
     for (var i = 0; i < records.length; i++) {
         $$('km_edit_item').appendItem(records[i][1], records[i][0]);
         $$('km_graph_item').appendItem(records[i][1], records[i][0]);

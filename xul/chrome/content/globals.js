@@ -54,8 +54,9 @@ var KmGlobals = {
 
   // Remove all child elements 
   $empty: function(el) {
-    while (el.firstChild) 
+    while (el.firstChild) {
       el.removeChild(el.firstChild);
+    }
   },
 
   //cTimePrecision: Y, M, D, h, m, s

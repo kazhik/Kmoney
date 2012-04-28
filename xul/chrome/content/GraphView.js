@@ -8,12 +8,16 @@ GraphView.prototype.initialize = function(db) {
 };
 
 GraphView.prototype.load = function() {
+  var itemid = $$('km_graph_item').value;
   var sql = "select "
     + "year, "
     + "month, "
     + "expense - income "
-    + "from kmv_sumpermonth "
-    + "where item_id = 1 ";
+    + "from kmv_sumpermonth ";
+    
+  if (itemid != 0) {
+    sql += "where item_id = " + itemid;
+  }
   this.mDb.selectQuery(sql);
   var records = this.mDb.getRecords();
   var labelArray = [];
@@ -27,14 +31,14 @@ GraphView.prototype.load = function() {
     }
   }
 
-  if (this.mGraph === null) {
-    this.mGraph = new Ico.BarGraph(
-        $$('km_graph'),
-        { expense: valueArray},
-        { colours: { expense: '#990000' },
-          show_vertical_labels: false,
-          labels: labelArray,
-          bar_labels: true }
-        );
-  }
+  KmGlobals.$empty($$('km_graph'));
+  this.mGraph = new Ico.BarGraph(
+      $$('km_graph'),
+      { expense: valueArray},
+      { colours: { expense: '#990000' },
+        show_vertical_labels: false,
+        labels: labelArray,
+        max_bar_size: 20,
+        bar_labels: true }
+      );
 }
