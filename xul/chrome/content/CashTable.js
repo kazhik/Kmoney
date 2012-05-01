@@ -51,7 +51,7 @@ CashTable.prototype.onSelect = function() {
   $$('km_edit_item').value = this.getColumnValue(1);
   $$('km_edit_detail').value = this.getColumnValue(3);
   var amount = this.getColumnValue(4);
-  if (Number(amount) == 0) {
+  if (Number(amount) === 0) {
     amount = this.getColumnValue(5);
     $$('income_expense').selectedItem = $$('km_edit_expense');
   } else {
@@ -59,6 +59,7 @@ CashTable.prototype.onSelect = function() {
   }
   $$('km_edit_amount').value = amount;
   $$('km_edit_user').value = this.getColumnValue(6);
+  $$('km_edit_internal').checked = (Number(this.getColumnValue(8)) === 1);
 }
 CashTable.prototype.addRecord = function() {
   var incomeValue;
@@ -92,7 +93,7 @@ CashTable.prototype.addRecord = function() {
     + incomeValue + ", "
     + expenseValue + ", "
     + $$('km_edit_item').value + ", "
-    + "'" + $$('km_edit_detail').value + "', "
+    + "\"" + $$('km_edit_detail').value + "\", "
     + $$('km_edit_user').value + ", "
     + internalValue + ", "
     + "datetime('now'), "
@@ -117,24 +118,26 @@ CashTable.prototype.updateRecord = function() {
   } else {
     internalValue = 0;
   }
+
   var sql = ["update km_realmoney_trns "
     + "set "
     + "transaction_date = " + "'" + $$('km_edit_transactionDate').value + "', "
     + "income = " + incomeValue + ", "
     + "expense = " + expenseValue + ", "
     + "item_id = " + $$('km_edit_item').value + ", "
-    + "detail = " + "'" + $$('km_edit_detail').value + "', "
+    + "detail = " + "\"" + $$('km_edit_detail').value + "\", "
     + "user_id = " + $$('km_edit_user').value + ", "
     + "last_update_date = datetime('now'), "
-    + "internal = " + $$('km_edit_internal').value + ", "
+    + "internal = " + internalValue + ", "
     + "source = 1 "
     + "where rowid = " + this.getColumnValue(9)];
+  km_log(sql);
   this.mDb.executeTransaction(sql);
   this.load();
 };
 
 CashTable.prototype.deleteRecord = function() {
-  var sql = "delete from km_realmoney_trns where rowid = " + this.getColumnValue(9);
+  var sql = ["delete from km_realmoney_trns where rowid = " + this.getColumnValue(9)];
   this.mDb.executeTransaction(sql);
   
   this.load();

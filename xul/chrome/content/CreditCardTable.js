@@ -92,7 +92,7 @@ CreditCardTable.prototype.addRecord = function() {
     + "'" + $$('km_edit_transactionDate').value + "', "
     + $$('km_edit_amount').value + ", "
     + $$('km_edit_item').value + ", "
-    + "'" + $$('km_edit_detail').value + "', "
+    + "\"" + $$('km_edit_detail').value + "\", "
     + $$('km_edit_user').value + ", "
     + $$('km_edit_creditcard').value + ", "
     + "datetime('now'), "
@@ -106,18 +106,19 @@ CreditCardTable.prototype.updateRecord = function() {
     + "transaction_date = " + "'" + $$('km_edit_transactionDate').value + "', "
     + "expense = " + $$('km_edit_amount').value + ", "
     + "item_id = " + $$('km_edit_item').value + ", "
-    + "detail = " + "'" + $$('km_edit_detail').value + "', "
+    + "detail = " + "\"" + $$('km_edit_detail').value + "\", "
     + "user_id = " + $$('km_edit_user').value + ", "
     + "card_id = " + $$('km_edit_creditcard').value + ", "
     + "last_update_date = datetime('now'), "
     + "source = 1 "
     + "where rowid = " + this.getColumnValue(9)];
+  km_log(sql);
   this.mDb.executeTransaction(sql);
   this.load();
 };
 
 CreditCardTable.prototype.deleteRecord = function() {
-  var sql = "delete from km_creditcard_trns where rowid = " + this.getColumnValue(9);
+  var sql = ["delete from km_creditcard_trns where rowid = " + this.getColumnValue(9)];
   this.mDb.executeTransaction(sql);
   
   this.load();

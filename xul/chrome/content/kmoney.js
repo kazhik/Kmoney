@@ -56,6 +56,12 @@ Kmoney.prototype.addEventListeners = function () {
     this.listeners['kmc-openDb.command'] = this.openDatabase.bind(this);
     $$('kmc-openDb').addEventListener("command", this.listeners['kmc-openDb.command']);
 
+    this.listeners['kmc-newDb.command'] = this.newDatabase.bind(this);
+    $$('kmc-newDb').addEventListener("command", this.listeners['kmc-newDb.command']);
+
+    this.listeners['kmc-import.command'] = this.importFile.bind(this);
+    $$('kmc-import').addEventListener("command", this.listeners['kmc-import.command']);
+    
     this.listeners['km_tabs.select'] = this.onTabSelected.bind(this);
     $$('km_tabs').addEventListener("select", this.listeners['km_tabs.select']);
 
@@ -105,6 +111,7 @@ Kmoney.prototype.addEventListeners = function () {
 
 Kmoney.prototype.removeEventListeners = function () {
     $$('kmc-openDb').removeEventListener("command", this.listeners['kmc-openDb.command']);
+    $$('kmc-import').removeEventListener("command", this.listeners['kmc-import.command']);
     $$('km_tabs').removeEventListener("select", this.listeners['km_tabs.select']);
     $$('km_button_add').removeEventListener("command", this.listeners['km_button_add.command']);
     $$('km_button_update').removeEventListener("command", this.listeners['km_button_update.command']);
@@ -123,7 +130,6 @@ Kmoney.prototype.removeEventListeners = function () {
 
     $$('km_graph_item').removeEventListener("command", this.listeners['km_graph_item.command']);
 };
-
 Kmoney.prototype.jump = function (direction) {
     var tree = this.getSelectedTree();
     if (typeof tree.load === 'function') {
@@ -221,6 +227,32 @@ Kmoney.prototype.openDatabaseFile = function (dbFile) {
     }
     return false;
 };
+Kmoney.prototype.importFile = function () {
+    alert('import file');
+};
+Kmoney.prototype.newDatabase = function () {
+    alert("new database");
+};
+Kmoney.prototype.closeDatabase = function (bAlert) {
+    //nothing to close if no database is already open
+    if (!this.mDb.isConnected()) {
+        if (bAlert) alert(km_getLStr("noOpenDb"));
+        return true;
+    }
+
+    //if another file is already open, confirm before closing
+    var answer = true;
+    if (bAlert) answer = kmPrompt.confirm(null, km_getLStr("extName"), km_getLStr("confirmClose"));
+
+    if (!answer) return false;
+
+
+    //make the current database as null and
+    //call setDatabase to do appropriate things
+    this.mDb.closeConnection();
+    return true;
+};
+
 Kmoney.prototype.openDatabase = function () {
     const nsIFilePicker = Ci.nsIFilePicker;
     var fp = Cc["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
@@ -305,26 +337,6 @@ Kmoney.prototype.PopulateUserList = function () {
 
     $$('km_edit_user').selectedIndex = 0;
 
-};
-Kmoney.prototype.newDatabase = function () {};
-Kmoney.prototype.closeDatabase = function (bAlert) {
-    //nothing to close if no database is already open
-    if (!this.mDb.isConnected()) {
-        if (bAlert) alert(km_getLStr("noOpenDb"));
-        return true;
-    }
-
-    //if another file is already open, confirm before closing
-    var answer = true;
-    if (bAlert) answer = kmPrompt.confirm(null, km_getLStr("extName"), km_getLStr("confirmClose"));
-
-    if (!answer) return false;
-
-
-    //make the current database as null and
-    //call setDatabase to do appropriate things
-    this.mDb.closeConnection();
-    return true;
 };
 
 Kmoney.prototype.reset = function () {

@@ -67,6 +67,8 @@ BankTable.prototype.onSelect = function() {
   $$('km_edit_amount').value = amount;
   $$('km_edit_bank').value = this.getColumnValue(6);
   $$('km_edit_user').value = this.getColumnValue(8);
+  $$('km_edit_internal').checked = (Number(this.getColumnValue(11)) === 1);
+
 }
 BankTable.prototype.PopulateBankList = function() {
     this.mDb.selectQuery("select rowid, name, user_id from km_bank_info");
@@ -115,11 +117,11 @@ BankTable.prototype.addRecord = function() {
     + "internal, "
     + "source "
     + ") values ( "
-    + "'" + $$('km_edit_transactionDate').value + "', "
+    + "\"" + $$('km_edit_transactionDate').value + "\", "
     + incomeValue + ", "
     + expenseValue + ", "
     + $$('km_edit_item').value + ", "
-    + "'" + $$('km_edit_detail').value + "', "
+    + "\"" + $$('km_edit_detail').value + "\", "
     + $$('km_edit_user').value + ", "
     + $$('km_edit_bank').value + ", "
     + "datetime('now'), "
@@ -150,11 +152,11 @@ BankTable.prototype.updateRecord = function() {
     + "income = " + incomeValue + ", "
     + "expense = " + expenseValue + ", "
     + "item_id = " + $$('km_edit_item').value + ", "
-    + "detail = " + "'" + $$('km_edit_detail').value + "', "
+    + "detail = " + "\"" + $$('km_edit_detail').value + "\", "
     + "user_id = " + $$('km_edit_user').value + ", "
     + "bank_id = " + $$('km_edit_bank').value + ", "
     + "last_update_date = datetime('now'), "
-    + "internal = " + $$('km_edit_internal').value + ", "
+    + "internal = " + internalValue + ", "
     + "source = 1 "
     + "where rowid = " + this.getColumnValue(12)];
   this.mDb.executeTransaction(sql);
@@ -162,7 +164,8 @@ BankTable.prototype.updateRecord = function() {
 };
 
 BankTable.prototype.deleteRecord = function() {
-  var sql = "delete from km_bank_trns where rowid = " + this.getColumnValue(12);
+  var sql = ["delete from km_bank_trns where rowid = " + this.getColumnValue(12)];
+  km_log(sql);
   this.mDb.executeTransaction(sql);
   
   this.load();

@@ -16,6 +16,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
     <commandset id="km-cmdset">
         <command id="kmc-newDb" />
         <command id="kmc-openDb" />
+        <command id="kmc-import" />
         <command id="kmc-setuser" />
         <command id="kmc-setitem" />
         <command id="kmc-setbank" />
@@ -31,14 +32,17 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
     <vbox id="km_main">
         <toolbox>
             <menubar id="km_menubar">
-                <menu id="km_menu_database" label="&menu.database;" accesskey="&menu.database.accesskey;">
+                <menu id="km_menu_file" label="&menu.file;" accesskey="&menu.file.accesskey;">
                     <menupopup>
-                        <menuitem label="&menu.database.new;" accesskey="&menu.database.new.accesskey;"
+                        <menuitem label="&menu.file.newdb;" accesskey="&menu.file.newdb.accesskey;"
                         command="kmc-newDb" />
-                        <menuitem label="&menu.database.open;" accesskey="&menu.database.open.accesskey;"
+                        <menuitem label="&menu.file.opendb;" accesskey="&menu.file.opendb.accesskey;"
                         command="kmc-openDb" />
                         <menuseparator/>
-                        <menuitem label="&menu.database.exit;" accesskey="&menu.database.exit.accesskey;"
+						<menuitem label="&menu.file.import;" accesskey="&menu.file.import.accesskey;"
+						command="kmc-import" />
+                        <menuseparator/>
+						<menuitem label="&menu.file.exit;" accesskey="&menu.file.exit.accesskey;"
                         oncommand="window.close()" />
                     </menupopup>
                 </menu>

@@ -68,6 +68,7 @@ EMoneyTable.prototype.onSelect = function() {
   $$('km_edit_amount').value = amount;
   $$('km_edit_emoney').value = this.getColumnValue(6);
   $$('km_edit_user').value = this.getColumnValue(8);
+  $$('km_edit_internal').checked = (Number(this.getColumnValue(11)) === 1);
 };
 EMoneyTable.prototype.PopulateEMoneyList = function() {
     this.mDb.selectQuery("select rowid, name, user_id from km_emoney_info");
@@ -121,7 +122,7 @@ EMoneyTable.prototype.addRecord = function() {
     + incomeValue + ", "
     + expenseValue + ", "
     + $$('km_edit_item').value + ", "
-    + "'" + $$('km_edit_detail').value + "', "
+    + "\"" + $$('km_edit_detail').value + "\", "
     + $$('km_edit_user').value + ", "
     + $$('km_edit_emoney').value + ", "
     + "datetime('now'), "
@@ -152,7 +153,7 @@ EMoneyTable.prototype.updateRecord = function() {
     + "income = " + incomeValue + ", "
     + "expense = " + expenseValue + ", "
     + "item_id = " + $$('km_edit_item').value + ", "
-    + "detail = " + "'" + $$('km_edit_detail').value + "', "
+    + "detail = " + "\"" + $$('km_edit_detail').value + "\", "
     + "user_id = " + $$('km_edit_user').value + ", "
     + "money_id = " + $$('km_edit_emoney').value + ", "
     + "last_update_date = datetime('now'), "
@@ -164,7 +165,7 @@ EMoneyTable.prototype.updateRecord = function() {
 };
 
 EMoneyTable.prototype.deleteRecord = function() {
-  var sql = "delete from km_emoney_trns where rowid = " + this.getColumnValue(12);
+  var sql = ["delete from km_emoney_trns where rowid = " + this.getColumnValue(12)];
   this.mDb.executeTransaction(sql);
   
   this.load();
