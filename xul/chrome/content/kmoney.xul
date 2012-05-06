@@ -11,8 +11,9 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
     <script type="application/x-javascript" src="BankTable.js" />
     <script type="application/x-javascript" src="CreditCardTable.js" />
     <script type="application/x-javascript" src="EMoneyTable.js" />
-    <script type="application/x-javascript" src="GraphView.js" />
+    <script type="application/x-javascript" src="SummaryView.js" />
     <script type="application/x-javascript" src="kmoney.js" />
+    <script type="application/x-javascript" src="KantanKakeibo.js" />
     <commandset id="km-cmdset">
         <command id="kmc-newDb" />
         <command id="kmc-openDb" />
@@ -79,7 +80,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
         </toolbox>
         <tabbox id="km_tabbox">
             <tabs id="km_tabs">
-                <tab id="km_tab_graph" label="&tab.graph;" persist="selected" />
+                <tab id="km_tab_summary" label="&tab.summary;" persist="selected" />
                 <tab id="km_tab_cash" label="&tab.cash;" persist="selected" />
                 <tab id="km_tab_bank" label="&tab.bank;" persist="selected" />
                 <tab id="km_tab_creditcard" label="&tab.creditcard;" persist="selected" />
@@ -87,7 +88,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
             </tabs>
             <tabpanels>
                 <tabpanel flex="1">
-                    <vbox id="km_graph" flex="1">
+                    <vbox id="km_summary" flex="1">
                     </vbox>
                 </tabpanel>
                 <tabpanel flex="1">
@@ -189,7 +190,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 </tabpanel>
                 <tabpanel flex="1">
                     <vbox flex="1">
-                        <tree id="km_tree_emoney" style="min-height:20em" flex="1" seltype="single"
+                        <tree id="km_tree_emoney" style="min-height:20em" flex="1" seltype="multiple"
                         enableColumnDrag="false">
                             <treecols id="km_cols_emoney">
 								<treecol id="0" label="&column.date;" width="60" persist="width" />
@@ -285,9 +286,9 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 					<button id="km_button_update" accesskey="&button.update.accesskey;" label="&button.update;" />
 					<button id="km_button_reset" accesskey="&button.reset.accesskey;" label="&button.reset;" />
 				</hbox>
-				<hbox id="km_graph_viewchanger" align="center" hidden="true">
-					<label control="km_graph_item" value="&edit.item;" />
-					<menulist id="km_graph_item">
+				<hbox id="km_summary_viewchanger" align="center" hidden="true">
+					<label control="km_summary_item" value="&edit.item;" />
+					<menulist id="km_summary_item">
 						<menupopup></menupopup>
 					</menulist>
 				</hbox>

@@ -11,11 +11,9 @@ CreditCardTable.prototype.initialize = function(db) {
   CreditCardTable.superclass.init.call(this);
 };
 CreditCardTable.prototype.load = function(direction) {
-  if (this.getRowCount() === 0) {
-    var count = this.mDb.getRowCount('km_creditcard_trns', '');
-    this.setRowCount(count);
-    $$('km_total').value = count;
-  }
+  var count = this.mDb.getRowCount('km_creditcard_trns', '');
+  this.setRowCount(count);
+  $$('km_total').value = count;
   this.setOffset(direction);
   var sql = "select "
     + "A.transaction_date, "
@@ -43,6 +41,7 @@ CreditCardTable.prototype.load = function(direction) {
   var columns = this.mDb.getColumns();
   this.PopulateCardList();
   this.PopulateTableData(records, columns, types);
+  this.ensureRowIsVisible(9, -1);
   this.ShowTable(true);
   
   $$('km_from_value').value = this.getFromValue();
@@ -101,6 +100,7 @@ CreditCardTable.prototype.addRecord = function() {
   this.load();
 };
 CreditCardTable.prototype.updateRecord = function() {
+  var rowid = this.getColumnValue(9);
   var sql = ["update km_creditcard_trns "
     + "set "
     + "transaction_date = " + "'" + $$('km_edit_transactionDate').value + "', "
@@ -111,10 +111,11 @@ CreditCardTable.prototype.updateRecord = function() {
     + "card_id = " + $$('km_edit_creditcard').value + ", "
     + "last_update_date = datetime('now'), "
     + "source = 1 "
-    + "where rowid = " + this.getColumnValue(9)];
+    + "where rowid = " + rowid];
   km_log(sql);
   this.mDb.executeTransaction(sql);
   this.load();
+  this.ensureRowIsVisible(9, rowid);
 };
 
 CreditCardTable.prototype.deleteRecord = function() {

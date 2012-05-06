@@ -12,7 +12,7 @@ function KmDatabaseTreeView(sTreeId) {
   this.aTypes = [];
 
   this.aOrder = [];
-}
+};
 
 KmDatabaseTreeView.prototype = {
   init: function(aTableData, aColumns, aTypes) {
@@ -30,6 +30,9 @@ KmDatabaseTreeView.prototype = {
   },
 
   get rowCount() { return this.aTableData.length; },
+  getCellValue: function(row, col) {
+      return "true";
+  },
   getCellText: function(row, col) {
     try {
       return this.aTableData[row][col.id];
@@ -140,7 +143,7 @@ function TreeDataTable(sTreeId) {
   this.mLimit = 100;
   this.mOffset = 0;
   this.mCount = 0;
-}
+};
 
 TreeDataTable.prototype = {
   // Initialize: Set up the treeview which will display the table contents
@@ -174,7 +177,22 @@ TreeDataTable.prototype = {
     //populate the tree's view with fresh data
     this.treeView.init(aTableData, aColumns, aTypes);
     
-    this.treeTable.boxObject.ensureRowIsVisible(this.treeTable.view.rowCount - 1);
+  },
+  ensureRowIsVisible: function(columnIdx, rowId) {
+    var idxRow;
+    if (rowId === -1) {
+      this.treeTable.boxObject.ensureRowIsVisible(this.treeTable.view.rowCount - 1);
+    } else {
+      var col = this.treeTable.columns.getColumnAt(columnIdx);
+      for (var i = 0; i < this.treeTable.view.rowCount; i++) {
+        var val = this.treeTable.view.getCellText(i, col)
+        if (val === rowId) {
+          this.treeTable.boxObject.ensureRowIsVisible(i);
+          break;
+        }
+      }
+      
+    }
   },
   setOffset: function(direction) {
     if (direction === 'first') {

@@ -13,11 +13,9 @@ BankTable.prototype.initialize = function(db) {
   BankTable.superclass.init.call(this);
 };
 BankTable.prototype.load = function(direction) {
-  if (this.getRowCount() === 0) {
-    var count = this.mDb.getRowCount('km_bank_trns', '');
-    this.setRowCount(count);
-    $$('km_total').value = count;
-  }
+  var count = this.mDb.getRowCount('km_bank_trns', '');
+  this.setRowCount(count);
+  $$('km_total').value = count;
   this.setOffset(direction);
   var sql = "select "
     + "A.transaction_date, "
@@ -48,6 +46,7 @@ BankTable.prototype.load = function(direction) {
   var columns = this.mDb.getColumns();
   this.PopulateBankList();
   this.PopulateTableData(records, columns, types);
+  this.ensureRowIsVisible(12, -1);
   this.ShowTable(true);
   $$('km_from_value').value = this.getFromValue();
   $$('km_to_value').value = this.getToValue();
@@ -146,6 +145,7 @@ BankTable.prototype.updateRecord = function() {
   } else {
     internalValue = 0;
   }
+  var rowid = this.getColumnValue(12);
   var sql = ["update km_bank_trns "
     + "set "
     + "transaction_date = " + "'" + $$('km_edit_transactionDate').value + "', "
@@ -158,9 +158,10 @@ BankTable.prototype.updateRecord = function() {
     + "last_update_date = datetime('now'), "
     + "internal = " + internalValue + ", "
     + "source = 1 "
-    + "where rowid = " + this.getColumnValue(12)];
+    + "where rowid = " + rowid];
   this.mDb.executeTransaction(sql);
   this.load();
+  this.ensureRowIsVisible(12, rowid);
 };
 
 BankTable.prototype.deleteRecord = function() {

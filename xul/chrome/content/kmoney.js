@@ -14,7 +14,7 @@ function Kmoney() {
     this.emoneyTree = null;
     this.maFileExt = [];
     this.listeners = [];
-    this.graph = null;
+    this.summary = null;
 };
 
 function Startup() {
@@ -33,13 +33,13 @@ Kmoney.prototype.Startup = function () {
     this.creditcardTree = new CreditCardTable();
     this.emoneyTree = new EMoneyTable();
     this.bankTree = new BankTable();
-    this.graph = new GraphView();
+    this.summary = new SummaryView();
 
     this.cashTree.initialize(this.mDb);
     this.creditcardTree.initialize(this.mDb);
     this.emoneyTree.initialize(this.mDb);
     this.bankTree.initialize(this.mDb);
-    this.graph.initialize(this.mDb);
+    this.summary.initialize(this.mDb);
 
     this.addEventListeners();
     var bOpenLastDb = true;
@@ -104,8 +104,8 @@ Kmoney.prototype.addEventListeners = function () {
     this.listeners['km_btn_last.command'] = this.jump.bind(this, 'last');
     $$('km_btn_last').addEventListener("command", this.listeners['km_btn_last.command']);
 
-    this.listeners['km_graph_item.command'] = this.onGraphItemChanged.bind(this);
-    $$('km_graph_item').addEventListener("command", this.listeners['km_graph_item.command']);
+    this.listeners['km_summary_item.command'] = this.onGraphItemChanged.bind(this);
+    $$('km_summary_item').addEventListener("command", this.listeners['km_summary_item.command']);
 
 };
 
@@ -128,7 +128,7 @@ Kmoney.prototype.removeEventListeners = function () {
     $$('mp-editTableRow-mi-delete').removeEventListener("command", this.listeners['mp-editTableRow-mi-delete.command']);
     $$('km_edit_user').removeEventListener("select", this.listeners['km_edit_user.select']);
 
-    $$('km_graph_item').removeEventListener("command", this.listeners['km_graph_item.command']);
+    $$('km_summary_item').removeEventListener("command", this.listeners['km_summary_item.command']);
 };
 Kmoney.prototype.jump = function (direction) {
     var tree = this.getSelectedTree();
@@ -137,7 +137,7 @@ Kmoney.prototype.jump = function (direction) {
     }
 };
 Kmoney.prototype.onGraphItemChanged = function() {
-    this.graph.load();
+    this.summary.drawGraph();
 }
 Kmoney.prototype.onCashSelect = function () {
     this.cashTree.onSelect();
@@ -161,7 +161,7 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_edit1').hidden = false;
         $$('km_edit2').hidden = false;
         $$('km_edit_buttons').hidden = false;
-        $$('km_graph_viewchanger').hidden = true;
+        $$('km_summary_viewchanger').hidden = true;
         $$('km_navigate').hidden = false;
         break;
     case 'km_tab_bank':
@@ -172,7 +172,7 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_edit1').hidden = false;
         $$('km_edit2').hidden = false;
         $$('km_edit_buttons').hidden = false;
-        $$('km_graph_viewchanger').hidden = true;
+        $$('km_summary_viewchanger').hidden = true;
         $$('km_navigate').hidden = false;
         break;
     case 'km_tab_creditcard':
@@ -183,7 +183,7 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_edit1').hidden = false;
         $$('km_edit2').hidden = false;
         $$('km_edit_buttons').hidden = false;
-        $$('km_graph_viewchanger').hidden = true;
+        $$('km_summary_viewchanger').hidden = true;
         $$('km_navigate').hidden = false;
         break;
     case 'km_tab_emoney':
@@ -194,15 +194,15 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_edit1').hidden = false;
         $$('km_edit2').hidden = false;
         $$('km_edit_buttons').hidden = false;
-        $$('km_graph_viewchanger').hidden = true;
+        $$('km_summary_viewchanger').hidden = true;
         $$('km_navigate').hidden = false;
         break;
-    case 'km_tab_graph':
-        this.graph.load();
+    case 'km_tab_summary':
+        this.summary.drawGraph();
         $$('km_edit1').hidden = true;
         $$('km_edit2').hidden = true;
         $$('km_edit_buttons').hidden = true;
-        $$('km_graph_viewchanger').hidden = false;
+        $$('km_summary_viewchanger').hidden = false;
         $$('km_navigate').hidden = true;
         break;
     }
@@ -228,7 +228,23 @@ Kmoney.prototype.openDatabaseFile = function (dbFile) {
     return false;
 };
 Kmoney.prototype.importFile = function () {
-    alert('import file');
+    const nsIFilePicker = Ci.nsIFilePicker;
+    var fp = Cc["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
+    fp.init(window, km_getLStr("import.title"), nsIFilePicker.modeOpen);
+    
+    fp.appendFilter(km_getLStr("import.suica") + " (*.html)", "*.html");
+    fp.appendFilter(km_getLStr("import.saison") + " (*.csv)", "*.csv");
+    fp.appendFilter(km_getLStr("import.uc") + " (*.csv)", "*.csv");
+    fp.appendFilter(km_getLStr("import.kantan") + " (*.db)", "*.db");
+
+    var rv = fp.show();
+    if (rv == nsIFilePicker.returnOK || rv == nsIFilePicker.returnReplace) {
+        if (fp.filterIndex === 3) {
+            var kantanDb = new KantanKakeibo();
+            kantanDb.importDb(fp.file, this.cashTree);
+        }
+    }
+    return true;
 };
 Kmoney.prototype.newDatabase = function () {
     alert("new database");
@@ -315,14 +331,14 @@ Kmoney.prototype.PopulateItemList = function () {
     var records = this.mDb.getRecords();
 
     $$('km_edit_item').removeAllItems();
-    $$('km_graph_item').removeAllItems();
-    $$('km_graph_item').appendItem(km_getLStr("graph.item.all"), 0);
+    $$('km_summary_item').removeAllItems();
+    $$('km_summary_item').appendItem(km_getLStr("summary.item.all"), 0);
     for (var i = 0; i < records.length; i++) {
         $$('km_edit_item').appendItem(records[i][1], records[i][0]);
-        $$('km_graph_item').appendItem(records[i][1], records[i][0]);
+        $$('km_summary_item').appendItem(records[i][1], records[i][0]);
     }
     $$('km_edit_item').selectedIndex = 0;
-    $$('km_graph_item').selectedIndex = 0;
+    $$('km_summary_item').selectedIndex = 0;
 
 };
 Kmoney.prototype.PopulateUserList = function () {
@@ -384,8 +400,8 @@ Kmoney.prototype.getSelectedTree = function () {
     case 'km_tab_emoney':
         tab = this.emoneyTree;
         break;
-    case 'km_tab_graph':
-        tab = this.graph;
+    case 'km_tab_summary':
+        tab = this.summary;
         break;
     }
     return tab;

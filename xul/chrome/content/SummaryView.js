@@ -1,14 +1,14 @@
-function GraphView() {
+function SummaryView() {
   this.mDb = null;
   this.mBankList = null;
   this.mGraph = null;
 };
-GraphView.prototype.initialize = function(db) {
+SummaryView.prototype.initialize = function(db) {
   this.mDb = db;
 };
 
-GraphView.prototype.load = function() {
-  var itemid = $$('km_graph_item').value;
+SummaryView.prototype.drawGraph = function() {
+  var itemid = $$('km_summary_item').value;
   var sql = "select "
     + "year, "
     + "month, "
@@ -31,9 +31,9 @@ GraphView.prototype.load = function() {
     }
   }
 
-  KmGlobals.$empty($$('km_graph'));
+  KmGlobals.$empty($$('km_summary'));
   this.mGraph = new Ico.BarGraph(
-      $$('km_graph'),
+      $$('km_summary'),
       { expense: valueArray},
       { colours: { expense: '#990000' },
         show_vertical_labels: false,

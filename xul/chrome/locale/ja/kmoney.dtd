@@ -1,7 +1,7 @@
 <!ENTITY window.title     "Kmoney">
 <!-- menu -->
 <!ENTITY menu.file          "ファイル">
-<!ENTITY menu.file.accesskey          "D">
+<!ENTITY menu.file.accesskey          "F">
 <!ENTITY menu.file.newdb          "新しいデータベース">
 <!ENTITY menu.file.newdb.accesskey          "N">
 <!ENTITY menu.file.opendb          "データベースを開く">
@@ -44,7 +44,7 @@
 <!ENTITY menu.deleteSelected.ak "D">
 
 <!-- tab -->
-<!ENTITY tab.graph          "グラフ">
+<!ENTITY tab.summary          "集計">
 <!ENTITY tab.cash          "現金">
 <!ENTITY tab.bank          "銀行口座">
 <!ENTITY tab.creditcard          "クレジットカード">

@@ -2,7 +2,7 @@
 
 <!-- menu -->
 <!ENTITY menu.file			"File">
-<!ENTITY menu.file.accesskey          "D">
+<!ENTITY menu.file.accesskey          "F">
 <!ENTITY menu.file.newdb          "New Database">
 <!ENTITY menu.file.newdb.accesskey          "N">
 <!ENTITY menu.file.opendb          "Open Database">
@@ -45,7 +45,7 @@
 <!ENTITY menu.help.deleteSelected.ak "D">
 
 <!-- tab -->
-<!ENTITY tab.graph          "Graph">
+<!ENTITY tab.summary          "Summary">
 <!ENTITY tab.cash          "Cash">
 <!ENTITY tab.bank          "Bank">
 <!ENTITY tab.creditcard          "CreditCard">

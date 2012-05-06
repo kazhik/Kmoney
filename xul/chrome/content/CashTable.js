@@ -10,11 +10,9 @@ CashTable.prototype.initialize = function(db) {
   CashTable.superclass.init.call(this);
 };
 CashTable.prototype.load = function(direction) {
-  if (this.getRowCount() === 0) {
-    var count = this.mDb.getRowCount('km_realmoney_trns', '');
-    this.setRowCount(count);
-    $$('km_total').value = count;
-  }
+  var count = this.mDb.getRowCount('km_realmoney_trns', '');
+  this.setRowCount(count);
+  $$('km_total').value = count;
   this.setOffset(direction);
   var sql = "select "
     + "A.transaction_date, "
@@ -41,6 +39,7 @@ CashTable.prototype.load = function(direction) {
   var columns = this.mDb.getColumns();
   
   this.PopulateTableData(records, columns, types);
+  this.ensureRowIsVisible(9, -1);
   this.ShowTable(true);
     
   $$('km_from_value').value = this.getFromValue();
@@ -60,7 +59,7 @@ CashTable.prototype.onSelect = function() {
   $$('km_edit_amount').value = amount;
   $$('km_edit_user').value = this.getColumnValue(6);
   $$('km_edit_internal').checked = (Number(this.getColumnValue(8)) === 1);
-}
+};
 CashTable.prototype.addRecord = function() {
   var incomeValue;
   var expenseValue;
@@ -119,6 +118,7 @@ CashTable.prototype.updateRecord = function() {
     internalValue = 0;
   }
 
+  var rowid = this.getColumnValue(9);
   var sql = ["update km_realmoney_trns "
     + "set "
     + "transaction_date = " + "'" + $$('km_edit_transactionDate').value + "', "
@@ -130,10 +130,11 @@ CashTable.prototype.updateRecord = function() {
     + "last_update_date = datetime('now'), "
     + "internal = " + internalValue + ", "
     + "source = 1 "
-    + "where rowid = " + this.getColumnValue(9)];
+    + "where rowid = " + rowid];
   km_log(sql);
   this.mDb.executeTransaction(sql);
   this.load();
+  this.ensureRowIsVisible(9, rowid);
 };
 
 CashTable.prototype.deleteRecord = function() {
@@ -141,4 +142,41 @@ CashTable.prototype.deleteRecord = function() {
   this.mDb.executeTransaction(sql);
   
   this.load();
+};
+
+CashTable.prototype.importRecord = function(transactionDate, income, expense, itemName, detail,
+  userId, internal, source) {
+  
+  var sql = ["insert into km_realmoney_trns ("
+    + "transaction_date, "
+    + "income, "
+    + "expense, "
+    + "item_id, "
+    + "detail, "
+    + "user_id, "
+    + "internal, "
+    + "last_update_date, "
+    + "source "
+    + ") "
+    + "select "
+    + "'" + transactionDate + "',"
+    + income + ","
+    + expense + ","
+    + "(select rowid from km_item where name = '" + itemName + "'),"
+    + "'" + detail + "',"
+    + userId + ","
+    + internal + ","
+    + "datetime('now'), "
+    + source + " "
+    + "where not exists ("
+    + " select 1 from km_realmoney_trns "
+    + " where transaction_date = '" + transactionDate + "'"
+    + " and income = " + income
+    + " and expense = " + expense
+    + " and source = " + source
+    + " and user_id = " + userId
+    + ")"];
+  km_log(sql);
+  this.mDb.executeTransaction(sql);
+  
 };
