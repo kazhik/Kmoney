@@ -8,9 +8,12 @@ function EMoneyTable() {
 };
 EMoneyTable.prototype.initialize = function(db) {
   this.mDb = db;
-  EMoneyTable.superclass.init.call(this);
+  EMoneyTable.superclass.init.call(this, this.load.bind(this));
 };
-EMoneyTable.prototype.load = function(direction) {
+EMoneyTable.prototype.load = function(direction, sortColumn) {
+  if (sortColumn === undefined) {
+    sortColumn = 'transaction_date';    
+  }
   var count = this.mDb.getRowCount('km_emoney_trns', '');
   this.setRowCount(count);
   $$('km_total').value = count;
@@ -18,14 +21,14 @@ EMoneyTable.prototype.load = function(direction) {
   var sql = "select "
     + "A.transaction_date, "
     + "A.item_id, "
-    + "B.name, "
+    + "B.name as item_name, "
     + "A.detail, "
     + "A.income, "
     + "A.expense, "
     + "A.money_id, "
-    + "D.name, "
+    + "D.name as money_name, "
     + "A.user_id, "
-    + "C.name, "
+    + "C.name as user_name, "
     + "A.source, "
     + "A.internal, "
     + "A.rowid "
@@ -36,7 +39,7 @@ EMoneyTable.prototype.load = function(direction) {
     + " on A.user_id = C.id "
     + "inner join km_emoney_info D "
     + " on A.money_id = D.rowid "
-    + "order by A.transaction_date "
+    + "order by " + sortColumn + " "
     + "limit " + this.mLimit + " offset " + this.mOffset;
   this.mDb.selectQuery(sql);
   var records = this.mDb.getRecords();

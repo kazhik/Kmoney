@@ -8,9 +8,12 @@ function CreditCardTable() {
 };
 CreditCardTable.prototype.initialize = function(db) {
   this.mDb = db;
-  CreditCardTable.superclass.init.call(this);
+  CreditCardTable.superclass.init.call(this, this.load.bind(this));
 };
-CreditCardTable.prototype.load = function(direction) {
+CreditCardTable.prototype.load = function(direction, sortColumn) {
+  if (sortColumn === undefined) {
+    sortColumn = 'transaction_date';    
+  }
   var count = this.mDb.getRowCount('km_creditcard_trns', '');
   this.setRowCount(count);
   $$('km_total').value = count;
@@ -18,13 +21,13 @@ CreditCardTable.prototype.load = function(direction) {
   var sql = "select "
     + "A.transaction_date, "
     + "A.item_id, "
-    + "B.name, "
+    + "B.name as item_name, "
     + "A.detail, "
     + "A.expense, "
     + "A.card_id, "
-    + "D.name, "
+    + "D.name as card_name, "
     + "A.user_id, "
-    + "C.name, "
+    + "C.name as user_name, "
     + "A.rowid "
     + "from km_creditcard_trns A "
     + "inner join km_item B "
@@ -33,7 +36,7 @@ CreditCardTable.prototype.load = function(direction) {
     + " on A.user_id = C.id "
     + "inner join km_creditcard_info D "
     + " on A.card_id = D.rowid "
-    + "order by A.transaction_date "
+    + "order by " + sortColumn + " "
     + "limit " + this.mLimit + " offset " + this.mOffset;
   this.mDb.selectQuery(sql);
   var records = this.mDb.getRecords();

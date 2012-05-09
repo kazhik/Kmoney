@@ -10,9 +10,12 @@ function BankTable() {
 };
 BankTable.prototype.initialize = function(db) {
   this.mDb = db;
-  BankTable.superclass.init.call(this);
+  BankTable.superclass.init.call(this, this.load.bind(this));
 };
-BankTable.prototype.load = function(direction) {
+BankTable.prototype.load = function(direction, sortColumn) {
+  if (sortColumn === undefined) {
+    sortColumn = 'transaction_date';    
+  }
   var count = this.mDb.getRowCount('km_bank_trns', '');
   this.setRowCount(count);
   $$('km_total').value = count;
@@ -20,14 +23,14 @@ BankTable.prototype.load = function(direction) {
   var sql = "select "
     + "A.transaction_date, "
     + "A.item_id, "
-    + "B.name, "
+    + "B.name as item_name, "
     + "A.detail, "
     + "A.income, "
     + "A.expense, "
     + "A.bank_id, "
-    + "D.name, "
+    + "D.name as bank_name, "
     + "A.user_id, "
-    + "C.name, "
+    + "C.name as user_name, "
     + "A.source, "
     + "A.internal, "
     + "A.rowid "
@@ -38,7 +41,7 @@ BankTable.prototype.load = function(direction) {
     + " on A.user_id = C.id "
     + "inner join km_bank_info D "
     + " on A.bank_id = D.rowid "
-    + "order by A.transaction_date "
+    + "order by " + sortColumn + " "
     + "limit " + this.mLimit + " offset " + this.mOffset;
   this.mDb.selectQuery(sql);
   var records = this.mDb.getRecords();

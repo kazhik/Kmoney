@@ -12,18 +12,33 @@ function KmDatabaseTreeView(sTreeId) {
   this.aTypes = [];
 
   this.aOrder = [];
+
+  this.colInfo = {};
+  
 };
 
 KmDatabaseTreeView.prototype = {
-  init: function(aTableData, aColumns, aTypes) {
+  init: function(aTableData, aColumns, aTypes, callbackFunc) {
     this.aTableData = aTableData;
     // Column information
     this.aColumns = aColumns;
     this.aTypes = aTypes;
 
     this.aOrder = [];
-    for (var i=0; i < this.aColumns.length; i++)
+    for (var i=0; i < this.aColumns.length; i++) {
       this.aOrder.push(-1);//0=asc; 1=desc
+    }
+    
+    for (var i = 0; i < this.aColumns.length; i++) {
+      this.colInfo[aColumns[i][0]] = 
+        {'index': i,
+         'type': aColumns[i][1],
+         'order': -1
+        };
+    }
+    if (callbackFunc != undefined) {
+      this.onClickColumnHeader = callbackFunc;
+    }
 
     //without this re-assigning the view, we get extra rows when we use last button in the navigation panel in browse tab.
     document.getElementById(this.mTreeId).view = this;
@@ -94,46 +109,9 @@ KmDatabaseTreeView.prototype = {
   getColumnProperties: function(colid, col, properties){},
 
   cycleHeader: function(col) {
-      this.SortColumn(col);
-  },
-
-  //this function is used only for tree in execute tab
-  SortColumn: function(col) {
-    var index  = col.id; 
-    var name = this.aColumns[index][0];
-    var type = this.aColumns[index][1];
-    var isnum = ((this.aColumns[index][2]==1)?1:0);
-    this.aOrder[index] = (this.aOrder[index]==0)?1:0;
-    var order = this.aOrder[index];
-//alert(order+"="+name);
-    
-    this.SortTable(this.aTableData, index, order, isnum);  // sort the table
-    this.treebox.invalidate();
-  },
-
-// This is the actual sorting method, extending the array.sort() method
-  SortTable: function(table, col, order, isnum) {
-    if (isnum) { // use numeric comparison 
-        if (order == 0) { // ascending 
-            this.columnSort = function (a,b){ return (a[col]-b[col]); };
-        }
-        else { // descending 
-            this.columnSort = function (a,b){ return (b[col]-a[col]); };
-        }
-    }
-    else { // use string comparison 
-        if (order == 0){ // ascending 
-            this.columnSort = function(a,b){
-                return (a[col]<b[col])?-1:(a[col]>b[col])?1:0; };
-        }
-        else { // descending 
-            this.columnSort = function(a,b){
-                return (a[col]>b[col])?-1:(a[col]<b[col])?1:0; };
-        }
-    }
-    // use array.sort(comparer) method
-    table.sort(this.columnSort);
+    this.onClickColumnHeader(this.aColumns[col.id][0]);
   }
+
 };
 
 
@@ -143,18 +121,27 @@ function TreeDataTable(sTreeId) {
   this.mLimit = 100;
   this.mOffset = 0;
   this.mCount = 0;
+  this.reloadTable = null;
 };
 
 TreeDataTable.prototype = {
   // Initialize: Set up the treeview which will display the table contents
-  init: function() {
+  init: function(callbackFunc) {
     this.treeTable = document.getElementById(this.mTreeId);
 
+    if (callbackFunc != undefined) {
+      this.reloadTable = callbackFunc;
+    }
     this.treeView = new KmDatabaseTreeView(this.mTreeId);
-    this.treeView.init([], [], []);
+    this.treeView.init([], [], [], this.onClickColumnHeader.bind(this));
     //init must be done before assigning to treeTable.view otherwise it does not work
     //this.treetable.view.init() also fails.
     this.treeTable.view = this.treeView;
+  },
+  onClickColumnHeader: function(col) {
+    if (this.reloadTable) {
+      this.reloadTable('last', col);
+    }
   },
 
   // ShowTable: Show/hide any currently displayed table data

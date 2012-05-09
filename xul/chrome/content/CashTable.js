@@ -5,11 +5,15 @@ CashTable.superclass = TreeDataTable.prototype;
 function CashTable() {
   this.mDb = null;
 };
+
 CashTable.prototype.initialize = function(db) {
   this.mDb = db;
-  CashTable.superclass.init.call(this);
+  CashTable.superclass.init.call(this, this.load.bind(this));
 };
-CashTable.prototype.load = function(direction) {
+CashTable.prototype.load = function(direction, sortColumn) {
+  if (sortColumn === undefined) {
+    sortColumn = 'transaction_date';    
+  }
   var count = this.mDb.getRowCount('km_realmoney_trns', '');
   this.setRowCount(count);
   $$('km_total').value = count;
@@ -17,12 +21,12 @@ CashTable.prototype.load = function(direction) {
   var sql = "select "
     + "A.transaction_date, "
     + "A.item_id, "
-    + "B.name, "
+    + "B.name as item_name, "
     + "A.detail, "
     + "A.income, "
     + "A.expense, "
     + "A.user_id, "
-    + "C.name, "
+    + "C.name as user_name, "
     + "A.internal, "
     + "A.rowid "
     + "from km_realmoney_trns A "
@@ -30,7 +34,7 @@ CashTable.prototype.load = function(direction) {
     + " on A.item_id = B.rowid "
     + "inner join km_user C "
     + " on A.user_id = C.id "
-    + "order by A.transaction_date "
+    + "order by " + sortColumn + " "
     + "limit " + this.mLimit + " offset " + this.mOffset;
   km_log(sql);
   this.mDb.selectQuery(sql);
@@ -143,6 +147,7 @@ CashTable.prototype.deleteRecord = function() {
   
   this.load();
 };
+
 
 CashTable.prototype.importRecord = function(transactionDate, income, expense, itemName, detail,
   userId, internal, source) {
