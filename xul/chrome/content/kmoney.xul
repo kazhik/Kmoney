@@ -96,7 +96,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                         <tree id="km_tree_cash" style="min-height:20em" flex="1" seltype="single"
                         enableColumnDrag="false">
                             <treecols id="km_cols_cash">
-								<treecol id="0" label="&column.date;" width="60" persist="width" />
+								<treecol id="jojoj" label="&column.date;" sortDirection="ascending" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 								<treecol id="1" label="item_id" width="60" hidden="true" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  

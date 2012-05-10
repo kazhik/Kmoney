@@ -11,9 +11,15 @@ CashTable.prototype.initialize = function(db) {
   CashTable.superclass.init.call(this, this.load.bind(this));
 };
 CashTable.prototype.load = function(direction, sortColumn) {
+  var orderby = "";
   if (sortColumn === undefined) {
-    sortColumn = 'transaction_date';    
+    orderby = "order by transaction_date"
+  } else if (sortColumn === "") {
+    orderby = "";
+  } else {
+    orderby = "order by " + sortColumn;
   }
+  
   var count = this.mDb.getRowCount('km_realmoney_trns', '');
   this.setRowCount(count);
   $$('km_total').value = count;
@@ -34,7 +40,7 @@ CashTable.prototype.load = function(direction, sortColumn) {
     + " on A.item_id = B.rowid "
     + "inner join km_user C "
     + " on A.user_id = C.id "
-    + "order by " + sortColumn + " "
+    + orderby + " "
     + "limit " + this.mLimit + " offset " + this.mOffset;
   km_log(sql);
   this.mDb.selectQuery(sql);

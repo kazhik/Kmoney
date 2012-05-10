@@ -11,9 +11,15 @@ EMoneyTable.prototype.initialize = function(db) {
   EMoneyTable.superclass.init.call(this, this.load.bind(this));
 };
 EMoneyTable.prototype.load = function(direction, sortColumn) {
+  var orderby = "";
   if (sortColumn === undefined) {
-    sortColumn = 'transaction_date';    
+    orderby = "order by transaction_date"
+  } else if (sortColumn === "") {
+    orderby = "";
+  } else {
+    orderby = "order by " + sortColumn;
   }
+  
   var count = this.mDb.getRowCount('km_emoney_trns', '');
   this.setRowCount(count);
   $$('km_total').value = count;
@@ -39,7 +45,7 @@ EMoneyTable.prototype.load = function(direction, sortColumn) {
     + " on A.user_id = C.id "
     + "inner join km_emoney_info D "
     + " on A.money_id = D.rowid "
-    + "order by " + sortColumn + " "
+    + orderby + " "
     + "limit " + this.mLimit + " offset " + this.mOffset;
   this.mDb.selectQuery(sql);
   var records = this.mDb.getRecords();

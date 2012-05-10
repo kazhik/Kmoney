@@ -11,8 +11,6 @@ function KmDatabaseTreeView(sTreeId) {
   this.aColumns = [];
   this.aTypes = [];
 
-  this.aOrder = [];
-
   this.colInfo = {};
   
 };
@@ -24,17 +22,14 @@ KmDatabaseTreeView.prototype = {
     this.aColumns = aColumns;
     this.aTypes = aTypes;
 
-    this.aOrder = [];
-    for (var i=0; i < this.aColumns.length; i++) {
-      this.aOrder.push(-1);//0=asc; 1=desc
-    }
-    
-    for (var i = 0; i < this.aColumns.length; i++) {
-      this.colInfo[aColumns[i][0]] = 
-        {'index': i,
-         'type': aColumns[i][1],
-         'order': -1
-        };
+    if (Object.keys(this.colInfo).length === 0) {
+      for (var i = 0; i < this.aColumns.length; i++) {
+        this.colInfo[aColumns[i][0]] = 
+          {'index': i,
+           'type': aColumns[i][1],
+           'order': 'natural'
+          };
+      }
     }
     if (callbackFunc != undefined) {
       this.onClickColumnHeader = callbackFunc;
@@ -50,7 +45,7 @@ KmDatabaseTreeView.prototype = {
   },
   getCellText: function(row, col) {
     try {
-      return this.aTableData[row][col.id];
+      return this.aTableData[row][col.index];
     }
     catch (e) {
       return "<" + row + "," + col.id + ">";
@@ -58,8 +53,12 @@ KmDatabaseTreeView.prototype = {
   },
   //function to get sqlite data type
   getCellDataType: function(row, col) {
+
     try {
-      return this.aTypes[row][col.id];
+//      var colLabel = this.aColumns[col.index][0];
+//      var colType = this.colInfo[colLabel]['type'];
+//      return colType;
+      return this.aTypes[row][col.index];
     }
     catch (e) {
       return SQLiteTypes.TEXT;
@@ -75,7 +74,7 @@ KmDatabaseTreeView.prototype = {
   getRowProperties: function(row, properties) {},
   getCellProperties: function(row, col, properties) {
     var atomService = Components.classes["@mozilla.org/atom-service;1"].getService(Components.interfaces.nsIAtomService);
-    switch(this.aTypes[row][col.id]) {
+    switch(this.aTypes[row][col.index]) {
       case SQLiteTypes.INTEGER:
         var atom = atomService.getAtom("integervalue");
         properties.AppendElement(atom);
@@ -109,7 +108,31 @@ KmDatabaseTreeView.prototype = {
   getColumnProperties: function(colid, col, properties){},
 
   cycleHeader: function(col) {
-    this.onClickColumnHeader(this.aColumns[col.id][0]);
+    var colLabel = this.aColumns[col.index][0];
+    var colOrder = this.colInfo[colLabel]['order'];
+    var orderby;
+
+    if (colOrder === 'natural') {
+      this.colInfo[colLabel]['order'] = 'ascending';
+      orderby = colLabel + " asc";
+    } else if (colOrder === 'ascending') {
+      this.colInfo[colLabel]['order'] = 'descending';
+      orderby = colLabel + " desc";
+    } else if (colOrder === 'descending') {
+      this.colInfo[colLabel]['order'] = 'natural';
+      orderby = "";
+    }
+    
+	var cols = document.getElementById(this.mTreeId).getElementsByTagName("treecol");
+	for (var i = 0; i < cols.length; i++) {
+      if (cols[i].getAttribute('id') === col.id) {
+        cols[i].setAttribute("sortDirection", this.colInfo[colLabel]['order']);
+      } else {
+		cols[i].removeAttribute("sortDirection");
+      }
+	}    
+    
+    this.onClickColumnHeader(orderby);
   }
 
 };

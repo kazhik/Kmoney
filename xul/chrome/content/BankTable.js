@@ -13,9 +13,15 @@ BankTable.prototype.initialize = function(db) {
   BankTable.superclass.init.call(this, this.load.bind(this));
 };
 BankTable.prototype.load = function(direction, sortColumn) {
+  var orderby = "";
   if (sortColumn === undefined) {
-    sortColumn = 'transaction_date';    
+    orderby = "order by transaction_date"
+  } else if (sortColumn === "") {
+    orderby = "";
+  } else {
+    orderby = "order by " + sortColumn;
   }
+
   var count = this.mDb.getRowCount('km_bank_trns', '');
   this.setRowCount(count);
   $$('km_total').value = count;
@@ -41,7 +47,7 @@ BankTable.prototype.load = function(direction, sortColumn) {
     + " on A.user_id = C.id "
     + "inner join km_bank_info D "
     + " on A.bank_id = D.rowid "
-    + "order by " + sortColumn + " "
+    + orderby + " "
     + "limit " + this.mLimit + " offset " + this.mOffset;
   this.mDb.selectQuery(sql);
   var records = this.mDb.getRecords();
