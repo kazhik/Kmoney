@@ -16,7 +16,7 @@ var KmGlobals = {
   },
 
   //these are the preferences which are being observed and which need to be initially read.
-  observedPrefs: ["jsonDataTreeStyle", "hideMainToolbar", "showMainToolbarDatabase", "showMainToolbarTable", "showMainToolbarIndex", "showMainToolbarDebug", "sqliteFileExtensions", "displayNumRecords", "textForBlob", "identifierQuoteChar", "jsonMruData", "notificationDuration",
+  observedPrefs: ["sqliteFileExtensions", "displayNumRecords", "jsonMruData",
         "posInTargetApp" /* this one for firefox only*/,
         "handleADS" /* this one for Windows only*/ ],
 

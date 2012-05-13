@@ -1,6 +1,7 @@
 "use strict";
-Components.utils.import("chrome://kmoney/content/sqlite.js");
+Components.utils.import("chrome://kmoney/content/common/sqlite.js");
 Components.utils.import("chrome://kmoney/content/appInfo.js");
+
 
 KmGlobals.disableChrome();
 
