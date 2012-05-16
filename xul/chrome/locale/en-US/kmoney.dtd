@@ -74,6 +74,7 @@
 <!ENTITY edit.bank          "Bank">
 <!ENTITY edit.creditcard          "CreditCard">
 <!ENTITY edit.emoney          "E-Money">
+<!ENTITY edit.period          "Period">
 
 <!-- button -->
 <!ENTITY button.add          "Add">

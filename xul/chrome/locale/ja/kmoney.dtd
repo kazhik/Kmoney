@@ -73,6 +73,7 @@
 <!ENTITY edit.bank          "銀行">
 <!ENTITY edit.creditcard          "クレジットカード">
 <!ENTITY edit.emoney          "電子マネー">
+<!ENTITY edit.period          "期間">
 
 <!-- button -->
 <!ENTITY button.add          "追加">

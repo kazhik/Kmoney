@@ -294,6 +294,10 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 					<menulist id="km_summary_item">
 						<menupopup></menupopup>
 					</menulist>
+					<label control="km_summary_period" value="&edit.period;" />
+					<menulist id="km_summary_period">
+						<menupopup></menupopup>
+					</menulist>
 				</hbox>
         </vbox>
     </vbox>

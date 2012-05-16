@@ -49,6 +49,7 @@ Kmoney.prototype.Startup = function () {
     }
 };
 Kmoney.prototype.Shutdown = function () {
+    this.summary.terminate();
     this.removeEventListeners();
     this.closeDatabase(false);
 };
@@ -105,8 +106,6 @@ Kmoney.prototype.addEventListeners = function () {
     this.listeners['km_btn_last.command'] = this.jump.bind(this, 'last');
     $$('km_btn_last').addEventListener("command", this.listeners['km_btn_last.command']);
 
-    this.listeners['km_summary_item.command'] = this.onGraphItemChanged.bind(this);
-    $$('km_summary_item').addEventListener("command", this.listeners['km_summary_item.command']);
 
 };
 
@@ -129,7 +128,6 @@ Kmoney.prototype.removeEventListeners = function () {
     $$('mp-editTableRow-mi-delete').removeEventListener("command", this.listeners['mp-editTableRow-mi-delete.command']);
     $$('km_edit_user').removeEventListener("select", this.listeners['km_edit_user.select']);
 
-    $$('km_summary_item').removeEventListener("command", this.listeners['km_summary_item.command']);
 };
 Kmoney.prototype.jump = function (direction) {
     var tree = this.getSelectedTree();
@@ -137,9 +135,6 @@ Kmoney.prototype.jump = function (direction) {
         tree.load(direction);
     }
 };
-Kmoney.prototype.onGraphItemChanged = function() {
-    this.summary.drawGraph();
-}
 Kmoney.prototype.onCashSelect = function () {
     this.cashTree.onSelect();
 };
