@@ -8,6 +8,7 @@ function CashTable() {
 
 CashTable.prototype.initialize = function(db) {
   this.mDb = db;
+
   CashTable.superclass.init.call(this, this.load.bind(this));
 };
 CashTable.prototype.load = function(direction, sortColumn) {

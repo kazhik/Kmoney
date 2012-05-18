@@ -152,6 +152,8 @@ TreeDataTable.prototype = {
   init: function(callbackFunc) {
     this.treeTable = document.getElementById(this.mTreeId);
 
+    this.mLimit = km_prefsBranch.getIntPref("displayNumRecords");
+    
     if (callbackFunc != undefined) {
       this.reloadTable = callbackFunc;
     }

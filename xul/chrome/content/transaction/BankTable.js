@@ -5,11 +5,10 @@ BankTable.superclass = TreeDataTable.prototype;
 function BankTable() {
   this.mDb = null;
   this.mBankList = null;
-  this.mLimit = 100;
-  this.mOffset = 0;
 };
 BankTable.prototype.initialize = function(db) {
   this.mDb = db;
+  
   BankTable.superclass.init.call(this, this.load.bind(this));
 };
 BankTable.prototype.load = function(direction, sortColumn) {

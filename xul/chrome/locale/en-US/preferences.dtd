@@ -1,6 +1,7 @@
 <!ENTITY  prefwinTitle	"Kmoney Options">
 
 <!ENTITY  paneMain.title	"Main">
+<!ENTITY  panePrompts.title	"Prompts">
 
 <!ENTITY  whenKMStarts	"When Kmoney starts">
 <!ENTITY  pref-openWithLastDb.label	"Open the last used database">

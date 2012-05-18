@@ -81,7 +81,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 </menu>
             </menubar>
         </toolbox>
-        <tabbox id="km_tabbox">
+        <tabbox id="km_tabbox" handleCtrlPageUpDown="true">
             <tabs id="km_tabs">
                 <tab id="km_tab_summary" label="&tab.summary;" persist="selected" />
                 <tab id="km_tab_cash" label="&tab.cash;" persist="selected" />
@@ -96,7 +96,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 </tabpanel>
                 <tabpanel flex="1">
                     <vbox flex="1">
-                        <tree id="km_tree_cash" style="min-height:20em" flex="1" seltype="single"
+                        <tree id="km_tree_cash" style="min-height:30em" flex="1" seltype="single"
                         enableColumnDrag="false">
                             <treecols id="km_cols_cash">
 								<treecol id="jojoj" label="&column.date;" sortDirection="ascending" width="60" persist="width" />
@@ -126,7 +126,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 </tabpanel>
                 <tabpanel flex="1">
                     <vbox flex="1">
-                        <tree id="km_tree_bank" style="min-height:20em" flex="1" seltype="single"
+                        <tree id="km_tree_bank" style="min-height:30em" flex="1" seltype="single"
                         enableColumnDrag="false">
                             <treecols id="km_cols_bank">
 								<treecol id="0" label="&column.date;" width="60" persist="width" />
@@ -162,7 +162,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 </tabpanel>
                 <tabpanel flex="1">
                     <vbox flex="1">
-                        <tree id="km_tree_creditcard" style="min-height:20em" flex="1" seltype="single"
+                        <tree id="km_tree_creditcard" style="min-height:30em" flex="1" seltype="single"
                         enableColumnDrag="false">
                             <treecols id="km_cols_creditcard">
 								<treecol id="0" label="&column.date;" width="60" persist="width" />
@@ -193,7 +193,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 </tabpanel>
                 <tabpanel flex="1">
                     <vbox flex="1">
-                        <tree id="km_tree_emoney" style="min-height:20em" flex="1" seltype="multiple"
+                        <tree id="km_tree_emoney" style="min-height:30em" flex="1" seltype="multiple"
                         enableColumnDrag="false">
                             <treecols id="km_cols_emoney">
 								<treecol id="0" label="&column.date;" width="60" persist="width" />
