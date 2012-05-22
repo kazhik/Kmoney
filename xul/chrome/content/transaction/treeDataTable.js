@@ -145,6 +145,7 @@ function TreeDataTable(sTreeId) {
   this.mOffset = 0;
   this.mCount = 0;
   this.reloadTable = null;
+  this.mSortOrder = null;
 };
 
 TreeDataTable.prototype = {
@@ -163,10 +164,11 @@ TreeDataTable.prototype = {
     //this.treetable.view.init() also fails.
     this.treeTable.view = this.treeView;
   },
-  onClickColumnHeader: function(col) {
+  onClickColumnHeader: function(sortOrder) {
     if (this.reloadTable) {
-      this.reloadTable('last', col);
+      this.reloadTable('last', sortOrder);
     }
+    this.mSortOrder = sortOrder;
   },
 
   // ShowTable: Show/hide any currently displayed table data

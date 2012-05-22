@@ -13,11 +13,16 @@ CreditCardTable.prototype.initialize = function(db) {
 CreditCardTable.prototype.load = function(direction, sortColumn) {
   var orderby = "";
   if (sortColumn === undefined) {
-    orderby = "order by transaction_date"
+    if (this.mSortOrder != null) {
+      orderby = "order by " + this.mSortOrder;
+    } else {
+      orderby = "order by transaction_date"
+    }
   } else if (sortColumn === "") {
     orderby = "";
   } else {
     orderby = "order by " + sortColumn;
+    this.mSortOrder = sortColumn;
   }
 
   var count = this.mDb.getRowCount('km_creditcard_trns', '');
@@ -36,7 +41,7 @@ CreditCardTable.prototype.load = function(direction, sortColumn) {
     + "C.name as user_name, "
     + "A.rowid "
     + "from km_creditcard_trns A "
-    + "inner join km_item B "
+    + "left join km_item B "
     + " on A.item_id = B.rowid "
     + "inner join km_user C "
     + " on A.user_id = C.id "
@@ -128,7 +133,11 @@ CreditCardTable.prototype.updateRecord = function() {
 };
 
 CreditCardTable.prototype.deleteRecord = function() {
-  var sql = ["delete from km_creditcard_trns where rowid = " + this.getColumnValue(9)];
+  var rowid = this.getColumnValue(9);
+  if (rowid === "") {
+    return;
+  }
+  var sql = ["delete from km_creditcard_trns where rowid = " + rowid];
   this.mDb.executeTransaction(sql);
   
   this.load();

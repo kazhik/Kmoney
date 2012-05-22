@@ -21,6 +21,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
         <command id="kmc-newDb" />
         <command id="kmc-openDb" />
         <command id="kmc-import" />
+        <command id="kmc-delete" />
         <command id="kmc-setuser" />
         <command id="kmc-setitem" />
         <command id="kmc-setbank" />
@@ -29,8 +30,8 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
     </commandset>
     <popupset>
         <menupopup id="mp-editTableRow">
-            <menuitem id="mp-editTableRow-mi-delete" label="&menu.deleteSelected;"
-            accesskey="&menu.deleteSelected.ak;" />
+            <menuitem label="&menu.deleteSelected;"
+             command="kmc-delete" accesskey="&menu.deleteSelected.ak;" />
         </menupopup>
     </popupset>
     <vbox id="km_main">
@@ -51,7 +52,10 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                     </menupopup>
                 </menu>
                 <menu id="km_menu_edit" label="&menu.edit;" accesskey="&menu.edit.accesskey;">
-                    <menupopup></menupopup>
+                    <menupopup>
+						<menuitem label="&menu.edit.delete;" accesskey="&menu.edit.delete.accesskey;"
+						command="kmc-delete" />
+					</menupopup>
                 </menu>
                 <menu id="km_menu_setting" label="&menu.setting;" accesskey="&menu.setting.accesskey;">
                     <menupopup>
@@ -193,7 +197,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 </tabpanel>
                 <tabpanel flex="1">
                     <vbox flex="1">
-                        <tree id="km_tree_emoney" style="min-height:30em" flex="1" seltype="multiple"
+                        <tree id="km_tree_emoney" style="min-height:30em" flex="1" seltype="single"
                         enableColumnDrag="false">
                             <treecols id="km_cols_emoney">
 								<treecol id="0" label="&column.date;" width="60" persist="width" />

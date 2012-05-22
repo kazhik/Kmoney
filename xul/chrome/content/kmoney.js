@@ -88,8 +88,8 @@ Kmoney.prototype.addEventListeners = function () {
     this.listeners['km_tree_bank.select'] = this.onBankSelect.bind(this);
     $$('km_tree_bank').addEventListener("select", this.listeners['km_tree_bank.select']);
 
-    this.listeners['mp-editTableRow-mi-delete.command'] = this.deleteRecord.bind(this);
-    $$('mp-editTableRow-mi-delete').addEventListener("command", this.listeners['mp-editTableRow-mi-delete.command']);
+    this.listeners['kmc-delete'] = this.deleteRecord.bind(this);
+    $$('kmc-delete').addEventListener("command", this.listeners['kmc-delete']);
 
     this.listeners['km_edit_user.select'] = this.onUserSelect.bind(this);
     $$('km_edit_user').addEventListener("select", this.listeners['km_edit_user.select']);
@@ -125,7 +125,7 @@ Kmoney.prototype.removeEventListeners = function () {
     $$('km_tree_creditcard').removeEventListener("select", this.listeners['km_tree_creditcard.select']);
     $$('km_tree_emoney').removeEventListener("select", this.listeners['km_tree_emoney.select']);
     $$('km_tree_bank').removeEventListener("select", this.listeners['km_tree_bank.select']);
-    $$('mp-editTableRow-mi-delete').removeEventListener("command", this.listeners['mp-editTableRow-mi-delete.command']);
+    $$('kmc-delete').removeEventListener("command", this.listeners['kmc-delete']);
     $$('km_edit_user').removeEventListener("select", this.listeners['km_edit_user.select']);
 
 };
@@ -377,9 +377,18 @@ Kmoney.prototype.onUserSelect = function () {
 };
 Kmoney.prototype.deleteRecord = function () {
     var tree = this.getSelectedTree();
-    if (typeof tree.deleteRecord === 'function') {
-        tree.deleteRecord();
+    if (typeof tree.deleteRecord != 'function') {
+        return;
     }
+    if (tree.treeTable.currentIndex === -1) {
+      km_alert(km_getLStr("error.title"), km_getLStr("error.notSelected"));
+      return;
+    }
+    var bConfirm = km_confirm(km_getLStr("confirm.title"), km_getLStr("confirm.deleteRow"));
+    if (!bConfirm) {
+      return;
+    }
+    tree.deleteRecord();
 };
 Kmoney.prototype.getSelectedTree = function () {
     var tab = null;

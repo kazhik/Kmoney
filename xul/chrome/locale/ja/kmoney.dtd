@@ -15,6 +15,8 @@
 
 <!ENTITY menu.edit          "編集">
 <!ENTITY menu.edit.accesskey          "E">
+<!ENTITY menu.edit.delete          "削除">
+<!ENTITY menu.edit.delete.accesskey          "D">
 
 <!ENTITY menu.view          "表示">
 <!ENTITY menu.view.accesskey          "V">
@@ -74,6 +76,10 @@
 <!ENTITY edit.creditcard          "クレジットカード">
 <!ENTITY edit.emoney          "電子マネー">
 <!ENTITY edit.period          "期間">
+
+<!-- confirm dialog -->
+<!ENTITY confirm.button.accept  "はい">
+<!ENTITY confirm.button.cancel  "いいえ">
 
 <!-- button -->
 <!ENTITY button.add          "追加">

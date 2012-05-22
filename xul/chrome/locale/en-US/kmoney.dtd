@@ -16,6 +16,8 @@
 
 <!ENTITY menu.edit          "Edit">
 <!ENTITY menu.edit.accesskey          "E">
+<!ENTITY menu.edit.delete          "Delete">
+<!ENTITY menu.edit.delete.accesskey          "D">
 
 <!ENTITY menu.view          "View">
 <!ENTITY menu.view.accesskey          "V">
@@ -75,6 +77,10 @@
 <!ENTITY edit.creditcard          "CreditCard">
 <!ENTITY edit.emoney          "E-Money">
 <!ENTITY edit.period          "Period">
+
+<!-- confirm dialog -->
+<!ENTITY confirm.button.accept  "Yes">
+<!ENTITY confirm.button.cancel  "No">
 
 <!-- button -->
 <!ENTITY button.add          "Add">
