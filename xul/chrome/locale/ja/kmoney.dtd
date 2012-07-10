@@ -1,4 +1,6 @@
 <!ENTITY window.title     "Kmoney">
+<!ENTITY dialog.masterData     "マスターデータ">
+
 <!-- menu -->
 <!ENTITY menu.file          "ファイル">
 <!ENTITY menu.file.accesskey          "F">
@@ -26,16 +28,8 @@
 
 <!ENTITY menu.setting          "設定">
 <!ENTITY menu.setting.accesskey          "S">
-<!ENTITY menu.setting.user          "ユーザー">
-<!ENTITY menu.setting.user.accesskey          "U">
-<!ENTITY menu.setting.item          "費目">
-<!ENTITY menu.setting.item.accesskey          "I">
-<!ENTITY menu.setting.bank          "銀行">
-<!ENTITY menu.setting.bank.accesskey          "B">
-<!ENTITY menu.setting.creditcard          "クレジットカード">
-<!ENTITY menu.setting.creditcard.accesskey          "C">
-<!ENTITY menu.setting.emoney          "電子マネー">
-<!ENTITY menu.setting.emoney.accesskey          "E">
+<!ENTITY menu.setting.master          "マスターデータ">
+<!ENTITY menu.setting.master.accesskey          "M">
 
 <!ENTITY menu.help          "ヘルプ">
 <!ENTITY menu.help.accesskey          "S">
@@ -52,6 +46,9 @@
 <!ENTITY tab.creditcard          "クレジットカード">
 <!ENTITY tab.emoney          "電子マネー">
 
+<!ENTITY tab.user          "ユーザー">
+<!ENTITY tab.item          "費目">
+
 <!-- column -->
 <!ENTITY column.date          "日付">
 <!ENTITY column.income          "収入">
@@ -62,6 +59,10 @@
 <!ENTITY column.bankname          "銀行名">
 <!ENTITY column.cardname          "カード名">
 <!ENTITY column.emoneyname          "電子マネー名">
+<!ENTITY column.userid          "ユーザID">
+<!ENTITY column.username          "ユーザ名">
+<!ENTITY column.itemname          "費目名">
+<!ENTITY column.internal          "内部">
 
 <!-- edit -->
 <!ENTITY edit.date          "日付">
@@ -88,6 +89,8 @@
 <!ENTITY button.update.accesskey          "U">
 <!ENTITY button.reset          "リセット">
 <!ENTITY button.reset.accesskey          "R">
+<!ENTITY button.close          "閉じる">
+<!ENTITY button.close.accesskey          "C">
 
 <!ENTITY first "最初">
 <!ENTITY previous "前">

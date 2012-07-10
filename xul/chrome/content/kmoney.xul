@@ -6,27 +6,27 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
     <script type="application/x-javascript" src="common/ico.js" />
     <script type="application/x-javascript" src="common/raphael.js" />
 
+    <script type="application/x-javascript" src="common/treeDataTable.js" />
+	
     <script type="application/x-javascript" src="globals.js" />
 
-    <script type="application/x-javascript" src="transaction/treeDataTable.js" />
     <script type="application/x-javascript" src="transaction/CashTable.js" />
     <script type="application/x-javascript" src="transaction/BankTable.js" />
     <script type="application/x-javascript" src="transaction/CreditCardTable.js" />
     <script type="application/x-javascript" src="transaction/EMoneyTable.js" />
     <script type="application/x-javascript" src="summary/SummaryView.js" />
 
-    <script type="application/x-javascript" src="kmoney.js" />
+
     <script type="application/x-javascript" src="import/KantanKakeibo.js" />
+
+    <script type="application/x-javascript" src="kmoney.js" />
+	
     <commandset id="km-cmdset">
         <command id="kmc-newDb" />
         <command id="kmc-openDb" />
         <command id="kmc-import" />
         <command id="kmc-delete" />
-        <command id="kmc-setuser" />
-        <command id="kmc-setitem" />
-        <command id="kmc-setbank" />
-        <command id="kmc-setcreditcard" />
-        <command id="kmc-setemoney" />
+        <command id="kmc-setmaster" />
     </commandset>
     <popupset>
         <menupopup id="mp-editTableRow">
@@ -59,21 +59,9 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 </menu>
                 <menu id="km_menu_setting" label="&menu.setting;" accesskey="&menu.setting.accesskey;">
                     <menupopup>
-                        <menuitem label="&menu.setting.user;"
-								accesskey="&menu.setting.user.accesskey;"
-								command="kmc-setuser" />
-                        <menuitem label="&menu.setting.item;"
-								accesskey="&menu.setting.item.accesskey;"
-								command="kmc-setitem" />
-                        <menuitem label="&menu.setting.bank;"
-								accesskey="&menu.setting.bank.accesskey;"
-								command="kmc-setbank" />
-                        <menuitem label="&menu.setting.creditcard;"
-								accesskey="&menu.setting.creditcard.accesskey;"
-								command="kmc-setcreditcard" />
-                        <menuitem label="&menu.setting.emoney;"
-								accesskey="&menu.setting.emoney.accesskey;"
-								command="kmc-setemoney" />
+                        <menuitem label="&menu.setting.master;"
+								accesskey="&menu.setting.master.accesskey;"
+								command="kmc-setmaster" />
 					</menupopup>
                 </menu>
                 <menu id="km_menu_help" label="&menu.help;" accesskey="&menu.help.accesskey;">

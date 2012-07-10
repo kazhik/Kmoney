@@ -13,6 +13,7 @@ function Kmoney() {
     this.creditcardTree = null;
     this.bankTree = null;
     this.emoneyTree = null;
+    this.masterData = null;
     this.maFileExt = [];
     this.listeners = [];
     this.summary = null;
@@ -106,6 +107,9 @@ Kmoney.prototype.addEventListeners = function () {
     this.listeners['km_btn_last.command'] = this.jump.bind(this, 'last');
     $$('km_btn_last').addEventListener("command", this.listeners['km_btn_last.command']);
 
+    this.listeners['kmc-setmaster.command'] = this.openSetMaster.bind(this);
+    $$('kmc-setmaster').addEventListener("command", this.listeners['kmc-setmaster.command']);
+
 
 };
 
@@ -128,6 +132,7 @@ Kmoney.prototype.removeEventListeners = function () {
     $$('kmc-delete').removeEventListener("command", this.listeners['kmc-delete']);
     $$('km_edit_user').removeEventListener("select", this.listeners['km_edit_user.select']);
 
+    $$('kmc-setmaster').removeEventListener("command", this.listeners['kmc-setmaster.command']);
 };
 Kmoney.prototype.jump = function (direction) {
     var tree = this.getSelectedTree();
@@ -135,6 +140,16 @@ Kmoney.prototype.jump = function (direction) {
         tree.load(direction);
     }
 };
+Kmoney.prototype.openSetMaster = function () {
+    if (!this.mDb.isConnected()) {
+      return;
+    }
+
+    window.openDialog("chrome://kmoney/content/master/MasterData.xul", "MasterData",
+        "chrome, resizable, centerscreen, modal, dialog", this.mDb);
+
+};
+
 Kmoney.prototype.onCashSelect = function () {
     this.cashTree.onSelect();
 };

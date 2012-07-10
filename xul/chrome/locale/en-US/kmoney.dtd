@@ -1,4 +1,5 @@
 <!ENTITY window.title     "Kmoney">
+<!ENTITY dialog.masterData     "Master Data">
 
 <!-- menu -->
 <!ENTITY menu.file			"File">
@@ -27,16 +28,8 @@
 
 <!ENTITY menu.setting          "Setting">
 <!ENTITY menu.setting.accesskey          "S">
-<!ENTITY menu.setting.user          "User">
-<!ENTITY menu.setting.user.accesskey          "U">
-<!ENTITY menu.setting.item          "Item">
-<!ENTITY menu.setting.item.accesskey          "I">
-<!ENTITY menu.setting.bank          "Bank">
-<!ENTITY menu.setting.bank.accesskey          "B">
-<!ENTITY menu.setting.creditcard          "CreditCard">
-<!ENTITY menu.setting.creditcard.accesskey          "C">
-<!ENTITY menu.setting.emoney          "EMoney">
-<!ENTITY menu.setting.emoney.accesskey          "E">
+<!ENTITY menu.setting.master          "Master data">
+<!ENTITY menu.setting.master.accesskey          "M">
 
 <!ENTITY menu.help          "Help">
 <!ENTITY menu.help.accesskey          "S">
@@ -53,6 +46,9 @@
 <!ENTITY tab.creditcard          "CreditCard">
 <!ENTITY tab.emoney          "E-Money">
 
+<!ENTITY tab.user          "User">
+<!ENTITY tab.item          "Item">
+
 <!-- column -->
 <!ENTITY column.date          "Date">
 <!ENTITY column.income          "Income">
@@ -63,6 +59,10 @@
 <!ENTITY column.bankname          "BankName">
 <!ENTITY column.cardname          "CardName">
 <!ENTITY column.emoneyname          "EMoneyName">
+<!ENTITY column.userid          "UserId">
+<!ENTITY column.username          "UserName">
+<!ENTITY column.itemname          "ItemName">
+<!ENTITY column.internal          "Internal">
 
 <!-- edit -->
 <!ENTITY edit.date          "Date">
@@ -89,6 +89,8 @@
 <!ENTITY button.update.accesskey          "U">
 <!ENTITY button.reset          "Reset">
 <!ENTITY button.reset.accesskey          "R">
+<!ENTITY button.close          "Close">
+<!ENTITY button.close.accesskey          "C">
 
 <!ENTITY first "First">
 <!ENTITY previous "Previous">

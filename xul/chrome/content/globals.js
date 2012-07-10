@@ -11,7 +11,6 @@ var KmGlobals = {
     preferences: "chrome://kmoney/content/preferences.xul",
     console: "chrome://global/content/console.xul",
     aboutconfig: "chrome://global/content/config.xul",
-    confirm: "chrome://kmoney/content/confirm.xul",
     aboutKM: "chrome://kmoney/content/about.xul"
   },
 
@@ -280,14 +279,15 @@ function km_message(str, where) {
 }
 
 function km_confirm(sTitle, sMessage) {
-  var aRetVals = {};
-  var oWin = window.openDialog(KmGlobals.chromes.confirm, "confirmDialog", KmGlobals.dialogFeatures, sTitle, sMessage, aRetVals, "confirm");
-  return aRetVals.bConfirm;
+   
+  return kmPrompt.confirm(window, sTitle, sMessage);
+
 }
 
 function km_alert(sTitle, sMessage) {
-  var aRetVals = {};
-  var oWin = window.openDialog(KmGlobals.chromes.confirm, "alertDialog", KmGlobals.dialogFeatures, sTitle, sMessage, aRetVals, "alert");
+    
+  kmPrompt.alert(window, sTitle, sMessage);
+
 }
 
 function km_log(sMsg) {
