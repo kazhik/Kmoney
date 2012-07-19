@@ -1,7 +1,7 @@
 // ****** table event handling and display ******
 
-// KmDatabaseTreeView: Create a custom nsITreeView
-function KmDatabaseTreeView(sTreeId) {
+// KmDataTreeView: Create a custom nsITreeView
+function KmDataTreeView(sTreeId) {
   this.mTreeId = sTreeId;
 
   // 2 dimensional array containing table contents
@@ -15,7 +15,7 @@ function KmDatabaseTreeView(sTreeId) {
   
 };
 
-KmDatabaseTreeView.prototype = {
+KmDataTreeView.prototype = {
   init: function(aTableData, aColumns, aTypes, callbackFunc) {
     this.aTableData = aTableData;
     // Column information
@@ -53,7 +53,7 @@ KmDatabaseTreeView.prototype = {
   },
   //function to get sqlite data type
   getCellDataType: function(row, col) {
-
+/*
     try {
 //      var colLabel = this.aColumns[col.index][0];
 //      var colType = this.colInfo[colLabel]['type'];
@@ -63,6 +63,7 @@ KmDatabaseTreeView.prototype = {
     catch (e) {
       return SQLiteTypes.TEXT;
     }
+*/
   },
 
   setTree: function(treebox) { this.treebox = treebox; },
@@ -73,6 +74,7 @@ KmDatabaseTreeView.prototype = {
   getImageSrc: function(row, col) { return null; },
   getRowProperties: function(row, properties) {},
   getCellProperties: function(row, col, properties) {
+ /*
     var atomService = Components.classes["@mozilla.org/atom-service;1"].getService(Components.interfaces.nsIAtomService);
     switch(this.aTypes[row][col.index]) {
       case SQLiteTypes.INTEGER:
@@ -103,7 +105,8 @@ KmDatabaseTreeView.prototype = {
     }
     var atom = atomService.getAtom("tabledata");
     properties.AppendElement(atom);
-  },
+ */
+ },
 
   getColumnProperties: function(colid, col, properties){},
 
@@ -138,17 +141,17 @@ KmDatabaseTreeView.prototype = {
 };
 
 
-function TreeDataTable(sTreeId) {
+function TreeViewController(sTreeId) {
   this.mTreeId = sTreeId;
   this.treeTable = null; // Tree containing listing of current table
   this.mLimit = 100;
   this.mOffset = 0;
   this.mCount = 0;
-  this.reloadTable = null;
   this.mSortOrder = null;
+  this.reloadTable = null;
 };
 
-TreeDataTable.prototype = {
+TreeViewController.prototype = {
   // Initialize: Set up the treeview which will display the table contents
   init: function(callbackFunc) {
     this.treeTable = document.getElementById(this.mTreeId);
@@ -158,7 +161,7 @@ TreeDataTable.prototype = {
     if (callbackFunc != undefined) {
       this.reloadTable = callbackFunc;
     }
-    this.treeView = new KmDatabaseTreeView(this.mTreeId);
+    this.treeView = new KmDataTreeView(this.mTreeId);
     this.treeView.init([], [], [], this.onClickColumnHeader.bind(this));
     //init must be done before assigning to treeTable.view otherwise it does not work
     //this.treetable.view.init() also fails.

@@ -1,20 +1,17 @@
-EMoneyTable.prototype = new TreeDataTable("km_tree_emoney");
-EMoneyTable.constructor = EMoneyTable;
-EMoneyTable.superclass = TreeDataTable.prototype;
-
 function EMoneyTable() {
   this.mDb = null;
   this.mMoneyList = null;
+  this.mTree = new TreeViewController("km_tree_emoney");
 };
 EMoneyTable.prototype.initialize = function(db) {
   this.mDb = db;
-  EMoneyTable.superclass.init.call(this, this.load.bind(this));
+  this.mTree.init(this, this.load.bind(this));
 };
 EMoneyTable.prototype.load = function(direction, sortColumn) {
   var orderby = "";
   if (sortColumn === undefined) {
-    if (this.mSortOrder != null) {
-      orderby = "order by " + this.mSortOrder;
+    if (this.mTree.mSortOrder != null) {
+      orderby = "order by " + this.mTree.mSortOrder;
     } else {
       orderby = "order by transaction_date"
     }
@@ -22,13 +19,13 @@ EMoneyTable.prototype.load = function(direction, sortColumn) {
     orderby = "";
   } else {
     orderby = "order by " + sortColumn;
-    this.mSortOrder = sortColumn;
+    this.mTree.mSortOrder = sortColumn;
   }
   
   var count = this.mDb.getRowCount('km_emoney_trns', '');
-  this.setRowCount(count);
+  this.mTree.setRowCount(count);
   $$('km_total').value = count;
-  this.setOffset(direction);
+  this.mTree.setOffset(direction);
   var sql = "select "
     + "A.transaction_date, "
     + "A.item_id, "
@@ -51,38 +48,38 @@ EMoneyTable.prototype.load = function(direction, sortColumn) {
     + "inner join km_emoney_info D "
     + " on A.money_id = D.rowid "
     + orderby + " "
-    + "limit " + this.mLimit + " offset " + this.mOffset;
+    + "limit " + this.mTree.mLimit + " offset " + this.mTree.mOffset;
   this.mDb.selectQuery(sql);
   var records = this.mDb.getRecords();
   var types = this.mDb.getRecordTypes();
   var columns = this.mDb.getColumns();
 
-  this.PopulateEMoneyList();
-  this.PopulateTableData(records, columns, types);
-  this.ensureRowIsVisible(12, -1);
-  this.ShowTable(true);
+  this.loadEMoneyList();
+  this.mTree.PopulateTableData(records, columns, types);
+  this.mTree.ensureRowIsVisible(12, -1);
+  this.mTree.ShowTable(true);
   
-  $$('km_from_value').value = this.getFromValue();
-  $$('km_to_value').value = this.getToValue();
+  $$('km_from_value').value = this.mTree.getFromValue();
+  $$('km_to_value').value = this.mTree.getToValue();
   
 };
 EMoneyTable.prototype.onSelect = function() {
-  $$('km_edit_transactionDate').value = this.getColumnValue(0);
-  $$('km_edit_item').value = this.getColumnValue(1);
-  $$('km_edit_detail').value = this.getColumnValue(3);
-  var amount = this.getColumnValue(4);
+  $$('km_edit_transactionDate').value = this.mTree.getColumnValue(0);
+  $$('km_edit_item').value = this.mTree.getColumnValue(1);
+  $$('km_edit_detail').value = this.mTree.getColumnValue(3);
+  var amount = this.mTree.getColumnValue(4);
   if (Number(amount) == 0) {
-    amount = this.getColumnValue(5);
+    amount = this.mTree.getColumnValue(5);
     $$('income_expense').selectedItem = $$('km_edit_expense');
   } else {
     $$('income_expense').selectedItem = $$('km_edit_income');
   }
   $$('km_edit_amount').value = amount;
-  $$('km_edit_emoney').value = this.getColumnValue(6);
-  $$('km_edit_user').value = this.getColumnValue(8);
-  $$('km_edit_internal').checked = (Number(this.getColumnValue(11)) === 1);
+  $$('km_edit_emoney').value = this.mTree.getColumnValue(6);
+  $$('km_edit_user').value = this.mTree.getColumnValue(8);
+  $$('km_edit_internal').checked = (Number(this.mTree.getColumnValue(11)) === 1);
 };
-EMoneyTable.prototype.PopulateEMoneyList = function() {
+EMoneyTable.prototype.loadEMoneyList = function() {
     this.mDb.selectQuery("select rowid, name, user_id from km_emoney_info");
     this.mMoneyList = this.mDb.getRecords();
 
@@ -159,8 +156,7 @@ EMoneyTable.prototype.updateRecord = function() {
   } else {
     internalValue = 0;
   }
-  var rowid = this.getColumnValue(12);
-  var currIdx = this.treeTable.currentIndex;
+  var rowid = this.mTree.getColumnValue(12);
   var sql = ["update km_emoney_trns "
     + "set "
     + "transaction_date = " + "'" + $$('km_edit_transactionDate').value + "', "
@@ -176,11 +172,11 @@ EMoneyTable.prototype.updateRecord = function() {
     + "where rowid = " + rowid];
   this.mDb.executeTransaction(sql);
   this.load();
-  this.ensureRowIsVisible(12, rowid);
+  this.mTree.ensureRowIsVisible(12, rowid);
 };
 
 EMoneyTable.prototype.deleteRecord = function() {
-  var rowid = this.getColumnValue(12);
+  var rowid = this.mTree.getColumnValue(12);
   if (rowid === "") {
     return;
   }

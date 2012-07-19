@@ -21,15 +21,14 @@ MasterData.prototype.initialize = function(db) {
     
     this.userMaster = new UserMaster();
     this.userMaster.initialize(db);
-    this.userMaster.load();
-    this.itemMaster = new ItemMaster(db);
+    this.itemMaster = new ItemMaster();
     this.itemMaster.initialize(db);
-    /*
-    this.cardMaster = new CardMaster(db);
+    this.cardMaster = new CardMaster();
     this.cardMaster.initialize(db);
-    this.bankMaster = new BankMaster(db);
+    /*
+    this.bankMaster = new BankMaster();
     this.bankMaster.initialize(db);
-    this.emoneyMaster = new EMoneyMaster(db);
+    this.emoneyMaster = new EMoneyMaster();
     this.emoneyMaster.initialize(db);
-    */  
+    */
 };

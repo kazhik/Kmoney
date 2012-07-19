@@ -3,19 +3,18 @@
 <dialog id="km_masterdata" title="&window.title; - &dialog.masterData;"
 	persist="screenX screenY width height sizemode" orient="vertical"
 	onload="openMasterDataDialog()"
-	buttons="extra1, extra2, cancel"
-	buttonlabelextra2="&button.add;"
-	buttonlabelextra1="&button.update;"
+	buttons="cancel"
 	buttonlabelcancel="&button.close;"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml">
     
     <script type="application/x-javascript" src="../globals.js" />
-    <script type="application/x-javascript" src="../common/treeDataTable.js" />
+    <script type="application/x-javascript" src="../common/TreeView.js" />
     <script type="application/x-javascript" src="UserMaster.js" />
     <script type="application/x-javascript" src="ItemMaster.js" />
+    <script type="application/x-javascript" src="CardMaster.js" />
     <script type="application/x-javascript" src="MasterData.js" />
-   <vbox>
+   <hbox>
         <tabbox id="km_tabbox" handleCtrlPageUpDown="true">
             <tabs id="km_tabs">
                 <tab id="km_tab_master_user" label="&tab.user;" persist="selected" />
@@ -48,6 +47,7 @@
                         <tree id="km_tree_master_item" style="min-height:30em" flex="1" seltype="single"
                         enableColumnDrag="false">
                             <treecols id="km_cols_master_item">
+								<treecol id="master_item_id" hidden="true" ignoreincolumnpicker="true" />
 								<treecol id="master_item_name" label="&column.itemname;" sortDirection="ascending" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 								<treecol id="master_item_internal" label="&column.internal;" sortDirection="ascending" width="60" persist="width" />
@@ -62,10 +62,9 @@
                         <tree id="km_tree_master_bank" style="min-height:30em" flex="1" seltype="single"
                         enableColumnDrag="false">
                             <treecols id="km_cols_master_bank">
-								<treecol id="master_bank_name" label="&column.bankname;" sortDirection="ascending" width="60" persist="width" />
+								<treecol id="master_bank_name" label="&column.bankname;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="master_bank_userid" label="&column.userid;" sortDirection="ascending" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="master_bank_userid" label="&column.userid;" hidden="true" ignoreincolumnpicker="true" />
 								<treecol id="master_bank_username" label="&column.username;" sortDirection="ascending" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 							</treecols>
@@ -78,11 +77,13 @@
                         <tree id="km_tree_master_creditcard" style="min-height:30em" flex="1" seltype="single"
                         enableColumnDrag="false">
                             <treecols id="km_cols_master_creditcard">
-								<treecol id="master_creditcard_name" label="&column.cardname;" sortDirection="ascending" width="60" persist="width" />
+								<treecol id="master_creditcard_id" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="master_creditcard_userid" label="&column.userid;" sortDirection="ascending" width="60" persist="width" />
+								<treecol id="master_creditcard_name" label="&column.cardname;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="master_creditcard_username" label="&column.username;" sortDirection="ascending" width="60" persist="width" />
+								<treecol id="master_creditcard_userid" label="&column.userid;" hidden="true" ignoreincolumnpicker="true" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="master_creditcard_username" label="&column.username;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 							</treecols>
                             <treechildren />
@@ -107,5 +108,11 @@
                 </tabpanel>
             </tabpanels>
         </tabbox>
-    </vbox>
+		<vbox align="right">
+			<spacer flex="1"/>
+			<button id="km_button_add" accesskey="&button.add.accesskey;" label="&button.add;" />
+			<button id="km_button_update" accesskey="&button.update.accesskey;" label="&button.update;" />
+			<button id="km_button_delete" accesskey="&button.delete.accesskey;" label="&button.delete;" />
+		</vbox>
+    </hbox>
 </dialog>

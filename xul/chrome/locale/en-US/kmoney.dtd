@@ -89,6 +89,8 @@
 <!ENTITY button.update.accesskey          "U">
 <!ENTITY button.reset          "Reset">
 <!ENTITY button.reset.accesskey          "R">
+<!ENTITY button.delete          "Delete">
+<!ENTITY button.delete.accesskey          "D">
 <!ENTITY button.close          "Close">
 <!ENTITY button.close.accesskey          "C">
 

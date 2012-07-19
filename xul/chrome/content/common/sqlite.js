@@ -632,15 +632,10 @@ SQLiteHandler.prototype = {
 
   // selectQuery : execute a select query and store the results
   selectQuery: function(sQuery, bBlobAsHex) {
-    this.aTableData = new Array();
-    this.aTableType = new Array();
-    // if aColumns is not null, there is a problem in tree display
-    this.aColumns = null;        
-    var bResult = false;
- 
-    var timeStart = Date.now();
+    var stmt;
+    
     try { // mozIStorageStatement
-      var stmt = this.dbConn.createStatement(sQuery);
+      stmt = this.dbConn.createStatement(sQuery);
       //Cu.reportError("createStatement");
     }
     catch (e) {
@@ -651,6 +646,8 @@ SQLiteHandler.prototype = {
       return false;
     }
     
+    // if aColumns is not null, there is a problem in tree display
+    this.aColumns = null;        
     var iCols = 0;
     var iType, colName;
     try {
@@ -672,8 +669,12 @@ SQLiteHandler.prototype = {
       return false;
     }
 
+    this.aTableData = new Array();
+    this.aTableType = new Array();
+    var bResult = false;
     var cell;
     var bFirstRow = true;
+    var timeStart = Date.now();
     try {
       while (stmt.executeStep()) {
         aTemp = [];
@@ -743,6 +744,150 @@ SQLiteHandler.prototype = {
     return true;
   },
 
+  // selectWithParams : execute a select query with parameter binding
+  selectWithParams: function(sQuery, aParamData) {
+    var stmt;
+    //create the statement
+    try {
+      stmt = this.dbConn.createStatement(sQuery);
+      //Cu.reportError("createStatement");
+    } catch (e) {
+      var msg = this.onSqlError(e, "Create statement failed (selectWithParams): " + sQuery, this.dbConn.lastErrorString, true);
+      Cu.reportError(msg);
+      this.setErrorString();
+      return false;
+    }
+    //bind the parameters
+    try {
+      for (var i = 0; i < aParamData.length; i++) {
+        var aData = aParamData[i];
+        switch (aData[2]) {
+          case SQLiteTypes.NULL:
+            stmt.bindNullParameter(aData[0]);
+            break;
+          case SQLiteTypes.INTEGER:
+            stmt.bindInt64Parameter(aData[0], aData[1]);
+            break;
+          case SQLiteTypes.REAL:
+            stmt.bindDoubleParameter(aData[0], aData[1]);
+            break;
+          case SQLiteTypes.TEXT:
+            stmt.bindStringParameter(aData[0], aData[1]);
+            break;
+          case SQLiteTypes.BLOB:
+            if (typeof aData[1] == "string")
+              aData[1] = this.textToBlob(aData[1]);
+            stmt.bindBlobParameter(aData[0], aData[1], aData[1].length);
+            break;
+        }
+      }
+    } catch (e) {
+      stmt.finalize();
+      //Cu.reportError("finalize");
+      var msg = this.onSqlError(e, "Binding failed for parameter: " + aData[0] + ". data length = " + aData[1].length, this.dbConn.lastErrorString, true);
+      Cu.reportError(msg);
+      this.setErrorString();
+      return false;
+    }
+    
+    // if aColumns is not null, there is a problem in tree display
+    this.aColumns = null;        
+    var iCols = 0;
+    var iType, colName;
+    try {
+      // do not use stmt.columnCount in the for loop, fetches the value again and again
+      iCols = stmt.columnCount;
+      this.aColumns = new Array();
+      var aTemp, aType;
+      for (var i = 0; i < iCols; i++) {
+        colName = stmt.getColumnName(i);
+        aTemp = [colName, iType];
+        this.aColumns.push(aTemp);  
+      }
+    } catch (e) {
+      stmt.finalize();
+      //Cu.reportError("finalize");
+      var msg = this.onSqlError(e, "Error while fetching column name: " + colName, null, true);
+      Cu.reportError(msg);
+      this.setErrorString();
+      return false;
+    }
+
+    this.aTableData = new Array();
+    this.aTableType = new Array();
+    var bResult = false;
+    var cell;
+    var bFirstRow = true;
+    var timeStart = Date.now();
+    try {
+      while (stmt.executeStep()) {
+        aTemp = [];
+        aType = [];
+        for (i = 0; i < iCols; i++) {
+          iType = stmt.getTypeOfIndex(i);
+          if (bFirstRow) {
+            this.aColumns[i][1] = iType;
+          }
+          switch (iType) {
+            case stmt.VALUE_TYPE_NULL: 
+              cell = null;
+              break;
+            case stmt.VALUE_TYPE_INTEGER:
+              cell = stmt.getInt64(i);
+              break;
+            case stmt.VALUE_TYPE_FLOAT:
+              cell = stmt.getDouble(i);
+              break;
+            case stmt.VALUE_TYPE_TEXT:
+              cell = stmt.getString(i);
+              break;
+            case stmt.VALUE_TYPE_BLOB: //TODO: handle blob properly
+              if (bBlobAsHex) {
+                  var iDataSize = {value:0};
+                  var aData = {value:null};
+                  stmt.getBlob(i, iDataSize, aData);
+                  cell = SQLiteFn.blobToHex(aData.value);
+              }
+              else {
+                cell = this.mBlobPrefs.sStrForBlob;
+                if (this.mBlobPrefs.bShowSize) {
+                  var iDataSize = {value:0};
+                  var aData = {value:null};
+                  stmt.getBlob(i, iDataSize, aData);
+                  cell += " (Size: " + iDataSize.value + ")";
+                  if (iDataSize.value <= this.mBlobPrefs.iMaxSizeToShowData || this.mBlobPrefs.iMaxSizeToShowData < 0) {
+                    if (this.mBlobPrefs.iHowToShowData == 1)
+                      cell = this.convertBlobToStr(aData.value);
+                    if (this.mBlobPrefs.iHowToShowData == 0)
+                      cell = SQLiteFn.blobToHex(aData.value);
+                  }
+                }
+              }
+              break;
+            default: sData = "<unknown>"; 
+          }
+          aTemp.push(cell);
+          aType.push(iType);
+        }
+        this.aTableData.push(aTemp);
+        this.aTableType.push(aType);
+        bFirstRow = false;
+      }
+      this.miTime = Date.now() - timeStart;
+    } catch (e) {
+      stmt.finalize();
+      //Cu.reportError("finalize");
+      var msg = this.onSqlError(e, "Query: " + sQuery + " - executeStep failed", null, true);
+      Cu.reportError(msg);
+      this.setErrorString();
+      return false;
+    }
+    stmt.finalize();
+    //Cu.reportError("finalize");
+    this.setErrorString();
+    return true;
+  },
+  
   exportTable: function(sTableName, sDbName, oFormat) {
     var sQuery = "SELECT * FROM " + this.getPrefixedName(sTableName, sDbName);
     this.selectQuery(sQuery, true);

@@ -1,21 +1,17 @@
-BankTable.prototype = new TreeDataTable("km_tree_bank");
-BankTable.constructor = BankTable;
-BankTable.superclass = TreeDataTable.prototype;
-
 function BankTable() {
   this.mDb = null;
   this.mBankList = null;
+  this.mTree = new TreeViewController("km_tree_bank");
 };
 BankTable.prototype.initialize = function(db) {
   this.mDb = db;
-  
-  BankTable.superclass.init.call(this, this.load.bind(this));
+  this.mTree.init(this, this.load.bind(this));
 };
 BankTable.prototype.load = function(direction, sortColumn) {
   var orderby = "";
   if (sortColumn === undefined) {
-    if (this.mSortOrder != null) {
-      orderby = "order by " + this.mSortOrder;
+    if (this.mTree.mSortOrder != null) {
+      orderby = "order by " + this.mTree.mSortOrder;
     } else {
       orderby = "order by transaction_date"
     }
@@ -23,13 +19,13 @@ BankTable.prototype.load = function(direction, sortColumn) {
     orderby = "";
   } else {
     orderby = "order by " + sortColumn;
-    this.mSortOrder = sortColumn;
+    this.mTree.mSortOrder = sortColumn;
   }
 
   var count = this.mDb.getRowCount('km_bank_trns', '');
-  this.setRowCount(count);
+  this.mTree.setRowCount(count);
   $$('km_total').value = count;
-  this.setOffset(direction);
+  this.mTree.setOffset(direction);
   var sql = "select "
     + "A.transaction_date, "
     + "A.item_id, "
@@ -52,37 +48,37 @@ BankTable.prototype.load = function(direction, sortColumn) {
     + "inner join km_bank_info D "
     + " on A.bank_id = D.rowid "
     + orderby + " "
-    + "limit " + this.mLimit + " offset " + this.mOffset;
+    + "limit " + this.mTree.mLimit + " offset " + this.mTree.mOffset;
   this.mDb.selectQuery(sql);
   var records = this.mDb.getRecords();
   var types = this.mDb.getRecordTypes();
   var columns = this.mDb.getColumns();
-  this.PopulateBankList();
-  this.PopulateTableData(records, columns, types);
-  this.ensureRowIsVisible(12, -1);
-  this.ShowTable(true);
-  $$('km_from_value').value = this.getFromValue();
-  $$('km_to_value').value = this.getToValue();
+  this.mTree.PopulateTableData(records, columns, types);
+  this.loadBankList();
+  this.mTree.ensureRowIsVisible(12, -1);
+  this.mTree.ShowTable(true);
+  $$('km_from_value').value = this.mTree.getFromValue();
+  $$('km_to_value').value = this.mTree.getToValue();
   
 };
 BankTable.prototype.onSelect = function() {
-  $$('km_edit_transactionDate').value = this.getColumnValue(0);
-  $$('km_edit_item').value = this.getColumnValue(1);
-  $$('km_edit_detail').value = this.getColumnValue(3);
-  var amount = this.getColumnValue(4);
+  $$('km_edit_transactionDate').value = this.mTree.getColumnValue(0);
+  $$('km_edit_item').value = this.mTree.getColumnValue(1);
+  $$('km_edit_detail').value = this.mTree.getColumnValue(3);
+  var amount = this.mTree.getColumnValue(4);
   if (Number(amount) == 0) {
-    amount = this.getColumnValue(5);
+    amount = this.mTree.getColumnValue(5);
     $$('income_expense').selectedItem = $$('km_edit_expense');
   } else {
     $$('income_expense').selectedItem = $$('km_edit_income');
   }
   $$('km_edit_amount').value = amount;
-  $$('km_edit_bank').value = this.getColumnValue(6);
-  $$('km_edit_user').value = this.getColumnValue(8);
-  $$('km_edit_internal').checked = (Number(this.getColumnValue(11)) === 1);
+  $$('km_edit_bank').value = this.mTree.getColumnValue(6);
+  $$('km_edit_user').value = this.mTree.getColumnValue(8);
+  $$('km_edit_internal').checked = (Number(this.mTree.getColumnValue(11)) === 1);
 
 }
-BankTable.prototype.PopulateBankList = function() {
+BankTable.prototype.loadBankList = function() {
     this.mDb.selectQuery("select rowid, name, user_id from km_bank_info");
     this.mBankList = this.mDb.getRecords();
 
@@ -158,7 +154,7 @@ BankTable.prototype.updateRecord = function() {
   } else {
     internalValue = 0;
   }
-  var rowid = this.getColumnValue(12);
+  var rowid = this.mTree.getColumnValue(12);
   var sql = ["update km_bank_trns "
     + "set "
     + "transaction_date = " + "'" + $$('km_edit_transactionDate').value + "', "
@@ -174,7 +170,7 @@ BankTable.prototype.updateRecord = function() {
     + "where rowid = " + rowid];
   this.mDb.executeTransaction(sql);
   this.load();
-  this.ensureRowIsVisible(12, rowid);
+  this.mTree.ensureRowIsVisible(12, rowid);
 };
 
 BankTable.prototype.deleteRecord = function() {

@@ -87,6 +87,8 @@
 <!ENTITY button.add.accesskey          "A">
 <!ENTITY button.update          "更新">
 <!ENTITY button.update.accesskey          "U">
+<!ENTITY button.delete          "削除">
+<!ENTITY button.delete.accesskey          "D">
 <!ENTITY button.reset          "リセット">
 <!ENTITY button.reset.accesskey          "R">
 <!ENTITY button.close          "閉じる">

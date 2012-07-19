@@ -1,21 +1,18 @@
-CashTable.prototype = new TreeDataTable("km_tree_cash");
-CashTable.constructor = CashTable;
-CashTable.superclass = TreeDataTable.prototype;
-
 function CashTable() {
   this.mDb = null;
+  this.mTree = new TreeViewController("km_tree_cash");
 };
 
 CashTable.prototype.initialize = function(db) {
   this.mDb = db;
 
-  CashTable.superclass.init.call(this, this.load.bind(this));
+  this.mTree.init(this, this.load.bind(this));
 };
 CashTable.prototype.load = function(direction, sortColumn) {
   var orderby = "";
   if (sortColumn === undefined) {
-    if (this.mSortOrder != null) {
-      orderby = "order by " + this.mSortOrder;
+    if (this.mTree.mSortOrder != null) {
+      orderby = "order by " + this.mTree.mSortOrder;
     } else {
       orderby = "order by transaction_date"
     }
@@ -23,13 +20,13 @@ CashTable.prototype.load = function(direction, sortColumn) {
     orderby = "";
   } else {
     orderby = "order by " + sortColumn;
-    this.mSortOrder = sortColumn;
+    this.mTree.mSortOrder = sortColumn;
   }
   
   var count = this.mDb.getRowCount('km_realmoney_trns', '');
-  this.setRowCount(count);
+  this.mTree.setRowCount(count);
   $$('km_total').value = count;
-  this.setOffset(direction);
+  this.mTree.setOffset(direction);
   var sql = "select "
     + "A.transaction_date, "
     + "A.item_id, "
@@ -47,34 +44,34 @@ CashTable.prototype.load = function(direction, sortColumn) {
     + "inner join km_user C "
     + " on A.user_id = C.id "
     + orderby + " "
-    + "limit " + this.mLimit + " offset " + this.mOffset;
+    + "limit " + this.mTree.mLimit + " offset " + this.mTree.mOffset;
   km_log(sql);
   this.mDb.selectQuery(sql);
   var records = this.mDb.getRecords();
   var types = this.mDb.getRecordTypes();
   var columns = this.mDb.getColumns();
   
-  this.PopulateTableData(records, columns, types);
-  this.ensureRowIsVisible(9, -1);
-  this.ShowTable(true);
+  this.mTree.PopulateTableData(records, columns, types);
+  this.mTree.ensureRowIsVisible(9, -1);
+  this.mTree.ShowTable(true);
     
   $$('km_from_value').value = this.getFromValue();
   $$('km_to_value').value = this.getToValue();
 };
 CashTable.prototype.onSelect = function() {
-  $$('km_edit_transactionDate').value = this.getColumnValue(0);
-  $$('km_edit_item').value = this.getColumnValue(1);
-  $$('km_edit_detail').value = this.getColumnValue(3);
-  var amount = this.getColumnValue(4);
+  $$('km_edit_transactionDate').value = this.mTree.getColumnValue(0);
+  $$('km_edit_item').value = this.mTree.getColumnValue(1);
+  $$('km_edit_detail').value = this.mTree.getColumnValue(3);
+  var amount = this.mTree.getColumnValue(4);
   if (Number(amount) === 0) {
-    amount = this.getColumnValue(5);
+    amount = this.mTree.getColumnValue(5);
     $$('income_expense').selectedItem = $$('km_edit_expense');
   } else {
     $$('income_expense').selectedItem = $$('km_edit_income');
   }
   $$('km_edit_amount').value = amount;
-  $$('km_edit_user').value = this.getColumnValue(6);
-  $$('km_edit_internal').checked = (Number(this.getColumnValue(8)) === 1);
+  $$('km_edit_user').value = this.mTree.getColumnValue(6);
+  $$('km_edit_internal').checked = (Number(this.mTree.getColumnValue(8)) === 1);
 };
 CashTable.prototype.addRecord = function() {
   var incomeValue;
@@ -134,7 +131,7 @@ CashTable.prototype.updateRecord = function() {
     internalValue = 0;
   }
 
-  var rowid = this.getColumnValue(9);
+  var rowid = this.mTree.getColumnValue(9);
   var sql = ["update km_realmoney_trns "
     + "set "
     + "transaction_date = " + "'" + $$('km_edit_transactionDate').value + "', "
@@ -150,11 +147,11 @@ CashTable.prototype.updateRecord = function() {
   km_log(sql);
   this.mDb.executeTransaction(sql);
   this.load();
-  this.ensureRowIsVisible(9, rowid);
+  this.mTree.ensureRowIsVisible(9, rowid);
 };
 
 CashTable.prototype.deleteRecord = function() {
-  var rowid = this.getColumnValue(9);
+  var rowid = this.mTree.getColumnValue(9);
   if (rowid === "") {
     return;
   }

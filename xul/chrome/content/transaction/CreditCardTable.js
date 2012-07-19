@@ -1,34 +1,31 @@
-CreditCardTable.prototype = new TreeDataTable("km_tree_creditcard");
-CreditCardTable.constructor = CreditCardTable;
-CreditCardTable.superclass = TreeDataTable.prototype;
-
 function CreditCardTable() {
   this.mDb = null;
   this.mCardList = null;
+  this.mTree = new TreeViewController("km_tree_creditcard");
 };
 CreditCardTable.prototype.initialize = function(db) {
   this.mDb = db;
-  CreditCardTable.superclass.init.call(this, this.load.bind(this));
+  this.mTree.init(this, this.load.bind(this));
 };
 CreditCardTable.prototype.load = function(direction, sortColumn) {
   var orderby = "";
   if (sortColumn === undefined) {
-    if (this.mSortOrder != null) {
-      orderby = "order by " + this.mSortOrder;
+    if (this.mTree.mSortOrder != null) {
+      orderby = "order by " + this.mTree.mSortOrder;
     } else {
-      orderby = "order by transaction_date"
+      orderby = "order by transaction_date";
     }
   } else if (sortColumn === "") {
     orderby = "";
   } else {
     orderby = "order by " + sortColumn;
-    this.mSortOrder = sortColumn;
+    this.mTree.mSortOrder = sortColumn;
   }
 
   var count = this.mDb.getRowCount('km_creditcard_trns', '');
-  this.setRowCount(count);
+  this.mTree.setRowCount(count);
   $$('km_total').value = count;
-  this.setOffset(direction);
+  this.mTree.setOffset(direction);
   var sql = "select "
     + "A.transaction_date, "
     + "A.item_id, "
@@ -48,29 +45,29 @@ CreditCardTable.prototype.load = function(direction, sortColumn) {
     + "inner join km_creditcard_info D "
     + " on A.card_id = D.rowid "
     + orderby + " "
-    + "limit " + this.mLimit + " offset " + this.mOffset;
+    + "limit " + this.mTree.mLimit + " offset " + this.mTree.mOffset;
   this.mDb.selectQuery(sql);
   var records = this.mDb.getRecords();
   var types = this.mDb.getRecordTypes();
   var columns = this.mDb.getColumns();
-  this.PopulateCardList();
-  this.PopulateTableData(records, columns, types);
-  this.ensureRowIsVisible(9, -1);
-  this.ShowTable(true);
+  this.loadCardList();
+  this.mTree.PopulateTableData(records, columns, types);
+  this.mTree.ensureRowIsVisible(9, -1);
+  this.mTree.ShowTable(true);
   
-  $$('km_from_value').value = this.getFromValue();
-  $$('km_to_value').value = this.getToValue();
+  $$('km_from_value').value = this.mTree.getFromValue();
+  $$('km_to_value').value = this.mTree.getToValue();
 };
 CreditCardTable.prototype.onSelect = function() {
-  $$('km_edit_transactionDate').value = this.getColumnValue(0);
-  $$('km_edit_item').value = this.getColumnValue(1);
-  $$('km_edit_detail').value = this.getColumnValue(3);
-  $$('km_edit_amount').value = this.getColumnValue(4);
+  $$('km_edit_transactionDate').value = this.mTree.getColumnValue(0);
+  $$('km_edit_item').value = this.mTree.getColumnValue(1);
+  $$('km_edit_detail').value = this.mTree.getColumnValue(3);
+  $$('km_edit_amount').value = this.mTree.getColumnValue(4);
   $$('income_expense').selectedItem = $$('km_edit_expense');
-  $$('km_edit_user').value = this.getColumnValue(7);
-  $$('km_edit_creditcard').value = this.getColumnValue(5);
+  $$('km_edit_user').value = this.mTree.getColumnValue(7);
+  $$('km_edit_creditcard').value = this.mTree.getColumnValue(5);
 };
-CreditCardTable.prototype.PopulateCardList = function() {
+CreditCardTable.prototype.loadCardList = function() {
     
     this.mDb.selectQuery("select rowid, name, user_id from km_creditcard_info");
     this.mCardList = this.mDb.getRecords();
@@ -114,7 +111,7 @@ CreditCardTable.prototype.addRecord = function() {
   this.load();
 };
 CreditCardTable.prototype.updateRecord = function() {
-  var rowid = this.getColumnValue(9);
+  var rowid = this.mTree.getColumnValue(9);
   var sql = ["update km_creditcard_trns "
     + "set "
     + "transaction_date = " + "'" + $$('km_edit_transactionDate').value + "', "
@@ -129,11 +126,11 @@ CreditCardTable.prototype.updateRecord = function() {
   km_log(sql);
   this.mDb.executeTransaction(sql);
   this.load();
-  this.ensureRowIsVisible(9, rowid);
+  this.mTree.ensureRowIsVisible(9, rowid);
 };
 
 CreditCardTable.prototype.deleteRecord = function() {
-  var rowid = this.getColumnValue(9);
+  var rowid = this.mTree.getColumnValue(9);
   if (rowid === "") {
     return;
   }

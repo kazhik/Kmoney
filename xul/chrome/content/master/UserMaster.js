@@ -12,6 +12,8 @@ UserMaster.prototype.initialize = function(db) {
   this.mDb = db;
   
   UserMaster.superclass.init.call(this, this.load.bind(this));
+  
+  this.load();
 };
 UserMaster.prototype.load = function() {
   this.mDb.selectQuery("select id, name from km_user");
