@@ -1,17 +1,14 @@
 "use strict";
 
-CardMaster.prototype = new TreeDataTable("km_tree_master_creditcard");
-CardMaster.constructor = CardMaster;
-CardMaster.superclass = TreeDataTable.prototype;
-
 function CardMaster() {
   this.mDb = null;
+  this.mTree = new TreeViewController("km_tree_master_creditcard");
 };
 CardMaster.prototype.initialize = function(db) {
   this.mDb = db;
   
-  CardMaster.superclass.init.call(this, this.load.bind(this));
-  
+  this.mTree.init(this, this.load.bind(this));
+
   this.load();
 };
 CardMaster.prototype.load = function() {
@@ -23,8 +20,8 @@ CardMaster.prototype.load = function() {
   var types = this.mDb.getRecordTypes();
   var columns = this.mDb.getColumns();
 
-  this.PopulateTableData(records, columns, types);
-  this.ShowTable(true);
+  this.mTree.PopulateTableData(records, columns, types);
+  this.mTree.ShowTable(true);
   
 };
 

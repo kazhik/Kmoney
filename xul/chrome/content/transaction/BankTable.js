@@ -5,7 +5,7 @@ function BankTable() {
 };
 BankTable.prototype.initialize = function(db) {
   this.mDb = db;
-  this.mTree.init(this, this.load.bind(this));
+  this.mTree.init(this.load.bind(this));
 };
 BankTable.prototype.load = function(direction, sortColumn) {
   var orderby = "";

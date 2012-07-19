@@ -1,15 +1,14 @@
-ItemMaster.prototype = new TreeDataTable("km_tree_master_item");
-ItemMaster.constructor = ItemMaster;
-ItemMaster.superclass = TreeDataTable.prototype;
+"use strict";
 
 function ItemMaster() {
   this.mDb = null;
+  this.mTree = new TreeViewController("km_tree_master_item");
   this.mItemList = null;
 };
 ItemMaster.prototype.initialize = function(db) {
   this.mDb = db;
   
-  ItemMaster.superclass.init.call(this, this.load.bind(this));
+  this.mTree.init(this, this.load.bind(this));
   
   this.load();
 };
@@ -21,8 +20,8 @@ ItemMaster.prototype.load = function() {
 
   this.mItemList = this.mDb.getRecords();
 
-  this.PopulateTableData(records, columns, types);
-  this.ShowTable(true);
+  this.mTree.PopulateTableData(records, columns, types);
+  this.mTree.ShowTable(true);
   
 };
 

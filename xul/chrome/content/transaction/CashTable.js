@@ -6,7 +6,7 @@ function CashTable() {
 CashTable.prototype.initialize = function(db) {
   this.mDb = db;
 
-  this.mTree.init(this, this.load.bind(this));
+  this.mTree.init(this.load.bind(this));
 };
 CashTable.prototype.load = function(direction, sortColumn) {
   var orderby = "";
@@ -55,8 +55,8 @@ CashTable.prototype.load = function(direction, sortColumn) {
   this.mTree.ensureRowIsVisible(9, -1);
   this.mTree.ShowTable(true);
     
-  $$('km_from_value').value = this.getFromValue();
-  $$('km_to_value').value = this.getToValue();
+  $$('km_from_value').value = this.mTree.getFromValue();
+  $$('km_to_value').value = this.mTree.getToValue();
 };
 CashTable.prototype.onSelect = function() {
   $$('km_edit_transactionDate').value = this.mTree.getColumnValue(0);
