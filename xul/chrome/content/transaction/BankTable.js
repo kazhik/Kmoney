@@ -62,6 +62,7 @@ BankTable.prototype.load = function(direction, sortColumn) {
   
 };
 BankTable.prototype.onSelect = function() {
+//  $$('km_edit_transactionDate').value = this.mTree.getSelectedRowValue('transaction_date');
   $$('km_edit_transactionDate').value = this.mTree.getColumnValue(0);
   $$('km_edit_item').value = this.mTree.getColumnValue(1);
   $$('km_edit_detail').value = this.mTree.getColumnValue(3);
@@ -174,7 +175,7 @@ BankTable.prototype.updateRecord = function() {
 };
 
 BankTable.prototype.deleteRecord = function() {
-  var rowid = this.getColumnValue(12);
+  var rowid = this.mTree.getColumnValue(12);
   if (rowid === "") {
     return;
   }

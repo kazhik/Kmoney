@@ -77,6 +77,7 @@
 <!ENTITY edit.creditcard          "クレジットカード">
 <!ENTITY edit.emoney          "電子マネー">
 <!ENTITY edit.period          "期間">
+<!ENTITY edit.name          "名前">
 
 <!-- confirm dialog -->
 <!ENTITY confirm.button.accept  "はい">

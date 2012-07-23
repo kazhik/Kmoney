@@ -1,10 +1,8 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://kmoney/locale/kmoney.dtd">
-<dialog id="km_masterdata" title="&window.title; - &dialog.masterData;"
+<window id="km_masterdata" title="&window.title; - &dialog.masterData;"
 	persist="screenX screenY width height sizemode" orient="vertical"
 	onload="openMasterDataDialog()"
-	buttons="cancel"
-	buttonlabelcancel="&button.close;"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml">
     
@@ -14,8 +12,8 @@
     <script type="application/x-javascript" src="ItemMaster.js" />
     <script type="application/x-javascript" src="CardMaster.js" />
     <script type="application/x-javascript" src="MasterData.js" />
-   <hbox>
-        <tabbox id="km_tabbox" handleCtrlPageUpDown="true">
+   <vbox>
+        <tabbox id="km_master_tabbox" handleCtrlPageUpDown="true">
             <tabs id="km_tabs">
                 <tab id="km_tab_master_user" label="&tab.user;" persist="selected" />
                 <tab id="km_tab_master_item" label="&tab.item;" persist="selected" />
@@ -108,11 +106,22 @@
                 </tabpanel>
             </tabpanels>
         </tabbox>
-		<vbox align="right">
-			<spacer flex="1"/>
-			<button id="km_button_add" accesskey="&button.add.accesskey;" label="&button.add;" />
-			<button id="km_button_update" accesskey="&button.update.accesskey;" label="&button.update;" />
-			<button id="km_button_delete" accesskey="&button.delete.accesskey;" label="&button.delete;" />
+		<vbox>
+			<hbox align="center">
+				<label control="km_edit_name" value="&edit.name;" />
+				<textbox id="km_edit_name" size="7" />
+				<checkbox id="km_edit_internal" label="&edit.internal;" />
+			</hbox>
+			<hbox align="center">
+				<button id="km_button_master_add" accesskey="&button.add.accesskey;"
+						label="&button.add;" />
+				<button id="km_button_master_update" accesskey="&button.update.accesskey;"
+						label="&button.update;" />
+				<button id="km_button_master_delete" accesskey="&button.delete.accesskey;"
+						label="&button.delete;" />
+				<button id="km_button_master_close" accesskey="&button.close.accesskey;"
+						label="&button.close;" />
+			</hbox>
 		</vbox>
-    </hbox>
-</dialog>
+    </vbox>
+</window>

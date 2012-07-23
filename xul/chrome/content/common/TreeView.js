@@ -195,12 +195,12 @@ TreeViewController.prototype = {
     this.treeView.init(aTableData, aColumns, aTypes);
     
   },
-  ensureRowIsVisible: function(columnIdx, rowId) {
+  ensureRowIsVisible: function(rowIdColIdx, rowId) {
     var idxRow;
     if (rowId === -1) {
       this.treeTable.boxObject.ensureRowIsVisible(this.treeTable.view.rowCount - 1);
     } else {
-      var col = this.treeTable.columns.getColumnAt(columnIdx);
+      var col = this.treeTable.columns.getColumnAt(rowIdColIdx);
       for (var i = 0; i < this.treeTable.view.rowCount; i++) {
         var val = this.treeTable.view.getCellText(i, col)
         if (val === rowId) {
@@ -249,6 +249,11 @@ TreeViewController.prototype = {
   },
   getColumnValue: function(columnIdx) {
     var col = this.treeTable.columns.getColumnAt(columnIdx);
+    return this.treeTable.view.getCellText(this.treeTable.currentIndex, col);
+    
+  },
+  getSelectedRowValue: function(columnName) {
+    var col = this.treeTable.columns.getNamedColumn(columnName);
     return this.treeTable.view.getCellText(this.treeTable.currentIndex, col);
     
   }

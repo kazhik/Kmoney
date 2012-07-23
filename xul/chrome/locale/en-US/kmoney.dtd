@@ -77,6 +77,7 @@
 <!ENTITY edit.creditcard          "CreditCard">
 <!ENTITY edit.emoney          "E-Money">
 <!ENTITY edit.period          "Period">
+<!ENTITY edit.name          "Name">
 
 <!-- confirm dialog -->
 <!ENTITY confirm.button.accept  "Yes">
