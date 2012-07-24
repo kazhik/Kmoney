@@ -27,6 +27,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
         <command id="kmc-import" />
         <command id="kmc-delete" />
         <command id="kmc-setmaster" />
+        <command id="kmc-setprefs" />
     </commandset>
     <popupset>
         <menupopup id="mp-editTableRow">
@@ -62,6 +63,9 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                         <menuitem label="&menu.setting.master;"
 								accesskey="&menu.setting.master.accesskey;"
 								command="kmc-setmaster" />
+                        <menuitem label="&menu.setting.prefs;"
+								accesskey="&menu.setting.prefs.accesskey;"
+								command="kmc-setprefs" />
 					</menupopup>
                 </menu>
                 <menu id="km_menu_help" label="&menu.help;" accesskey="&menu.help.accesskey;">

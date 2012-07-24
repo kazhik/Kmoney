@@ -30,6 +30,8 @@
 <!ENTITY menu.setting.accesskey          "S">
 <!ENTITY menu.setting.master          "Master data">
 <!ENTITY menu.setting.master.accesskey          "M">
+<!ENTITY menu.setting.prefs          "Preferences">
+<!ENTITY menu.setting.prefs.accesskey          "N">
 
 <!ENTITY menu.help          "Help">
 <!ENTITY menu.help.accesskey          "S">

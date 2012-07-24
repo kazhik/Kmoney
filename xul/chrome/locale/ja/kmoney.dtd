@@ -30,6 +30,8 @@
 <!ENTITY menu.setting.accesskey          "S">
 <!ENTITY menu.setting.master          "マスターデータ">
 <!ENTITY menu.setting.master.accesskey          "M">
+<!ENTITY menu.setting.prefs          "オプション">
+<!ENTITY menu.setting.prefs.accesskey          "N">
 
 <!ENTITY menu.help          "ヘルプ">
 <!ENTITY menu.help.accesskey          "S">

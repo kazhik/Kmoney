@@ -109,6 +109,8 @@ Kmoney.prototype.addEventListeners = function () {
     this.listeners['kmc-setmaster.command'] = this.openSetMaster.bind(this);
     $$('kmc-setmaster').addEventListener("command", this.listeners['kmc-setmaster.command']);
 
+    this.listeners['kmc-setprefs.command'] = this.openSetPrefs.bind(this);
+    $$('kmc-setprefs').addEventListener("command", this.listeners['kmc-setprefs.command']);
 
 };
 
@@ -132,6 +134,7 @@ Kmoney.prototype.removeEventListeners = function () {
     $$('km_edit_user').removeEventListener("select", this.listeners['km_edit_user.select']);
 
     $$('kmc-setmaster').removeEventListener("command", this.listeners['kmc-setmaster.command']);
+    $$('kmc-setprefs').removeEventListener("command", this.listeners['kmc-setprefs.command']);
 };
 Kmoney.prototype.jump = function (direction) {
     var tree = this.getSelectedTree();
@@ -147,6 +150,10 @@ Kmoney.prototype.openSetMaster = function () {
     window.openDialog("chrome://kmoney/content/master/MasterData.xul", "MasterData",
         "chrome, resizable, centerscreen, modal, dialog", this.mDb);
 
+};
+Kmoney.prototype.openSetPrefs = function () {
+    var features = "chrome,titlebar,toolbar,centerscreen,modal";
+    openDialog(KmGlobals.chromes.preferences, 'preferences', features);
 };
 
 Kmoney.prototype.onCashSelect = function () {

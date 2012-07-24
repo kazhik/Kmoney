@@ -17,3 +17,4 @@ pref("extensions.kmoney.displayNumRecords", 100);
 //stores JSON object for MRU
 pref("extensions.kmoney.jsonMruData", '{"meta":{"version":"1"},"size":10,"list":[]}');
 
+pref("toolkit.defaultChromeURI", "chrome://kmoney/content/kmoney.xul");
