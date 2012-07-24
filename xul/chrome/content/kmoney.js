@@ -13,7 +13,6 @@ function Kmoney() {
     this.creditcardTree = null;
     this.bankTree = null;
     this.emoneyTree = null;
-    this.masterData = null;
     this.maFileExt = [];
     this.listeners = [];
     this.summary = null;
