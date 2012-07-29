@@ -245,26 +245,19 @@ Kmoney.prototype.openDatabaseFile = function (dbFile) {
     return false;
 };
 Kmoney.prototype.importFile = function () {
-    const nsIFilePicker = Ci.nsIFilePicker;
-    var fp = Cc["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
-    fp.init(window, km_getLStr("import.title"), nsIFilePicker.modeOpen);
+    var retVals = { file: null, importtype: null };
     
-    fp.appendFilter(km_getLStr("import.suica") + " (*.html)", "*.html");
-    fp.appendFilter(km_getLStr("import.saison") + " (*.csv)", "*.csv");
-    fp.appendFilter(km_getLStr("import.uc") + " (*.csv)", "*.csv");
-    fp.appendFilter(km_getLStr("import.kantan") + " (*.db)", "*.db");
-
-    var rv = fp.show();
-    if (rv == nsIFilePicker.returnOK || rv == nsIFilePicker.returnReplace) {
-        if (fp.filterIndex === 3) {
-            var kantanDb = new KantanKakeibo();
-            kantanDb.importDb(fp.file, this.cashTree);
-        }
+    window.openDialog("chrome://kmoney/content/import/ImportDialog.xul", "ImportDialog",
+        "chrome, resizable, centerscreen, modal, dialog", retVals);
+    
+    if (retVals['importtype'] != null) {
+        alert(retVals['importtype']);
     }
     return true;
 };
 Kmoney.prototype.newDatabase = function () {
-    alert("new database");
+    // FilePickerでファイルを指定
+    // 全テーブルを作成
 };
 Kmoney.prototype.closeDatabase = function (bAlert) {
     //nothing to close if no database is already open

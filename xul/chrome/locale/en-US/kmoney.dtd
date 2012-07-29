@@ -1,5 +1,6 @@
 <!ENTITY window.title     "Kmoney">
 <!ENTITY dialog.masterData     "Master Data">
+<!ENTITY dialog.import     "Import">
 
 <!-- menu -->
 <!ENTITY menu.file			"File">
@@ -80,6 +81,7 @@
 <!ENTITY edit.emoney          "E-Money">
 <!ENTITY edit.period          "Period">
 <!ENTITY edit.name          "Name">
+<!ENTITY edit.importfrom          "Source">
 
 <!-- confirm dialog -->
 <!ENTITY confirm.button.accept  "Yes">
@@ -96,6 +98,12 @@
 <!ENTITY button.delete.accesskey          "D">
 <!ENTITY button.close          "Close">
 <!ENTITY button.close.accesskey          "C">
+<!ENTITY button.selectfile          "Select File">
+<!ENTITY button.selectfile.accesskey          "S">
+
+<!ENTITY select.importtype          "Import Type">
+<!ENTITY select.importtype.accesskey          "T">
+
 
 <!ENTITY first "First">
 <!ENTITY previous "Previous">
