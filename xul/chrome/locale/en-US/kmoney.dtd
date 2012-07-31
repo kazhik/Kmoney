@@ -48,6 +48,7 @@
 <!ENTITY tab.bank          "Bank">
 <!ENTITY tab.creditcard          "CreditCard">
 <!ENTITY tab.emoney          "E-Money">
+<!ENTITY tab.all          "All">
 
 <!ENTITY tab.user          "User">
 <!ENTITY tab.item          "Item">
@@ -66,6 +67,7 @@
 <!ENTITY column.username          "UserName">
 <!ENTITY column.itemname          "ItemName">
 <!ENTITY column.internal          "Internal">
+<!ENTITY column.type          "Type">
 
 <!-- edit -->
 <!ENTITY edit.date          "Date">

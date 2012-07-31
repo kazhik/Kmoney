@@ -48,6 +48,7 @@
 <!ENTITY tab.bank          "銀行口座">
 <!ENTITY tab.creditcard          "クレジットカード">
 <!ENTITY tab.emoney          "電子マネー">
+<!ENTITY tab.all          "全て">
 
 <!ENTITY tab.user          "ユーザー">
 <!ENTITY tab.item          "費目">
@@ -66,6 +67,7 @@
 <!ENTITY column.username          "ユーザ名">
 <!ENTITY column.itemname          "費目名">
 <!ENTITY column.internal          "内部">
+<!ENTITY column.type          "種別">
 
 <!-- edit -->
 <!ENTITY edit.date          "日付">

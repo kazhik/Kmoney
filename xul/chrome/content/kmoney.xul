@@ -10,6 +10,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 	
     <script type="application/x-javascript" src="globals.js" />
 
+    <script type="application/x-javascript" src="transaction/AllView.js" />
     <script type="application/x-javascript" src="transaction/CashTable.js" />
     <script type="application/x-javascript" src="transaction/BankTable.js" />
     <script type="application/x-javascript" src="transaction/CreditCardTable.js" />
@@ -80,6 +81,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
         <tabbox id="km_tabbox" handleCtrlPageUpDown="true">
             <tabs id="km_tabs">
                 <tab id="km_tab_summary" label="&tab.summary;" persist="selected" />
+                <tab id="km_tab_all" label="&tab.all;" persist="selected" />
                 <tab id="km_tab_cash" label="&tab.cash;" persist="selected" />
                 <tab id="km_tab_bank" label="&tab.bank;" persist="selected" />
                 <tab id="km_tab_creditcard" label="&tab.creditcard;" persist="selected" />
@@ -92,10 +94,34 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 </tabpanel>
                 <tabpanel flex="1">
                     <vbox flex="1">
+                        <tree id="km_tree_all" style="min-height:30em" flex="1" seltype="single"
+                        enableColumnDrag="false">
+                            <treecols id="km_cols_all">
+								<treecol id="0" label="&column.date;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="1" label="&column.item;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="2" label="&column.detail;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="3" label="&column.income;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="4" label="&column.expense;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="5" label="&column.type;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="6" label="rowid" width="60" hidden="true" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+							</treecols>
+                            <treechildren />
+                        </tree>
+                    </vbox>
+                </tabpanel>
+                <tabpanel flex="1">
+                    <vbox flex="1">
                         <tree id="km_tree_cash" style="min-height:30em" flex="1" seltype="single"
                         enableColumnDrag="false">
                             <treecols id="km_cols_cash">
-								<treecol id="jojoj" label="&column.date;" sortDirection="ascending" width="60" persist="width" />
+								<treecol id="0" label="&column.date;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 								<treecol id="1" label="item_id" width="60" hidden="true" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  

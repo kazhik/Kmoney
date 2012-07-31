@@ -13,6 +13,7 @@ function Kmoney() {
     this.creditcardTree = null;
     this.bankTree = null;
     this.emoneyTree = null;
+    this.allView = null;
     this.maFileExt = [];
     this.listeners = [];
     this.summary = null;
@@ -35,12 +36,14 @@ Kmoney.prototype.Startup = function () {
     this.emoneyTree = new EMoneyTable();
     this.bankTree = new BankTable();
     this.summary = new SummaryView();
+    this.allView = new AllView();
 
     this.cashTree.initialize(this.mDb);
     this.creditcardTree.initialize(this.mDb);
     this.emoneyTree.initialize(this.mDb);
     this.bankTree.initialize(this.mDb);
     this.summary.initialize(this.mDb);
+    this.allView.initialize(this.mDb);
 
     this.addEventListeners();
     var bOpenLastDb = true;
@@ -214,6 +217,17 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_summary_viewchanger').hidden = true;
         $$('km_navigate').hidden = false;
         break;
+    case 'km_tab_all':
+        this.allView.load('last');
+        $$('bankbox').hidden = true;
+        $$('creditcardbox').hidden = true;
+        $$('emoneybox').hidden = true;
+        $$('km_edit1').hidden = true;
+        $$('km_edit2').hidden = true;
+        $$('km_edit_buttons').hidden = true;
+        $$('km_summary_viewchanger').hidden = true;
+        $$('km_navigate').hidden = false;
+        break;
     case 'km_tab_summary':
         this.summary.drawGraph();
         $$('km_edit1').hidden = true;
@@ -256,8 +270,15 @@ Kmoney.prototype.importFile = function () {
     return true;
 };
 Kmoney.prototype.newDatabase = function () {
-    // FilePickerでファイルを指定
-    // 全テーブルを作成
+    const nsIFilePicker = Ci.nsIFilePicker;
+    var fp = Cc["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
+    fp.init(window, km_getLStr("newdatabase.title"), nsIFilePicker.modeSave);
+    fp.defaultString = "Kmoney.sqlite";
+
+    var rv = fp.show();
+    if (rv == nsIFilePicker.returnOK || rv == nsIFilePicker.returnReplace) {
+        //TODO: 全テーブルを作成
+    }
 };
 Kmoney.prototype.closeDatabase = function (bAlert) {
     //nothing to close if no database is already open
@@ -421,6 +442,9 @@ Kmoney.prototype.getSelectedTree = function () {
         break;
     case 'km_tab_summary':
         tab = this.summary;
+        break;
+    case 'km_tab_all':
+        tab = this.allView;
         break;
     }
     return tab;
