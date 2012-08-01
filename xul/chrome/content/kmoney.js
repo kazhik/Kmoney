@@ -415,7 +415,7 @@ Kmoney.prototype.deleteRecord = function () {
     if (typeof tree.deleteRecord != 'function') {
         return;
     }
-    if (tree.treeTable.currentIndex === -1) {
+    if (tree.mTree.treeTable.currentIndex === -1) {
       km_alert(km_getLStr("error.title"), km_getLStr("error.notSelected"));
       return;
     }

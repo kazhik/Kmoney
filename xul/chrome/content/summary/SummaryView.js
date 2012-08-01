@@ -75,7 +75,7 @@ SummaryView.prototype.drawGraph = function() {
     var dateStr = this.getDateYYYYMM(labelDate);
     labelArray.push(dateStr);
     
-    if (records[idx][0] === dateStr) {
+    if (records[idx] != undefined && records[idx][0] === dateStr) {
       valueArray.push(records[idx][1]);
       idx++;
     } else {
