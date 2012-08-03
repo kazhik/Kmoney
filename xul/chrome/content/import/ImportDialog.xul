@@ -19,6 +19,10 @@
         <menulist id="km_select_importtype">
             <menupopup></menupopup>
         </menulist>
+        <label control="km_select_user" value="&edit.user;" />
+        <menulist id="km_select_user">
+            <menupopup></menupopup>
+        </menulist>
     </hbox>
     <hbox align="center">
         <label control="km_edit_importfrom" value="&edit.importfrom;" />

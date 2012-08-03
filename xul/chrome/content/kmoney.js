@@ -262,7 +262,7 @@ Kmoney.prototype.importFile = function () {
     var retVals = { file: null, importtype: null };
     
     window.openDialog("chrome://kmoney/content/import/ImportDialog.xul", "ImportDialog",
-        "chrome, resizable, centerscreen, modal, dialog", retVals);
+        "chrome, resizable, centerscreen, modal, dialog", this.mDb, retVals);
     
     if (retVals['importtype'] != null) {
         alert(retVals['importtype']);
@@ -277,8 +277,19 @@ Kmoney.prototype.newDatabase = function () {
 
     var rv = fp.show();
     if (rv == nsIFilePicker.returnOK || rv == nsIFilePicker.returnReplace) {
-        //TODO: 全テーブルを作成
+        try {
+            this.mDb.openDatabase(fp.file, true);
+        } catch (e) {
+            Components.utils.reportError('in function newDatabase - ' + e);
+            km_message("Connect to '" + fp.file.path + "' failed: " + e, 0x3);
+            return false;
+        }
+        KmGlobals.mru.add(this.mDb.getFile().path);
+
+        var initDatabase = new InitDB();
+        initDatabase.execute(this.mDb);
     }
+    return true;
 };
 Kmoney.prototype.closeDatabase = function (bAlert) {
     //nothing to close if no database is already open
@@ -304,8 +315,10 @@ Kmoney.prototype.openDatabase = function () {
     const nsIFilePicker = Ci.nsIFilePicker;
     var fp = Cc["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
     fp.init(window, km_getLStr("selectDb"), nsIFilePicker.modeOpen);
-    var sExt = km_prefsBranch.getCharPref("sqliteFileExtensions");
-    this.maFileExt = sExt.split(",");
+    
+    this.maFileExt = km_prefsBranch.getCharPref("sqliteFileExtensions").split(",");
+    
+    var sExt = "";
     for (var iCnt = 0; iCnt < this.maFileExt.length; iCnt++) {
         sExt += "*." + this.maFileExt[iCnt] + ";";
     }
@@ -314,6 +327,7 @@ Kmoney.prototype.openDatabase = function () {
 
     var rv = fp.show();
     if (rv == nsIFilePicker.returnOK || rv == nsIFilePicker.returnReplace) {
+//          bConnected = this.mDb.openDatabase(nsiFileObj, bSharedPagerCache);
         this.openDatabaseFile(fp.file);
     }
     return true;

@@ -5,34 +5,37 @@ var importDialog;
 var retVals = { file: null, importtype: null };
 
 function ImportDialog() {
+    this.mDb = null;
+    this.importTypeList = {};
+
+    this.importTypeList["bank"] =
+        {"label": km_getLStr("import.bank"), "ext": "*.csv"};
+    this.importTypeList["mizuho"] =
+        {"label": km_getLStr("import.mizuho"), "ext": "*.ofx"};
+    this.importTypeList["shinsei"] =
+        {"label": km_getLStr("import.shinsei"), "ext": "*.csv"};
+    this.importTypeList["creditcard"] =
+        {"label": km_getLStr("import.creditcard"), "ext": "*.csv"};
+    this.importTypeList["saison"] =
+        {"label": km_getLStr("import.saison"), "ext": "*.csv"};
+    this.importTypeList["uc"] =
+        {"label": km_getLStr("import.uc"), "ext": "*.csv"};
+    this.importTypeList["view"] =
+        {"label": km_getLStr("import.view"), "ext": "*.html"};
+    this.importTypeList["emoney"] =
+        {"label": km_getLStr("import.emoney"), "ext": "*.csv"};
+    this.importTypeList["suica"] =
+        {"label": km_getLStr("import.suica"), "ext": "*.html"};
+    this.importTypeList["kantan"] =
+        {"label": km_getLStr("import.kantan"), "ext": "*.db"};
     
     this.listeners = [];
 
-    this.itemList = [
-      {'label': km_getLStr("import.bank"),  'value': 'bank'},
-      {'label': km_getLStr("import.mizuho"),  'value': 'mizuho'},
-      {'label': km_getLStr("import.shinsei"),  'value': 'shinsei'},
+    this.mDb = window.arguments[0];
+    retVals = window.arguments[1];
 
-      {'label': km_getLStr("import.creditcard"),  'value': 'creditcard'},
-      {'label': km_getLStr("import.saison"),  'value': 'saison'},
-      {'label': km_getLStr("import.uc"),  'value': 'uc'},
-      {'label': km_getLStr("import.view"),  'value': 'view'},
-
-      {'label': km_getLStr("import.emoney"),  'value': 'emoney'},
-      {'label': km_getLStr("import.suica"),  'value': 'suica'},
-
-      {'label': km_getLStr("import.kantan"),  'value': 'kantan'}
-    ];
-    
-    $$("km_select_importtype").removeAllItems();
-
-    for (var i = 0; i < this.itemList.length; i++) {
-        $$("km_select_importtype").appendItem(this.itemList[i]['label'],
-            this.itemList[i]['value']);
-    }
-    $$("km_select_importtype").selectedIndex = 0;
-    
-    retVals = window.arguments[0];
+    this.populateImportTypeList();
+    this.populateUserList();
 
     this.addEventListeners();  
 };
@@ -40,6 +43,7 @@ function ImportDialog() {
 function openImportDialog() {
     importDialog = new ImportDialog();
 };
+
 
 function onAccept() {
     return true;    
@@ -49,7 +53,6 @@ function onCancel() {
     retVals['file'] = null;
     return true;    
 };
-
 ImportDialog.prototype.addEventListeners = function () {
     this.listeners['km_button_importfrom.command'] = this.selectFile.bind(this);
     $$('km_button_importfrom').addEventListener("command",
@@ -66,7 +69,11 @@ ImportDialog.prototype.selectFile = function () {
     const nsIFilePicker = Ci.nsIFilePicker;
     var fp = Cc["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
     fp.init(window, km_getLStr("import.title"), nsIFilePicker.modeOpen);
-
+    
+    var importType = this.importTypeList[retVals["importtype"]];
+    fp.appendFilter(
+        importType["label"] + "(" + importType["ext"] + ")",
+        importType["ext"]);
 /*    
     fp.appendFilter(km_getLStr("import.suica") + " (*.html)", "*.html");
     fp.appendFilter(km_getLStr("import.saison") + " (*.csv)", "*.csv");
@@ -78,4 +85,27 @@ ImportDialog.prototype.selectFile = function () {
         retVals['file'] = fp.file;
         $$('km_edit_importfrom').value = fp.file.path;
     }
+};
+
+ImportDialog.prototype.populateImportTypeList = function () {
+    $$("km_select_importtype").removeAllItems();
+
+    for (var key in this.importTypeList) {
+        $$("km_select_importtype").appendItem(this.importTypeList[key]['label'], key);
+    }
+    $$("km_select_importtype").selectedIndex = 0;
+    
+};
+ImportDialog.prototype.populateUserList = function () {
+    $$('km_select_user').removeAllItems();
+
+    this.mDb.selectQuery("select id, name from km_user");
+    var records = this.mDb.getRecords();
+
+    for (var i = 0; i < records.length; i++) {
+        $$('km_select_user').appendItem(records[i][1], records[i][0]);
+    }
+
+    $$('km_select_user').selectedIndex = 0;
+
 };

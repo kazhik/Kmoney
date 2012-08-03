@@ -9,6 +9,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
     <script type="application/x-javascript" src="common/TreeView.js" />
 	
     <script type="application/x-javascript" src="globals.js" />
+    <script type="application/x-javascript" src="InitDB.js" />
 
     <script type="application/x-javascript" src="transaction/AllView.js" />
     <script type="application/x-javascript" src="transaction/CashTable.js" />
