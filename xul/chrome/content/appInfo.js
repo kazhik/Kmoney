@@ -12,6 +12,10 @@ var KmAppInfo = {
   extVersion: "",
   extCreator: "kazhik",
 
+  webpages: {
+    github: "http://kazhik.github.com/Kmoney/"
+  },
+  
   setVersion: function() {
     if (this.appInfo.ID == extId) {
       this.extVersion = this.appInfo.version;

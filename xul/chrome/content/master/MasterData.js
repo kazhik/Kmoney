@@ -29,7 +29,6 @@ MasterData.prototype.initialize = function(db) {
     this.itemMaster.initialize(db);
     this.cardMaster = new CardMaster();
     this.cardMaster.initialize(db);
-    
     this.bankMaster = new BankMaster();
     this.bankMaster.initialize(db);
     this.emoneyMaster = new EMoneyMaster();

@@ -2,37 +2,15 @@
 
 var importDialog;
 
-var retVals = { file: null, importtype: null };
+var retVals = { file: null, importtype: null, user: null };
 
 function ImportDialog() {
-    this.mDb = null;
-    this.importTypeList = {};
-
-    this.importTypeList["bank"] =
-        {"label": km_getLStr("import.bank"), "ext": "*.csv"};
-    this.importTypeList["mizuho"] =
-        {"label": km_getLStr("import.mizuho"), "ext": "*.ofx"};
-    this.importTypeList["shinsei"] =
-        {"label": km_getLStr("import.shinsei"), "ext": "*.csv"};
-    this.importTypeList["creditcard"] =
-        {"label": km_getLStr("import.creditcard"), "ext": "*.csv"};
-    this.importTypeList["saison"] =
-        {"label": km_getLStr("import.saison"), "ext": "*.csv"};
-    this.importTypeList["uc"] =
-        {"label": km_getLStr("import.uc"), "ext": "*.csv"};
-    this.importTypeList["view"] =
-        {"label": km_getLStr("import.view"), "ext": "*.html"};
-    this.importTypeList["emoney"] =
-        {"label": km_getLStr("import.emoney"), "ext": "*.csv"};
-    this.importTypeList["suica"] =
-        {"label": km_getLStr("import.suica"), "ext": "*.html"};
-    this.importTypeList["kantan"] =
-        {"label": km_getLStr("import.kantan"), "ext": "*.db"};
-    
     this.listeners = [];
 
     this.mDb = window.arguments[0];
-    retVals = window.arguments[1];
+    this.importTypeList = window.arguments[1];
+    this.users = window.arguments[2];
+    retVals = window.arguments[3];
 
     this.populateImportTypeList();
     this.populateUserList();
@@ -51,6 +29,7 @@ function onAccept() {
 function onCancel() {
     retVals['importtype'] = null;
     retVals['file'] = null;
+    retVals['user'] = null;
     return true;    
 };
 ImportDialog.prototype.addEventListeners = function () {
@@ -61,9 +40,16 @@ ImportDialog.prototype.addEventListeners = function () {
     this.listeners['km_select_importtype.select'] = this.onSelectImportType.bind(this);
     $$('km_select_importtype').addEventListener("select",
         this.listeners['km_select_importtype.select']);
+    
+    this.listeners['km_select_user.select'] = this.onSelectUser.bind(this);
+    $$('km_select_user').addEventListener("select",
+        this.listeners['km_select_user.select']);
 };
 ImportDialog.prototype.onSelectImportType = function () {
     retVals['importtype'] = $$("km_select_importtype").value;
+};
+ImportDialog.prototype.onSelectUser = function () {
+    retVals['user'] = $$("km_select_user").value;
 };
 ImportDialog.prototype.selectFile = function () {
     const nsIFilePicker = Ci.nsIFilePicker;
@@ -74,12 +60,6 @@ ImportDialog.prototype.selectFile = function () {
     fp.appendFilter(
         importType["label"] + "(" + importType["ext"] + ")",
         importType["ext"]);
-/*    
-    fp.appendFilter(km_getLStr("import.suica") + " (*.html)", "*.html");
-    fp.appendFilter(km_getLStr("import.saison") + " (*.csv)", "*.csv");
-    fp.appendFilter(km_getLStr("import.uc") + " (*.csv)", "*.csv");
-    fp.appendFilter(km_getLStr("import.kantan") + " (*.db)", "*.db");
-*/
     var rv = fp.show();
     if (rv == nsIFilePicker.returnOK || rv == nsIFilePicker.returnReplace) {
         retVals['file'] = fp.file;
@@ -93,19 +73,16 @@ ImportDialog.prototype.populateImportTypeList = function () {
     for (var key in this.importTypeList) {
         $$("km_select_importtype").appendItem(this.importTypeList[key]['label'], key);
     }
-    $$("km_select_importtype").selectedIndex = 0;
-    
+    $$('km_select_importtype').selectedIndex = 0;
+    this.onSelectImportType();
 };
 ImportDialog.prototype.populateUserList = function () {
     $$('km_select_user').removeAllItems();
 
-    this.mDb.selectQuery("select id, name from km_user");
-    var records = this.mDb.getRecords();
-
-    for (var i = 0; i < records.length; i++) {
-        $$('km_select_user').appendItem(records[i][1], records[i][0]);
+    for (var key in this.users) {
+        $$('km_select_user').appendItem(this.users[key], key);
     }
-
+    
     $$('km_select_user').selectedIndex = 0;
-
+    this.onSelectUser();
 };

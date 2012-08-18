@@ -29,7 +29,7 @@
                         <tree id="km_tree_master_user" style="min-height:30em" flex="1" seltype="single"
 							enableColumnDrag="false">
                             <treecols id="km_cols_master_user">
-								<treecol id="master_user_name" label="&column.username;"
+								<treecol id="master_user_id"
 										 hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" resizebefore="closest"
 										  resizeafter="grow" />  
@@ -178,7 +178,7 @@
 				</hbox>
 				<checkbox id="km_edit_internal" label="&edit.internal;" />
 			</hbox>
-			<hbox align="center">
+			<hbox align="right">
 				<button id="km_button_master_add" accesskey="&button.add.accesskey;"
 						label="&button.add;" />
 				<button id="km_button_master_update" accesskey="&button.update.accesskey;"

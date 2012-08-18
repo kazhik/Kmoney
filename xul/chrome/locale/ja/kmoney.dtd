@@ -38,6 +38,8 @@
 <!ENTITY menu.help.accesskey          "S">
 <!ENTITY menu.help.aboutextension "Kmoneyについて">
 <!ENTITY menu.help.aboutextension.ak "A">
+<!ENTITY menu.help.helppage "Kmoneyヘルプ">
+<!ENTITY menu.help.helppage.ak "H">
 
 <!ENTITY menu.deleteSelected "削除">
 <!ENTITY menu.deleteSelected.ak "D">
@@ -52,6 +54,7 @@
 
 <!ENTITY tab.user          "ユーザー">
 <!ENTITY tab.item          "費目">
+<!ENTITY tab.source          "入力元">
 
 <!-- column -->
 <!ENTITY column.date          "日付">
@@ -68,6 +71,7 @@
 <!ENTITY column.itemname          "費目名">
 <!ENTITY column.internal          "内部">
 <!ENTITY column.type          "種別">
+<!ENTITY column.sourcetype          "入力元">
 
 <!-- edit -->
 <!ENTITY edit.date          "日付">

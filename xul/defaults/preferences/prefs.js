@@ -7,6 +7,10 @@ pref("extensions.kmoney.autoBackup", "off");//on, off, prompt
 pref("extensions.kmoney.openWithLastDb", true);
 pref("extensions.kmoney.promptForLastDb", true);
 
+//position in target application (only Firefox) as a menuitem
+//As of now, 1 stands for show menuitem in Tools menu. 0 means hide it.
+//for other values do nothing
+pref("extensions.kmoney.posInTargetApp", 1);
 
 //default extension for sqlite db files
 pref("extensions.kmoney.sqliteFileExtensions", "sqlite");

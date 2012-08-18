@@ -20,6 +20,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 
 
     <script type="application/x-javascript" src="import/KantanKakeibo.js" />
+    <script type="application/x-javascript" src="import/Suica.js" />
 
     <script type="application/x-javascript" src="kmoney.js" />
 	
@@ -72,8 +73,12 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 </menu>
                 <menu id="km_menu_help" label="&menu.help;" accesskey="&menu.help.accesskey;">
                     <menupopup>
-                        <menuitem label="&menu.help.aboutextension;" accesskey="&menu.help.aboutextension.ak;"
-                        oncommand="window.openDialog(KmGlobals.chromes.aboutKM,'about','chrome, centerscreen, modal, dialog');"
+				        <menuitem label="&menu.help.helppage;"
+								  accesskey="&menu.help.helppage.ak;"
+								  oncommand="KmGlobals.openURL(KmAppInfo.webpages.github)"/>
+                        <menuitem label="&menu.help.aboutextension;"
+								  accesskey="&menu.help.aboutextension.ak;"
+                                  oncommand="window.openDialog(KmGlobals.chromes.aboutKM,'about','chrome, centerscreen, modal, dialog');"
                         />
                     </menupopup>
                 </menu>
@@ -308,9 +313,14 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 					</hbox>
 				</hbox>
 				<hbox id="km_edit_buttons" align="right">
-					<button id="km_button_add" accesskey="&button.add.accesskey;" label="&button.add;" />
-					<button id="km_button_update" accesskey="&button.update.accesskey;" label="&button.update;" />
-					<button id="km_button_reset" accesskey="&button.reset.accesskey;" label="&button.reset;" />
+					<button id="km_button_add" accesskey="&button.add.accesskey;"
+							label="&button.add;" />
+					<button id="km_button_update" accesskey="&button.update.accesskey;"
+							label="&button.update;" />
+				    <button id="km_button_delete" accesskey="&button.delete.accesskey;"
+							label="&button.delete;" />
+					<button id="km_button_reset" accesskey="&button.reset.accesskey;"
+							label="&button.reset;" />
 				</hbox>
 				<hbox id="km_summary_viewchanger" align="center" hidden="true">
 					<label control="km_summary_item" value="&edit.item;" />

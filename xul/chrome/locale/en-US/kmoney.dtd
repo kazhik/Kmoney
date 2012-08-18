@@ -38,6 +38,8 @@
 <!ENTITY menu.help.accesskey          "S">
 <!ENTITY menu.help.aboutextension "About Kmoney">
 <!ENTITY menu.help.aboutextension.ak "A">
+<!ENTITY menu.help.helppage "Kmoney Help">
+<!ENTITY menu.help.helppage.ak "H">
 
 <!ENTITY menu.help.deleteSelected "Delete">
 <!ENTITY menu.help.deleteSelected.ak "D">
@@ -52,6 +54,7 @@
 
 <!ENTITY tab.user          "User">
 <!ENTITY tab.item          "Item">
+<!ENTITY tab.source          "DataSource">
 
 <!-- column -->
 <!ENTITY column.date          "Date">
@@ -68,6 +71,7 @@
 <!ENTITY column.itemname          "ItemName">
 <!ENTITY column.internal          "Internal">
 <!ENTITY column.type          "Type">
+<!ENTITY column.sourcetype          "SourceType">
 
 <!-- edit -->
 <!ENTITY edit.date          "Date">

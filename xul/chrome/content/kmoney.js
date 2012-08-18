@@ -17,6 +17,10 @@ function Kmoney() {
     this.maFileExt = [];
     this.listeners = [];
     this.summary = null;
+    this.itemMap = {};
+    this.importTypeList = {};
+    this.importers = {};
+    this.users = {};
 };
 
 function Startup() {
@@ -50,6 +54,33 @@ Kmoney.prototype.Startup = function () {
     if (bOpenLastDb) {
         this.openLastDb();
     }
+    
+    this.initImport();
+
+};
+Kmoney.prototype.initImport = function () {
+    this.importTypeList["bank"] =
+        {"label": km_getLStr("import.bank"), "ext": "*.csv"};
+    this.importTypeList["mizuho"] =
+        {"label": km_getLStr("import.mizuho"), "ext": "*.ofx"};
+    this.importTypeList["shinsei"] =
+        {"label": km_getLStr("import.shinsei"), "ext": "*.csv"};
+    this.importTypeList["creditcard"] =
+        {"label": km_getLStr("import.creditcard"), "ext": "*.csv"};
+    this.importTypeList["saison"] =
+        {"label": km_getLStr("import.saison"), "ext": "*.csv"};
+    this.importTypeList["uc"] =
+        {"label": km_getLStr("import.uc"), "ext": "*.csv"};
+    this.importTypeList["view"] =
+        {"label": km_getLStr("import.view"), "ext": "*.html"};
+    this.importTypeList["emoney"] =
+        {"label": km_getLStr("import.emoney"), "ext": "*.csv"};
+    this.importTypeList["suica"] =
+        {"label": km_getLStr("import.suica"), "ext": "*.html"};
+    this.importTypeList["kantan"] =
+        {"label": km_getLStr("import.kantan"), "ext": "*.db"};
+
+    this.importers["suica"] = new Suica(this.emoneyTree, this.itemMap);
 };
 Kmoney.prototype.Shutdown = function () {
     this.summary.terminate();
@@ -75,6 +106,9 @@ Kmoney.prototype.addEventListeners = function () {
 
     this.listeners['km_button_update.command'] = this.updateRecord.bind(this);
     $$('km_button_update').addEventListener("command", this.listeners['km_button_update.command']);
+
+    this.listeners['km_button_delete.command'] = this.deleteRecord.bind(this);
+    $$('km_button_delete').addEventListener("command", this.listeners['km_button_delete.command']);
 
     this.listeners['km_button_reset.command'] = this.reset.bind(this);
     $$('km_button_reset').addEventListener("command", this.listeners['km_button_reset.command']);
@@ -262,10 +296,11 @@ Kmoney.prototype.importFile = function () {
     var retVals = { file: null, importtype: null };
     
     window.openDialog("chrome://kmoney/content/import/ImportDialog.xul", "ImportDialog",
-        "chrome, resizable, centerscreen, modal, dialog", this.mDb, retVals);
+        "chrome, resizable, centerscreen, modal, dialog",
+        this.mDb, this.importTypeList, this.users, retVals);
     
     if (retVals['importtype'] != null) {
-        alert(retVals['importtype']);
+        this.importers[retVals["importtype"]].importDb(retVals['file'], retVals["user"]);
     }
     return true;
 };
@@ -381,6 +416,7 @@ Kmoney.prototype.PopulateItemList = function () {
     for (var i = 0; i < records.length; i++) {
         $$('km_edit_item').appendItem(records[i][1], records[i][0]);
         $$('km_summary_item').appendItem(records[i][1], records[i][0]);
+        this.itemMap[records[i][1]] = records[i][0];
     }
     $$('km_edit_item').selectedIndex = 0;
     $$('km_summary_item').selectedIndex = 0;
@@ -394,6 +430,7 @@ Kmoney.prototype.PopulateUserList = function () {
 
     for (var i = 0; i < records.length; i++) {
         $$('km_edit_user').appendItem(records[i][1], records[i][0]);
+        this.users[records[i][0]] = records[i][1];
     }
 
     $$('km_edit_user').selectedIndex = 0;
