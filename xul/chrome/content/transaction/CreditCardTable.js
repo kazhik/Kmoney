@@ -105,7 +105,7 @@ CreditCardTable.prototype.addRecord = function() {
     + "\"" + $$('km_edit_detail').value + "\", "
     + $$('km_edit_user').value + ", "
     + $$('km_edit_creditcard').value + ", "
-    + "datetime('now'), "
+    + "datetime('now', 'localtime'), "
     + "1)"];
   this.mDb.executeTransaction(sql);
   this.load();
@@ -120,7 +120,7 @@ CreditCardTable.prototype.updateRecord = function() {
     + "detail = " + "\"" + $$('km_edit_detail').value + "\", "
     + "user_id = " + $$('km_edit_user').value + ", "
     + "card_id = " + $$('km_edit_creditcard').value + ", "
-    + "last_update_date = datetime('now'), "
+    + "last_update_date = datetime('now', 'localtime'), "
     + "source = 1 "
     + "where rowid = " + rowid];
   km_log(sql);

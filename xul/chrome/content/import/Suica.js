@@ -1,6 +1,7 @@
 Components.utils.import("resource://gre/modules/NetUtil.jsm");
 
-function Suica(emoneyTbl, itemMap) {
+function Suica(db, emoneyTbl, itemMap) {
+  this.mDb = db;
   this.emoneyTable = emoneyTbl;
   
   // TODO: このマップは編集できるようにする
@@ -9,23 +10,20 @@ function Suica(emoneyTbl, itemMap) {
     "Charge": itemMap["ATM/振替"],
     "Other": itemMap["食材・生活用品"]
   };
-  this.sourceType = 200;
+  this.sourceType = 0;
 
   this.emoneyId = 0;
   this.userId = 0;
   
 };
 
-Suica.prototype.setMoneyId = function(moneyId) {
-  this.emoneyId = moneyId;
-};
-
-Suica.prototype.setSourceType = function(type) {
-  this.sourceType = type;
-};
-
-Suica.prototype.setUserId = function(userid) {
-  this.userId = userid;
+Suica.prototype.getSourceType = function() {
+    this.mDb.selectQuery("select rowid from km_source where type = 'Suica'" );
+    var records = this.mDb.getRecords();
+    if (records.length === 1) {
+      return records[0][0];
+    }
+    return 0;
 };
 
 Suica.prototype.onFileOpen = function(inputStream, status) {
@@ -53,14 +51,8 @@ Suica.prototype.onFileOpen = function(inputStream, status) {
   if (rowData.length === 0) {
     return;
   }
-  
+  var sourceType = this.getSourceType();
   var columnData;
-  var colDate;
-  var colDetail;
-  var colIncome;
-  var colExpense;
-  var colInternal;
-  var colItemId;
   var prevBalance = -1;
   var balance = 0;
   for (var i = rowData.length - 1; i >= 0; --i) {
@@ -69,6 +61,17 @@ Suica.prototype.onFileOpen = function(inputStream, status) {
       continue;
     }
 
+    var rec = {
+      "transactionDate": "",
+      "income": 0,
+      "expense": 0,
+      "itemId": 0,
+      "detail": "",
+      "userId": 0,
+      "moneyId": 0,
+      "internal": 0,
+      "source": 0,
+    };
     // 月日を年月日に変換
     // ファイル内に年データがないので、データは1年以内のものと想定
     var today = new Date();
@@ -77,50 +80,57 @@ Suica.prototype.onFileOpen = function(inputStream, status) {
     if (monthday[0] > today.getMonth() + 1) {
       --year;
     }
-    colDate = year + "-" + monthday[0] + "-" + monthday[1];
+    rec["transactionDate"] = year + "-" + monthday[0] + "-" + monthday[1];
     
-    colDetail = columnData[1].textContent.trim();
+    rec["detail"] = columnData[1].textContent.trim();
    
     balance = parseInt(columnData[5].textContent.replace(/[^\d.]+/g, ""));
 
-    if (colDetail === "繰") {
+    if (rec["detail"] === "繰") {
       prevBalance = balance;
       continue;
     }
     // 残高が減っていれば支出、増えていれば収入とする
     if (prevBalance > balance) {
       // 第5カラムがある場合は電車
+      km_log("[" + columnData[1].textContent + "]");
       if (columnData[4].textContent != "") {
-        colDetail += ":";
-        colDetail += columnData[2].textContent.trim();
-        colDetail += "-";
-        colDetail += columnData[3].textContent.trim();
-        colDetail += ":";
-        colDetail += columnData[4].textContent.trim();
-        colItemId = this.importItemMap["Fare"];
+        rec["detail"] += ":";
+        rec["detail"] += columnData[2].textContent.trim();
+        rec["detail"] += " - ";
+        rec["detail"] += columnData[3].textContent.trim();
+        rec["detail"] += ":";
+        rec["detail"] += columnData[4].textContent.trim();
+        rec["itemId"] = this.importItemMap["Fare"];
       // 「物販」以外は交通費のはず（バス等）
-      } else if (columnData[4].textContent != "物販") {
-        colItemId = this.importItemMap["Fare"];
+      } else if (columnData[1].textContent != "物販") {
+        rec["itemId"] = this.importItemMap["Fare"];
       } else {
-        colItemId = this.importItemMap["Other"];
+        rec["itemId"] = this.importItemMap["Other"];
       }
-      colIncome = 0;
-      colExpense = prevBalance - balance;
+      rec["income"] = 0;
+      rec["expense"] = prevBalance - balance;
     } else {
-      colItemId = this.importItemMap["Charge"];
-      colInternal = 1;
-      colIncome = balance - prevBalance;
-      colExpense = 0;
+      rec["itemId"] = this.importItemMap["Charge"];
+      rec["internal"] = 1;
+      rec["income"] = balance - prevBalance;
+      rec["expense"] = 0;
     }
+    
+    rec["userId"] = this.userId;
+    rec["moneyId"] = this.emoneyId;
+    rec["source"] = sourceType;
+    
     prevBalance = balance;
-    km_log(colDate + "," + colItemId + "," + colDetail +","
-           + colIncome + "," + colExpense + "," + this.userId);
+    
+    this.emoneyTable.addNewRecord(rec);
   }
-  
+  this.emoneyTable.executeInsert();
 };
 
 Suica.prototype.importDb = function(suicaHtmlFile, userId) {
   this.userId = userId;
+  this.emoneyId = this.emoneyTable.getMoneyId("Suica", userId);
 
   NetUtil.asyncFetch(suicaHtmlFile, this.onFileOpen.bind(this));
   

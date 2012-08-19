@@ -108,7 +108,7 @@ CashTable.prototype.addRecord = function() {
     + "\"" + $$('km_edit_detail').value + "\", "
     + $$('km_edit_user').value + ", "
     + internalValue + ", "
-    + "datetime('now'), "
+    + "datetime('now', 'localtime'), "
     + "1)"];
   this.mDb.executeTransaction(sql);
   
@@ -140,7 +140,7 @@ CashTable.prototype.updateRecord = function() {
     + "item_id = " + $$('km_edit_item').value + ", "
     + "detail = " + "\"" + $$('km_edit_detail').value + "\", "
     + "user_id = " + $$('km_edit_user').value + ", "
-    + "last_update_date = datetime('now'), "
+    + "last_update_date = datetime('now', 'localtime'), "
     + "internal = " + internalValue + ", "
     + "source = 1 "
     + "where rowid = " + rowid];
@@ -184,7 +184,7 @@ CashTable.prototype.importRecord = function(transactionDate, income, expense, it
     + "'" + detail + "',"
     + userId + ","
     + internal + ","
-    + "datetime('now'), "
+    + "datetime('now', 'localtime'), "
     + source + " "
     + "where not exists ("
     + " select 1 from km_realmoney_trns "

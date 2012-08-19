@@ -41,7 +41,13 @@ Kmoney.prototype.Startup = function () {
     this.bankTree = new BankTable();
     this.summary = new SummaryView();
     this.allView = new AllView();
+    
+    this.addEventListeners();
 
+    var bOpenLastDb = true;
+    if (bOpenLastDb) {
+        this.openLastDb();
+    }
     this.cashTree.initialize(this.mDb);
     this.creditcardTree.initialize(this.mDb);
     this.emoneyTree.initialize(this.mDb);
@@ -49,14 +55,12 @@ Kmoney.prototype.Startup = function () {
     this.summary.initialize(this.mDb);
     this.allView.initialize(this.mDb);
 
-    this.addEventListeners();
-    var bOpenLastDb = true;
-    if (bOpenLastDb) {
-        this.openLastDb();
-    }
+    this.PopulateItemList();
+    this.PopulateUserList();
     
     this.initImport();
 
+    this.loadTable($$('km_tabbox').selectedTab.id);
 };
 Kmoney.prototype.initImport = function () {
     this.importTypeList["bank"] =
@@ -80,7 +84,7 @@ Kmoney.prototype.initImport = function () {
     this.importTypeList["kantan"] =
         {"label": km_getLStr("import.kantan"), "ext": "*.db"};
 
-    this.importers["suica"] = new Suica(this.emoneyTree, this.itemMap);
+    this.importers["suica"] = new Suica(this.mDb, this.emoneyTree, this.itemMap);
 };
 Kmoney.prototype.Shutdown = function () {
     this.summary.terminate();
@@ -284,23 +288,25 @@ Kmoney.prototype.openDatabaseFile = function (dbFile) {
             km_message("Connect to '" + dbFile.path + "' failed: " + e, 0x3);
             return false;
         }
-        this.PopulateItemList();
-        this.PopulateUserList();
-        this.loadTable($$('km_tabbox').selectedTab.id);
         KmGlobals.mru.add(this.mDb.getFile().path);
         return true;
     }
     return false;
 };
 Kmoney.prototype.importFile = function () {
-    var retVals = { file: null, importtype: null };
+    var retVals = { file: null, importtype: null, user: null };
     
     window.openDialog("chrome://kmoney/content/import/ImportDialog.xul", "ImportDialog",
         "chrome, resizable, centerscreen, modal, dialog",
         this.mDb, this.importTypeList, this.users, retVals);
     
     if (retVals['importtype'] != null) {
-        this.importers[retVals["importtype"]].importDb(retVals['file'], retVals["user"]);
+        var importer = this.importers[retVals["importtype"]];
+        if (importer === undefined) {
+            km_alert("Error", "Not implemented yet");
+            return false;
+        }
+        importer.importDb(retVals['file'], retVals["user"]);
     }
     return true;
 };

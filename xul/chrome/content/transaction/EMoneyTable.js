@@ -2,10 +2,12 @@ function EMoneyTable() {
   this.mDb = null;
   this.mMoneyList = null;
   this.mTree = new TreeViewController("km_tree_emoney");
+  this.newRecordArray = [];
 };
 EMoneyTable.prototype.initialize = function(db) {
   this.mDb = db;
   this.mTree.init(this.load.bind(this));
+  this.loadEMoneyList();
 };
 EMoneyTable.prototype.load = function(direction, sortColumn) {
   var orderby = "";
@@ -54,7 +56,6 @@ EMoneyTable.prototype.load = function(direction, sortColumn) {
   var types = this.mDb.getRecordTypes();
   var columns = this.mDb.getColumns();
 
-  this.loadEMoneyList();
   this.mTree.PopulateTableData(records, columns, types);
   this.mTree.ensureRowIsVisible(12, -1);
   this.mTree.ShowTable(true);
@@ -85,7 +86,16 @@ EMoneyTable.prototype.loadEMoneyList = function() {
 
     this.onUserSelect();    
     
-  };
+};
+EMoneyTable.prototype.getMoneyId = function(name, userId) {
+  for (var i = 0; i < this.mMoneyList.length; i++) {
+    if (this.mMoneyList[i][1] === name && this.mMoneyList[i][2] == userId) {
+      return this.mMoneyList[i][0];
+    }
+  }
+  return 0;
+  
+};
 EMoneyTable.prototype.onUserSelect = function() {
     $$("km_edit_emoney").removeAllItems();
     var userId = $$('km_edit_user').value;
@@ -99,45 +109,84 @@ EMoneyTable.prototype.onUserSelect = function() {
   
 };
 
+EMoneyTable.prototype.addNewRecord = function(rec) {
+  this.newRecordArray.push(rec);
+};
+EMoneyTable.prototype.executeInsert = function() {
+  var sqlArray = [];
+  var sql;
+  for (var i = 0; i < this.newRecordArray.length; i++) {
+    sql = ["insert into km_emoney_trns ("
+      + "transaction_date, "
+      + "income, "
+      + "expense, "
+      + "item_id, "
+      + "detail, "
+      + "user_id, "
+      + "money_id, "
+      + "last_update_date, "
+      + "internal, "
+      + "source "
+      + ") "
+      + "select "
+      + "'" + this.newRecordArray[i]["transactionDate"] + "', "
+      + this.newRecordArray[i]["income"] + ", "
+      + this.newRecordArray[i]["expense"] + ", "
+      + this.newRecordArray[i]["itemId"] + ", "
+      + "\"" + this.newRecordArray[i]["detail"] + "\", "
+      + this.newRecordArray[i]["userId"] + ", "
+      + this.newRecordArray[i]["moneyId"] + ", "
+      + "datetime('now', 'localtime'), "
+      + this.newRecordArray[i]["internal"] + ", "
+      + this.newRecordArray[i]["source"] + " "
+      + "where not exists ("
+      + " select 1 from km_emoney_trns "
+      + " where transaction_date = '" + this.newRecordArray[i]["transactionDate"] + "'"
+      + " and income = " + this.newRecordArray[i]["income"]
+      + " and expense = " + this.newRecordArray[i]["expense"]
+      + " and user_id = " + this.newRecordArray[i]["userId"]
+      + ")"];
+    km_log(sql);
+    sqlArray.push(sql);
+  }
+  this.mDb.executeTransaction(sqlArray);
+  this.newRecordArray.length = 0;
+};
+
 EMoneyTable.prototype.addRecord = function() {
-  var incomeValue;
-  var expenseValue;
+  var rec = {
+    "transactionDate": "",
+    "income": 0,
+    "expense": 0,
+    "itemId": 0,
+    "detail": "",
+    "userId": 0,
+    "moneyId": 0,
+    "internal": 0,
+    "source": 0,
+  };
+  rec["transactionDate"] = $$('km_edit_transactionDate').value;
   if ($$('km_edit_income').selected) {
-    incomeValue = $$('km_edit_amount').value;
-    expenseValue = 0;
+    rec["income"] = $$('km_edit_amount').value;
+    rec["expense"] = 0;
   } else {
-    incomeValue = 0;
-    expenseValue = $$('km_edit_amount').value;
+    rec["income"] = 0;
+    rec["expense"] = $$('km_edit_amount').value;
   }
-  var internalValue;
   if ($$('km_edit_internal').checked) {
-    internalValue = 1;
+    rec["internal"] = 1;
   } else {
-    internalValue = 0;
+    rec["internal"] = 0;
   }
-  var sql = ["insert into km_emoney_trns ("
-    + "transaction_date, "
-    + "income, "
-    + "expense, "
-    + "item_id, "
-    + "detail, "
-    + "user_id, "
-    + "money_id, "
-    + "last_update_date, "
-    + "internal, "
-    + "source "
-    + ") values ( "
-    + "'" + $$('km_edit_transactionDate').value + "', "
-    + incomeValue + ", "
-    + expenseValue + ", "
-    + $$('km_edit_item').value + ", "
-    + "\"" + $$('km_edit_detail').value + "\", "
-    + $$('km_edit_user').value + ", "
-    + $$('km_edit_emoney').value + ", "
-    + "datetime('now'), "
-    + "0, "
-    + "1)"];
-  this.mDb.executeTransaction(sql);
+  rec["itemId"] = $$('km_edit_item').value;
+  rec["detail"] = $$('km_edit_detail').value;
+  rec["userId"] = $$('km_edit_user').value;
+  rec["moneyId"] = $$('km_edit_emoney').value;
+  rec["source"] = 1;
+
+  this.addNewRecord(rec);
+  this.executeInsert();
+
   this.load();
 };
 EMoneyTable.prototype.updateRecord = function() {
@@ -166,7 +215,7 @@ EMoneyTable.prototype.updateRecord = function() {
     + "detail = " + "\"" + $$('km_edit_detail').value + "\", "
     + "user_id = " + $$('km_edit_user').value + ", "
     + "money_id = " + $$('km_edit_emoney').value + ", "
-    + "last_update_date = datetime('now'), "
+    + "last_update_date = datetime('now', 'localtime'), "
     + "internal = " + internalValue + ", "
     + "source = 1 "
     + "where rowid = " + rowid];

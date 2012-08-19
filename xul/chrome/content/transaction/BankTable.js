@@ -133,7 +133,7 @@ BankTable.prototype.addRecord = function() {
     + "\"" + $$('km_edit_detail').value + "\", "
     + $$('km_edit_user').value + ", "
     + $$('km_edit_bank').value + ", "
-    + "datetime('now'), "
+    + "datetime('now', 'localtime'), "
     + "0, "
     + "1)"];
   this.mDb.executeTransaction(sql);
@@ -165,7 +165,7 @@ BankTable.prototype.updateRecord = function() {
     + "detail = " + "\"" + $$('km_edit_detail').value + "\", "
     + "user_id = " + $$('km_edit_user').value + ", "
     + "bank_id = " + $$('km_edit_bank').value + ", "
-    + "last_update_date = datetime('now'), "
+    + "last_update_date = datetime('now', 'localtime'), "
     + "internal = " + internalValue + ", "
     + "source = 1 "
     + "where rowid = " + rowid];
