@@ -59,6 +59,8 @@ EMoneyTable.prototype.load = function(direction, sortColumn) {
   this.mTree.PopulateTableData(records, columns, types);
   this.mTree.ensureRowIsVisible(12, -1);
   this.mTree.ShowTable(true);
+
+  this.onUserSelect();
   
   $$('km_from_value').value = this.mTree.getFromValue();
   $$('km_to_value').value = this.mTree.getToValue();
@@ -81,10 +83,10 @@ EMoneyTable.prototype.onSelect = function() {
   $$('km_edit_internal').checked = (Number(this.mTree.getColumnValue(11)) === 1);
 };
 EMoneyTable.prototype.loadEMoneyList = function() {
-    this.mDb.selectQuery("select rowid, name, user_id from km_emoney_info");
-    this.mMoneyList = this.mDb.getRecords();
+  this.mDb.selectQuery("select rowid, name, user_id from km_emoney_info");
+  this.mMoneyList = this.mDb.getRecords();
 
-    this.onUserSelect();    
+  this.onUserSelect();    
     
 };
 EMoneyTable.prototype.getMoneyId = function(name, userId) {

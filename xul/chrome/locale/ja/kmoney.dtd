@@ -72,6 +72,7 @@
 <!ENTITY column.internal          "内部">
 <!ENTITY column.type          "種別">
 <!ENTITY column.sourcetype          "入力元">
+<!ENTITY column.paymonth          "支払月">
 
 <!-- edit -->
 <!ENTITY edit.date          "日付">

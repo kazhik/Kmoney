@@ -18,7 +18,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
     <script type="application/x-javascript" src="transaction/EMoneyTable.js" />
     <script type="application/x-javascript" src="summary/SummaryView.js" />
 
-
+    <script type="application/x-javascript" src="import/ViewCard.js" />
     <script type="application/x-javascript" src="import/KantanKakeibo.js" />
     <script type="application/x-javascript" src="import/Suica.js" />
 
@@ -125,8 +125,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<treecol id="4" label="&column.expense;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 								<treecol id="5" label="&column.type;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="6" label="rowid" width="60" hidden="true" persist="width" />
+								<treecol id="6" label="rowid" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 							</treecols>
                             <treechildren />
@@ -155,8 +154,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<treecol id="7" label="&column.user;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 								<treecol id="8" label="internal" width="60" hidden="true" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="9" label="rowid" width="60" hidden="true" persist="width" />
+								<treecol id="9" label="rowid" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 							</treecols>
                             <treechildren context="mp-editTableRow" />
@@ -191,8 +189,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<treecol id="10" label="source" width="60" hidden="true" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 								<treecol id="11" label="internal" width="60" hidden="true" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="12" label="rowid" width="60" hidden="true" persist="width" />
+								<treecol id="12" label="rowid" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 							</treecols>
                             <treechildren context="mp-editTableRow" />
@@ -222,7 +219,8 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 								<treecol id="8" label="&column.user;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="9" label="rowid" width="60" hidden="true" persist="width" />
+								<treecol id="9" label="&column.paymonth;" width="60" persist="width" />
+								<treecol id="10" label="rowid" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 								
 							</treecols>
@@ -258,8 +256,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<treecol id="10" label="source" width="60" hidden="true" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 								<treecol id="11" label="internal" width="60" hidden="true" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="12" label="rowid" width="60" hidden="true" persist="width" />
+								<treecol id="12" label="rowid" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 							</treecols>
                             <treechildren context="mp-editTableRow" />

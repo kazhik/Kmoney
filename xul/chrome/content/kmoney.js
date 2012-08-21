@@ -84,7 +84,9 @@ Kmoney.prototype.initImport = function () {
     this.importTypeList["kantan"] =
         {"label": km_getLStr("import.kantan"), "ext": "*.db"};
 
+    this.importers["view"] = new ViewCard(this.mDb, this.creditcardTree, this.itemMap);
     this.importers["suica"] = new Suica(this.mDb, this.emoneyTree, this.itemMap);
+    this.importers["kantan"] = new KantanKakeibo(this.mDb, this.cashTree, this.itemMap);
 };
 Kmoney.prototype.Shutdown = function () {
     this.summary.terminate();

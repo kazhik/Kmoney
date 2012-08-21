@@ -1,6 +1,7 @@
 function CashTable() {
   this.mDb = null;
   this.mTree = new TreeViewController("km_tree_cash");
+  this.newRecordArray = [];
 };
 
 CashTable.prototype.initialize = function(db) {
@@ -198,3 +199,46 @@ CashTable.prototype.importRecord = function(transactionDate, income, expense, it
   this.mDb.executeTransaction(sql);
   
 };
+CashTable.prototype.addNewRecord = function(rec) {
+  this.newRecordArray.push(rec);
+};
+CashTable.prototype.executeInsert = function() {
+  var sqlArray = [];
+  var sql;
+  for (var i = 0; i < this.newRecordArray.length; i++) {
+    var sql = ["insert into km_realmoney_trns ("
+      + "transaction_date, "
+      + "income, "
+      + "expense, "
+      + "item_id, "
+      + "detail, "
+      + "user_id, "
+      + "internal, "
+      + "last_update_date, "
+      + "source "
+      + ") "
+      + "select "
+      + "'" + this.newRecordArray[i]["transactionDate"] + "',"
+      + this.newRecordArray[i]["income"] + ","
+      + this.newRecordArray[i]["expense"] + ","
+      + this.newRecordArray[i]["itemId"] + ", "
+//      + "(select rowid from km_item where name = '" + itemName + "'),"
+      + "'" + this.newRecordArray[i]["detail"] + "',"
+      + this.newRecordArray[i]["userId"] + ","
+      + this.newRecordArray[i]["internal"] + ","
+      + "datetime('now', 'localtime'), "
+      + this.newRecordArray[i]["source"] + " "
+      + "where not exists ("
+      + " select 1 from km_realmoney_trns "
+      + " where transaction_date = '" + this.newRecordArray[i]["transactionDate"] + "'"
+      + " and income = " + this.newRecordArray[i]["income"]
+      + " and expense = " + this.newRecordArray[i]["expense"]
+      + " and user_id = " + this.newRecordArray[i]["userId"]
+      + ")"];
+    km_log(sql);
+    sqlArray.push(sql);
+  }
+  this.mDb.executeTransaction(sqlArray);
+  this.newRecordArray.length = 0;
+};
+

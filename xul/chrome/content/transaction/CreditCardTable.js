@@ -2,23 +2,25 @@ function CreditCardTable() {
   this.mDb = null;
   this.mCardList = null;
   this.mTree = new TreeViewController("km_tree_creditcard");
+  this.newRecordArray = [];
 };
 CreditCardTable.prototype.initialize = function(db) {
   this.mDb = db;
   this.mTree.init(this.load.bind(this));
+  this.loadCardList();
 };
 CreditCardTable.prototype.load = function(direction, sortColumn) {
   var orderby = "";
   if (sortColumn === undefined) {
     if (this.mTree.mSortOrder != null) {
-      orderby = "order by " + this.mTree.mSortOrder;
+      orderby = "order by A." + this.mTree.mSortOrder;
     } else {
-      orderby = "order by transaction_date";
+      orderby = "order by A.transaction_date";
     }
   } else if (sortColumn === "") {
     orderby = "";
   } else {
-    orderby = "order by " + sortColumn;
+    orderby = "order by A." + sortColumn;
     this.mTree.mSortOrder = sortColumn;
   }
 
@@ -36,6 +38,8 @@ CreditCardTable.prototype.load = function(direction, sortColumn) {
     + "D.name as card_name, "
     + "A.user_id, "
     + "C.name as user_name, "
+    + "(select max(E.pay_month) from km_creditcard_payment E "
+    + " where A.rowid = E.transaction_id) as pay_month, "
     + "A.rowid "
     + "from km_creditcard_trns A "
     + "left join km_item B "
@@ -46,14 +50,17 @@ CreditCardTable.prototype.load = function(direction, sortColumn) {
     + " on A.card_id = D.rowid "
     + orderby + " "
     + "limit " + this.mTree.mLimit + " offset " + this.mTree.mOffset;
+
+  km_log(sql);
   this.mDb.selectQuery(sql);
   var records = this.mDb.getRecords();
   var types = this.mDb.getRecordTypes();
   var columns = this.mDb.getColumns();
-  this.loadCardList();
   this.mTree.PopulateTableData(records, columns, types);
-  this.mTree.ensureRowIsVisible(9, -1);
+  this.mTree.ensureRowIsVisible(10, -1);
   this.mTree.ShowTable(true);
+
+  this.onUserSelect();    
   
   $$('km_from_value').value = this.mTree.getFromValue();
   $$('km_to_value').value = this.mTree.getToValue();
@@ -111,7 +118,7 @@ CreditCardTable.prototype.addRecord = function() {
   this.load();
 };
 CreditCardTable.prototype.updateRecord = function() {
-  var rowid = this.mTree.getColumnValue(9);
+  var rowid = this.mTree.getColumnValue(10);
   var sql = ["update km_creditcard_trns "
     + "set "
     + "transaction_date = " + "'" + $$('km_edit_transactionDate').value + "', "
@@ -126,16 +133,110 @@ CreditCardTable.prototype.updateRecord = function() {
   km_log(sql);
   this.mDb.executeTransaction(sql);
   this.load();
-  this.mTree.ensureRowIsVisible(9, rowid);
+  this.mTree.ensureRowIsVisible(10, rowid);
 };
 
 CreditCardTable.prototype.deleteRecord = function() {
-  var rowid = this.mTree.getColumnValue(9);
+  var rowid = this.mTree.getColumnValue(10);
   if (rowid === "") {
     return;
   }
   var sql = ["delete from km_creditcard_trns where rowid = " + rowid];
+  km_log(sql);
   this.mDb.executeTransaction(sql);
-  
   this.load();
+  
+  this.mTree.ensurePreviousRowIsVisible();
+  
 };
+
+CreditCardTable.prototype.getCardId = function(name, userId) {
+  for (var i = 0; i < this.mCardList.length; i++) {
+    if (this.mCardList[i][1] === name && this.mCardList[i][2] == userId) {
+      return this.mCardList[i][0];
+    }
+  }
+  return 0;
+  
+};
+CreditCardTable.prototype.addNewRecord = function(rec) {
+  this.newRecordArray.push(rec);
+};
+CreditCardTable.prototype.executeInsert = function() {
+  var sqlArray = [];
+  var sqlPayment;
+  var sqlTransaction;
+  for (var i = 0; i < this.newRecordArray.length; i++) {
+    sqlTransaction = ["insert into km_creditcard_trns ("
+      + "transaction_date, "
+      + "item_id, "
+      + "detail, "
+      + "expense, "
+      + "user_id, "
+      + "card_id, "
+      + "internal, "
+      + "source, "
+      + "last_update_date "
+      + ") "
+      + "select "
+      + "'" + this.newRecordArray[i]["transactionDate"] + "', "
+      + this.newRecordArray[i]["itemId"] + ", "
+      + "\"" + this.newRecordArray[i]["detail"] + "\", "
+      + this.newRecordArray[i]["boughtAmount"] + ", "
+      + this.newRecordArray[i]["userId"] + ", "
+      + this.newRecordArray[i]["cardId"] + ", "
+      + this.newRecordArray[i]["internal"] + ", "
+      + this.newRecordArray[i]["source"] + ", "
+      + "datetime('now', 'localtime') "
+      + "where not exists ("
+      + " select 1 from km_creditcard_trns "
+      + " where transaction_date = '" + this.newRecordArray[i]["transactionDate"] + "'"
+      + " and item_id = " + this.newRecordArray[i]["itemId"]
+      + " and expense = " + this.newRecordArray[i]["boughtAmount"]
+      + " and card_id = " + this.newRecordArray[i]["cardId"]
+      + " and user_id = " + this.newRecordArray[i]["userId"]
+      + ")"];
+    km_log(sqlTransaction);
+    sqlArray.push(sqlTransaction);
+
+    sqlPayment = ["insert into km_creditcard_payment ("
+      + "transaction_date, "
+      + "bought_amount, "
+      + "pay_amount, "
+      + "pay_month, "
+      + "remaining_balance, "
+      + "detail, "
+      + "user_id, "
+      + "card_id, "
+      + "transaction_id, "
+      + "last_update_date "
+      + ") "
+      + "select "
+      + "'" + this.newRecordArray[i]["transactionDate"] + "', "
+      + this.newRecordArray[i]["boughtAmount"] + ", "
+      + this.newRecordArray[i]["payAmount"] + ", "
+      + "'" + this.newRecordArray[i]["payMonth"] + "', "
+      + this.newRecordArray[i]["remainingBalance"] + ", "
+      + "\"" + this.newRecordArray[i]["detail"] + "\", "
+      + this.newRecordArray[i]["userId"] + ", "
+      + this.newRecordArray[i]["cardId"] + ", "
+      + "(select max(rowid) from km_creditcard_trns " // 同一内容のレコードが複数件ある場合も。
+      + " where transaction_date = '" + this.newRecordArray[i]["transactionDate"] + "'"
+      + " and expense = " + this.newRecordArray[i]["boughtAmount"]
+      + " and card_id = " + this.newRecordArray[i]["cardId"]
+      + " and user_id = " + this.newRecordArray[i]["userId"] + "), "
+      + "datetime('now', 'localtime') "
+      + "where not exists ("
+      + " select 1 from km_creditcard_payment "
+      + " where transaction_date = '" + this.newRecordArray[i]["transactionDate"] + "'"
+      + " and bought_amount = " + this.newRecordArray[i]["boughtAmount"]
+      + " and card_id = " + this.newRecordArray[i]["cardId"]
+      + " and user_id = " + this.newRecordArray[i]["userId"]
+      + ")"];
+    km_log(sqlPayment);
+    sqlArray.push(sqlPayment);
+  }
+  this.mDb.executeTransaction(sqlArray);
+  this.newRecordArray.length = 0;
+};
+

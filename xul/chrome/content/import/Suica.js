@@ -10,7 +10,6 @@ function Suica(db, emoneyTbl, itemMap) {
     "Charge": itemMap["ATM/振替"],
     "Other": itemMap["食材・生活用品"]
   };
-  this.sourceType = 0;
 
   this.emoneyId = 0;
   this.userId = 0;
@@ -67,10 +66,10 @@ Suica.prototype.onFileOpen = function(inputStream, status) {
       "expense": 0,
       "itemId": 0,
       "detail": "",
-      "userId": 0,
-      "moneyId": 0,
+      "userId": this.userId,
+      "moneyId": this.emoneyId,
       "internal": 0,
-      "source": 0,
+      "source": sourceType,
     };
     // 月日を年月日に変換
     // ファイル内に年データがないので、データは1年以内のものと想定
@@ -116,10 +115,6 @@ Suica.prototype.onFileOpen = function(inputStream, status) {
       rec["income"] = balance - prevBalance;
       rec["expense"] = 0;
     }
-    
-    rec["userId"] = this.userId;
-    rec["moneyId"] = this.emoneyId;
-    rec["source"] = sourceType;
     
     prevBalance = balance;
     

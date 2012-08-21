@@ -6,6 +6,7 @@ function BankTable() {
 BankTable.prototype.initialize = function(db) {
   this.mDb = db;
   this.mTree.init(this.load.bind(this));
+  this.loadBankList();
 };
 BankTable.prototype.load = function(direction, sortColumn) {
   var orderby = "";
@@ -54,9 +55,11 @@ BankTable.prototype.load = function(direction, sortColumn) {
   var types = this.mDb.getRecordTypes();
   var columns = this.mDb.getColumns();
   this.mTree.PopulateTableData(records, columns, types);
-  this.loadBankList();
   this.mTree.ensureRowIsVisible(12, -1);
   this.mTree.ShowTable(true);
+  
+  this.onUserSelect();    
+  
   $$('km_from_value').value = this.mTree.getFromValue();
   $$('km_to_value').value = this.mTree.getToValue();
   

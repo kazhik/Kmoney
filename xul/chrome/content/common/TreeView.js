@@ -195,6 +195,7 @@ TreeViewController.prototype = {
     this.treeView.init(aTableData, aColumns, aTypes);
     
   },
+  
   ensureRowIsVisible: function(rowIdColIdx, rowId) {
     var idxRow;
     if (rowId === -1) {
@@ -211,6 +212,15 @@ TreeViewController.prototype = {
       
     }
   },
+  
+  ensurePreviousRowIsVisible: function() {
+	if (this.treeTable.currentIndex - 1 >= 0) {
+      this.treeTable.boxObject.ensureRowIsVisible(this.treeTable.currentIndex - 1);
+	} else {
+      this.treeTable.boxObject.ensureRowIsVisible(0);
+	}
+  },
+  
   setOffset: function(direction) {
     if (direction === 'first') {
       this.mOffset = 0;

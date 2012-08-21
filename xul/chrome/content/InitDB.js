@@ -84,6 +84,7 @@ InitDB.prototype.createTables = function() {
       '"last_update_date" DATETIME,' +
       '"item_id" INTEGER,' +
       '"user_id" INTEGER,' +
+      '"internal" BOOL,' +
       '"source" INTEGER)',
     'CREATE TABLE "km_emoney_info" (' +
       '"name" TEXT,' +
