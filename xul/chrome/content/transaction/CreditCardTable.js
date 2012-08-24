@@ -162,6 +162,13 @@ CreditCardTable.prototype.getCardId = function(name, userId) {
 CreditCardTable.prototype.addNewRecord = function(rec) {
   this.newRecordArray.push(rec);
 };
+CreditCardTable.prototype.updateLastPayment = function(payAmount) {
+  if (this.newRecordArray.length === 0) {
+    return;
+  }
+  
+  this.newRecordArray[this.newRecordArray.length - 1]["payAmount"] += parseInt(payAmount);
+};
 CreditCardTable.prototype.executeInsert = function() {
   var sqlArray = [];
   var sqlPayment;
