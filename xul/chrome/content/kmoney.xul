@@ -18,6 +18,8 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
     <script type="application/x-javascript" src="transaction/EMoneyTable.js" />
     <script type="application/x-javascript" src="summary/SummaryView.js" />
 
+    <script type="application/x-javascript" src="import/ShinseiBank.js" />
+    <script type="application/x-javascript" src="import/UCCard.js" />
     <script type="application/x-javascript" src="import/SaisonCard.js" />
     <script type="application/x-javascript" src="import/ViewCard.js" />
     <script type="application/x-javascript" src="import/KantanKakeibo.js" />

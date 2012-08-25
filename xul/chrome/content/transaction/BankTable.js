@@ -189,3 +189,55 @@ BankTable.prototype.deleteRecord = function() {
   this.load();
 };
 
+BankTable.prototype.executeInsert = function(newRecordArray) {
+  var sqlArray = [];
+  var sql;
+  for (var i = 0; i < newRecordArray.length; i++) {
+    
+    var sql = ["insert into km_bank_trns ("
+      + "transaction_date, "
+      + "item_id, "
+      + "detail, "
+      + "income, "
+      + "expense, "
+      + "user_id, "
+      + "bank_id, "
+      + "internal, "
+      + "source, "
+      + "last_update_date "
+      + ") "
+      + "select "
+      + "'" + newRecordArray[i]["transactionDate"] + "', "
+      + newRecordArray[i]["itemId"] + ", "
+      + "\"" + newRecordArray[i]["detail"] + "\", "
+      + newRecordArray[i]["income"] + ", "
+      + newRecordArray[i]["expense"] + ", "
+      + newRecordArray[i]["userId"] + ", "
+      + newRecordArray[i]["bankId"] + ", "
+      + newRecordArray[i]["internal"] + ", "
+      + newRecordArray[i]["source"] + ", "
+      + "datetime('now', 'localtime') "
+      + "where not exists ("
+      + " select 1 from km_bank_trns "
+      + " where transaction_date = '" + newRecordArray[i]["transactionDate"] + "'"
+      + " and income = " + newRecordArray[i]["income"]
+      + " and expense = " + newRecordArray[i]["expense"]
+      + " and bank_id = " + newRecordArray[i]["bankId"]
+      + " and user_id = " + newRecordArray[i]["userId"]
+      + ")"];
+    km_log(sql);
+    sqlArray.push(sql);
+
+  }
+  this.mDb.executeTransaction(sqlArray);
+};
+BankTable.prototype.getBankId = function(name, userId) {
+  for (var i = 0; i < this.mBankList.length; i++) {
+    if (this.mBankList[i][1] === name && this.mBankList[i][2] == userId) {
+      return this.mBankList[i][0];
+    }
+  }
+  return 0;
+  
+};
+

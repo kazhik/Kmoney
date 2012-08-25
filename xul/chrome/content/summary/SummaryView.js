@@ -42,7 +42,7 @@ SummaryView.prototype.getDateYYYYMM = function(dateObj) {
 SummaryView.prototype.drawGraph = function() {
   var month = $$('km_summary_period').value;
   var startDate = new Date();
-  startDate.setMonth(startDate.getMonth() - month);
+  startDate.setMonth(startDate.getMonth() - month + 1);
 
   var itemid = $$('km_summary_item').value;
  
