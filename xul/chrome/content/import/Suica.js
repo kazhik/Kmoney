@@ -54,6 +54,7 @@ Suica.prototype.onFileOpen = function(inputStream, status) {
   var columnData;
   var prevBalance = -1;
   var balance = 0;
+  var newRecordArray = [];
   for (var i = rowData.length - 1; i >= 0; --i) {
     columnData = rowData[i].getElementsByClassName("whtbg");
     if (columnData.length === 0) {
@@ -118,9 +119,9 @@ Suica.prototype.onFileOpen = function(inputStream, status) {
     
     prevBalance = balance;
     
-    this.emoneyTable.addNewRecord(rec);
+    newRecordArray.push(rec);
   }
-  this.emoneyTable.executeInsert();
+  this.emoneyTable.executeImport(newRecordArray);
 };
 
 Suica.prototype.importDb = function(suicaHtmlFile, userId) {

@@ -21,7 +21,7 @@ function Kmoney() {
     this.importTypeList = {};
     this.importers = {};
     this.users = {};
-};
+}
 
 function Startup() {
     kmoney = new Kmoney();
@@ -30,7 +30,7 @@ function Startup() {
 
 function Shutdown() {
     kmoney.Shutdown();
-};
+}
 
 Kmoney.prototype.Startup = function () {
     this.mDb = new SQLiteHandler();
@@ -84,9 +84,9 @@ Kmoney.prototype.initImport = function () {
     this.importTypeList["kantan"] =
         {"label": km_getLStr("import.kantan"), "ext": "*.db"};
 
-    this.importers["view"] = new ViewCard(this.mDb, this.creditcardTree, this.itemMap);
-    this.importers["saison"] = new SaisonCard(this.mDb, this.creditcardTree, this.itemMap);
-    this.importers["uc"] = new UCCard(this.mDb, this.creditcardTree, this.itemMap);
+    this.importers["view"] = new ViewCard(this.mDb, this.creditcardTree);
+    this.importers["saison"] = new SaisonCard(this.mDb, this.creditcardTree);
+    this.importers["uc"] = new UCCard(this.mDb, this.creditcardTree);
     this.importers["shinsei"] = new ShinseiBank(this.mDb, this.bankTree, this.itemMap);
     this.importers["suica"] = new Suica(this.mDb, this.emoneyTree, this.itemMap);
     this.importers["kantan"] = new KantanKakeibo(this.mDb, this.cashTree, this.itemMap);
@@ -158,6 +158,8 @@ Kmoney.prototype.addEventListeners = function () {
     this.listeners['kmc-setprefs.command'] = this.openSetPrefs.bind(this);
     $$('kmc-setprefs').addEventListener("command", this.listeners['kmc-setprefs.command']);
 
+    this.listeners['kmc-importconf.command'] = this.openImportConf.bind(this);
+    $$('kmc-importconf').addEventListener("command", this.listeners['kmc-importconf.command']);
 };
 
 Kmoney.prototype.removeEventListeners = function () {
@@ -195,6 +197,15 @@ Kmoney.prototype.openSetMaster = function () {
 
     window.openDialog("chrome://kmoney/content/master/MasterData.xul", "MasterData",
         "chrome, resizable, centerscreen, modal, dialog", this.mDb);
+
+};
+Kmoney.prototype.openImportConf = function () {
+    if (!this.mDb.isConnected()) {
+      return;
+    }
+
+    window.openDialog("chrome://kmoney/content/import/ImportConf.xul", "ImportConf",
+        "chrome, resizable, centerscreen, modal, dialog", this.mDb, this.itemMap);
 
 };
 Kmoney.prototype.openSetPrefs = function () {
@@ -462,9 +473,14 @@ Kmoney.prototype.addRecord = function () {
 };
 Kmoney.prototype.updateRecord = function () {
     var tree = this.getSelectedTree();
-    if (typeof tree.updateRecord === 'function') {
-        tree.updateRecord();
+    if (typeof tree.updateRecord != 'function') {
+        return;
     }
+    if (tree.mTree.checkSelected() === false) {
+      km_alert(km_getLStr("error.title"), km_getLStr("error.update.notSelected"));
+      return;
+    }
+    tree.updateRecord();
 };
 Kmoney.prototype.onUserSelect = function () {
     var tree = this.getSelectedTree();
@@ -477,8 +493,8 @@ Kmoney.prototype.deleteRecord = function () {
     if (typeof tree.deleteRecord != 'function') {
         return;
     }
-    if (tree.mTree.treeTable.currentIndex === -1) {
-      km_alert(km_getLStr("error.title"), km_getLStr("error.notSelected"));
+    if (tree.mTree.checkSelected() === false) {
+      km_alert(km_getLStr("error.title"), km_getLStr("error.delete.notSelected"));
       return;
     }
     var bConfirm = km_confirm(km_getLStr("confirm.title"), km_getLStr("confirm.deleteRow"));

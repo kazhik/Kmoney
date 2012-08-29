@@ -46,15 +46,25 @@ MasterData.prototype.addRecord = function () {
 };
 MasterData.prototype.updateRecord = function () {
     var tab = this.getSelectedTab();
-    if (typeof tab.updateRecord === 'function') {
-        tab.updateRecord();
+    if (typeof tab.updateRecord != 'function') {
+        return;
     }
+    if (tree.mTree.checkSelected() === false) {
+        km_alert(km_getLStr("error.title"), km_getLStr("error.update.notSelected"));
+        return;
+    }
+    tab.updateRecord();
 };
 MasterData.prototype.deleteRecord = function () {
     var tab = this.getSelectedTab();
-    if (typeof tab.deleteRecord === 'function') {
-        tab.deleteRecord();
+    if (typeof tab.deleteRecord != 'function') {
+        return;
     }
+    if (tree.mTree.checkSelected() === false) {
+        km_alert(km_getLStr("error.title"), km_getLStr("error.delete.notSelected"));
+        return;
+    }
+    tab.deleteRecord();
 };
 MasterData.prototype.getSelectedTab = function () {
     var tab = null;

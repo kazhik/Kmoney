@@ -257,12 +257,21 @@ TreeViewController.prototype = {
       return this.mCount;
     }
   },
+  checkSelected: function() {
+	return (this.treeTable.currentIndex != -1);
+  },
   getColumnValue: function(columnIdx) {
+	if (this.treeTable.currentIndex === -1) {
+	  return "";
+	}
     var col = this.treeTable.columns.getColumnAt(columnIdx);
     return this.treeTable.view.getCellText(this.treeTable.currentIndex, col);
     
   },
   getSelectedRowValue: function(columnName) {
+	if (this.treeTable.currentIndex === -1) {
+	  return "";
+	}
     var col = this.treeTable.columns.getNamedColumn(columnName);
     return this.treeTable.view.getCellText(this.treeTable.currentIndex, col);
     

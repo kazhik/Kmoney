@@ -1,56 +1,10 @@
 Components.utils.import("resource://gre/modules/NetUtil.jsm");
 
-function ShinseiBank(db, bankTbl, itemMap) {
-  this.mDb = db;
-  this.bankTable = bankTbl;
-  this.itemMap = itemMap;
-  
-  this.bankId = 0;
-  this.userId = 0;
-  
-};
 
-ShinseiBank.prototype.getSourceType = function() {
-    this.mDb.selectQuery("select rowid from km_source where type = '新生銀行'" );
-    var records = this.mDb.getRecords();
-    if (records.length === 1) {
-      return records[0][0];
-    }
-    return 0;
-};
-
-
-ShinseiBank.prototype.getItemInfo = function(detail) {
-  // TODO: このマップは編集できるようにする
-  var importItemArray = [
-    { "detail": "その他",
-      "itemId": this.itemMap["食材・生活用品"],
-      "internal": 0,
-      "default" : 1
-    },
-    { "detail": "税引前利息",
-      "itemId": this.itemMap["利子"],
-      "internal": 0,
-      "default" : 0
-    },
-    { "detail": "振込手数料",
-      "itemId": this.itemMap["雑費"],
-      "internal": 0,
-      "default" : 0
-    }
-  ];
-  
-  var defaultItem = {};
-  for (var i in importItemArray) {
-    if (importItemArray[i]["default"] == 1) {
-      defaultItem = importItemArray[i];
-    } else if (detail.search(importItemArray[i]["detail"]) != -1) {
-      return importItemArray[i];
-    }
-  }
-  return defaultItem;
-
-};
+function ShinseiBank(db, bankTbl) {
+  BankImport.call(this, db, bankTbl);
+}
+ShinseiBank.prototype = Object.create(BankImport.prototype);
 
 ShinseiBank.prototype.onFileOpen = function(inputStream, status) {
   if (!Components.isSuccessCode(status)) {
@@ -66,7 +20,6 @@ ShinseiBank.prototype.onFileOpen = function(inputStream, status) {
     return;
   }
   var payMonth = "";
-  var sourceType = this.getSourceType();
   var newRecordArray = [];
   for (var i = rowArray.length - 1; i >= 0; --i) {
     
@@ -83,7 +36,7 @@ ShinseiBank.prototype.onFileOpen = function(inputStream, status) {
         "expense": 0,
         "userId": this.userId,
         "bankId": this.bankId,
-        "source": sourceType,
+        "source": this.sourceType,
         "internal": 0
       };
       rec["transactionDate"] = rowArray[i][0].replace("/", "-", "g");
@@ -108,6 +61,8 @@ ShinseiBank.prototype.onFileOpen = function(inputStream, status) {
 ShinseiBank.prototype.importDb = function(csvFile, userId) {
   this.userId = userId;
   this.bankId = this.bankTable.getBankId("新生銀行", userId);
+  this.loadSourceType("新生銀行");
+  this.loadImportConf();
 
   NetUtil.asyncFetch(csvFile, this.onFileOpen.bind(this));
   

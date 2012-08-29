@@ -2,7 +2,6 @@ function EMoneyTable() {
   this.mDb = null;
   this.mMoneyList = null;
   this.mTree = new TreeViewController("km_tree_emoney");
-  this.newRecordArray = [];
 };
 EMoneyTable.prototype.initialize = function(db) {
   this.mDb = db;
@@ -111,13 +110,10 @@ EMoneyTable.prototype.onUserSelect = function() {
   
 };
 
-EMoneyTable.prototype.addNewRecord = function(rec) {
-  this.newRecordArray.push(rec);
-};
-EMoneyTable.prototype.executeInsert = function() {
+EMoneyTable.prototype.executeImport = function(newRecordArray) {
   var sqlArray = [];
   var sql;
-  for (var i = 0; i < this.newRecordArray.length; i++) {
+  for (var i = 0; i < newRecordArray.length; i++) {
     sql = ["insert into km_emoney_trns ("
       + "transaction_date, "
       + "income, "
@@ -131,28 +127,27 @@ EMoneyTable.prototype.executeInsert = function() {
       + "source "
       + ") "
       + "select "
-      + "'" + this.newRecordArray[i]["transactionDate"] + "', "
-      + this.newRecordArray[i]["income"] + ", "
-      + this.newRecordArray[i]["expense"] + ", "
-      + this.newRecordArray[i]["itemId"] + ", "
-      + "\"" + this.newRecordArray[i]["detail"] + "\", "
-      + this.newRecordArray[i]["userId"] + ", "
-      + this.newRecordArray[i]["moneyId"] + ", "
+      + "'" + newRecordArray[i]["transactionDate"] + "', "
+      + newRecordArray[i]["income"] + ", "
+      + newRecordArray[i]["expense"] + ", "
+      + newRecordArray[i]["itemId"] + ", "
+      + "\"" + newRecordArray[i]["detail"] + "\", "
+      + newRecordArray[i]["userId"] + ", "
+      + newRecordArray[i]["moneyId"] + ", "
       + "datetime('now', 'localtime'), "
-      + this.newRecordArray[i]["internal"] + ", "
-      + this.newRecordArray[i]["source"] + " "
+      + newRecordArray[i]["internal"] + ", "
+      + newRecordArray[i]["source"] + " "
       + "where not exists ("
       + " select 1 from km_emoney_trns "
-      + " where transaction_date = '" + this.newRecordArray[i]["transactionDate"] + "'"
-      + " and income = " + this.newRecordArray[i]["income"]
-      + " and expense = " + this.newRecordArray[i]["expense"]
-      + " and user_id = " + this.newRecordArray[i]["userId"]
+      + " where transaction_date = '" + newRecordArray[i]["transactionDate"] + "'"
+      + " and income = " + newRecordArray[i]["income"]
+      + " and expense = " + newRecordArray[i]["expense"]
+      + " and user_id = " + newRecordArray[i]["userId"]
       + ")"];
     km_log(sql);
     sqlArray.push(sql);
   }
   this.mDb.executeTransaction(sqlArray);
-  this.newRecordArray.length = 0;
 };
 
 EMoneyTable.prototype.addRecord = function() {

@@ -1,6 +1,7 @@
 <!ENTITY window.title     "Kmoney">
 <!ENTITY dialog.masterData     "Master Data">
 <!ENTITY dialog.import     "Import">
+<!ENTITY dialog.importConf     "Import Conf">
 
 <!-- menu -->
 <!ENTITY menu.file			"File">
@@ -31,6 +32,8 @@
 <!ENTITY menu.setting.accesskey          "S">
 <!ENTITY menu.setting.master          "Master data">
 <!ENTITY menu.setting.master.accesskey          "M">
+<!ENTITY menu.setting.import          "Import Config">
+<!ENTITY menu.setting.import.accesskey          "I">
 <!ENTITY menu.setting.prefs          "Preferences">
 <!ENTITY menu.setting.prefs.accesskey          "N">
 
@@ -82,13 +85,14 @@
 <!ENTITY edit.detail          "Detail">
 <!ENTITY edit.amount          "Amount">
 <!ENTITY edit.user          "Name">
-<!ENTITY edit.internal          "Internal">
+<!ENTITY edit.internal          "Type">
 <!ENTITY edit.bank          "Bank">
 <!ENTITY edit.creditcard          "CreditCard">
 <!ENTITY edit.emoney          "E-Money">
 <!ENTITY edit.period          "Period">
 <!ENTITY edit.name          "Name">
 <!ENTITY edit.importfrom          "Source">
+<!ENTITY edit.default          "Default">
 
 <!-- confirm dialog -->
 <!ENTITY confirm.button.accept  "Yes">
@@ -108,6 +112,7 @@
 <!ENTITY button.selectfile          "Select File">
 <!ENTITY button.selectfile.accesskey          "S">
 
+<!ENTITY select.type          "Type">
 <!ENTITY select.importtype          "Import Type">
 <!ENTITY select.importtype.accesskey          "T">
 

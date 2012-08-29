@@ -1,6 +1,7 @@
 <!ENTITY window.title     "Kmoney">
 <!ENTITY dialog.masterData     "マスターデータ">
 <!ENTITY dialog.import     "インポート">
+<!ENTITY dialog.importConf     "インポート設定">
 
 <!-- menu -->
 <!ENTITY menu.file          "ファイル">
@@ -31,6 +32,8 @@
 <!ENTITY menu.setting.accesskey          "S">
 <!ENTITY menu.setting.master          "マスターデータ">
 <!ENTITY menu.setting.master.accesskey          "M">
+<!ENTITY menu.setting.import          "インポート設定">
+<!ENTITY menu.setting.import.accesskey          "I">
 <!ENTITY menu.setting.prefs          "オプション">
 <!ENTITY menu.setting.prefs.accesskey          "N">
 
@@ -82,13 +85,14 @@
 <!ENTITY edit.detail          "詳細">
 <!ENTITY edit.amount          "金額">
 <!ENTITY edit.user          "名前">
-<!ENTITY edit.internal          "内部">
+<!ENTITY edit.internal          "収支区分">
 <!ENTITY edit.bank          "銀行">
 <!ENTITY edit.creditcard          "クレジットカード">
 <!ENTITY edit.emoney          "電子マネー">
 <!ENTITY edit.period          "期間">
 <!ENTITY edit.name          "名前">
 <!ENTITY edit.importfrom          "インポート元">
+<!ENTITY edit.default          "既定値">
 
 <!-- confirm dialog -->
 <!ENTITY confirm.button.accept  "はい">
@@ -108,6 +112,7 @@
 <!ENTITY button.selectfile          "ファイルを選択">
 <!ENTITY button.selectfile.accesskey          "S">
 
+<!ENTITY select.type          "種別">
 <!ENTITY select.importtype          "インポート種別">
 <!ENTITY select.importtype.accesskey          "T">
 

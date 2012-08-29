@@ -159,6 +159,9 @@ BankTable.prototype.updateRecord = function() {
     internalValue = 0;
   }
   var rowid = this.mTree.getColumnValue(12);
+  if (rowid === "") {
+    km_alert(km_getLStr("no_selectedrow"));
+  }
   var sql = ["update km_bank_trns "
     + "set "
     + "transaction_date = " + "'" + $$('km_edit_transactionDate').value + "', "

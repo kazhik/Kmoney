@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://kmoney/locale/kmoney.dtd">
+ 
+<window id="km_import_conf" title="&window.title; - &dialog.importConf;"
+  onload="openImportConfDialog()"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml">
+
+  <script type="application/x-javascript" src="../globals.js"/>  
+  <script type="application/x-javascript" src="ImportConf.js"/>  
+  <script type="application/x-javascript" src="../common/TreeView.js"/>  
+
+   <vbox>
+        <hbox align="center">
+            <label id="km_import_type" control="km_import_select_type" value="&select.type;" />
+            <menulist id="km_import_select_type">
+                <menupopup></menupopup>
+            </menulist>
+        </hbox>
+        <vbox flex="1">
+          <tree id="km_tree_import_conf" style="min-height:30em" flex="1" seltype="single"
+              enableColumnDrag="false">
+            <treecols id="km_cols_import_conf">
+                <treecol id="import_conf_id" hidden="true" ignoreincolumnpicker="true" />
+                <treecol id="import_conf_source_type" hidden="true" ignoreincolumnpicker="true" />
+                <splitter class="tree-splitter" resizebefore="closest"
+                          resizeafter="grow" />  
+                <treecol id="import_conf_detail" label="&column.detail;"
+                         width="60" persist="width" />
+                <splitter class="tree-splitter" resizebefore="closest"
+                          resizeafter="grow" />  
+                <treecol id="import_conf_itemid" hidden="true" ignoreincolumnpicker="true" />
+                <splitter class="tree-splitter" resizebefore="closest"
+                          resizeafter="grow" />  
+                <treecol id="import_conf_itemname" label="&column.itemname;"
+                         width="90" persist="width" />
+                <splitter class="tree-splitter" resizebefore="closest"
+                          resizeafter="grow" />  
+                <treecol id="import_conf_default" hidden="true" ignoreincolumnpicker="true" />
+                <treecol id="import_conf_internal" hidden="true" ignoreincolumnpicker="true" />
+                <treecol id="import_conf_can_be_deleted" hidden="true" ignoreincolumnpicker="true" />
+            </treecols>
+            <treechildren />
+          </tree>
+        </vbox>
+		<vbox>
+			<hbox align="center">
+				<label control="conf_edit_detail" value="&edit.detail;" />
+				<textbox id="conf_edit_detail" size="10" />
+    			<label control="conf_edit_item" value="&edit.item;" />
+                <menulist id="conf_edit_item">
+                    <menupopup></menupopup>
+                </menulist>
+    			<label control="conf_edit_internal" value="&edit.internal;" />
+                <menulist id="conf_edit_internal">
+                    <menupopup></menupopup>
+                </menulist>
+				<checkbox id="conf_edit_default" label="&edit.default;" />
+			</hbox>
+			<hbox align="right">
+				<button id="import_conf_add" accesskey="&button.add.accesskey;"
+						label="&button.add;" />
+				<button id="import_conf_update" accesskey="&button.update.accesskey;"
+						label="&button.update;" />
+				<button id="import_conf_delete" accesskey="&button.delete.accesskey;"
+						label="&button.delete;" />
+				<button id="import_conf_close" accesskey="&button.close.accesskey;"
+						label="&button.close;" />
+			</hbox>
+		</vbox>
+    </vbox>
+</window>
