@@ -79,7 +79,7 @@ BankTable.prototype.onSelect = function() {
   $$('km_edit_amount').value = amount;
   $$('km_edit_bank').value = this.mTree.getColumnValue(6);
   $$('km_edit_user').value = this.mTree.getColumnValue(8);
-  $$('km_edit_internal').checked = (Number(this.mTree.getColumnValue(11)) === 1);
+  $$('km_edit_internal').value = this.mTree.getColumnValue(11);
 
 }
 BankTable.prototype.loadBankList = function() {
@@ -152,12 +152,6 @@ BankTable.prototype.updateRecord = function() {
     incomeValue = 0;
     expenseValue = $$('km_edit_amount').value;
   }
-  var internalValue;
-  if ($$('km_edit_internal').checked) {
-    internalValue = 1;
-  } else {
-    internalValue = 0;
-  }
   var rowid = this.mTree.getColumnValue(12);
   if (rowid === "") {
     km_alert(km_getLStr("no_selectedrow"));
@@ -172,7 +166,7 @@ BankTable.prototype.updateRecord = function() {
     + "user_id = " + $$('km_edit_user').value + ", "
     + "bank_id = " + $$('km_edit_bank').value + ", "
     + "last_update_date = datetime('now', 'localtime'), "
-    + "internal = " + internalValue + ", "
+    + "internal = " + $$('km_edit_internal').value  + ", "
     + "source = 1 "
     + "where rowid = " + rowid];
   this.mDb.executeTransaction(sql);

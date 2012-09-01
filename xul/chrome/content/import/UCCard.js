@@ -45,6 +45,10 @@ UCCard.prototype.onFileOpen = function(inputStream, status) {
       rec["payAmount"] = parseInt(rowArray[i][7]);
       rec["detail"] = rowArray[i][3];
       var itemInfo = this.getItemInfo(rowArray[i][3]);
+      if (itemInfo["itemId"] === undefined) {
+        km_alert(km_getLStr("error.title"), km_getLStr("error.import.noConf"));
+        return;
+      }
       rec["itemId"] = itemInfo["itemId"];
       
       if (rowArray[i][0] != "１回払い") {

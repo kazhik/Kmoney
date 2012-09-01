@@ -176,7 +176,10 @@
 						<menupopup></menupopup>
 					</menulist>
 				</hbox>
-				<checkbox id="km_edit_internal" label="&edit.internal;" />
+				<label id="label_internal" control="km_edit_internal" value="&edit.internal;" />
+				<menulist id="km_edit_internal">
+					<menupopup></menupopup>
+				</menulist>
 			</hbox>
 			<hbox align="right">
 				<button id="km_button_master_add" accesskey="&button.add.accesskey;"

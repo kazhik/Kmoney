@@ -44,6 +44,10 @@ ShinseiBank.prototype.onFileOpen = function(inputStream, status) {
       rec["income"] = parseInt(rowArray[i][4]) || 0;
       rec["detail"] = rowArray[i][2];
       var itemInfo = this.getItemInfo(rowArray[i][2]);
+      if (itemInfo["itemId"] === undefined) {
+        km_alert(km_getLStr("error.title"), km_getLStr("error.import.noConf"));
+        return;
+      }
       rec["itemId"] = itemInfo["itemId"];
       
       if (rec["detail"] === "振込手数料" && rec["income"] > 0) {

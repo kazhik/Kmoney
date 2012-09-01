@@ -51,6 +51,10 @@ SaisonCard.prototype.onFileOpen = function(inputStream, status) {
       rec["payAmount"] = parseInt(strBuff);
       rec["detail"] = rowArray[i][1];
       var itemInfo = this.getItemInfo(rowArray[i][1]);
+      if (itemInfo["itemId"] === undefined) {
+        km_alert(km_getLStr("error.title"), km_getLStr("error.import.noConf"));
+        return;
+      }
       rec["itemId"] = itemInfo["itemId"];
       
       if (rowArray[i][3] != "１回") {

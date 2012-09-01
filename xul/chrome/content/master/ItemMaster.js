@@ -48,20 +48,14 @@ ItemMaster.prototype.addRecord = function() {
   
 }
 ItemMaster.prototype.updateRecord = function() {
-  var name = $$('km_edit_name').value;
-  var internalValue;
-  if ($$('km_edit_internal').checked) {
-    internalValue = 1;
-  } else {
-    internalValue = 0;
-  }
-  
+ 
   var rowid = this.mTree.getColumnValue(0);
   var sql = ["update km_item "
     + "set "
-    + "name = '" + name + "', "
-    + "internal = " + internalValue + " "
+    + "name = '" + $$('km_edit_name').value + "', "
+    + "internal = " + $$('km_edit_internal').value + " "
     + "where rowid = " + rowid];
+  km_log(sql);
   this.mDb.executeTransaction(sql);
   this.load();
   this.mTree.ensureRowIsVisible(0, rowid);
@@ -73,6 +67,7 @@ ItemMaster.prototype.deleteRecord = function() {
     return;
   }
   var sql = ["delete from km_item where rowid = " + rowid];
+  km_log(sql);
   this.mDb.executeTransaction(sql);
   
   this.load();
@@ -80,7 +75,7 @@ ItemMaster.prototype.deleteRecord = function() {
 
 ItemMaster.prototype.onSelect = function() {
   $$('km_edit_name').value = this.mTree.getColumnValue(1);
-  $$('km_edit_internal').checked = (Number(this.mTree.getColumnValue(2)) === 1);
+  $$('km_edit_internal').value = this.mTree.getColumnValue(2);
  
 };
 

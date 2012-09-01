@@ -57,6 +57,7 @@ Kmoney.prototype.Startup = function () {
 
     this.PopulateItemList();
     this.PopulateUserList();
+    this.initInternalList();
     
     this.initImport();
 
@@ -87,7 +88,8 @@ Kmoney.prototype.initImport = function () {
     this.importers["view"] = new ViewCard(this.mDb, this.creditcardTree);
     this.importers["saison"] = new SaisonCard(this.mDb, this.creditcardTree);
     this.importers["uc"] = new UCCard(this.mDb, this.creditcardTree);
-    this.importers["shinsei"] = new ShinseiBank(this.mDb, this.bankTree, this.itemMap);
+    this.importers["shinsei"] = new ShinseiBank(this.mDb, this.bankTree);
+    this.importers["mizuho"] = new MizuhoBank(this.mDb, this.bankTree);
     this.importers["suica"] = new Suica(this.mDb, this.emoneyTree, this.itemMap);
     this.importers["kantan"] = new KantanKakeibo(this.mDb, this.cashTree, this.itemMap);
 };
@@ -457,6 +459,13 @@ Kmoney.prototype.PopulateUserList = function () {
 
     $$('km_edit_user').selectedIndex = 0;
 
+};
+Kmoney.prototype.initInternalList = function () {
+    $$('km_edit_internal').removeAllItems();
+    $$('km_edit_internal').appendItem(km_getLStr("internal.none"), 0);
+    $$('km_edit_internal').appendItem(km_getLStr("internal.self"), 1);
+    $$('km_edit_internal').appendItem(km_getLStr("internal.family"), 2);
+    $$('km_edit_internal').selectedIndex = 0;
 };
 
 Kmoney.prototype.reset = function () {

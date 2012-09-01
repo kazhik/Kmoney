@@ -34,6 +34,8 @@ MasterData.prototype.initialize = function(db) {
     this.emoneyMaster = new EMoneyMaster();
     this.emoneyMaster.initialize(db);
     
+    this.initInternalList();
+    
     this.addEventListeners();
     
     this.onTabSelected();
@@ -49,7 +51,7 @@ MasterData.prototype.updateRecord = function () {
     if (typeof tab.updateRecord != 'function') {
         return;
     }
-    if (tree.mTree.checkSelected() === false) {
+    if (tab.mTree.checkSelected() === false) {
         km_alert(km_getLStr("error.title"), km_getLStr("error.update.notSelected"));
         return;
     }
@@ -60,7 +62,7 @@ MasterData.prototype.deleteRecord = function () {
     if (typeof tab.deleteRecord != 'function') {
         return;
     }
-    if (tree.mTree.checkSelected() === false) {
+    if (tab.mTree.checkSelected() === false) {
         km_alert(km_getLStr("error.title"), km_getLStr("error.delete.notSelected"));
         return;
     }
@@ -136,6 +138,14 @@ MasterData.prototype.loadCardList = function() {
     $$("km_edit_creditcard").selectedIndex = 0;
     
 };
+MasterData.prototype.initInternalList = function () {
+    $$('km_edit_internal').removeAllItems();
+    $$('km_edit_internal').appendItem(km_getLStr("internal.none"), 0);
+    $$('km_edit_internal').appendItem(km_getLStr("internal.self"), 1);
+    $$('km_edit_internal').appendItem(km_getLStr("internal.family"), 2);
+    $$('km_edit_internal').selectedIndex = 0;
+};
+
 MasterData.prototype.loadEMoneyList = function() {
     this.mDb.selectQuery("select rowid, name from km_emoney_info");
     var moneyList = this.mDb.getRecords();
@@ -162,6 +172,7 @@ MasterData.prototype.onTabSelected = function (e) {
     switch ($$('km_master_tabbox').selectedTab.id) {
     case 'km_tab_master_user':
         $$('km_edit_label_name').value = km_getLStr("master.username")
+        $$('label_internal').hidden = true;
         $$('km_edit_internal').hidden = true;
         $$('userbox').hidden = true;
         $$('creditcardbox').hidden = true;
@@ -169,6 +180,7 @@ MasterData.prototype.onTabSelected = function (e) {
         break;
     case 'km_tab_master_item':
         $$('km_edit_label_name').value = km_getLStr("master.itemname")
+        $$('label_internal').hidden = false;
         $$('km_edit_internal').hidden = false;
         $$('userbox').hidden = true;
         $$('creditcardbox').hidden = true;
@@ -176,6 +188,7 @@ MasterData.prototype.onTabSelected = function (e) {
         break;
     case 'km_tab_master_bank':
         $$('km_edit_label_name').value = km_getLStr("master.bankname")
+        $$('label_internal').hidden = true;
         $$('km_edit_internal').hidden = true;
         $$('userbox').hidden = false;
         $$('km_edit_label_user').value = km_getLStr("master.username")
@@ -185,6 +198,7 @@ MasterData.prototype.onTabSelected = function (e) {
         break;
     case 'km_tab_master_creditcard':
         $$('km_edit_label_name').value = km_getLStr("master.cardname")
+        $$('label_internal').hidden = true;
         $$('km_edit_internal').hidden = true;
         $$('userbox').hidden = false;
         $$('km_edit_label_user').value = km_getLStr("master.username")
@@ -195,6 +209,7 @@ MasterData.prototype.onTabSelected = function (e) {
         break;
     case 'km_tab_master_emoney':
         $$('km_edit_label_name').value = km_getLStr("master.emoneyname")
+        $$('label_internal').hidden = true;
         $$('km_edit_internal').hidden = true;
         $$('userbox').hidden = false;
         $$('km_edit_label_user').value = km_getLStr("master.username")

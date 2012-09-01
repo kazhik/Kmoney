@@ -60,6 +60,10 @@ ViewCard.prototype.onFileOpen = function(inputStream, status) {
       rec["transactionDate"] = dateElem.textContent.replace(/\//g, "-");
       rec["detail"] = columnData[2].textContent.trim();
       var itemInfo = this.getItemInfo(rec["detail"]);
+      if (itemInfo["itemId"] === undefined) {
+        km_alert(km_getLStr("error.title"), km_getLStr("error.import.noConf"));
+        return;
+      }
       rec["itemId"] = itemInfo["itemId"];
       rec["internal"] = itemInfo["internal"];
       columnData2 = rowData[i].getElementsByTagName("th");

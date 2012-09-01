@@ -72,7 +72,7 @@ CashTable.prototype.onSelect = function() {
   }
   $$('km_edit_amount').value = amount;
   $$('km_edit_user').value = this.mTree.getColumnValue(6);
-  $$('km_edit_internal').checked = (Number(this.mTree.getColumnValue(8)) === 1);
+  $$('km_edit_internal').value = this.mTree.getColumnValue(8);
 };
 CashTable.prototype.addRecord = function() {
   var incomeValue;
@@ -125,12 +125,6 @@ CashTable.prototype.updateRecord = function() {
     incomeValue = 0;
     expenseValue = $$('km_edit_amount').value;
   }
-  var internalValue;
-  if ($$('km_edit_internal').checked) {
-    internalValue = 1;
-  } else {
-    internalValue = 0;
-  }
 
   var rowid = this.mTree.getColumnValue(9);
   var sql = ["update km_realmoney_trns "
@@ -142,7 +136,7 @@ CashTable.prototype.updateRecord = function() {
     + "detail = " + "\"" + $$('km_edit_detail').value + "\", "
     + "user_id = " + $$('km_edit_user').value + ", "
     + "last_update_date = datetime('now', 'localtime'), "
-    + "internal = " + internalValue + ", "
+    + "internal = " + $$('km_edit_internal').value + ", "
     + "source = 1 "
     + "where rowid = " + rowid];
   km_log(sql);

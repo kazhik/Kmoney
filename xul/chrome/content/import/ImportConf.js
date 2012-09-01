@@ -68,7 +68,7 @@ ImportConf.prototype.addRecord = function () {
       + "detail, "
       + "item_id, "
       + "default_id, "
-      + "can_be_deleted, "
+      + "permission, "
       + "internal "
       + ") values ( "
       + sourceType + ", "
@@ -85,11 +85,23 @@ ImportConf.prototype.updateRecord = function () {
       km_alert(km_getLStr("error.title"), km_getLStr("error.update.notSelected"));
       return;
     }
+    
     var rowid = this.mTree.getColumnValue(0);
     var detail = $$("conf_edit_detail").value;
     var itemId = $$('conf_edit_item').value;
     var defaultId = ($$('conf_edit_default').checked)? 1: 0;
     var internal = $$("conf_edit_internal").value;
+    
+    // permissionがなければdetailは変更不可
+    var permission = this.mTree.getColumnValue(7);
+    var orgDetail = "";
+    if (permission != 0) {
+        orgDetail = this.mTree.getColumnValue(2);
+        if (detail != orgDetail) {
+            km_alert(km_getLStr("error.title"), km_getLStr("error.update.cannotUpdate"));
+            return;
+        }
+    }
     
     var sql = ["update km_import "
       + "set detail = '" + detail + "', "
@@ -105,6 +117,14 @@ ImportConf.prototype.deleteRecord = function () {
       km_alert(km_getLStr("error.title"), km_getLStr("error.delete.notSelected"));
       return;
     }
+
+    // 削除不可
+    var permission = this.mTree.getColumnValue(7);
+    if (permission != 0) {
+        km_alert(km_getLStr("error.title"), km_getLStr("error.update.cannotDelete"));
+    }
+    
+    
     var rowid = this.mTree.getColumnValue(0);
     if (rowid === "") {
       return;
@@ -146,7 +166,7 @@ ImportConf.prototype.onSelectType = function () {
     }
     
     this.mDb.selectQuery("select A.rowid, A.source_type, A.detail, A.item_id,"
-                         + "B.name, A.default_id, A.internal, A.can_be_deleted "
+                         + "B.name, A.default_id, A.internal, A.permission "
                          + "from km_import A "
                          + "inner join km_item B "
                          + "on A.item_id = B.rowid "
@@ -169,7 +189,7 @@ ImportConf.prototype.initItemList = function (itemMap) {
 ImportConf.prototype.initInternalList = function () {
     $$('conf_edit_internal').removeAllItems();
     $$('conf_edit_internal').appendItem(km_getLStr("internal.none"), 0);
-    $$('conf_edit_internal').appendItem(km_getLStr("internal.family"), 1);
-    $$('conf_edit_internal').appendItem(km_getLStr("internal.self"), 2);
+    $$('conf_edit_internal').appendItem(km_getLStr("internal.self"), 1);
+    $$('conf_edit_internal').appendItem(km_getLStr("internal.family"), 2);
     $$('conf_edit_internal').selectedIndex = 0;
 };

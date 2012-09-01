@@ -1,29 +1,9 @@
 Components.utils.import("resource://gre/modules/NetUtil.jsm");
 
-function Suica(db, emoneyTbl, itemMap) {
-  this.mDb = db;
-  this.emoneyTable = emoneyTbl;
-  
-  // TODO: このマップは編集できるようにする
-  this.importItemMap = {
-    "Fare": itemMap["交通費"],
-    "Charge": itemMap["ATM/振替"],
-    "Other": itemMap["食材・生活用品"]
-  };
-
-  this.emoneyId = 0;
-  this.userId = 0;
-  
-};
-
-Suica.prototype.getSourceType = function() {
-    this.mDb.selectQuery("select rowid from km_source where type = 'Suica'" );
-    var records = this.mDb.getRecords();
-    if (records.length === 1) {
-      return records[0][0];
-    }
-    return 0;
-};
+function Suica(db, emoneyTbl) {
+  EMoneyImport.call(this, db, emoneyTbl);
+}
+Suica.prototype = Object.create(EMoneyImport.prototype);
 
 Suica.prototype.onFileOpen = function(inputStream, status) {
   var strBuff = "";
@@ -50,7 +30,6 @@ Suica.prototype.onFileOpen = function(inputStream, status) {
   if (rowData.length === 0) {
     return;
   }
-  var sourceType = this.getSourceType();
   var columnData;
   var prevBalance = -1;
   var balance = 0;
@@ -70,7 +49,7 @@ Suica.prototype.onFileOpen = function(inputStream, status) {
       "userId": this.userId,
       "moneyId": this.emoneyId,
       "internal": 0,
-      "source": sourceType,
+      "source": this.sourceType,
     };
     // 月日を年月日に変換
     // ファイル内に年データがないので、データは1年以内のものと想定
@@ -101,17 +80,17 @@ Suica.prototype.onFileOpen = function(inputStream, status) {
         rec["detail"] += columnData[3].textContent.trim();
         rec["detail"] += ":";
         rec["detail"] += columnData[4].textContent.trim();
-        rec["itemId"] = this.importItemMap["Fare"];
+        rec["itemId"] = this.importItemMap["交通費"];
+      } else if (columnData[1].textContent === "物販") {
+        rec["itemId"] = this.importItemMap["物販"];
       // 「物販」以外は交通費のはず（バス等）
-      } else if (columnData[1].textContent != "物販") {
-        rec["itemId"] = this.importItemMap["Fare"];
       } else {
-        rec["itemId"] = this.importItemMap["Other"];
+        rec["itemId"] = this.importItemMap["交通費"];
       }
       rec["income"] = 0;
       rec["expense"] = prevBalance - balance;
     } else {
-      rec["itemId"] = this.importItemMap["Charge"];
+      rec["itemId"] = this.importItemMap["チャージ"];
       rec["internal"] = 1;
       rec["income"] = balance - prevBalance;
       rec["expense"] = 0;
@@ -127,6 +106,8 @@ Suica.prototype.onFileOpen = function(inputStream, status) {
 Suica.prototype.importDb = function(suicaHtmlFile, userId) {
   this.userId = userId;
   this.emoneyId = this.emoneyTable.getMoneyId("Suica", userId);
+  this.loadSourceType("Suica");
+  this.loadImportConf();
 
   NetUtil.asyncFetch(suicaHtmlFile, this.onFileOpen.bind(this));
   

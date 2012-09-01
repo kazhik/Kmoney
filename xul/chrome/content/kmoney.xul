@@ -21,6 +21,8 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
     <script type="application/x-javascript" src="import/AbstractImport.js" />
     <script type="application/x-javascript" src="import/BankImport.js" />
     <script type="application/x-javascript" src="import/CreditCardImport.js" />
+    <script type="application/x-javascript" src="import/EMoneyImport.js" />
+    <script type="application/x-javascript" src="import/MizuhoBank.js" />
     <script type="application/x-javascript" src="import/ShinseiBank.js" />
     <script type="application/x-javascript" src="import/UCCard.js" />
     <script type="application/x-javascript" src="import/SaisonCard.js" />
@@ -299,7 +301,10 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 					<menulist id="km_edit_user">
 						<menupopup></menupopup>
 					</menulist>
-					<checkbox id="km_edit_internal" label="&edit.internal;" />
+					<label control="km_edit_internal" value="&edit.internal;" />
+					<menulist id="km_edit_internal">
+						<menupopup></menupopup>
+					</menulist>
 					<hbox id="bankbox" align="center">
 						<label control="km_edit_bank" value="&edit.bank;" />
 						<menulist id="km_edit_bank">

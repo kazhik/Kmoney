@@ -39,7 +39,7 @@
                           resizeafter="grow" />  
                 <treecol id="import_conf_default" hidden="true" ignoreincolumnpicker="true" />
                 <treecol id="import_conf_internal" hidden="true" ignoreincolumnpicker="true" />
-                <treecol id="import_conf_can_be_deleted" hidden="true" ignoreincolumnpicker="true" />
+                <treecol id="import_conf_permission" hidden="true" ignoreincolumnpicker="true" />
             </treecols>
             <treechildren />
           </tree>

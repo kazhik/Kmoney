@@ -72,7 +72,7 @@
 <!ENTITY column.userid          "ユーザID">
 <!ENTITY column.username          "ユーザ名">
 <!ENTITY column.itemname          "費目名">
-<!ENTITY column.internal          "内部">
+<!ENTITY column.internal          "家計内">
 <!ENTITY column.type          "種別">
 <!ENTITY column.sourcetype          "入力元">
 <!ENTITY column.paymonth          "支払月">
@@ -85,7 +85,7 @@
 <!ENTITY edit.detail          "詳細">
 <!ENTITY edit.amount          "金額">
 <!ENTITY edit.user          "名前">
-<!ENTITY edit.internal          "収支区分">
+<!ENTITY edit.internal          "家計内">
 <!ENTITY edit.bank          "銀行">
 <!ENTITY edit.creditcard          "クレジットカード">
 <!ENTITY edit.emoney          "電子マネー">

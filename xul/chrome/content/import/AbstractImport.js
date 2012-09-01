@@ -35,7 +35,7 @@ AbstractImport.prototype.loadImportConf = function() {
 
 AbstractImport.prototype.getItemInfo = function(detail) {
   var defaultItem = {};
-  for (var i in this.importItemArray) {
+  for (var i = 0; i < this.importItemArray.length; i++) {
     if (this.importItemArray[i]["default"] == 1) {
       defaultItem = this.importItemArray[i];
     } else if (detail.search(this.importItemArray[i]["detail"]) != -1) {

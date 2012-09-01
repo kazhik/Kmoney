@@ -79,7 +79,7 @@ EMoneyTable.prototype.onSelect = function() {
   $$('km_edit_amount').value = amount;
   $$('km_edit_emoney').value = this.mTree.getColumnValue(6);
   $$('km_edit_user').value = this.mTree.getColumnValue(8);
-  $$('km_edit_internal').checked = (Number(this.mTree.getColumnValue(11)) === 1);
+  $$('km_edit_internal').value = this.mTree.getColumnValue(11);
 };
 EMoneyTable.prototype.loadEMoneyList = function() {
   this.mDb.selectQuery("select rowid, name, user_id from km_emoney_info");
@@ -196,12 +196,6 @@ EMoneyTable.prototype.updateRecord = function() {
     incomeValue = 0;
     expenseValue = $$('km_edit_amount').value;
   }
-  var internalValue;
-  if ($$('km_edit_internal').checked) {
-    internalValue = 1;
-  } else {
-    internalValue = 0;
-  }
   var rowid = this.mTree.getColumnValue(12);
   var sql = ["update km_emoney_trns "
     + "set "
@@ -213,7 +207,7 @@ EMoneyTable.prototype.updateRecord = function() {
     + "user_id = " + $$('km_edit_user').value + ", "
     + "money_id = " + $$('km_edit_emoney').value + ", "
     + "last_update_date = datetime('now', 'localtime'), "
-    + "internal = " + internalValue + ", "
+    + "internal = " + $$('km_edit_internal').value + ", "
     + "source = 1 "
     + "where rowid = " + rowid];
   this.mDb.executeTransaction(sql);
