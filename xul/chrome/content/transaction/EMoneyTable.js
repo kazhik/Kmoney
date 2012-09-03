@@ -2,6 +2,7 @@ function EMoneyTable() {
   this.mDb = null;
   this.mMoneyList = null;
   this.mTree = new TreeViewController("km_tree_emoney");
+  this.mPaging = false;
 };
 EMoneyTable.prototype.initialize = function(db) {
   this.mDb = db;
@@ -26,7 +27,9 @@ EMoneyTable.prototype.load = function(direction, sortColumn) {
   var count = this.mDb.getRowCount('km_emoney_trns', '');
   this.mTree.setRowCount(count);
   $$('km_total').value = count;
-  this.mTree.setOffset(direction);
+  if (this.mPaging) {
+      this.mTree.setOffset(direction);
+  }
   var sql = "select "
     + "A.transaction_date, "
     + "A.item_id, "
@@ -48,8 +51,11 @@ EMoneyTable.prototype.load = function(direction, sortColumn) {
     + " on A.user_id = C.id "
     + "inner join km_emoney_info D "
     + " on A.money_id = D.rowid "
-    + orderby + " "
-    + "limit " + this.mTree.mLimit + " offset " + this.mTree.mOffset;
+    + orderby;
+
+  if (this.mPaging) {
+    sql += " limit " + this.mTree.mLimit + " offset " + this.mTree.mOffset;
+  }
   this.mDb.selectQuery(sql);
   var records = this.mDb.getRecords();
   var types = this.mDb.getRecordTypes();
@@ -61,8 +67,10 @@ EMoneyTable.prototype.load = function(direction, sortColumn) {
 
   this.onUserSelect();
   
-  $$('km_from_value').value = this.mTree.getFromValue();
-  $$('km_to_value').value = this.mTree.getToValue();
+  if (this.mPaging) {
+    $$('km_from_value').value = this.mTree.getFromValue();
+    $$('km_to_value').value = this.mTree.getToValue();
+  }
   
 };
 EMoneyTable.prototype.onSelect = function() {
@@ -170,11 +178,7 @@ EMoneyTable.prototype.addRecord = function() {
     rec["income"] = 0;
     rec["expense"] = $$('km_edit_amount').value;
   }
-  if ($$('km_edit_internal').checked) {
-    rec["internal"] = 1;
-  } else {
-    rec["internal"] = 0;
-  }
+  rec["internal"] = $$('km_edit_internal').value;
   rec["itemId"] = $$('km_edit_item').value;
   rec["detail"] = $$('km_edit_detail').value;
   rec["userId"] = $$('km_edit_user').value;

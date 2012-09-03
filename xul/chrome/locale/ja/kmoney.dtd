@@ -38,7 +38,7 @@
 <!ENTITY menu.setting.prefs.accesskey          "N">
 
 <!ENTITY menu.help          "ヘルプ">
-<!ENTITY menu.help.accesskey          "S">
+<!ENTITY menu.help.accesskey          "H">
 <!ENTITY menu.help.aboutextension "Kmoneyについて">
 <!ENTITY menu.help.aboutextension.ak "A">
 <!ENTITY menu.help.helppage "Kmoneyヘルプ">
@@ -111,10 +111,15 @@
 <!ENTITY button.close.accesskey          "C">
 <!ENTITY button.selectfile          "ファイルを選択">
 <!ENTITY button.selectfile.accesskey          "S">
+<!ENTITY button.query          "検索">
+<!ENTITY button.query.accesskey          "Q">
 
 <!ENTITY select.type          "種別">
 <!ENTITY select.importtype          "インポート種別">
 <!ENTITY select.importtype.accesskey          "T">
+
+<!ENTITY menulist.selecttype          "種別を選択してください">
+
 
 <!ENTITY first "最初">
 <!ENTITY previous "前">

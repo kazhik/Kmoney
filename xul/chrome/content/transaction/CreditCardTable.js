@@ -2,6 +2,7 @@ function CreditCardTable() {
   this.mDb = null;
   this.mCardList = null;
   this.mTree = new TreeViewController("km_tree_creditcard");
+  this.mPaging = false;
 }
 
 CreditCardTable.prototype.initialize = function(db) {
@@ -27,7 +28,9 @@ CreditCardTable.prototype.load = function(direction, sortColumn) {
   var count = this.mDb.getRowCount('km_creditcard_trns', '');
   this.mTree.setRowCount(count);
   $$('km_total').value = count;
-  this.mTree.setOffset(direction);
+  if (this.mPaging) {
+    this.mTree.setOffset(direction);
+  }
   var sql = "select "
     + "A.transaction_date, "
     + "A.item_id, "
@@ -48,9 +51,11 @@ CreditCardTable.prototype.load = function(direction, sortColumn) {
     + " on A.user_id = C.id "
     + "inner join km_creditcard_info D "
     + " on A.card_id = D.rowid "
-    + orderby + " "
-    + "limit " + this.mTree.mLimit + " offset " + this.mTree.mOffset;
+    + orderby;
 
+  if (this.mPaging) {
+    sql += " limit " + this.mTree.mLimit + " offset " + this.mTree.mOffset;
+  }
   km_log(sql);
   this.mDb.selectQuery(sql);
   var records = this.mDb.getRecords();
@@ -62,8 +67,10 @@ CreditCardTable.prototype.load = function(direction, sortColumn) {
 
   this.onUserSelect();    
   
-  $$('km_from_value').value = this.mTree.getFromValue();
-  $$('km_to_value').value = this.mTree.getToValue();
+  if (this.mPaging) {
+    $$('km_from_value').value = this.mTree.getFromValue();
+    $$('km_to_value').value = this.mTree.getToValue();
+  }
 };
 CreditCardTable.prototype.onSelect = function() {
   $$('km_edit_transactionDate').value = this.mTree.getColumnValue(0);

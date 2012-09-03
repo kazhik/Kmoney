@@ -147,14 +147,14 @@ ImportConf.prototype.onSelect = function () {
 ImportConf.prototype.initImportTypeList = function () {
     $$('km_import_select_type').removeAllItems();
     
-    $$('km_import_select_type').appendItem(km_getLStr("import.none"), 0);
 
-    this.mDb.selectQuery("select A.rowid, A.type from km_source A");
+    var sql = "select A.rowid, A.type from km_source A where A.import = 1 and A.enabled = 1";
+    this.mDb.selectQuery(sql);
     var records = this.mDb.getRecords();
     for (var i = 0; i < records.length; i++) {
         $$('km_import_select_type').appendItem(records[i][1], records[i][0]);
     }
-    $$("km_import_select_type").selectedIndex = 0;
+//    $$("km_import_select_type").selectedIndex = 0;
 
 };
 ImportConf.prototype.onSelectType = function () {

@@ -2,6 +2,7 @@ function BankTable() {
   this.mDb = null;
   this.mBankList = null;
   this.mTree = new TreeViewController("km_tree_bank");
+  this.mPaging = false;
 };
 BankTable.prototype.initialize = function(db) {
   this.mDb = db;
@@ -26,7 +27,9 @@ BankTable.prototype.load = function(direction, sortColumn) {
   var count = this.mDb.getRowCount('km_bank_trns', '');
   this.mTree.setRowCount(count);
   $$('km_total').value = count;
-  this.mTree.setOffset(direction);
+  if (this.mPaging) {
+    this.mTree.setOffset(direction);
+  }
   var sql = "select "
     + "A.transaction_date, "
     + "A.item_id, "
@@ -48,8 +51,10 @@ BankTable.prototype.load = function(direction, sortColumn) {
     + " on A.user_id = C.id "
     + "inner join km_bank_info D "
     + " on A.bank_id = D.rowid "
-    + orderby + " "
-    + "limit " + this.mTree.mLimit + " offset " + this.mTree.mOffset;
+    + orderby;
+  if (this.mPaging) {
+    sql += " limit " + this.mTree.mLimit + " offset " + this.mTree.mOffset;
+  }
   this.mDb.selectQuery(sql);
   var records = this.mDb.getRecords();
   var types = this.mDb.getRecordTypes();
@@ -60,8 +65,10 @@ BankTable.prototype.load = function(direction, sortColumn) {
   
   this.onUserSelect();    
   
-  $$('km_from_value').value = this.mTree.getFromValue();
-  $$('km_to_value').value = this.mTree.getToValue();
+  if (this.mPaging) {
+    $$('km_from_value').value = this.mTree.getFromValue();
+    $$('km_to_value').value = this.mTree.getToValue();
+  }
   
 };
 BankTable.prototype.onSelect = function() {
@@ -111,12 +118,6 @@ BankTable.prototype.addRecord = function() {
     incomeValue = 0;
     expenseValue = $$('km_edit_amount').value;
   }
-  var internalValue;
-  if ($$('km_edit_internal').checked) {
-    internalValue = 1;
-  } else {
-    internalValue = 0;
-  }
   var sql = ["insert into km_bank_trns ("
     + "transaction_date, "
     + "income, "
@@ -137,7 +138,7 @@ BankTable.prototype.addRecord = function() {
     + $$('km_edit_user').value + ", "
     + $$('km_edit_bank').value + ", "
     + "datetime('now', 'localtime'), "
-    + "0, "
+    + $$('km_edit_internal').value + ", "
     + "1)"];
   this.mDb.executeTransaction(sql);
   this.load();

@@ -105,6 +105,19 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 <tab id="km_tab_creditcard" label="&tab.creditcard;" persist="selected" />
                 <tab id="km_tab_emoney" label="&tab.emoney;" persist="selected" />
             </tabs>
+			<hbox id="km_simple_query">
+				<menulist id="km_list_query_condition">
+					<menupopup>
+						<menuitem label="&column.date;" value="1"/>
+						<menuitem label="&column.item;" value="2"/>
+						<menuitem label="&column.detail;" value="3"/>
+						<menuitem label="&column.user;" value="4"/>
+					</menupopup>
+				</menulist>
+				<textbox id="km_edit_simplequery" size="40" />
+				<button id="km_button_query" accesskey="&button.query.accesskey;"
+					label="&button.query;" />
+			</hbox>
 				<hbox id="km_navigate" align="center">
 				  <button id="km_btn_first" label="&lt;&lt;" tooltiptext="&first;"/>
 				  <button id="km_btn_previous" label="&lt;" tooltiptext="&previous;"/>

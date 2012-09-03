@@ -13,8 +13,7 @@
 
    <vbox>
         <hbox align="center">
-            <label id="km_import_type" control="km_import_select_type" value="&select.type;" />
-            <menulist id="km_import_select_type">
+            <menulist id="km_import_select_type" label="&menulist.selecttype;">
                 <menupopup></menupopup>
             </menulist>
         </hbox>

@@ -13,6 +13,7 @@ function KmDataTreeView(sTreeId) {
 
   this.colInfo = {};
   
+  this.onClickColumnHeader = null;
 };
 
 KmDataTreeView.prototype = {
@@ -123,7 +124,7 @@ KmDataTreeView.prototype = {
       orderby = colLabel + " desc";
     } else if (colOrder === 'descending') {
       this.colInfo[colLabel]['order'] = 'natural';
-      orderby = "";
+      orderby = null;
     }
     
 	var cols = document.getElementById(this.mTreeId).getElementsByTagName("treecol");

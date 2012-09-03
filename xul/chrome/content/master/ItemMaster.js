@@ -30,19 +30,12 @@ ItemMaster.prototype.load = function() {
   
 };
 ItemMaster.prototype.addRecord = function() {
-  var name = $$('km_edit_name').value;
-  var internalValue;
-  if ($$('km_edit_internal').checked) {
-    internalValue = 1;
-  } else {
-    internalValue = 0;
-  }
   var sql = ["insert into km_item ("
     + "name, "
     + "internal "
     + ") values ( "
-    + "'" + name + "', "
-    + internalValue + ")"];
+    + "'" + $$('km_edit_name').value + "', "
+    + $$('km_edit_internal').value + ")"];
   this.mDb.executeTransaction(sql);
   this.load();
   

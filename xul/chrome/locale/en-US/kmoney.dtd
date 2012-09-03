@@ -38,7 +38,7 @@
 <!ENTITY menu.setting.prefs.accesskey          "N">
 
 <!ENTITY menu.help          "Help">
-<!ENTITY menu.help.accesskey          "S">
+<!ENTITY menu.help.accesskey          "H">
 <!ENTITY menu.help.aboutextension "About Kmoney">
 <!ENTITY menu.help.aboutextension.ak "A">
 <!ENTITY menu.help.helppage "Kmoney Help">
@@ -111,11 +111,14 @@
 <!ENTITY button.close.accesskey          "C">
 <!ENTITY button.selectfile          "Select File">
 <!ENTITY button.selectfile.accesskey          "S">
+<!ENTITY button.query          "Query">
+<!ENTITY button.query.accesskey          "Q">
 
 <!ENTITY select.type          "Type">
 <!ENTITY select.importtype          "Import Type">
 <!ENTITY select.importtype.accesskey          "T">
 
+<!ENTITY menulist.selecttype          "Please select type">
 
 <!ENTITY first "First">
 <!ENTITY previous "Previous">

@@ -1,6 +1,7 @@
 function AllView() {
   this.mDb = null;
   this.mTree = new TreeViewController("km_tree_all");
+  this.mPaging = false;
 };
 AllView.prototype.initialize = function(db) {
   this.mDb = db;
@@ -24,7 +25,9 @@ AllView.prototype.load = function(direction, sortColumn) {
   var count = this.mDb.getRowCount('kmv_transactions', '');
   this.mTree.setRowCount(count);
   $$('km_total').value = count;
-  this.mTree.setOffset(direction);
+  if (this.mPaging) {
+    this.mTree.setOffset(direction);
+  }
   var sql = "select "
     + "A.date, "
     + "A.item, "
@@ -39,8 +42,10 @@ AllView.prototype.load = function(direction, sortColumn) {
     + " end as type, "
     + "A.rowid "
     + "from kmv_transactions A "
-    + orderby + " "
-    + "limit " + this.mTree.mLimit + " offset " + this.mTree.mOffset;
+    + orderby;
+  if (this.mPaging) {
+    sql += "limit " + this.mTree.mLimit + " offset " + this.mTree.mOffset;
+  }
   this.mDb.selectQuery(sql);
   km_log(sql);
   var records = this.mDb.getRecords();
@@ -48,8 +53,9 @@ AllView.prototype.load = function(direction, sortColumn) {
   var columns = this.mDb.getColumns();
   this.mTree.PopulateTableData(records, columns, types);
   this.mTree.ShowTable(true);
-  $$('km_from_value').value = this.mTree.getFromValue();
-  $$('km_to_value').value = this.mTree.getToValue();
-  
+  if (this.mPaging) {
+    $$('km_from_value').value = this.mTree.getFromValue();
+    $$('km_to_value').value = this.mTree.getToValue();
+  }  
 };
 

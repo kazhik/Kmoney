@@ -72,7 +72,6 @@ Suica.prototype.onFileOpen = function(inputStream, status) {
     // 残高が減っていれば支出、増えていれば収入とする
     if (prevBalance > balance) {
       // 第5カラムがある場合は電車
-      km_log("[" + columnData[1].textContent + "]");
       if (columnData[4].textContent != "") {
         rec["detail"] += ":";
         rec["detail"] += columnData[2].textContent.trim();
@@ -80,17 +79,14 @@ Suica.prototype.onFileOpen = function(inputStream, status) {
         rec["detail"] += columnData[3].textContent.trim();
         rec["detail"] += ":";
         rec["detail"] += columnData[4].textContent.trim();
-        rec["itemId"] = this.importItemMap["交通費"];
-      } else if (columnData[1].textContent === "物販") {
-        rec["itemId"] = this.importItemMap["物販"];
-      // 「物販」以外は交通費のはず（バス等）
+        rec["itemId"] = this.getItemId("交通費");
       } else {
-        rec["itemId"] = this.importItemMap["交通費"];
+        rec["itemId"] = this.getItemId(rec["detail"]);
       }
       rec["income"] = 0;
       rec["expense"] = prevBalance - balance;
     } else {
-      rec["itemId"] = this.importItemMap["チャージ"];
+      rec["itemId"] = this.getItemId("チャージ");
       rec["internal"] = 1;
       rec["income"] = balance - prevBalance;
       rec["expense"] = 0;
@@ -101,6 +97,7 @@ Suica.prototype.onFileOpen = function(inputStream, status) {
     newRecordArray.push(rec);
   }
   this.emoneyTable.executeImport(newRecordArray);
+  this.emoneyTable.load('last');
 };
 
 Suica.prototype.importDb = function(suicaHtmlFile, userId) {
