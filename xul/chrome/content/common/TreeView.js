@@ -54,17 +54,6 @@ KmDataTreeView.prototype = {
   },
   //function to get sqlite data type
   getCellDataType: function(row, col) {
-/*
-    try {
-//      var colLabel = this.aColumns[col.index][0];
-//      var colType = this.colInfo[colLabel]['type'];
-//      return colType;
-      return this.aTypes[row][col.index];
-    }
-    catch (e) {
-      return SQLiteTypes.TEXT;
-    }
-*/
   },
 
   setTree: function(treebox) { this.treebox = treebox; },
@@ -75,38 +64,6 @@ KmDataTreeView.prototype = {
   getImageSrc: function(row, col) { return null; },
   getRowProperties: function(row, properties) {},
   getCellProperties: function(row, col, properties) {
- /*
-    var atomService = Components.classes["@mozilla.org/atom-service;1"].getService(Components.interfaces.nsIAtomService);
-    switch(this.aTypes[row][col.index]) {
-      case SQLiteTypes.INTEGER:
-        var atom = atomService.getAtom("integervalue");
-        properties.AppendElement(atom);
-        break;
-      case SQLiteTypes.REAL:
-        var atom = atomService.getAtom("floatvalue");
-        properties.AppendElement(atom);
-        break;
-      case SQLiteTypes.BLOB:
-        var atom = atomService.getAtom("blobvalue");
-        properties.AppendElement(atom);
-        break;
-      case SQLiteTypes.NULL: 
-        var atom = atomService.getAtom("nullvalue");
-        properties.AppendElement(atom);
-        break;
-      case SQLiteTypes.TEXT:
-      default:
-        var atom = atomService.getAtom("textvalue");
-        properties.AppendElement(atom);
-        break;
-    }
-    if (typeof this.getCellText(row,col) == "number") {
-      var atom = atomService.getAtom("numbervalue");
-      properties.AppendElement(atom);
-    }
-    var atom = atomService.getAtom("tabledata");
-    properties.AppendElement(atom);
- */
  },
 
   getColumnProperties: function(colid, col, properties){},
@@ -114,17 +71,17 @@ KmDataTreeView.prototype = {
   cycleHeader: function(col) {
     var colLabel = this.aColumns[col.index][0];
     var colOrder = this.colInfo[colLabel]['order'];
-    var orderby;
+    var sortOrder;
 
     if (colOrder === 'natural') {
       this.colInfo[colLabel]['order'] = 'ascending';
-      orderby = colLabel + " asc";
+      sortOrder = "asc";
     } else if (colOrder === 'ascending') {
       this.colInfo[colLabel]['order'] = 'descending';
-      orderby = colLabel + " desc";
+      sortOrder = "desc";
     } else if (colOrder === 'descending') {
       this.colInfo[colLabel]['order'] = 'natural';
-      orderby = null;
+      sortOrder = "";
     }
     
 	var cols = document.getElementById(this.mTreeId).getElementsByTagName("treecol");
@@ -136,7 +93,7 @@ KmDataTreeView.prototype = {
       }
 	}    
     
-    this.onClickColumnHeader(orderby);
+    this.onClickColumnHeader(colLabel, sortOrder);
   }
 
 };
@@ -145,9 +102,7 @@ KmDataTreeView.prototype = {
 function TreeViewController(sTreeId) {
   this.mTreeId = sTreeId;
   this.treeTable = null; // Tree containing listing of current table
-  this.mLimit = 100;
-  this.mOffset = 0;
-  this.mCount = 0;
+  this.mSortCol = null;
   this.mSortOrder = null;
   this.reloadTable = null;
 };
@@ -157,8 +112,6 @@ TreeViewController.prototype = {
   init: function(callbackFunc) {
     this.treeTable = document.getElementById(this.mTreeId);
 
-    this.mLimit = km_prefsBranch.getIntPref("displayNumRecords");
-    
     if (callbackFunc != undefined) {
       this.reloadTable = callbackFunc;
     }
@@ -168,15 +121,19 @@ TreeViewController.prototype = {
     //this.treetable.view.init() also fails.
     this.treeTable.view = this.treeView;
   },
-  onClickColumnHeader: function(sortOrder) {
+  onClickColumnHeader: function(sortCol, sortOrder) {
     if (this.reloadTable) {
-      this.reloadTable('last', sortOrder);
+      var sort = {};
+      sort['column'] = sortCol;
+      sort['order'] = sortOrder;
+      this.reloadTable(null, sort);
     }
+    this.mSortCol = sortCol;
     this.mSortOrder = sortOrder;
   },
 
-  // ShowTable: Show/hide any currently displayed table data
-  ShowTable: function(bShow) {
+  // showTable: Show/hide any currently displayed table data
+  showTable: function(bShow) {
     if (this.treeTable == null) 
       return;
 
@@ -190,8 +147,8 @@ TreeViewController.prototype = {
     } 
   },
 
-  // PopulateTableData: Assign our custom treeview
-  PopulateTableData: function(aTableData, aColumns, aTypes) {
+  // populateTableData: Assign our custom treeview
+  populateTableData: function(aTableData, aColumns, aTypes) {
     //populate the tree's view with fresh data
     this.treeView.init(aTableData, aColumns, aTypes);
     
@@ -222,42 +179,6 @@ TreeViewController.prototype = {
 	}
   },
   
-  setOffset: function(direction) {
-    if (direction === 'first') {
-      this.mOffset = 0;
-    } else if (direction === 'prev') {
-      this.mOffset -= this.mLimit;
-      if (this.mOffset < 0) {
-        this.mOffset = 0;
-      }
-    } else if (direction === 'next') {
-      if (this.mOffset + this.mLimit < this.mCount) {
-        this.mOffset += this.mLimit;
-      }
-    } else if (direction === 'last') {
-      if (this.mCount % this.mLimit === 0) {
-        this.mOffset = (this.mLimit * (Math.floor(this.mCount / this.mLimit) - 1));
-      } else {
-        this.mOffset = (this.mLimit * Math.floor(this.mCount / this.mLimit));
-      }
-    }
-  },
-  getRowCount: function() {
-    return this.mCount;
-  },
-  setRowCount: function(count) {
-    this.mCount = count;
-  },
-  getFromValue: function() {
-    return this.mOffset + 1;
-  },
-  getToValue: function() {
-    if (this.mOffset + this.mLimit < this.mCount) {
-      return this.mOffset + this.mLimit;
-    } else {
-      return this.mCount;
-    }
-  },
   checkSelected: function() {
 	return (this.treeTable.currentIndex != -1);
   },

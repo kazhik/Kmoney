@@ -25,8 +25,8 @@ ItemMaster.prototype.load = function() {
 
   this.mItemList = this.mDb.getRecords();
 
-  this.mTree.PopulateTableData(records, columns, types);
-  this.mTree.ShowTable(true);
+  this.mTree.populateTableData(records, columns, types);
+  this.mTree.showTable(true);
   
 };
 ItemMaster.prototype.addRecord = function() {

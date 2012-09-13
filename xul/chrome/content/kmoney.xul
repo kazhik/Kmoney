@@ -106,29 +106,39 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 <tab id="km_tab_emoney" label="&tab.emoney;" persist="selected" />
             </tabs>
 			<hbox id="km_simple_query">
-				<menulist id="km_list_query_condition">
-					<menupopup>
-						<menuitem label="&column.date;" value="1"/>
-						<menuitem label="&column.item;" value="2"/>
-						<menuitem label="&column.detail;" value="3"/>
-						<menuitem label="&column.user;" value="4"/>
-					</menupopup>
+				<menulist id="km_list_query_condition1">
+					<menupopup></menupopup>
 				</menulist>
-				<textbox id="km_edit_simplequery" size="40" />
+				<menulist id="km_list_query_operator1">
+					<menupopup></menupopup>
+				</menulist>
+				<datepicker id="km_edit_query_date1" type="popup" hidden="true" />
+				<textbox id="km_edit_query_text1" size="10" hidden="true" />
+				<menulist id="km_edit_query_list1" hidden="true" >
+					<menupopup></menupopup>
+				</menulist>
+                
+				<menulist id="km_list_query_andor">
+					<menupopup>
+                        <menuitem label="&menu.query.and;" value="AND" />
+                        <menuitem label="&menu.query.or;" value="OR" />
+                    </menupopup>
+				</menulist>
+                
+				<menulist id="km_list_query_condition2">
+					<menupopup></menupopup>
+				</menulist>
+				<menulist id="km_list_query_operator2">
+					<menupopup></menupopup>
+				</menulist>
+				<datepicker id="km_edit_query_date2" type="popup" hidden="true" />
+				<textbox id="km_edit_query_text2" size="10" hidden="true" />
+				<menulist id="km_edit_query_list2" hidden="true" >
+					<menupopup></menupopup>
+				</menulist>
 				<button id="km_button_query" accesskey="&button.query.accesskey;"
 					label="&button.query;" />
 			</hbox>
-				<hbox id="km_navigate" align="center">
-				  <button id="km_btn_first" label="&lt;&lt;" tooltiptext="&first;"/>
-				  <button id="km_btn_previous" label="&lt;" tooltiptext="&previous;"/>
-				  <label id="km_from_value" style="padding-top:5px;font-weight:bold;"/>
-				  <label value="&to;" style="padding-top:5px"/>
-				  <label id="km_to_value" style="padding-top:5px;font-weight:bold;"/>
-				  <label value="&of;" style="padding-top:5px"/>
-				  <label id="km_total" style="padding-top:5px;font-weight:bold;"/>
-				  <button id="km_btn_next" label="&gt;" tooltiptext="&next;" />
-				  <button id="km_btn_last" label="&gt;&gt;" tooltiptext="&last;" />
-				</hbox>
             <tabpanels>
                 <tabpanel flex="1">
                     <vbox id="km_summary" flex="1">
@@ -149,8 +159,10 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 								<treecol id="4" label="&column.expense;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="5" label="&column.type;" width="60" persist="width" />
-								<treecol id="6" label="rowid" hidden="true" ignoreincolumnpicker="true" />
+								<treecol id="5" label="&column.user;" width="30" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="6" label="&column.type;" width="60" persist="width" />
+								<treecol id="7" label="rowid" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 							</treecols>
                             <treechildren />

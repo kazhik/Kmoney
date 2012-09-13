@@ -25,8 +25,8 @@ UserMaster.prototype.load = function() {
 
   this.mUserList = this.mDb.getRecords();
 
-  this.mTree.PopulateTableData(records, columns, types);
-  this.mTree.ShowTable(true);
+  this.mTree.populateTableData(records, columns, types);
+  this.mTree.showTable(true);
   
 };
 UserMaster.prototype.addRecord = function() {

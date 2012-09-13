@@ -28,8 +28,8 @@ CardMaster.prototype.load = function() {
   var types = this.mDb.getRecordTypes();
   var columns = this.mDb.getColumns();
 
-  this.mTree.PopulateTableData(records, columns, types);
-  this.mTree.ShowTable(true);
+  this.mTree.populateTableData(records, columns, types);
+  this.mTree.showTable(true);
   
 };
 CardMaster.prototype.addRecord = function() {

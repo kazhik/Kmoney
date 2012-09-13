@@ -119,7 +119,8 @@
 <!ENTITY select.importtype.accesskey          "T">
 
 <!ENTITY menulist.selecttype          "種別を選択してください">
-
+<!ENTITY menu.query.and          "AND">
+<!ENTITY menu.query.or          "OR">
 
 <!ENTITY first "最初">
 <!ENTITY previous "前">

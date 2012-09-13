@@ -42,6 +42,7 @@ var stmtCallback = {
         return true;
       case Ci.mozIStorageStatementCallback.REASON_CANCELED:
       case Ci.mozIStorageStatementCallback.REASON_ERROR:
+      default:
         alert("Query canceled or aborted!");
         return false;
     }
@@ -745,7 +746,7 @@ SQLiteHandler.prototype = {
   },
 
   // selectWithParams : execute a select query with parameter binding
-  selectWithParams: function(sQuery, aParamData) {
+  selectWithParams: function(sQuery, paramValue) {
     var stmt;
     //create the statement
     try {
@@ -758,36 +759,8 @@ SQLiteHandler.prototype = {
       return false;
     }
     //bind the parameters
-    try {
-      for (var i = 0; i < aParamData.length; i++) {
-        var aData = aParamData[i];
-        switch (aData[2]) {
-          case SQLiteTypes.NULL:
-            stmt.bindNullParameter(aData[0]);
-            break;
-          case SQLiteTypes.INTEGER:
-            stmt.bindInt64Parameter(aData[0], aData[1]);
-            break;
-          case SQLiteTypes.REAL:
-            stmt.bindDoubleParameter(aData[0], aData[1]);
-            break;
-          case SQLiteTypes.TEXT:
-            stmt.bindStringParameter(aData[0], aData[1]);
-            break;
-          case SQLiteTypes.BLOB:
-            if (typeof aData[1] == "string")
-              aData[1] = this.textToBlob(aData[1]);
-            stmt.bindBlobParameter(aData[0], aData[1], aData[1].length);
-            break;
-        }
-      }
-    } catch (e) {
-      stmt.finalize();
-      //Cu.reportError("finalize");
-      var msg = this.onSqlError(e, "Binding failed for parameter: " + aData[0] + ". data length = " + aData[1].length, this.dbConn.lastErrorString, true);
-      Cu.reportError(msg);
-      this.setErrorString();
-      return false;
+    for (let paramKey in stmt.params) {
+        stmt.params[paramKey] = paramValue[paramKey];
     }
     
     // if aColumns is not null, there is a problem in tree display

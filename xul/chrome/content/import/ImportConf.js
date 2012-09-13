@@ -22,7 +22,7 @@ ImportConf.prototype.initialize = function(db, itemMap) {
     this.mTree.init();
     
     this.initImportTypeList();
-    this.initInternalList();
+    this.populateInternalList();
     this.initItemList(itemMap);
 };
 ImportConf.prototype.close = function () {
@@ -146,7 +146,6 @@ ImportConf.prototype.onSelect = function () {
 
 ImportConf.prototype.initImportTypeList = function () {
     $$('km_import_select_type').removeAllItems();
-    
 
     var sql = "select A.rowid, A.type from km_source A where A.import = 1 and A.enabled = 1";
     this.mDb.selectQuery(sql);
@@ -154,7 +153,6 @@ ImportConf.prototype.initImportTypeList = function () {
     for (var i = 0; i < records.length; i++) {
         $$('km_import_select_type').appendItem(records[i][1], records[i][0]);
     }
-//    $$("km_import_select_type").selectedIndex = 0;
 
 };
 ImportConf.prototype.onSelectType = function () {
@@ -176,8 +174,8 @@ ImportConf.prototype.onSelectType = function () {
     var types = this.mDb.getRecordTypes();
     var columns = this.mDb.getColumns();
   
-    this.mTree.PopulateTableData(records, columns, types);
-    this.mTree.ShowTable(true);
+    this.mTree.populateTableData(records, columns, types);
+    this.mTree.showTable(true);
 };
 ImportConf.prototype.initItemList = function (itemMap) {
     $$('conf_edit_item').removeAllItems();
@@ -186,7 +184,7 @@ ImportConf.prototype.initItemList = function (itemMap) {
     }
     $$('conf_edit_item').selectedIndex = 0;
 };
-ImportConf.prototype.initInternalList = function () {
+ImportConf.prototype.populateInternalList = function () {
     $$('conf_edit_internal').removeAllItems();
     $$('conf_edit_internal').appendItem(km_getLStr("internal.none"), 0);
     $$('conf_edit_internal').appendItem(km_getLStr("internal.self"), 1);

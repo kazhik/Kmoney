@@ -124,13 +124,13 @@ function $$(sId) {
   return document.getElementById(sId);
 }
 
-function smShow(aId) {
+function showElements(aId) {
   for (var i in aId) {
     $$(aId[i]).hidden = false;
   }
 }
 
-function smHide(aId) {
+function hideElements(aId) {
   for (var i in aId) {
     $$(aId[i]).hidden = true;
   }
@@ -334,6 +334,15 @@ Date.prototype.yyyymmdd = function() {
   return yyyy + "-" + (mm[1]?mm:"0"+mm[0]) + "-" + (dd[1]?dd:"0"+dd[0]); // padding
 }
 
+Date.prototype.yyyymm = function() {
+  var yyyy = this.getFullYear().toString();
+  var mm = (this.getMonth()+1).toString(); // getMonth() is zero-based
+  return yyyy + "/" + (mm[1]?mm:"0"+mm[0]); // padding
+}
+
+function isEmpty(obj) {
+    return Object.keys(new Object(obj)).length === 0;
+}
 function convertZen2han(str) {
   for (var i = 0; i < 10; i++) {
     str = str.replace(new RegExp(

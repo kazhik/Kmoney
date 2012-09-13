@@ -26,7 +26,7 @@ function Kmoney() {
 function Startup() {
     kmoney = new Kmoney();
     kmoney.Startup();
-};
+}
 
 function Shutdown() {
     kmoney.Shutdown();
@@ -48,6 +48,10 @@ Kmoney.prototype.Startup = function () {
     if (bOpenLastDb) {
         this.openLastDb();
     }
+    this.populateItemList();
+    this.populateUserList();
+    this.populateInternalList();
+    
     this.cashTree.initialize(this.mDb);
     this.creditcardTree.initialize(this.mDb);
     this.emoneyTree.initialize(this.mDb);
@@ -55,10 +59,6 @@ Kmoney.prototype.Startup = function () {
     this.summary.initialize(this.mDb);
     this.allView.initialize(this.mDb);
 
-    this.PopulateItemList();
-    this.PopulateUserList();
-    this.initInternalList();
-    
     this.initImport();
     
     this.initQueryCondition();
@@ -102,6 +102,23 @@ Kmoney.prototype.Shutdown = function () {
     this.closeDatabase(false);
 };
 Kmoney.prototype.initQueryCondition = function () {
+    $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.none"), "none");
+    $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.date"), "date");
+    $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.item"), "item");
+    $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.detail"), "detail");
+    $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.user"), "user");
+
+    $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.none"), "none");
+    $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.date"), "date");
+    $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.item"), "item");
+    $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.detail"), "detail");
+    $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.user"), "user");
+
+    $$('km_list_query_condition1').selectedIndex = 1;
+    $$('km_list_query_andor').selectedIndex = 0;
+    $$('km_list_query_condition2').selectedIndex = 0;
+    this.onQueryCondition1Select();
+    this.onQueryCondition2Select();
 };
 
 Kmoney.prototype.addEventListeners = function () {
@@ -144,20 +161,16 @@ Kmoney.prototype.addEventListeners = function () {
     this.listeners['kmc-delete'] = this.deleteRecord.bind(this);
     $$('kmc-delete').addEventListener("command", this.listeners['kmc-delete']);
 
+    this.listeners['km_list_query_condition1.select'] = this.onQueryCondition1Select.bind(this);
+    $$('km_list_query_condition1').addEventListener(
+        "select", this.listeners['km_list_query_condition1.select']);
+
+    this.listeners['km_list_query_condition2.select'] = this.onQueryCondition2Select.bind(this);
+    $$('km_list_query_condition2').addEventListener(
+        "select", this.listeners['km_list_query_condition2.select']);
+    
     this.listeners['km_edit_user.select'] = this.onUserSelect.bind(this);
     $$('km_edit_user').addEventListener("select", this.listeners['km_edit_user.select']);
-
-    this.listeners['km_btn_first.command'] = this.jump.bind(this, 'first');
-    $$('km_btn_first').addEventListener("command", this.listeners['km_btn_first.command']);
-
-    this.listeners['km_btn_previous.command'] = this.jump.bind(this, 'prev');
-    $$('km_btn_previous').addEventListener("command", this.listeners['km_btn_previous.command']);
-
-    this.listeners['km_btn_next.command'] = this.jump.bind(this, 'next');
-    $$('km_btn_next').addEventListener("command", this.listeners['km_btn_next.command']);
-
-    this.listeners['km_btn_last.command'] = this.jump.bind(this, 'last');
-    $$('km_btn_last').addEventListener("command", this.listeners['km_btn_last.command']);
 
     this.listeners['kmc-setmaster.command'] = this.openSetMaster.bind(this);
     $$('kmc-setmaster').addEventListener("command", this.listeners['kmc-setmaster.command']);
@@ -167,6 +180,10 @@ Kmoney.prototype.addEventListeners = function () {
 
     this.listeners['kmc-importconf.command'] = this.openImportConf.bind(this);
     $$('kmc-importconf').addEventListener("command", this.listeners['kmc-importconf.command']);
+
+    this.listeners['km_button_query.command'] = this.query.bind(this);
+    $$('km_button_query').addEventListener("command", this.listeners['km_button_query.command']);
+
 };
 
 Kmoney.prototype.removeEventListeners = function () {
@@ -176,10 +193,6 @@ Kmoney.prototype.removeEventListeners = function () {
     $$('km_button_add').removeEventListener("command", this.listeners['km_button_add.command']);
     $$('km_button_update').removeEventListener("command", this.listeners['km_button_update.command']);
     $$('km_button_reset').removeEventListener("command", this.listeners['km_button_reset.command']);
-    $$('km_btn_first').removeEventListener("command", this.listeners['km_btn_first.command']);
-    $$('km_btn_previous').removeEventListener("command", this.listeners['km_btn_previous.command']);
-    $$('km_btn_next').removeEventListener("command", this.listeners['km_btn_next.command']);
-    $$('km_btn_last').removeEventListener("command", this.listeners['km_btn_last.command']);
 
     $$('km_tree_cash').removeEventListener("select", this.listeners['km_tree_cash.select']);
     $$('km_tree_creditcard').removeEventListener("select", this.listeners['km_tree_creditcard.select']);
@@ -190,12 +203,6 @@ Kmoney.prototype.removeEventListeners = function () {
 
     $$('kmc-setmaster').removeEventListener("command", this.listeners['kmc-setmaster.command']);
     $$('kmc-setprefs').removeEventListener("command", this.listeners['kmc-setprefs.command']);
-};
-Kmoney.prototype.jump = function (direction) {
-    var tree = this.getSelectedTree();
-    if (typeof tree.load === 'function') {
-        tree.load(direction);
-    }
 };
 Kmoney.prototype.openSetMaster = function () {
     if (!this.mDb.isConnected()) {
@@ -233,9 +240,61 @@ Kmoney.prototype.onEMoneySelect = function () {
     this.emoneyTree.onSelect();
 };
 Kmoney.prototype.loadTable = function (tabId) {
+    var key;
+    var value;
+    var operator;
+    var queryParams = {
+        "cond1": {},
+        "andor": $$('km_list_query_andor').value,
+        "cond2": {}
+    };
+    
+    key = $$('km_list_query_condition1').value;
+    if (key === "date") {
+        value = $$('km_edit_query_date1').value;
+        operator = $$('km_list_query_operator1').value;
+    } else if (key === "item") {
+        value = $$('km_edit_query_list1').value;
+        operator = "=";
+    } else if (key === "detail") {
+        value = $$('km_edit_query_text1').value;
+        operator = "=";
+    } else if (key === "user") {
+        value = $$('km_edit_query_list1').value;
+        operator = "=";
+    } else if (key === "none") {
+        value = "";
+    }
+
+    queryParams['cond1']['key'] = key;
+    queryParams['cond1']['operator'] = operator;
+    queryParams['cond1']['value'] = value;
+    
+    queryParams['andor'] = $$('km_list_query_andor').value;
+    
+    key = $$('km_list_query_condition2').value;
+    if (key === "date") {
+        value = $$('km_edit_query_date2').value;
+        operator = $$('km_list_query_operator2').value;
+    } else if (key === "item") {
+        value = $$('km_edit_query_list2').value;
+        operator = "=";
+    } else if (key === "detail") {
+        value = $$('km_edit_query_text2').value;
+        operator = "=";
+    } else if (key === "user") {
+        value = $$('km_edit_query_list2').value;
+        operator = "=";
+    } else if (key === "none") {
+        value = "";
+    }
+    queryParams['cond2']['key'] = key;
+    queryParams['cond2']['operator'] = operator;
+    queryParams['cond2']['value'] = value;
+
     switch (tabId) {
     case 'km_tab_cash':
-        this.cashTree.load('last');
+        this.cashTree.query(queryParams);
         $$('bankbox').hidden = true;
         $$('creditcardbox').hidden = true;
         $$('emoneybox').hidden = true;
@@ -243,11 +302,10 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_edit2').hidden = false;
         $$('km_edit_buttons').hidden = false;
         $$('km_summary_viewchanger').hidden = true;
-        $$('km_navigate').hidden = true;
         $$('km_simple_query').hidden = false;
         break;
     case 'km_tab_bank':
-        this.bankTree.load('last');
+        this.bankTree.query(queryParams);
         $$('bankbox').hidden = false;
         $$('creditcardbox').hidden = true;
         $$('emoneybox').hidden = true;
@@ -255,11 +313,10 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_edit2').hidden = false;
         $$('km_edit_buttons').hidden = false;
         $$('km_summary_viewchanger').hidden = true;
-        $$('km_navigate').hidden = true;
         $$('km_simple_query').hidden = false;
         break;
     case 'km_tab_creditcard':
-        this.creditcardTree.load('last');
+        this.creditcardTree.query(queryParams);
         $$('bankbox').hidden = true;
         $$('creditcardbox').hidden = false;
         $$('emoneybox').hidden = true;
@@ -267,11 +324,10 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_edit2').hidden = false;
         $$('km_edit_buttons').hidden = false;
         $$('km_summary_viewchanger').hidden = true;
-        $$('km_navigate').hidden = true;
         $$('km_simple_query').hidden = false;
         break;
     case 'km_tab_emoney':
-        this.emoneyTree.load('last');
+        this.emoneyTree.query(queryParams);
         $$('bankbox').hidden = true;
         $$('creditcardbox').hidden = true;
         $$('emoneybox').hidden = false;
@@ -279,11 +335,10 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_edit2').hidden = false;
         $$('km_edit_buttons').hidden = false;
         $$('km_summary_viewchanger').hidden = true;
-        $$('km_navigate').hidden = true;
         $$('km_simple_query').hidden = false;
         break;
     case 'km_tab_all':
-        this.allView.load('last');
+        this.allView.query(queryParams);
         $$('bankbox').hidden = true;
         $$('creditcardbox').hidden = true;
         $$('emoneybox').hidden = true;
@@ -291,7 +346,6 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_edit2').hidden = true;
         $$('km_edit_buttons').hidden = true;
         $$('km_summary_viewchanger').hidden = true;
-        $$('km_navigate').hidden = true;
         $$('km_simple_query').hidden = false;
         break;
     case 'km_tab_summary':
@@ -300,7 +354,6 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_edit2').hidden = true;
         $$('km_edit_buttons').hidden = true;
         $$('km_summary_viewchanger').hidden = false;
-        $$('km_navigate').hidden = true;
         $$('km_simple_query').hidden = true;
         break;
     }
@@ -441,7 +494,7 @@ Kmoney.prototype.openLastDb = function () {
     this.openDatabaseFile(newfile);
 };
 
-Kmoney.prototype.PopulateItemList = function () {
+Kmoney.prototype.populateItemList = function () {
     this.mDb.selectQuery("select rowid, name from km_item");
     var records = this.mDb.getRecords();
 
@@ -457,7 +510,7 @@ Kmoney.prototype.PopulateItemList = function () {
     $$('km_summary_item').selectedIndex = 0;
 
 };
-Kmoney.prototype.PopulateUserList = function () {
+Kmoney.prototype.populateUserList = function () {
     $$('km_edit_user').removeAllItems();
 
     this.mDb.selectQuery("select id, name from km_user");
@@ -471,14 +524,13 @@ Kmoney.prototype.PopulateUserList = function () {
     $$('km_edit_user').selectedIndex = 0;
 
 };
-Kmoney.prototype.initInternalList = function () {
+Kmoney.prototype.populateInternalList = function () {
     $$('km_edit_internal').removeAllItems();
     $$('km_edit_internal').appendItem(km_getLStr("internal.none"), 0);
     $$('km_edit_internal').appendItem(km_getLStr("internal.self"), 1);
     $$('km_edit_internal').appendItem(km_getLStr("internal.family"), 2);
     $$('km_edit_internal').selectedIndex = 0;
 };
-
 Kmoney.prototype.reset = function () {
     var now = new Date();
     $$('km_edit_transactionDate').value = now.yyyymmdd();
@@ -508,6 +560,152 @@ Kmoney.prototype.onUserSelect = function () {
         tree.onUserSelect();
     }
 };
+Kmoney.prototype.query = function () {
+    this.loadTable($$('km_tabbox').selectedTab.id);
+};
+
+Kmoney.prototype.onQueryCondition1Select = function() {
+    var key = $$('km_list_query_condition1').value;
+    
+    var mapKey;
+    
+    if (key === "none") {
+        $$('km_edit_query_date1').hidden = true;
+        $$('km_edit_query_text1').hidden = true;
+        $$('km_edit_query_list1').hidden = true;
+        $$('km_list_query_operator1').hidden = true;
+
+        $$('km_list_query_operator1').removeAllItems();
+    } else if (key === "date") {
+        $$('km_edit_query_date1').hidden = false;
+        $$('km_edit_query_text1').hidden = true;
+        $$('km_edit_query_list1').hidden = true;
+        
+        $$('km_list_query_operator1').hidden = false;
+        $$('km_list_query_operator1').removeAllItems();
+        $$('km_list_query_operator1').appendItem(km_getLStr("query_operator.ge"), ">=");
+        $$('km_list_query_operator1').appendItem(km_getLStr("query_operator.le"), "<=");
+
+        $$('km_list_query_operator1').selectedIndex = 0;
+        var now = new Date();
+        now.setMonth(now.getMonth() - 2);
+        now.setDate(1);
+        $$('km_edit_query_date1').value = now.yyyymmdd();
+    } else if (key === "item") {
+        $$('km_edit_query_date1').hidden = true;
+        $$('km_edit_query_text1').hidden = true;
+        $$('km_edit_query_list1').hidden = false;
+        $$('km_list_query_operator1').hidden = true;
+        
+        $$('km_edit_query_list1').removeAllItems();
+        for (mapKey in this.itemMap) {
+            $$('km_edit_query_list1').appendItem(mapKey, this.itemMap[mapKey]);
+        }
+    } else if (key === "detail") {
+        $$('km_edit_query_date1').hidden = true;
+        $$('km_edit_query_text1').hidden = false;
+        $$('km_edit_query_list1').hidden = true;
+
+        $$('km_list_query_operator1').hidden = false;
+        $$('km_list_query_operator1').removeAllItems();
+        $$('km_list_query_operator1').appendItem(
+            km_getLStr("query_operator.equals"), "equals");
+        $$('km_list_query_operator1').appendItem(
+            km_getLStr("query_operator.contains"), "contains");
+        
+        $$('km_edit_query_text1').value = "";
+    } else if (key === "user") {
+        $$('km_edit_query_date1').hidden = true;
+        $$('km_edit_query_text1').hidden = true;
+        $$('km_edit_query_list1').hidden = false;
+        $$('km_list_query_operator1').hidden = true;
+        
+        $$('km_edit_query_list1').removeAllItems();
+        for (mapKey in this.users) {
+            $$('km_edit_query_list1').appendItem(this.users[mapKey], mapKey);
+        }
+    }
+    
+};
+
+Kmoney.prototype.onQueryCondition2Select = function() {
+    var key = $$('km_list_query_condition2').value;
+    
+    var mapKey;
+    
+    if (key === "none") {
+        $$('km_edit_query_date2').hidden = true;
+        $$('km_edit_query_text2').hidden = true;
+        $$('km_edit_query_list2').hidden = true;
+        $$('km_list_query_operator2').hidden = true;
+
+        $$('km_list_query_operator2').removeAllItems();
+    } else if (key === "date") {
+        $$('km_edit_query_date2').hidden = false;
+        $$('km_edit_query_text2').hidden = true;
+        $$('km_edit_query_list2').hidden = true;
+        
+        $$('km_list_query_operator2').hidden = false;
+        $$('km_list_query_operator2').removeAllItems();
+        $$('km_list_query_operator2').appendItem(km_getLStr("query_operator.ge"), ">=");
+        $$('km_list_query_operator2').appendItem(km_getLStr("query_operator.le"), "<=");
+
+        $$('km_list_query_operator2').selectedIndex = 0;
+        var now = new Date();
+        now.setDate(2);
+        $$('km_edit_query_date2').value = now.yyyymmdd();
+    } else if (key === "item") {
+        $$('km_edit_query_date2').hidden = true;
+        $$('km_edit_query_text2').hidden = true;
+        $$('km_edit_query_list2').hidden = false;
+        $$('km_list_query_operator2').hidden = true;
+        
+        $$('km_edit_query_list2').removeAllItems();
+        for (mapKey in this.itemMap) {
+            $$('km_edit_query_list2').appendItem(mapKey, this.itemMap[mapKey]);
+        }
+    } else if (key === "detail") {
+        $$('km_edit_query_date2').hidden = true;
+        $$('km_edit_query_text2').hidden = false;
+        $$('km_edit_query_list2').hidden = true;
+
+        $$('km_list_query_operator2').hidden = false;
+        $$('km_list_query_operator2').removeAllItems();
+        $$('km_list_query_operator2').appendItem(
+            km_getLStr("query_operator.equals"), "equals");
+        $$('km_list_query_operator2').appendItem(
+            km_getLStr("query_operator.contains"), "contains");
+        
+        $$('km_edit_query_text2').value = "";
+    } else if (key === "user") {
+        $$('km_edit_query_date2').hidden = true;
+        $$('km_edit_query_text2').hidden = true;
+        $$('km_edit_query_list2').hidden = false;
+        $$('km_list_query_operator2').hidden = true;
+        
+        $$('km_edit_query_list2').removeAllItems();
+        for (mapKey in this.users) {
+            $$('km_edit_query_list2').appendItem(this.users[mapKey], mapKey);
+        }
+    }
+};
+
+Kmoney.prototype.executeQuery = function() {
+    var cond = $$('km_edit_simplequery').value.split("=");
+    
+    if (cond.length < 2) {
+        km_alert(km_getLStr("error.title"), km_getLStr("error.query.nocond"));
+        return;
+    }
+    if (cond[0] === km_getLStr("query_condition.date")) {
+        
+    } else if (cond[0] === km_getLStr("query_condition.item")) {
+        
+    } else if (cond[0] === km_getLStr("query_condition.detail")) {
+    } else if (cond[0] === km_getLStr("query_condition.user")) {
+    }
+};
+
 Kmoney.prototype.deleteRecord = function () {
     var tree = this.getSelectedTree();
     if (typeof tree.deleteRecord != 'function') {
