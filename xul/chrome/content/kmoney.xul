@@ -105,6 +105,20 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 <tab id="km_tab_creditcard" label="&tab.creditcard;" persist="selected" />
                 <tab id="km_tab_emoney" label="&tab.emoney;" persist="selected" />
             </tabs>
+            <hbox id="km_summary_viewchanger" align="center" hidden="true">
+                <label control="km_summary_period" value="&edit.period;" />
+                <menulist id="km_summary_period">
+                    <menupopup></menupopup>
+                </menulist>
+                <label control="km_summary_item" value="&edit.item;" />
+                <menulist id="km_summary_item">
+                    <menupopup></menupopup>
+                </menulist>
+                <label control="km_summary_user" value="&edit.user;" />
+                <menulist id="km_summary_user">
+                    <menupopup></menupopup>
+                </menulist>
+            </hbox>
 			<hbox id="km_simple_query">
 				<menulist id="km_list_query_condition1">
 					<menupopup></menupopup>
@@ -358,16 +372,6 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 							label="&button.delete;" />
 					<button id="km_button_reset" accesskey="&button.reset.accesskey;"
 							label="&button.reset;" />
-				</hbox>
-				<hbox id="km_summary_viewchanger" align="center" hidden="true">
-					<label control="km_summary_item" value="&edit.item;" />
-					<menulist id="km_summary_item">
-						<menupopup></menupopup>
-					</menulist>
-					<label control="km_summary_period" value="&edit.period;" />
-					<menulist id="km_summary_period">
-						<menupopup></menupopup>
-					</menulist>
 				</hbox>
         </vbox>
     </vbox>

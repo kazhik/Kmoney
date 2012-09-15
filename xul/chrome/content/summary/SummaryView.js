@@ -16,6 +16,9 @@ SummaryView.prototype.initialize = function(db) {
   this.listeners['km_summary_item.command'] = this.onGraphItemChanged.bind(this);
   $$('km_summary_item').addEventListener("command", this.listeners['km_summary_item.command']);
   
+  this.listeners['km_summary_user.command'] = this.onGraphItemChanged.bind(this);
+  $$('km_summary_user').addEventListener("command", this.listeners['km_summary_user.command']);
+
   this.listeners['km_summary_period.command'] = this.onGraphItemChanged.bind(this);
   $$('km_summary_period').addEventListener("command", this.listeners['km_summary_period.command']);
 };
@@ -27,45 +30,46 @@ SummaryView.prototype.onGraphItemChanged = function() {
     this.drawGraph();
 }
 
-SummaryView.prototype.getDateYYYYMM = function(dateObj) {
-  var retStr = dateObj.getFullYear();
-  retStr += "/";
-  var month = dateObj.getMonth() + 1;
-  if (month < 10) {
-    retStr += "0";
-  }
-  retStr += month;
-  
-  return retStr;
-};
-
 SummaryView.prototype.drawGraph = function() {
   var month = $$('km_summary_period').value;
   var startDate = new Date();
   startDate.setDate(1); // あとで月の計算をするため
   startDate.setMonth(startDate.getMonth() - month + 1);
 
-  var itemid = $$('km_summary_item').value;
+  var itemid = parseInt($$('km_summary_item').value);
+  var userid = parseInt($$('km_summary_user').value);
  
-  var sql;   
-  var startYearMonth = this.getDateYYYYMM(startDate);
-  if (itemid != 0) {
-    sql = "select "
-      + " transaction_month, "
-      + " abs(income - expense) "
-      + " from kmv_sumpermonth "
-      + " where item_id = " + itemid
-      + " and transaction_month >= '" + startYearMonth + "'"
- } else {
-    sql = "select "
-      + " transaction_month, "
-      + " abs(sum(income - expense)) "
-      + " from kmv_sumpermonth "
-      + " where transaction_month >= '" + startYearMonth + "'"
-      + " group by transaction_month ";
-  }
+  var startYearMonth = convDateToYYYYMM(startDate, "/");
 
-  this.mDb.selectQuery(sql);
+    var params = {};
+    params['startYearMonth'] = startYearMonth;
+  var sqlArray = ["select",
+                "strftime('%Y/%m', transaction_date) as transaction_month,",
+                "sum(expense - income) as sumpermonth",
+                "from kmv_transactions",
+                "where transaction_month >= :startYearMonth"];
+  if (userid !== 0 && itemid !== 0) {
+    sqlArray.push("and user_id = :user_id",
+                "and internal <> 1",
+                "and item_id = :item_id");
+    params['user_id'] = userid;
+    params['item_id'] = itemid;
+  } else if (userid !== 0 && itemid === 0) {
+    sqlArray.push("and user_id = :user_id",
+                "and internal <> 1");
+    params['user_id'] = userid;
+  } else if (userid === 0 && itemid !== 0) {
+    sqlArray.push("and item_id = :item_id",
+                "and internal = 0");
+    params['item_id'] = itemid;
+  } else {
+    sqlArray.push("and internal = 0");
+  }
+  sqlArray.push("group by transaction_month");
+  
+  var sql = sqlArray.join(" ");
+  km_log(sql);
+  this.mDb.selectWithParams(sql, params);
   var records = this.mDb.getRecords();
   var labelArray = [];
   var valueArray = [];
@@ -73,7 +77,7 @@ SummaryView.prototype.drawGraph = function() {
   var labelDate = startDate;
   var idx = 0;
   for (var i = 0; i < month; i++) {
-    var dateStr = this.getDateYYYYMM(labelDate);
+    var dateStr = convDateToYYYYMM(labelDate, "/");
     labelArray.push(dateStr);
     
     if (records[idx] != undefined && records[idx][0] === dateStr) {

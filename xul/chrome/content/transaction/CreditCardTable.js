@@ -10,16 +10,16 @@ CreditCardTable.prototype.initialize = function (db) {
     this.loadCardList();
 };
 CreditCardTable.prototype.query = function (queryParams) {
-    this.load(queryParams, null);
+    this.load(queryParams);
 };
 
 CreditCardTable.prototype.sort = function (sortParams) {
-    this.load(null, sortParams);
+    this.load(undefined, sortParams);
 };
 
 CreditCardTable.prototype.load = function (queryParams, sortParams) {
     var orderBy = "";
-    if (!isEmpty(sortParams)) {
+    if (sortParams !== undefined) {
         for (var i = 0; i < sortParams.length; i++) {
             orderBy += sortParams[i]['column'];
             if (sortParams[i]['order'] != undefined) {
@@ -37,7 +37,7 @@ CreditCardTable.prototype.load = function (queryParams, sortParams) {
         }
     }
 
-    if (queryParams != null) {
+    if (queryParams != undefined) {
         this.queryParams = queryParams;
     } else {
         queryParams = this.queryParams;

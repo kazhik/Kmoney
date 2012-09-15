@@ -500,7 +500,7 @@ Kmoney.prototype.populateItemList = function () {
 
     $$('km_edit_item').removeAllItems();
     $$('km_summary_item').removeAllItems();
-    $$('km_summary_item').appendItem(km_getLStr("summary.item.all"), 0);
+    $$('km_summary_item').appendItem(km_getLStr("query_condition.none"), 0);
     for (var i = 0; i < records.length; i++) {
         $$('km_edit_item').appendItem(records[i][1], records[i][0]);
         $$('km_summary_item').appendItem(records[i][1], records[i][0]);
@@ -512,16 +512,20 @@ Kmoney.prototype.populateItemList = function () {
 };
 Kmoney.prototype.populateUserList = function () {
     $$('km_edit_user').removeAllItems();
+    $$('km_summary_user').removeAllItems();
 
     this.mDb.selectQuery("select id, name from km_user");
     var records = this.mDb.getRecords();
 
+    $$('km_summary_user').appendItem(km_getLStr('query_condition.none'), 0);
     for (var i = 0; i < records.length; i++) {
         $$('km_edit_user').appendItem(records[i][1], records[i][0]);
+        $$('km_summary_user').appendItem(records[i][1], records[i][0]);
         this.users[records[i][0]] = records[i][1];
     }
 
     $$('km_edit_user').selectedIndex = 0;
+    $$('km_summary_user').selectedIndex = 0;
 
 };
 Kmoney.prototype.populateInternalList = function () {
@@ -532,8 +536,7 @@ Kmoney.prototype.populateInternalList = function () {
     $$('km_edit_internal').selectedIndex = 0;
 };
 Kmoney.prototype.reset = function () {
-    var now = new Date();
-    $$('km_edit_transactionDate').value = now.yyyymmdd();
+    $$('km_edit_transactionDate').value = convDateToYYYYMMDD(new Date(), "-");
     $$('km_edit_detail').value = "";
     $$('km_edit_amount').value = "";
 };
@@ -590,7 +593,7 @@ Kmoney.prototype.onQueryCondition1Select = function() {
         var now = new Date();
         now.setMonth(now.getMonth() - 2);
         now.setDate(1);
-        $$('km_edit_query_date1').value = now.yyyymmdd();
+        $$('km_edit_query_date1').value = convDateToYYYYMMDD(now, "-");
     } else if (key === "item") {
         $$('km_edit_query_date1').hidden = true;
         $$('km_edit_query_text1').hidden = true;
@@ -653,7 +656,7 @@ Kmoney.prototype.onQueryCondition2Select = function() {
         $$('km_list_query_operator2').selectedIndex = 0;
         var now = new Date();
         now.setDate(2);
-        $$('km_edit_query_date2').value = now.yyyymmdd();
+        $$('km_edit_query_date2').value = convDateToYYYYMMDD(now, "-");
     } else if (key === "item") {
         $$('km_edit_query_date2').hidden = true;
         $$('km_edit_query_text2').hidden = true;

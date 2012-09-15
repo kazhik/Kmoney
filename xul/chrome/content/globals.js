@@ -326,23 +326,19 @@ function km_setCurrentSettings() {
   km_setDataTreeStyleControls();
 }
 
-
-Date.prototype.yyyymmdd = function() {
-  var yyyy = this.getFullYear().toString();
-  var mm = (this.getMonth()+1).toString(); // getMonth() is zero-based
-  var dd  = this.getDate().toString();
-  return yyyy + "-" + (mm[1]?mm:"0"+mm[0]) + "-" + (dd[1]?dd:"0"+dd[0]); // padding
+function convDateToYYYYMM(dt, delimiter) {
+  var yyyy = dt.getFullYear().toString();
+  var mm = (dt.getMonth()+1).toString(); // getMonth() is zero-based
+  return yyyy + delimiter + (mm[1]?mm:"0"+mm[0]); // padding
 }
 
-Date.prototype.yyyymm = function() {
-  var yyyy = this.getFullYear().toString();
-  var mm = (this.getMonth()+1).toString(); // getMonth() is zero-based
-  return yyyy + "/" + (mm[1]?mm:"0"+mm[0]); // padding
+function convDateToYYYYMMDD(dt, delimiter) {
+  var yyyy = dt.getFullYear().toString();
+  var mm = (dt.getMonth()+1).toString(); // getMonth() is zero-based
+  var dd  = dt.getDate().toString();
+  return yyyy + delimiter + (mm[1]?mm:"0"+mm[0]) + delimiter + (dd[1]?dd:"0"+dd[0]); // padding
 }
 
-function isEmpty(obj) {
-    return Object.keys(new Object(obj)).length === 0;
-}
 function convertZen2han(str) {
   for (var i = 0; i < 10; i++) {
     str = str.replace(new RegExp(
