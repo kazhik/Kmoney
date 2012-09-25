@@ -165,7 +165,7 @@ CreditCardTable.prototype.getCardId = function (name, userId) {
     }
     return 0;
 };
-CreditCardTable.prototype.executeImport = function (newRecordArray) {
+CreditCardTable.prototype.executeInsert = function (newRecordArray) {
     var sqlArray = [];
     var sqlPayment;
     var sqlTransaction;

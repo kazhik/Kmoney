@@ -60,6 +60,7 @@ ShinseiBank.prototype.onFileOpen = function(inputStream, status) {
     
   }
   this.bankTable.executeInsert(newRecordArray);
+  this.bankTable.load();
 };
 
 ShinseiBank.prototype.importDb = function(csvFile, userId) {

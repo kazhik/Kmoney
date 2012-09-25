@@ -159,7 +159,7 @@ EMoneyTable.prototype.onUserSelect = function () {
 
 };
 
-EMoneyTable.prototype.executeImport = function (newRecordArray) {
+EMoneyTable.prototype.executeInsert = function (newRecordArray) {
     var sqlArray = [];
     var sql;
     for (var i = 0; i < newRecordArray.length; i++) {
@@ -226,8 +226,9 @@ EMoneyTable.prototype.addRecord = function () {
     rec["moneyId"] = $$('km_edit_emoney').value;
     rec["source"] = 1;
 
-    this.addNewRecord(rec);
-    this.executeInsert();
+    var recArray = [];
+    recArray.push(rec);
+    this.executeInsert(recArray);
 
     this.load();
 };

@@ -74,7 +74,7 @@ MizuhoBank.prototype.onFileOpen = function(inputStream, status) {
     }
   }    
   this.bankTable.executeInsert(newRecordArray);
-  this.bankTable.load('last');
+  this.bankTable.load();
 };
 
 MizuhoBank.prototype.importDb = function(inputFile, userId) {

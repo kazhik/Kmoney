@@ -1,7 +1,6 @@
 function CashTable() {
     this.mDb = null;
     this.mTree = new TreeViewController("km_tree_cash");
-    this.newRecordArray = [];
     this.queryParams = {};
 };
 
@@ -157,28 +156,19 @@ CashTable.prototype.addRecord = function () {
         expenseValue = $$('km_edit_amount').value;
     }
 
-    var sqlArray = ["insert into km_realmoney_trns (",
-                            "transaction_date, ",
-                            "income, ",
-                            "expense, ",
-                            "item_id, ",
-                            "detail, ",
-                            "user_id, ",
-                            "internal, ",
-                            "last_update_date, ",
-                            "source ",
-                            ") values ( ",
-                            "'" + $$('km_edit_transactionDate').value + "', ",
-                            incomeValue + ", ",
-                            expenseValue + ", ",
-                            $$('km_edit_item').value + ", ",
-                            "\"", $$('km_edit_detail').value, "\", ",
-                            $$('km_edit_user').value + ", ",
-                            $$('km_edit_internal').value + ", ",
-                            "datetime('now', 'localtime') + ",
-                            "1)"];
-    var sql = sqlArray.join(" ");
-    this.mDb.executeTransaction(sql);
+    var rec = {
+      "transactionDate": $$('km_edit_transactionDate').value,
+      "income": incomeValue,
+      "expense": expenseValue,
+      "itemId": $$('km_edit_item').value,
+      "detail": $$('km_edit_detail').value,
+      "userId": $$('km_edit_user').value,
+      "internal": $$('km_edit_internal').value,
+      "source": 0
+    };
+    var recArray = [];
+    recArray.push(rec);
+    this.executeInsert(recArray);
 
     this.load();
 };
@@ -221,17 +211,40 @@ detail, userId, internal, source) {
     this.mDb.executeTransaction(sql);
 
 };
-CashTable.prototype.addNewRecord = function (rec) {
-    this.newRecordArray.push(rec);
-};
-CashTable.prototype.executeInsert = function () {
-    var sqlArray = [];
-    var sql;
-    for (var i = 0; i < this.newRecordArray.length; i++) {
-        var sql = ["insert into km_realmoney_trns (" + "transaction_date, " + "income, " + "expense, " + "item_id, " + "detail, " + "user_id, " + "internal, " + "last_update_date, " + "source " + ") " + "select " + "'" + this.newRecordArray[i]["transactionDate"] + "'," + this.newRecordArray[i]["income"] + "," + this.newRecordArray[i]["expense"] + "," + this.newRecordArray[i]["itemId"] + ", " + "'" + this.newRecordArray[i]["detail"] + "'," + this.newRecordArray[i]["userId"] + "," + this.newRecordArray[i]["internal"] + "," + "datetime('now', 'localtime'), " + this.newRecordArray[i]["source"] + " " + "where not exists (" + " select 1 from km_realmoney_trns " + " where transaction_date = '" + this.newRecordArray[i]["transactionDate"] + "'" + " and income = " + this.newRecordArray[i]["income"] + " and expense = " + this.newRecordArray[i]["expense"] + " and user_id = " + this.newRecordArray[i]["userId"] + ")"];
+CashTable.prototype.executeInsert = function (newRecordArray) {
+    var sqlStmt = [];
+    for (var i = 0; i < newRecordArray.length; i++) {
+        var sqlArray = ["insert into km_realmoney_trns (",
+                        "transaction_date, ",
+                        "income, ",
+                        "expense, ",
+                        "item_id, ",
+                        "detail, ",
+                        "user_id, ",
+                        "internal, ",
+                        "last_update_date, ",
+                        "source ",
+                        ") ",
+                        "select ",
+                        "'" + newRecordArray[i]["transactionDate"] + "',",
+                        newRecordArray[i]["income"] + ",",
+                        newRecordArray[i]["expense"] + ",",
+                        newRecordArray[i]["itemId"] + ", ",
+                        "'" + newRecordArray[i]["detail"] + "',",
+                        newRecordArray[i]["userId"] + ",",
+                        newRecordArray[i]["internal"] + ",",
+                        "datetime('now', 'localtime'), ",
+                        newRecordArray[i]["source"] + " ",
+                        "where not exists (",
+                        " select 1 from km_realmoney_trns ",
+                        " where transaction_date = '" + newRecordArray[i]["transactionDate"] + "'",
+                        " and income = " + newRecordArray[i]["income"],
+                        " and expense = " + newRecordArray[i]["expense"],
+                        " and user_id = " + newRecordArray[i]["userId"],
+                        ")"];
+        var sql = sqlArray.join(" ");
         km_log(sql);
-        sqlArray.push(sql);
+        sqlStmt.push(sql);
     }
-    this.mDb.executeTransaction(sqlArray);
-    this.newRecordArray.length = 0;
+    this.mDb.executeTransaction(sqlStmt);
 };

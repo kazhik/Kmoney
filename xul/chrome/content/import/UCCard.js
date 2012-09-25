@@ -63,7 +63,8 @@ UCCard.prototype.onFileOpen = function(inputStream, status) {
     
   }
   
-  this.cardTable.executeImport(newRecordArray);
+  this.cardTable.executeInsert(newRecordArray);
+  this.cardTable.load();
 };
 
 UCCard.prototype.importDb = function(csvFile, userId) {

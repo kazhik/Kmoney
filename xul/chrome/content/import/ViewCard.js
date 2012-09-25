@@ -76,7 +76,8 @@ ViewCard.prototype.onFileOpen = function(inputStream, status) {
       newRecordArray.push(rec);
     }
   }
-  this.cardTable.executeImport(newRecordArray);
+  this.cardTable.executeInsert(newRecordArray);
+  this.cardTable.load();
 };
 
 ViewCard.prototype.importDb = function(suicaHtmlFile, userId) {

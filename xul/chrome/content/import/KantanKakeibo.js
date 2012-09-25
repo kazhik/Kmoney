@@ -34,6 +34,7 @@ KantanKakeibo.prototype.importDb = function(kantanDbFile, userId) {
   kantanDb.selectQuery(sql);
   var records = kantanDb.getRecords();
 
+  var newRecordArray = [];
   for (var i = 0; i < records.length; i++) {
     var rec = {
       "transactionDate": records[i][0],
@@ -70,11 +71,11 @@ KantanKakeibo.prototype.importDb = function(kantanDbFile, userId) {
     rec["itemId"] = itemInfo["itemId"];
     rec["internal"] = itemInfo["internal"];
 
-    this.cashTbl.addNewRecord(rec);
+    newRecordArray.push(rec);
   }
-  this.cashTbl.executeInsert();
+  this.cashTbl.executeInsert(newRecordArray);
   kantanDb.closeConnection();
-  this.cashTbl.load('last');
+  this.cashTbl.load();
   
   return true;
 };

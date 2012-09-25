@@ -75,7 +75,8 @@ SaisonCard.prototype.onFileOpen = function(inputStream, status) {
     }
     
   }
-  this.cardTable.executeImport(newRecordArray);
+  this.cardTable.executeInsert(newRecordArray);
+  this.cardTable.load();
 };
 
 SaisonCard.prototype.importDb = function(csvFile, userId) {

@@ -96,8 +96,8 @@ Suica.prototype.onFileOpen = function(inputStream, status) {
     
     newRecordArray.push(rec);
   }
-  this.emoneyTable.executeImport(newRecordArray);
-  this.emoneyTable.load('last');
+  this.emoneyTable.executeInsert(newRecordArray);
+  this.emoneyTable.load();
 };
 
 Suica.prototype.importDb = function(suicaHtmlFile, userId) {
