@@ -190,7 +190,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                             <treecols id="km_cols_cash">
 								<treecol id="0" label="&column.date;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="1" label="item_id" width="60" hidden="true" persist="width" />
+								<treecol id="1" label="item_id" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 								<treecol id="2" label="&column.item;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
@@ -200,11 +200,11 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 								<treecol id="5" label="&column.expense;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="6" label="user_id" width="60" hidden="true" persist="width" />
+								<treecol id="6" label="user_id" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 								<treecol id="7" label="&column.user;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="8" label="internal" width="60" hidden="true" persist="width" />
+								<treecol id="8" label="&column.internal;" hidden="true" ignoreincolumnpicker="true" />
 								<treecol id="9" label="rowid" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 							</treecols>
@@ -219,7 +219,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                             <treecols id="km_cols_bank">
 								<treecol id="0" label="&column.date;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="1" label="item_id" width="60" hidden="true" persist="width" />
+								<treecol id="1" label="item_id" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 								<treecol id="2" label="&column.item;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
@@ -229,17 +229,17 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 								<treecol id="5" label="&column.expense;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="6" label="bank_id" width="60" hidden="true" persist="width" />
+								<treecol id="6" label="bank_id" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 								<treecol id="7" label="&column.bankname;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="8" label="user_id" width="60" hidden="true" persist="width" />
+								<treecol id="8" label="user_id" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 								<treecol id="9" label="&column.user;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="10" label="source" width="60" hidden="true" persist="width" />
+								<treecol id="10" label="&column.sourcetype;" width="60" hidden="true" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="11" label="internal" width="60" hidden="true" persist="width" />
+								<treecol id="11" label="&column.internal;" width="60" hidden="true" persist="width" />
 								<treecol id="12" label="rowid" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 							</treecols>
@@ -254,7 +254,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                             <treecols id="km_cols_creditcard">
 								<treecol id="0" label="&column.date;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="1" label="item_id" width="60" hidden="true" persist="width" />
+								<treecol id="1" label="item_id" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 								<treecol id="2" label="&column.item;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
@@ -262,11 +262,11 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 								<treecol id="4" label="&column.expense;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="5" label="card_id" width="60" hidden="true" persist="width" />
+								<treecol id="5" label="card_id" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 								<treecol id="6" label="&column.cardname;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="7" label="user_id" width="60" hidden="true" persist="width" />
+								<treecol id="7" label="user_id" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 								<treecol id="8" label="&column.user;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
@@ -286,7 +286,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                             <treecols id="km_cols_emoney">
 								<treecol id="0" label="&column.date;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="1" label="item_id" width="60" hidden="true" persist="width" />
+								<treecol id="1" label="item_id" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 								<treecol id="2" label="&column.item;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
@@ -296,17 +296,17 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 								<treecol id="5" label="&column.expense;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="6" label="money_id" width="60" hidden="true" persist="width" />
+								<treecol id="6" label="money_id" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 								<treecol id="7" label="&column.emoneyname;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="8" label="user_id" width="60" hidden="true" persist="width" />
+								<treecol id="8" label="user_id" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 								<treecol id="9" label="&column.user;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="10" label="source" width="60" hidden="true" persist="width" />
+								<treecol id="10" label="&column.sourcetype;" width="60" hidden="true" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="11" label="internal" width="60" hidden="true" persist="width" />
+								<treecol id="11" label="&column.internal;" width="60" hidden="true" persist="width" />
 								<treecol id="12" label="rowid" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 							</treecols>
