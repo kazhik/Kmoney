@@ -95,7 +95,7 @@ BankTable.prototype.load = function (queryParams, sortParams) {
         }
     }
 
-    var sqlArray = [
+    var sql = [
         "select ",
         "A.transaction_date, ",
         "A.item_id, ",
@@ -117,8 +117,7 @@ BankTable.prototype.load = function (queryParams, sortParams) {
         " on A.user_id = C.id ",
         "inner join km_bank_info D ",
         " on A.bank_id = D.rowid "
-    ];
-    var sql = sqlArray.join(" ");
+    ].join(" ");
     if (where.length > 0) {
         sql += where;
     }
@@ -183,8 +182,20 @@ BankTable.prototype.addRecord = function () {
         incomeValue = 0;
         expenseValue = $$('km_edit_amount').value;
     }
-    var sql = ["insert into km_bank_trns (" + "transaction_date, " + "income, " + "expense, " + "item_id, " + "detail, " + "user_id, " + "bank_id, " + "last_update_date, " + "internal, " + "source " + ") values ( " + "\"" + $$('km_edit_transactionDate').value + "\", " + incomeValue + ", " + expenseValue + ", " + $$('km_edit_item').value + ", " + "\"" + $$('km_edit_detail').value + "\", " + $$('km_edit_user').value + ", " + $$('km_edit_bank').value + ", " + "datetime('now', 'localtime'), " + $$('km_edit_internal').value + ", " + "1)"];
-    this.mDb.executeTransaction(sql);
+    
+    var recArray = [{
+        "transactionDate": $$('km_edit_transactionDate').value,
+        "itemId": $$('km_edit_item').value,
+        "detail": $$('km_edit_detail').value,
+        "income": incomeValue,
+        "expense": expenseValue,
+        "userId": $$('km_edit_user').value,
+        "bankId": $$('km_edit_bank').value,
+        "source": 1,
+        "internal": $$('km_edit_internal').value
+        }];
+    this.executeInsert(recArray);
+    
     this.load();
 };
 BankTable.prototype.updateRecord = function () {
@@ -201,8 +212,20 @@ BankTable.prototype.updateRecord = function () {
     if(rowid === "") {
         km_alert(km_getLStr("no_selectedrow"));
     }
-    var sql = ["update km_bank_trns " + "set " + "transaction_date = " + "'" + $$('km_edit_transactionDate').value + "', " + "income = " + incomeValue + ", " + "expense = " + expenseValue + ", " + "item_id = " + $$('km_edit_item').value + ", " + "detail = " + "\"" + $$('km_edit_detail').value + "\", " + "user_id = " + $$('km_edit_user').value + ", " + "bank_id = " + $$('km_edit_bank').value + ", " + "last_update_date = datetime('now', 'localtime'), " + "internal = " + $$('km_edit_internal').value + ", " + "source = 1 " + "where rowid = " + rowid];
-    this.mDb.executeTransaction(sql);
+    var sql = ["update km_bank_trns ",
+               "set ",
+               "transaction_date = " + "'" + $$('km_edit_transactionDate').value + "', ",
+               "income = " + incomeValue + ", ",
+               "expense = " + expenseValue + ", ",
+               "item_id = " + $$('km_edit_item').value + ", ",
+               "detail = " + "\"" + $$('km_edit_detail').value + "\", ",
+               "user_id = " + $$('km_edit_user').value + ", ",
+               "bank_id = " + $$('km_edit_bank').value + ", ",
+               "last_update_date = datetime('now', 'localtime'), ",
+               "internal = " + $$('km_edit_internal').value + ", ",
+               "source = 1 ",
+               "where rowid = " + rowid].join(" ");
+    this.mDb.executeTransaction([sql]);
     this.load();
     this.mTree.ensureRowIsVisible(12, rowid);
 };
@@ -221,10 +244,36 @@ BankTable.prototype.deleteRecord = function () {
 
 BankTable.prototype.executeInsert = function (newRecordArray) {
     var sqlArray = [];
-    var sql;
     for(var i = 0; i < newRecordArray.length; i++) {
-
-        var sql = ["insert into km_bank_trns (" + "transaction_date, " + "item_id, " + "detail, " + "income, " + "expense, " + "user_id, " + "bank_id, " + "internal, " + "source, " + "last_update_date " + ") " + "select " + "'" + newRecordArray[i]["transactionDate"] + "', " + newRecordArray[i]["itemId"] + ", " + "\"" + newRecordArray[i]["detail"] + "\", " + newRecordArray[i]["income"] + ", " + newRecordArray[i]["expense"] + ", " + newRecordArray[i]["userId"] + ", " + newRecordArray[i]["bankId"] + ", " + newRecordArray[i]["internal"] + ", " + newRecordArray[i]["source"] + ", " + "datetime('now', 'localtime') " + "where not exists (" + " select 1 from km_bank_trns " + " where transaction_date = '" + newRecordArray[i]["transactionDate"] + "'" + " and income = " + newRecordArray[i]["income"] + " and expense = " + newRecordArray[i]["expense"] + " and bank_id = " + newRecordArray[i]["bankId"] + " and user_id = " + newRecordArray[i]["userId"] + ")"];
+        var sql = ["insert into km_bank_trns (",
+                   "transaction_date, ",
+                   "item_id, ",
+                   "detail, ",
+                   "income, ",
+                   "expense, ",
+                   "user_id, ",
+                   "bank_id, ",
+                   "internal, ",
+                   "source, ",
+                   "last_update_date " + ") ",
+                   "select ",
+                   "'" + newRecordArray[i]["transactionDate"] + "', ",
+                   newRecordArray[i]["itemId"] + ", ",
+                   "\"" + newRecordArray[i]["detail"] + "\", ",
+                   newRecordArray[i]["income"] + ", ",
+                   newRecordArray[i]["expense"] + ", ",
+                   newRecordArray[i]["userId"] + ", ",
+                   newRecordArray[i]["bankId"] + ", ",
+                   newRecordArray[i]["internal"] + ", ",
+                   newRecordArray[i]["source"] + ", ",
+                   "datetime('now', 'localtime') ",
+                   "where not exists (",
+                   " select 1 from km_bank_trns ",
+                   " where transaction_date = '" + newRecordArray[i]["transactionDate"] + "'",
+                   " and income = " + newRecordArray[i]["income"],
+                   " and expense = " + newRecordArray[i]["expense"],
+                   " and bank_id = " + newRecordArray[i]["bankId"],
+                   " and user_id = " + newRecordArray[i]["userId"] + ")"].join(" ");
         km_log(sql);
         sqlArray.push(sql);
 

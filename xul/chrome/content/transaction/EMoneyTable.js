@@ -95,7 +95,27 @@ EMoneyTable.prototype.load = function (queryParams, sortParams) {
         }
     }
 
-    var sql = "select " + "A.transaction_date, " + "A.item_id, " + "B.name as item_name, " + "A.detail, " + "A.income, " + "A.expense, " + "A.money_id, " + "D.name as money_name, " + "A.user_id, " + "C.name as user_name, " + "A.source, " + "A.internal, " + "A.rowid " + "from km_emoney_trns A " + "left join km_item B " + " on A.item_id = B.rowid " + "inner join km_user C " + " on A.user_id = C.id " + "inner join km_emoney_info D " + " on A.money_id = D.rowid ";
+    var sql = ["select ",
+               "A.transaction_date, ",
+               "A.item_id, ",
+               "B.name as item_name, ",
+               "A.detail, ",
+               "A.income, ",
+               "A.expense, ",
+               "A.money_id, ",
+               "D.name as money_name, ",
+               "A.user_id, ",
+               "C.name as user_name, ",
+               "A.source, ",
+               "A.internal, ",
+               "A.rowid ",
+               "from km_emoney_trns A ",
+               "left join km_item B ",
+               " on A.item_id = B.rowid ",
+               "inner join km_user C ",
+               " on A.user_id = C.id ",
+               "inner join km_emoney_info D ",
+               " on A.money_id = D.rowid "].join(" ");
     if (where.length > 0) {
         sql += where;
     }

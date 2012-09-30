@@ -95,7 +95,7 @@ CashTable.prototype.load = function (queryParams, sortParams) {
         }
     }
 
-    var sqlArray = [
+    var sql = [
         "select ",
         "A.transaction_date, ",
         "A.item_id, ",
@@ -112,8 +112,7 @@ CashTable.prototype.load = function (queryParams, sortParams) {
         " on A.item_id = B.rowid ",
         "inner join km_user C ",
         " on A.user_id = C.id "
-        ];
-    var sql = sqlArray.join(" ");
+        ].join(" ");
     if (where.length > 0) {
         sql += where;
     }
@@ -156,7 +155,7 @@ CashTable.prototype.addRecord = function () {
         expenseValue = $$('km_edit_amount').value;
     }
 
-    var rec = {
+    var recArray = [{
       "transactionDate": $$('km_edit_transactionDate').value,
       "income": incomeValue,
       "expense": expenseValue,
@@ -165,9 +164,7 @@ CashTable.prototype.addRecord = function () {
       "userId": $$('km_edit_user').value,
       "internal": $$('km_edit_internal').value,
       "source": 0
-    };
-    var recArray = [];
-    recArray.push(rec);
+    }];
     this.executeInsert(recArray);
 
     this.load();
@@ -184,7 +181,18 @@ CashTable.prototype.updateRecord = function () {
     }
 
     var rowid = this.mTree.getColumnValue(9);
-    var sql = ["update km_realmoney_trns " + "set " + "transaction_date = " + "'" + $$('km_edit_transactionDate').value + "', " + "income = " + incomeValue + ", " + "expense = " + expenseValue + ", " + "item_id = " + $$('km_edit_item').value + ", " + "detail = " + "\"" + $$('km_edit_detail').value + "\", " + "user_id = " + $$('km_edit_user').value + ", " + "last_update_date = datetime('now', 'localtime'), " + "internal = " + $$('km_edit_internal').value + ", " + "source = 1 " + "where rowid = " + rowid];
+    var sql = ["update km_realmoney_trns ",
+               "set ",
+               "transaction_date = " + "'" + $$('km_edit_transactionDate').value + "', ",
+               "income = " + incomeValue + ", ",
+               "expense = " + expenseValue + ", ",
+               "item_id = " + $$('km_edit_item').value + ", ",
+               "detail = " + "\"" + $$('km_edit_detail').value + "\", ",
+               "user_id = " + $$('km_edit_user').value + ", ",
+               "last_update_date = datetime('now', 'localtime'), ",
+               "internal = " + $$('km_edit_internal').value + ", ",
+               "source = 1 ",
+               "where rowid = " + rowid].join(" ");
     km_log(sql);
     this.mDb.executeTransaction(sql);
     this.load();
@@ -202,15 +210,6 @@ CashTable.prototype.deleteRecord = function () {
     this.load();
 };
 
-
-CashTable.prototype.importRecord = function (transactionDate, income, expense, itemName,
-detail, userId, internal, source) {
-
-    var sql = ["insert into km_realmoney_trns (" + "transaction_date, " + "income, " + "expense, " + "item_id, " + "detail, " + "user_id, " + "internal, " + "last_update_date, " + "source " + ") " + "select " + "'" + transactionDate + "'," + income + "," + expense + "," + "(select rowid from km_item where name = '" + itemName + "')," + "'" + detail + "'," + userId + "," + internal + "," + "datetime('now', 'localtime'), " + source + " " + "where not exists (" + " select 1 from km_realmoney_trns " + " where transaction_date = '" + transactionDate + "'" + " and income = " + income + " and expense = " + expense + " and source = " + source + " and user_id = " + userId + ")"];
-    km_log(sql);
-    this.mDb.executeTransaction(sql);
-
-};
 CashTable.prototype.executeInsert = function (newRecordArray) {
     var sqlStmt = [];
     for (var i = 0; i < newRecordArray.length; i++) {
