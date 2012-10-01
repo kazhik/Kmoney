@@ -126,7 +126,7 @@ TreeViewController.prototype = {
       var sort = {};
       sort['column'] = sortCol;
       sort['order'] = sortOrder;
-      this.reloadTable(null, sort);
+      this.reloadTable(null, [sort]);
     }
     this.mSortCol = sortCol;
     this.mSortOrder = sortOrder;
@@ -189,6 +189,21 @@ TreeViewController.prototype = {
     var col = this.treeTable.columns.getColumnAt(columnIdx);
     return this.treeTable.view.getCellText(this.treeTable.currentIndex, col);
     
+  },
+  getSelectedRowValueList: function(columnName) {
+    var start = new Object();
+    var end = new Object();
+    var numRanges = this.treeTable.view.selection.getRangeCount();
+    var valueArray = [];
+    var col = this.treeTable.columns.getNamedColumn(columnName);
+    
+    for (var t = 0; t < numRanges; t++){
+      this.treeTable.view.selection.getRangeAt(t,start,end);
+      for (var v = start.value; v <= end.value; v++){
+        valueArray.push(this.treeTable.view.getCellText(v, col));
+      }
+    }
+    return valueArray;
   },
   getSelectedRowValue: function(columnName) {
 	if (this.treeTable.currentIndex === -1) {
