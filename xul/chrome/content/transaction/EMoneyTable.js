@@ -135,20 +135,20 @@ EMoneyTable.prototype.load = function (queryParams, sortParams) {
 
 };
 EMoneyTable.prototype.onSelect = function () {
-    $$('km_edit_transactionDate').value = this.mTree.getColumnValue('transaction_date');
-    $$('km_edit_item').value = this.mTree.getColumnValue('item_id');
-    $$('km_edit_detail').value = this.mTree.getColumnValue('detail');
-    var amount = this.mTree.getColumnValue('income');
+    $$('km_edit_transactionDate').value = this.mTree.getSelectedRowValue('transaction_date');
+    $$('km_edit_item').value = this.mTree.getSelectedRowValue('item_id');
+    $$('km_edit_detail').value = this.mTree.getSelectedRowValue('detail');
+    var amount = this.mTree.getSelectedRowValue('income');
     if (Number(amount) == 0) {
-        amount = this.mTree.getColumnValue('expense');
+        amount = this.mTree.getSelectedRowValue('expense');
         $$('income_expense').selectedItem = $$('km_edit_expense');
     } else {
         $$('income_expense').selectedItem = $$('km_edit_income');
     }
     $$('km_edit_amount').value = amount;
-    $$('km_edit_emoney').value = this.mTree.getColumnValue('money_id');
-    $$('km_edit_user').value = this.mTree.getColumnValue('user_id');
-    $$('km_edit_internal').value = this.mTree.getColumnValue('internal');
+    $$('km_edit_emoney').value = this.mTree.getSelectedRowValue('money_id');
+    $$('km_edit_user').value = this.mTree.getSelectedRowValue('user_id');
+    $$('km_edit_internal').value = this.mTree.getSelectedRowValue('internal');
 };
 EMoneyTable.prototype.loadEMoneyList = function () {
     this.mDb.selectQuery("select rowid, name, user_id from km_emoney_info");

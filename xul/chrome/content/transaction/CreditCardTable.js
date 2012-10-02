@@ -129,13 +129,13 @@ CreditCardTable.prototype.load = function (queryParams, sortParams) {
     this.onUserSelect();
 };
 CreditCardTable.prototype.onSelect = function () {
-    $$('km_edit_transactionDate').value = this.mTree.getColumnValue('transaction_date');
-    $$('km_edit_item').value = this.mTree.getColumnValue('item_id');
-    $$('km_edit_detail').value = this.mTree.getColumnValue('detail');
-    $$('km_edit_amount').value = this.mTree.getColumnValue('expense');
+    $$('km_edit_transactionDate').value = this.mTree.getSelectedRowValue('transaction_date');
+    $$('km_edit_item').value = this.mTree.getSelectedRowValue('item_id');
+    $$('km_edit_detail').value = this.mTree.getSelectedRowValue('detail');
+    $$('km_edit_amount').value = this.mTree.getSelectedRowValue('expense');
     $$('income_expense').selectedItem = $$('km_edit_expense');
-    $$('km_edit_user').value = this.mTree.getColumnValue('user_id');
-    $$('km_edit_creditcard').value = this.mTree.getColumnValue('card_id');
+    $$('km_edit_user').value = this.mTree.getSelectedRowValue('user_id');
+    $$('km_edit_creditcard').value = this.mTree.getSelectedRowValue('card_id');
 };
 CreditCardTable.prototype.loadCardList = function () {
     this.mDb.selectQuery("select rowid, name, user_id from km_creditcard_info");
