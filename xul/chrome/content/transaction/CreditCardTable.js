@@ -124,18 +124,18 @@ CreditCardTable.prototype.load = function (queryParams, sortParams) {
     var types = this.mDb.getRecordTypes();
     var columns = this.mDb.getColumns();
     this.mTree.populateTableData(records, columns, types);
-    this.mTree.ensureRowIsVisible(10, -1);
+    this.mTree.ensureRowIsVisible2('rowid', -1);
     this.mTree.showTable(true);
     this.onUserSelect();
 };
 CreditCardTable.prototype.onSelect = function () {
-    $$('km_edit_transactionDate').value = this.mTree.getColumnValue(0);
-    $$('km_edit_item').value = this.mTree.getColumnValue(1);
-    $$('km_edit_detail').value = this.mTree.getColumnValue(3);
-    $$('km_edit_amount').value = this.mTree.getColumnValue(4);
+    $$('km_edit_transactionDate').value = this.mTree.getColumnValue('transaction_date');
+    $$('km_edit_item').value = this.mTree.getColumnValue('item_id');
+    $$('km_edit_detail').value = this.mTree.getColumnValue('detail');
+    $$('km_edit_amount').value = this.mTree.getColumnValue('expense');
     $$('income_expense').selectedItem = $$('km_edit_expense');
-    $$('km_edit_user').value = this.mTree.getColumnValue(7);
-    $$('km_edit_creditcard').value = this.mTree.getColumnValue(5);
+    $$('km_edit_user').value = this.mTree.getColumnValue('user_id');
+    $$('km_edit_creditcard').value = this.mTree.getColumnValue('card_id');
 };
 CreditCardTable.prototype.loadCardList = function () {
     this.mDb.selectQuery("select rowid, name, user_id from km_creditcard_info");
@@ -168,7 +168,7 @@ CreditCardTable.prototype.addRecord = function () {
     this.load();
 };
 CreditCardTable.prototype.updateRecord = function () {
-    var rowid = this.mTree.getColumnValue(10);
+    var rowid = this.mTree.getSelectedRowValue('rowid');
     var sql = ["update km_creditcard_trns ",
                "set ",
                "transaction_date = " + "'" + $$('km_edit_transactionDate').value + "', ",
@@ -181,12 +181,12 @@ CreditCardTable.prototype.updateRecord = function () {
                "source = 1 ",
                "where rowid = " + rowid].join(" ");
     km_log(sql);
-    this.mDb.executeTransaction(sql);
+    this.mDb.executeTransaction([sql]);
     this.load();
-    this.mTree.ensureRowIsVisible(10, rowid);
+    this.mTree.ensureRowIsVisible2('rowid', rowid);
 };
 CreditCardTable.prototype.deleteRecord = function () {
-    var rowid = this.mTree.getColumnValue(10);
+    var rowid = this.mTree.getSelectedRowValue('rowid');
     if (rowid === "") {
         return;
     }

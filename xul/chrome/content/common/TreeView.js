@@ -154,6 +154,23 @@ TreeViewController.prototype = {
     
   },
   
+  ensureRowIsVisible2: function(rowidLabel, rowId) {
+    var idxRow;
+    if (rowId === -1) {
+      this.treeTable.boxObject.ensureRowIsVisible(this.treeTable.view.rowCount - 1);
+    } else {
+      var col = this.treeTable.columns.getNamedColumn(rowidLabel);
+      for (var i = 0; i < this.treeTable.view.rowCount; i++) {
+        var val = this.treeTable.view.getCellText(i, col)
+        if (val === rowId) {
+          this.treeTable.boxObject.ensureRowIsVisible(i);
+          break;
+        }
+      }
+      
+    }
+  },
+
   ensureRowIsVisible: function(rowIdColIdx, rowId) {
     var idxRow;
     if (rowId === -1) {
@@ -170,7 +187,7 @@ TreeViewController.prototype = {
       
     }
   },
-  
+
   ensurePreviousRowIsVisible: function() {
 	if (this.treeTable.currentIndex - 1 >= 0) {
       this.treeTable.boxObject.ensureRowIsVisible(this.treeTable.currentIndex - 1);
