@@ -693,22 +693,6 @@ Kmoney.prototype.onQueryCondition2Select = function() {
     }
 };
 
-Kmoney.prototype.executeQuery = function() {
-    var cond = $$('km_edit_simplequery').value.split("=");
-    
-    if (cond.length < 2) {
-        km_alert(km_getLStr("error.title"), km_getLStr("error.query.nocond"));
-        return;
-    }
-    if (cond[0] === km_getLStr("query_condition.date")) {
-        
-    } else if (cond[0] === km_getLStr("query_condition.item")) {
-        
-    } else if (cond[0] === km_getLStr("query_condition.detail")) {
-    } else if (cond[0] === km_getLStr("query_condition.user")) {
-    }
-};
-
 Kmoney.prototype.deleteRecord = function () {
     var tree = this.getSelectedTree();
     if (typeof tree.deleteRecord != 'function') {

@@ -104,7 +104,7 @@ function TreeViewController(sTreeId) {
   this.treeTable = null; // Tree containing listing of current table
   this.mSortCol = null;
   this.mSortOrder = null;
-  this.reloadTable = null;
+  this.sortTable = null;
 };
 
 TreeViewController.prototype = {
@@ -113,7 +113,7 @@ TreeViewController.prototype = {
     this.treeTable = document.getElementById(this.mTreeId);
 
     if (callbackFunc != undefined) {
-      this.reloadTable = callbackFunc;
+      this.sortTable = callbackFunc;
     }
     this.treeView = new KmDataTreeView(this.mTreeId);
     this.treeView.init([], [], [], this.onClickColumnHeader.bind(this));
@@ -122,11 +122,11 @@ TreeViewController.prototype = {
     this.treeTable.view = this.treeView;
   },
   onClickColumnHeader: function(sortCol, sortOrder) {
-    if (this.reloadTable) {
+    if (this.sortTable) {
       var sort = {};
       sort['column'] = sortCol;
       sort['order'] = sortOrder;
-      this.reloadTable(null, [sort]);
+      this.sortTable([sort]);
     }
     this.mSortCol = sortCol;
     this.mSortOrder = sortOrder;

@@ -7,7 +7,7 @@ function CashTable() {
 CashTable.prototype.initialize = function (db) {
     this.mDb = db;
 
-    this.mTree.init(this.load.bind(this));
+    this.mTree.init(this.sort.bind(this));
 };
 
 CashTable.prototype.query = function (queryParams) {
@@ -38,7 +38,7 @@ CashTable.prototype.load = function (queryParams, sortParams) {
         }
     }
 
-    if (queryParams != undefined) {
+    if (queryParams !== undefined) {
         this.queryParams = queryParams;
     } else {
         queryParams = this.queryParams;
@@ -51,7 +51,7 @@ CashTable.prototype.load = function (queryParams, sortParams) {
 
     var key = cond1['key'];
     var keyCol;
-    if (key != "none") {
+    if (key !== "none") {
         if (key === "date") {
             keyCol = "A.transaction_date";
         } else if (key === "item") {
@@ -70,7 +70,7 @@ CashTable.prototype.load = function (queryParams, sortParams) {
         params[key + "_1"] = cond1['value'];
 
         key = cond2['key'];
-        if (key != "none") {
+        if (key !== "none") {
             if (key === "date") {
                 keyCol = "A.transaction_date";
             } else if (key === "item") {
@@ -213,7 +213,7 @@ CashTable.prototype.deleteRecord = function () {
 CashTable.prototype.executeInsert = function (newRecordArray) {
     var sqlStmt = [];
     for (var i = 0; i < newRecordArray.length; i++) {
-        var sqlArray = ["insert into km_realmoney_trns (",
+        var sql = ["insert into km_realmoney_trns (",
                         "transaction_date, ",
                         "income, ",
                         "expense, ",
@@ -240,8 +240,7 @@ CashTable.prototype.executeInsert = function (newRecordArray) {
                         " and income = " + newRecordArray[i]["income"],
                         " and expense = " + newRecordArray[i]["expense"],
                         " and user_id = " + newRecordArray[i]["userId"],
-                        ")"];
-        var sql = sqlArray.join(" ");
+                        ")"].join(" ");
         km_log(sql);
         sqlStmt.push(sql);
     }

@@ -6,7 +6,7 @@ function CreditCardTable() {
 }
 CreditCardTable.prototype.initialize = function (db) {
     this.mDb = db;
-    this.mTree.init(this.load.bind(this));
+    this.mTree.init(this.sort.bind(this));
     this.loadCardList();
 };
 CreditCardTable.prototype.query = function (queryParams) {
@@ -37,7 +37,7 @@ CreditCardTable.prototype.load = function (queryParams, sortParams) {
         }
     }
 
-    if (queryParams != undefined) {
+    if (queryParams !== undefined) {
         this.queryParams = queryParams;
     } else {
         queryParams = this.queryParams;
@@ -50,7 +50,7 @@ CreditCardTable.prototype.load = function (queryParams, sortParams) {
 
     var key = cond1['key'];
     var keyCol;
-    if (key != "none") {
+    if (key !== "none") {
         if (key === "date") {
             keyCol = "A.transaction_date";
         } else if (key === "item") {
@@ -69,7 +69,7 @@ CreditCardTable.prototype.load = function (queryParams, sortParams) {
         params[key + "_1"] = cond1['value'];
 
         key = cond2['key'];
-        if (key != "none") {
+        if (key !== "none") {
             if (key === "date") {
                 keyCol = "A.transaction_date";
             } else if (key === "item") {
