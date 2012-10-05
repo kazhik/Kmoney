@@ -631,236 +631,142 @@ SQLiteHandler.prototype = {
     return bReturn;
   },
 
-  // selectQuery : execute a select query and store the results
-  selectQuery: function(sQuery, bBlobAsHex) {
+  // execSelect : execute a select query 
+  execSelect: function(stmt, bBlobAsHex) {
+    // if aColumns is not null, there is a problem in tree display
+    this.aColumns = null;        
+    var iCols = 0;
+    var iType, colName;
+    try {
+      // do not use stmt.columnCount in the for loop, fetches the value again and again
+      iCols = stmt.columnCount;
+      this.aColumns = new Array();
+      var aTemp, aType;
+      for (var i = 0; i < iCols; i++) {
+        colName = stmt.getColumnName(i);
+        aTemp = [colName, iType];
+        this.aColumns.push(aTemp);  
+      }
+    } catch (e) {
+      stmt.finalize();
+      //Cu.reportError("finalize");
+      var msg = this.onSqlError(e, "Error while fetching column name: " + colName, null, true);
+      Cu.reportError(msg);
+      this.setErrorString();
+      return false;
+    }
+
+    this.aTableData = new Array();
+    this.aTableType = new Array();
+    var bResult = false;
+    var cell;
+    var bFirstRow = true;
+    var timeStart = Date.now();
+    try {
+      while (stmt.executeStep()) {
+        aTemp = [];
+        aType = [];
+        for (i = 0; i < iCols; i++) {
+          iType = stmt.getTypeOfIndex(i);
+          if (bFirstRow) {
+            this.aColumns[i][1] = iType;
+          }
+          switch (iType) {
+            case stmt.VALUE_TYPE_NULL: 
+              cell = null;
+              break;
+            case stmt.VALUE_TYPE_INTEGER:
+              cell = stmt.getInt64(i);
+              break;
+            case stmt.VALUE_TYPE_FLOAT:
+              cell = stmt.getDouble(i);
+              break;
+            case stmt.VALUE_TYPE_TEXT:
+              cell = stmt.getString(i);
+              break;
+            case stmt.VALUE_TYPE_BLOB: //TODO: handle blob properly
+              if (bBlobAsHex) {
+                  var iDataSize = {value:0};
+                  var aData = {value:null};
+                  stmt.getBlob(i, iDataSize, aData);
+                  cell = SQLiteFn.blobToHex(aData.value);
+              }
+              else {
+                cell = this.mBlobPrefs.sStrForBlob;
+                if (this.mBlobPrefs.bShowSize) {
+                  var iDataSize = {value:0};
+                  var aData = {value:null};
+                  stmt.getBlob(i, iDataSize, aData);
+                  cell += " (Size: " + iDataSize.value + ")";
+                  if (iDataSize.value <= this.mBlobPrefs.iMaxSizeToShowData || this.mBlobPrefs.iMaxSizeToShowData < 0) {
+                    if (this.mBlobPrefs.iHowToShowData == 1)
+                      cell = this.convertBlobToStr(aData.value);
+                    if (this.mBlobPrefs.iHowToShowData == 0)
+                      cell = SQLiteFn.blobToHex(aData.value);
+                  }
+                }
+              }
+              break;
+            default: sData = "<unknown>"; 
+          }
+          aTemp.push(cell);
+          aType.push(iType);
+        }
+        this.aTableData.push(aTemp);
+        this.aTableType.push(aType);
+        bFirstRow = false;
+      }
+      this.miTime = Date.now() - timeStart;
+    } catch (e) {
+      stmt.finalize();
+      //Cu.reportError("finalize");
+      var msg = this.onSqlError(e, "Query: " + sQuery + " - executeStep failed", null, true);
+      Cu.reportError(msg);
+      this.setErrorString();
+      return false;
+    }
+    stmt.finalize();
+    //Cu.reportError("finalize");
+    this.setErrorString();
+    return true;
+  },
+  createStatement: function(sQuery) {
     var stmt;
     
-    try { // mozIStorageStatement
+    try {
       stmt = this.dbConn.createStatement(sQuery);
-      //Cu.reportError("createStatement");
     }
     catch (e) {
       // statement will be undefined because it throws error);
       var msg = this.onSqlError(e, "Likely SQL syntax error: " + sQuery, this.dbConn.lastErrorString, true);
       Cu.reportError(msg);
       this.setErrorString();
-      return false;
+      return null;
+    }
+    return stmt;
+  },
+  // selectQuery : execute a select query and store the results
+  selectQuery: function(sQuery, bBlobAsHex) {
+    var stmt = this.createStatement(sQuery);
+    if (stmt === null) {
+        return false;
     }
     
-    // if aColumns is not null, there is a problem in tree display
-    this.aColumns = null;        
-    var iCols = 0;
-    var iType, colName;
-    try {
-      // do not use stmt.columnCount in the for loop, fetches the value again and again
-      iCols = stmt.columnCount;
-      this.aColumns = new Array();
-      var aTemp, aType;
-      for (var i = 0; i < iCols; i++) {
-        colName = stmt.getColumnName(i);
-        aTemp = [colName, iType];
-        this.aColumns.push(aTemp);  
-      }
-    } catch (e) {
-      stmt.finalize();
-      //Cu.reportError("finalize");
-      var msg = this.onSqlError(e, "Error while fetching column name: " + colName, null, true);
-      Cu.reportError(msg);
-      this.setErrorString();
-      return false;
-    }
-
-    this.aTableData = new Array();
-    this.aTableType = new Array();
-    var bResult = false;
-    var cell;
-    var bFirstRow = true;
-    var timeStart = Date.now();
-    try {
-      while (stmt.executeStep()) {
-        aTemp = [];
-        aType = [];
-        for (i = 0; i < iCols; i++) {
-          iType = stmt.getTypeOfIndex(i);
-          if (bFirstRow) {
-            this.aColumns[i][1] = iType;
-          }
-          switch (iType) {
-            case stmt.VALUE_TYPE_NULL: 
-              cell = null;
-              break;
-            case stmt.VALUE_TYPE_INTEGER:
-              cell = stmt.getInt64(i);
-              break;
-            case stmt.VALUE_TYPE_FLOAT:
-              cell = stmt.getDouble(i);
-              break;
-            case stmt.VALUE_TYPE_TEXT:
-              cell = stmt.getString(i);
-              break;
-            case stmt.VALUE_TYPE_BLOB: //TODO: handle blob properly
-              if (bBlobAsHex) {
-                  var iDataSize = {value:0};
-                  var aData = {value:null};
-                  stmt.getBlob(i, iDataSize, aData);
-                  cell = SQLiteFn.blobToHex(aData.value);
-              }
-              else {
-                cell = this.mBlobPrefs.sStrForBlob;
-                if (this.mBlobPrefs.bShowSize) {
-                  var iDataSize = {value:0};
-                  var aData = {value:null};
-                  stmt.getBlob(i, iDataSize, aData);
-                  cell += " (Size: " + iDataSize.value + ")";
-                  if (iDataSize.value <= this.mBlobPrefs.iMaxSizeToShowData || this.mBlobPrefs.iMaxSizeToShowData < 0) {
-                    if (this.mBlobPrefs.iHowToShowData == 1)
-                      cell = this.convertBlobToStr(aData.value);
-                    if (this.mBlobPrefs.iHowToShowData == 0)
-                      cell = SQLiteFn.blobToHex(aData.value);
-                  }
-                }
-              }
-              break;
-            default: sData = "<unknown>"; 
-          }
-          aTemp.push(cell);
-          aType.push(iType);
-        }
-        this.aTableData.push(aTemp);
-        this.aTableType.push(aType);
-        bFirstRow = false;
-      }
-      this.miTime = Date.now() - timeStart;
-    } catch (e) {
-      stmt.finalize();
-      //Cu.reportError("finalize");
-      var msg = this.onSqlError(e, "Query: " + sQuery + " - executeStep failed", null, true);
-      Cu.reportError(msg);
-      this.setErrorString();
-      return false;
-    }
-    stmt.finalize();
-    //Cu.reportError("finalize");
-    this.setErrorString();
-    return true;
+    return this.execSelect(stmt);
   },
 
   // selectWithParams : execute a select query with parameter binding
   selectWithParams: function(sQuery, paramValue) {
-    var stmt;
-    //create the statement
-    try {
-      stmt = this.dbConn.createStatement(sQuery);
-      //Cu.reportError("createStatement");
-    } catch (e) {
-      var msg = this.onSqlError(e, "Create statement failed (selectWithParams): " + sQuery, this.dbConn.lastErrorString, true);
-      Cu.reportError(msg);
-      this.setErrorString();
-      return false;
+    var stmt = this.createStatement(sQuery);
+    if (stmt === null) {
+        return false;
     }
     //bind the parameters
     for (let paramKey in stmt.params) {
         stmt.params[paramKey] = paramValue[paramKey];
     }
-    
-    // if aColumns is not null, there is a problem in tree display
-    this.aColumns = null;        
-    var iCols = 0;
-    var iType, colName;
-    try {
-      // do not use stmt.columnCount in the for loop, fetches the value again and again
-      iCols = stmt.columnCount;
-      this.aColumns = new Array();
-      var aTemp, aType;
-      for (var i = 0; i < iCols; i++) {
-        colName = stmt.getColumnName(i);
-        aTemp = [colName, iType];
-        this.aColumns.push(aTemp);  
-      }
-    } catch (e) {
-      stmt.finalize();
-      //Cu.reportError("finalize");
-      var msg = this.onSqlError(e, "Error while fetching column name: " + colName, null, true);
-      Cu.reportError(msg);
-      this.setErrorString();
-      return false;
-    }
-
-    this.aTableData = new Array();
-    this.aTableType = new Array();
-    var bResult = false;
-    var cell;
-    var bFirstRow = true;
-    var timeStart = Date.now();
-    try {
-      while (stmt.executeStep()) {
-        aTemp = [];
-        aType = [];
-        for (i = 0; i < iCols; i++) {
-          iType = stmt.getTypeOfIndex(i);
-          if (bFirstRow) {
-            this.aColumns[i][1] = iType;
-          }
-          switch (iType) {
-            case stmt.VALUE_TYPE_NULL: 
-              cell = null;
-              break;
-            case stmt.VALUE_TYPE_INTEGER:
-              cell = stmt.getInt64(i);
-              break;
-            case stmt.VALUE_TYPE_FLOAT:
-              cell = stmt.getDouble(i);
-              break;
-            case stmt.VALUE_TYPE_TEXT:
-              cell = stmt.getString(i);
-              break;
-            case stmt.VALUE_TYPE_BLOB: //TODO: handle blob properly
-              if (bBlobAsHex) {
-                  var iDataSize = {value:0};
-                  var aData = {value:null};
-                  stmt.getBlob(i, iDataSize, aData);
-                  cell = SQLiteFn.blobToHex(aData.value);
-              }
-              else {
-                cell = this.mBlobPrefs.sStrForBlob;
-                if (this.mBlobPrefs.bShowSize) {
-                  var iDataSize = {value:0};
-                  var aData = {value:null};
-                  stmt.getBlob(i, iDataSize, aData);
-                  cell += " (Size: " + iDataSize.value + ")";
-                  if (iDataSize.value <= this.mBlobPrefs.iMaxSizeToShowData || this.mBlobPrefs.iMaxSizeToShowData < 0) {
-                    if (this.mBlobPrefs.iHowToShowData == 1)
-                      cell = this.convertBlobToStr(aData.value);
-                    if (this.mBlobPrefs.iHowToShowData == 0)
-                      cell = SQLiteFn.blobToHex(aData.value);
-                  }
-                }
-              }
-              break;
-            default: sData = "<unknown>"; 
-          }
-          aTemp.push(cell);
-          aType.push(iType);
-        }
-        this.aTableData.push(aTemp);
-        this.aTableType.push(aType);
-        bFirstRow = false;
-      }
-      this.miTime = Date.now() - timeStart;
-    } catch (e) {
-      stmt.finalize();
-      //Cu.reportError("finalize");
-      var msg = this.onSqlError(e, "Query: " + sQuery + " - executeStep failed", null, true);
-      Cu.reportError(msg);
-      this.setErrorString();
-      return false;
-    }
-    stmt.finalize();
-    //Cu.reportError("finalize");
-    this.setErrorString();
-    return true;
+    return this.execSelect(stmt);
   },
-  
   exportTable: function(sTableName, sDbName, oFormat) {
     var sQuery = "SELECT * FROM " + this.getPrefixedName(sTableName, sDbName);
     this.selectQuery(sQuery, true);

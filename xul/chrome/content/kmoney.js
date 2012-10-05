@@ -240,61 +240,9 @@ Kmoney.prototype.onEMoneySelect = function () {
     this.emoneyTree.onSelect();
 };
 Kmoney.prototype.loadTable = function (tabId) {
-    var key;
-    var value;
-    var operator;
-    var queryParams = {
-        "cond1": {},
-        "andor": $$('km_list_query_andor').value,
-        "cond2": {}
-    };
-    
-    key = $$('km_list_query_condition1').value;
-    if (key === "date") {
-        value = $$('km_edit_query_date1').value;
-        operator = $$('km_list_query_operator1').value;
-    } else if (key === "item") {
-        value = $$('km_edit_query_list1').value;
-        operator = "=";
-    } else if (key === "detail") {
-        value = $$('km_edit_query_text1').value;
-        operator = "=";
-    } else if (key === "user") {
-        value = $$('km_edit_query_list1').value;
-        operator = "=";
-    } else if (key === "none") {
-        value = "";
-    }
-
-    queryParams['cond1']['key'] = key;
-    queryParams['cond1']['operator'] = operator;
-    queryParams['cond1']['value'] = value;
-    
-    queryParams['andor'] = $$('km_list_query_andor').value;
-    
-    key = $$('km_list_query_condition2').value;
-    if (key === "date") {
-        value = $$('km_edit_query_date2').value;
-        operator = $$('km_list_query_operator2').value;
-    } else if (key === "item") {
-        value = $$('km_edit_query_list2').value;
-        operator = "=";
-    } else if (key === "detail") {
-        value = $$('km_edit_query_text2').value;
-        operator = "=";
-    } else if (key === "user") {
-        value = $$('km_edit_query_list2').value;
-        operator = "=";
-    } else if (key === "none") {
-        value = "";
-    }
-    queryParams['cond2']['key'] = key;
-    queryParams['cond2']['operator'] = operator;
-    queryParams['cond2']['value'] = value;
-
     switch (tabId) {
     case 'km_tab_cash':
-        this.cashTree.query(queryParams);
+        this.cashTree.load();
         $$('bankbox').hidden = true;
         $$('creditcardbox').hidden = true;
         $$('emoneybox').hidden = true;
@@ -305,7 +253,7 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_simple_query').hidden = false;
         break;
     case 'km_tab_bank':
-        this.bankTree.query(queryParams);
+        this.bankTree.load();
         $$('bankbox').hidden = false;
         $$('creditcardbox').hidden = true;
         $$('emoneybox').hidden = true;
@@ -316,7 +264,7 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_simple_query').hidden = false;
         break;
     case 'km_tab_creditcard':
-        this.creditcardTree.query(queryParams);
+        this.creditcardTree.load();
         $$('bankbox').hidden = true;
         $$('creditcardbox').hidden = false;
         $$('emoneybox').hidden = true;
@@ -327,7 +275,7 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_simple_query').hidden = false;
         break;
     case 'km_tab_emoney':
-        this.emoneyTree.query(queryParams);
+        this.emoneyTree.load();
         $$('bankbox').hidden = true;
         $$('creditcardbox').hidden = true;
         $$('emoneybox').hidden = false;
@@ -338,7 +286,7 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_simple_query').hidden = false;
         break;
     case 'km_tab_all':
-        this.allView.query(queryParams);
+        this.allView.load();
         $$('bankbox').hidden = true;
         $$('creditcardbox').hidden = true;
         $$('emoneybox').hidden = true;
@@ -612,9 +560,9 @@ Kmoney.prototype.onQueryCondition1Select = function() {
         $$('km_list_query_operator1').hidden = false;
         $$('km_list_query_operator1').removeAllItems();
         $$('km_list_query_operator1').appendItem(
-            km_getLStr("query_operator.equals"), "equals");
+            km_getLStr("query_operator.equals"), "=");
         $$('km_list_query_operator1').appendItem(
-            km_getLStr("query_operator.contains"), "contains");
+            km_getLStr("query_operator.contains"), "like");
         
         $$('km_edit_query_text1').value = "";
     } else if (key === "user") {
@@ -675,9 +623,9 @@ Kmoney.prototype.onQueryCondition2Select = function() {
         $$('km_list_query_operator2').hidden = false;
         $$('km_list_query_operator2').removeAllItems();
         $$('km_list_query_operator2').appendItem(
-            km_getLStr("query_operator.equals"), "equals");
+            km_getLStr("query_operator.equals"), "=");
         $$('km_list_query_operator2').appendItem(
-            km_getLStr("query_operator.contains"), "contains");
+            km_getLStr("query_operator.contains"), "like");
         
         $$('km_edit_query_text2').value = "";
     } else if (key === "user") {

@@ -2,22 +2,14 @@ function CreditCardTable() {
     this.mDb = null;
     this.mCardList = null;
     this.mTree = new TreeViewController("km_tree_creditcard");
-    this.queryParams = {};
 }
 CreditCardTable.prototype.initialize = function (db) {
     this.mDb = db;
-    this.mTree.init(this.sort.bind(this));
+    this.mTree.init(this.load.bind(this));
     this.loadCardList();
 };
-CreditCardTable.prototype.query = function (queryParams) {
-    this.load(queryParams);
-};
 
-CreditCardTable.prototype.sort = function (sortParams) {
-    this.load(undefined, sortParams);
-};
-
-CreditCardTable.prototype.load = function (queryParams, sortParams) {
+CreditCardTable.prototype.load = function (sortParams) {
     var orderBy = "";
     if (sortParams !== undefined) {
         for (var i = 0; i < sortParams.length; i++) {
@@ -37,62 +29,74 @@ CreditCardTable.prototype.load = function (queryParams, sortParams) {
         }
     }
 
-    if (queryParams !== undefined) {
-        this.queryParams = queryParams;
-    } else {
-        queryParams = this.queryParams;
-    }
-    var params = {};
     var where = "";
-
-    var cond1 = queryParams['cond1'];
-    var cond2 = queryParams['cond2'];
-
-    var key = cond1['key'];
+    var key1 = $$('km_list_query_condition1').value;
+    var operator1 = "";
+    var value1 = "";
+    var key2 = $$('km_list_query_condition2').value;
+    var operator2 = "";
+    var value2 = "";
     var keyCol;
-    if (key !== "none") {
-        if (key === "date") {
+    if (key1 !== "none") {
+        if (key1 === "date") {
             keyCol = "A.transaction_date";
-        } else if (key === "item") {
+            operator1 = $$('km_list_query_operator1').value;
+            value1 = $$('km_edit_query_date1').value;
+        } else if (key1 === "item") {
             keyCol = "A.item_id";
-        } else if (key === "detail") {
+            operator1 = "=";
+            value1 = $$('km_edit_query_list1').value;
+        } else if (key1 === "detail") {
             keyCol = "A.detail";
-        } else if (key === "user") {
+            operator1 = $$('km_list_query_operator1').value;
+            value1 = $$('km_edit_query_text1').value;
+        } else if (key1 === "user") {
             keyCol = "A.user_id";
+            operator1 = "=";
+            value1 = $$('km_edit_query_list1').value;
         }
         where = " where ";
         where += keyCol;
         where += " ";
-        where += cond1['operator'];
+        where += operator1;
         where += " ";
-        where += ":" + key + "_1";
-        params[key + "_1"] = cond1['value'];
+        where += ":" + key1 + "_1";
+        if (operator1 === 'like') {
+            where += " escape '/'";
+        }
 
-        key = cond2['key'];
-        if (key !== "none") {
-            if (key === "date") {
+        if (key2 !== "none") {
+            where += " " + $$('km_list_query_andor').value + " ";
+
+            if (key2 === "date") {
                 keyCol = "A.transaction_date";
-            } else if (key === "item") {
+                operator2 = $$('km_list_query_operator2').value;
+                value2 = $$('km_edit_query_date2').value;
+            } else if (key2 === "item") {
                 keyCol = "A.item_id";
-            } else if (key === "detail") {
+                operator2 = "=";
+                value2 = $$('km_edit_query_list2').value;
+            } else if (key2 === "detail") {
                 keyCol = "A.detail";
-            } else if (key === "user") {
+                operator2 = "=";
+                value2 = $$('km_edit_query_text2').value;
+            } else if (key2 === "user") {
                 keyCol = "A.user_id";
+                operator2 = "=";
+                value2 = $$('km_edit_query_list2').value;
             }
-            if (queryParams['andor'] === 'AND') {
-                where += " and ";
-            } else if (queryParams['andor'] === 'OR') {
-                where += " or ";
-            }
-
+            
             where += keyCol;
             where += " ";
-            where += cond2['operator'];
+            where += operator2;
             where += " ";
-            where += ":" + key + "_2";
-            params[key + "_2"] = cond2['value'];
+            where += ":" + key2 + "_2";
+            if (operator2 === 'like') {
+                where += " escape '/'";
+            }
         }
     }
+
     var sql = ["select ",
                "A.transaction_date, ",
                "A.item_id, ",
@@ -119,7 +123,27 @@ CreditCardTable.prototype.load = function (queryParams, sortParams) {
     sql += " order by " + orderBy;
 
     km_log(sql);
-    this.mDb.selectWithParams(sql, params);
+
+    var stmt = this.mDb.createStatement(sql);
+    if (stmt === null) {
+        return;
+    }
+    if (key1 !== "none") {
+        if (operator1 === "like") {
+            stmt.params[key1 + "_1"] = "%" + stmt.escapeStringForLIKE(value1, "/") + "%";    
+        } else {
+            stmt.params[key1 + "_1"] = value1;    
+        }
+    }
+    if (key2 !== "none") {
+        if (operator2 === "like") {
+            stmt.params[key2 + "_2"] = "%" + stmt.escapeStringForLIKE(value2, "/") + "%";    
+        } else {
+            stmt.params[key2 + "_2"] = value2;    
+        }
+    }
+
+    this.mDb.execSelect(stmt);
     var records = this.mDb.getRecords();
     var types = this.mDb.getRecordTypes();
     var columns = this.mDb.getColumns();
