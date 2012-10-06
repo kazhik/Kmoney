@@ -358,6 +358,13 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 						<menulist id="km_edit_creditcard">
 							<menupopup></menupopup>
 						</menulist>
+						<label control="km_edit_paymonthY" value="&edit.paymonth;" />
+						<menulist id="km_edit_paymonthY">
+							<menupopup></menupopup>
+						</menulist>
+						<menulist id="km_edit_paymonthM">
+							<menupopup></menupopup>
+						</menulist>
 					</hbox>
 					<hbox id="emoneybox" align="center">
 						<label control="km_edit_emoney" value="&edit.emoney;" />

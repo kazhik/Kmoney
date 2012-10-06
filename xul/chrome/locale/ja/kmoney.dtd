@@ -93,6 +93,7 @@
 <!ENTITY edit.name          "名前">
 <!ENTITY edit.importfrom          "インポート元">
 <!ENTITY edit.default          "既定値">
+<!ENTITY edit.paymonth          "支払月">
 
 <!-- confirm dialog -->
 <!ENTITY confirm.button.accept  "はい">

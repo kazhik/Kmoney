@@ -624,9 +624,30 @@ Kmoney.prototype.updateRecord = function () {
     } else if (selectedCnt > 1) {
         //TODO: 将来的には複数削除もできるようにする
         km_alert(km_getLStr("error.title"), km_getLStr("error.update.multipleSelected"));
+        return;
     }
 
     tree.updateRecord();
+};
+Kmoney.prototype.deleteRecord = function () {
+    var tree = this.getSelectedTree();
+    if (typeof tree.deleteRecord != 'function') {
+        return;
+    }
+    var selectedCnt = tree.mTree.getSelectedRowCount();
+    if (selectedCnt === 0) {
+        km_alert(km_getLStr("error.title"), km_getLStr("error.delete.notSelected"));
+        return;
+    } else if (selectedCnt > 1) {
+        //TODO: 将来的には複数削除もできるようにする
+        km_alert(km_getLStr("error.title"), km_getLStr("error.delete.multipleSelected"));
+        return;
+    }
+    var bConfirm = km_confirm(km_getLStr("confirm.title"), km_getLStr("confirm.deleteRow"));
+    if (!bConfirm) {
+        return;
+    }
+    tree.deleteRecord();
 };
 Kmoney.prototype.onUserSelect = function () {
     var tree = this.getSelectedTree();
@@ -844,25 +865,6 @@ Kmoney.prototype.onQueryAndOrSelect = function() {
 };
 Kmoney.prototype.onQueryConditionChanged = function() {
     this.query();
-};
-Kmoney.prototype.deleteRecord = function () {
-    var tree = this.getSelectedTree();
-    if (typeof tree.deleteRecord != 'function') {
-        return;
-    }
-    var selectedCnt = tree.mTree.getSelectedRowCount();
-    if (selectedCnt === 0) {
-        km_alert(km_getLStr("error.title"), km_getLStr("error.delete.notSelected"));
-        return;
-    } else if (selectedCnt > 1) {
-        //TODO: 将来的には複数削除もできるようにする
-        km_alert(km_getLStr("error.title"), km_getLStr("error.delete.multipleSelected"));
-    }
-    var bConfirm = km_confirm(km_getLStr("confirm.title"), km_getLStr("confirm.deleteRow"));
-    if (!bConfirm) {
-      return;
-    }
-    tree.deleteRecord();
 };
 Kmoney.prototype.getSelectedTree = function () {
     var tab = null;

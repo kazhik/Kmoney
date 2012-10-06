@@ -93,6 +93,7 @@
 <!ENTITY edit.name          "Name">
 <!ENTITY edit.importfrom          "Source">
 <!ENTITY edit.default          "Default">
+<!ENTITY edit.paymonth          "PayMonth">
 
 <!-- confirm dialog -->
 <!ENTITY confirm.button.accept  "Yes">

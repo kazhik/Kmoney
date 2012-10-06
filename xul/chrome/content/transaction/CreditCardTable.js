@@ -7,6 +7,7 @@ CreditCardTable.prototype.initialize = function (db) {
     this.mDb = db;
     this.mTree.init(this.load.bind(this));
     this.loadCardList();
+    this.initPayMonth();
 };
 
 CreditCardTable.prototype.load = function (sortParams) {
@@ -168,6 +169,12 @@ CreditCardTable.prototype.onSelect = function () {
     $$('income_expense').selectedItem = $$('km_edit_expense');
     $$('km_edit_user').value = this.mTree.getSelectedRowValue('user_id');
     $$('km_edit_creditcard').value = this.mTree.getSelectedRowValue('card_id');
+    var payMonth = this.mTree.getSelectedRowValue('pay_month');
+    if (payMonth.length > 0) {
+        var payMonthSplitted = payMonth.split('-');
+        $$('km_edit_paymonthY').value = payMonthSplitted[0];
+        $$('km_edit_paymonthM').value = payMonthSplitted[1];
+    }
 
     // 選択行の収支を計算してステータスバーに表示
     var expenseArray = this.mTree.getSelectedRowValueList('expense');
@@ -184,6 +191,29 @@ CreditCardTable.prototype.loadCardList = function () {
     this.mCardList = this.mDb.getRecords();
     this.onUserSelect();
 };
+CreditCardTable.prototype.initPayMonth = function () {
+    var thisMonth = new Date();
+    var year = thisMonth.getFullYear();
+    $$('km_edit_paymonthY').removeAllItems();
+    $$('km_edit_paymonthY').appendItem("-", 0);
+    $$('km_edit_paymonthY').appendItem(year, year);
+    $$('km_edit_paymonthY').appendItem(year + 1, year + 1);
+    $$('km_edit_paymonthY').selectedIndex = 0;
+    
+    $$('km_edit_paymonthM').removeAllItems();
+    $$('km_edit_paymonthM').appendItem("-", 0);
+    for (var i = 0; i < 12; i++) {
+        var monthValue = i + 1;
+        if (monthValue < 10) {
+            monthValue = "0" + monthValue;
+        }
+        
+        $$('km_edit_paymonthM').appendItem(i + 1, monthValue);
+    }
+    $$('km_edit_paymonthM').selectedIndex = 0;
+    
+};
+
 CreditCardTable.prototype.onUserSelect = function () {
     $$("km_edit_creditcard").removeAllItems();
     var userId = $$('km_edit_user').value;
@@ -195,7 +225,7 @@ CreditCardTable.prototype.onUserSelect = function () {
     $$("km_edit_creditcard").selectedIndex = 0;
 };
 CreditCardTable.prototype.addRecord = function () {
-    var recArray = [{
+    var rec = {
       "transactionDate": $$('km_edit_transactionDate').value,
       "boughtAmount": $$('km_edit_amount').value,
       "itemId": $$('km_edit_item').value,
@@ -204,26 +234,61 @@ CreditCardTable.prototype.addRecord = function () {
       "cardId": $$('km_edit_creditcard').value,
       "internal": 0,
       "source": 1
-    }];
-    this.executeInsert(recArray);
+    };
+    // 支払月が指定された場合は支払い情報も更新する
+    var payMonthY = $$('km_edit_paymonthY').value;
+    if (payMonthY !== '-') {
+        rec['payMonth'] = payMonthY + "-" + $$('km_edit_paymonthM').value;
+        rec['payAmount'] = rec['boughtAmount']; // 分割払いは当面対応しない
+        rec['remainingBalance'] = 0;
+    }
+    this.executeInsert([rec]);
     
     this.load();
 };
 CreditCardTable.prototype.updateRecord = function () {
     var rowid = this.mTree.getSelectedRowValue('rowid');
-    var sql = ["update km_creditcard_trns ",
+
+    var transactionDate = $$('km_edit_transactionDate').value;
+    var boughtAmount = $$('km_edit_amount').value;
+    var itemId = $$('km_edit_item').value;
+    var detail = $$('km_edit_detail').value;
+    var userId = $$('km_edit_user').value;
+    var cardId = $$('km_edit_creditcard').value;
+    var payMonth = $$('km_edit_paymonthY').value;
+    if (payMonth !== '-') {
+        payMonth += "-" + $$('km_edit_paymonthM').value;
+    }
+
+    var sqlArray = [["update km_creditcard_trns ",
                "set ",
-               "transaction_date = " + "'" + $$('km_edit_transactionDate').value + "', ",
-               "expense = " + $$('km_edit_amount').value + ", ",
-               "item_id = " + $$('km_edit_item').value + ", ",
-               "detail = " + "\"" + $$('km_edit_detail').value + "\", ",
-               "user_id = " + $$('km_edit_user').value + ", ",
-               "card_id = " + $$('km_edit_creditcard').value + ", ",
+               "transaction_date = " + "'" + transactionDate + "', ",
+               "expense = " + boughtAmount + ", ",
+               "item_id = " + itemId + ", ",
+               "detail = \"" + detail + "\", ",
+               "user_id = " + userId + ", ",
+               "card_id = " + cardId + ", ",
                "last_update_date = datetime('now', 'localtime'), ",
                "source = 1 ",
-               "where rowid = " + rowid].join(" ");
-    km_log(sql);
-    this.mDb.executeTransaction([sql]);
+               "where rowid = " + rowid].join(" ")];
+    km_log(sqlArray[0]);
+    if (payMonth !== '-') {
+        sqlArray.push(
+            ["update km_creditcard_payment ",
+             "set ",
+             "transaction_date = '" + transactionDate + "', ",
+             "detail = \"" + detail + "\", ",
+             "bought_amount = " + boughtAmount + ", ",
+             "pay_amount = " + boughtAmount + ", ",
+             "pay_month = '" + payMonth + "', ",
+             "user_id = " + userId + ", ",
+             "card_id = " + cardId + ", ",
+             "last_update_date = datetime('now', 'localtime') ",
+             "where transaction_id = " + rowid].join(" ")
+                      );
+        km_log(sqlArray[1]);
+    }
+    this.mDb.executeTransaction(sqlArray);
     this.load();
     this.mTree.ensureRowIsVisible2('rowid', rowid);
 };
@@ -232,7 +297,8 @@ CreditCardTable.prototype.deleteRecord = function () {
     if (rowid === "") {
         return;
     }
-    var sql = ["delete from km_creditcard_trns where rowid = " + rowid];
+    var sql = ["delete from km_creditcard_trns where rowid = " + rowid,
+               "delete from km_creditcard_payment where transaction_id = " + rowid];
     km_log(sql);
     this.mDb.executeTransaction(sql);
     this.load();
@@ -313,7 +379,7 @@ CreditCardTable.prototype.executeInsert = function (newRecordArray) {
                           " where transaction_date = '" + newRecordArray[i]["transactionDate"] + "'",
                           " and bought_amount = " + newRecordArray[i]["boughtAmount"],
                           " and card_id = " + newRecordArray[i]["cardId"],
-                          " and user_id = " + newRecordArray[i]["userId"] + ")"];
+                          " and user_id = " + newRecordArray[i]["userId"] + ")"].join(" ");
             km_log(sqlPayment);
             sqlArray.push(sqlPayment);
         }
