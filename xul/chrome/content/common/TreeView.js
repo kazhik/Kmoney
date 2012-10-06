@@ -207,6 +207,10 @@ TreeViewController.prototype = {
     return this.treeTable.view.getCellText(this.treeTable.currentIndex, col);
     
   },
+  getSelectedRowCount: function() {
+    return this.treeTable.view.selection.count;
+    
+  },
   getSelectedRowValueList: function(columnName) {
     var start = new Object();
     var end = new Object();

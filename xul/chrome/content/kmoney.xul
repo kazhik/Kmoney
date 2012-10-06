@@ -119,7 +119,8 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                     <menupopup></menupopup>
                 </menulist>
             </hbox>
-			<hbox id="km_simple_query">
+            <hbox>
+			<hbox id="km_query1">
 				<menulist id="km_list_query_condition1">
 					<menupopup></menupopup>
 				</menulist>
@@ -134,11 +135,13 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 
 				<menulist id="km_list_query_andor">
 					<menupopup>
-                        <menuitem label="&menu.query.and;" value="AND" />
-                        <menuitem label="&menu.query.or;" value="OR" />
+                        <menuitem label="&menuitem.query.none;" value="none" />
+                        <menuitem label="&menuitem.query.and;" value="and" />
+                        <menuitem label="&menuitem.query.or;" value="or" />
                     </menupopup>
 				</menulist>
-                
+			</hbox>
+			<hbox id="km_query2">
 				<menulist id="km_list_query_condition2">
 					<menupopup></menupopup>
 				</menulist>
@@ -150,9 +153,8 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 				<menulist id="km_edit_query_list2" hidden="true" >
 					<menupopup></menupopup>
 				</menulist>
-				<button id="km_button_query" accesskey="&button.query.accesskey;"
-					label="&button.query;" />
 			</hbox>
+            </hbox>
             <tabpanels>
                 <tabpanel flex="1">
                     <vbox id="km_summary" flex="1">
@@ -160,23 +162,24 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 </tabpanel>
                 <tabpanel flex="1">
                     <vbox flex="1">
-                        <tree id="km_tree_all" style="min-height:30em" flex="1" seltype="single"
+                        <tree id="km_tree_all" style="min-height:30em" flex="1" seltype="multiple"
                         enableColumnDrag="false">
                             <treecols id="km_cols_all">
-								<treecol id="0" label="&column.date;" width="60" persist="width" />
+								<treecol id="transaction_date" label="&column.date;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="1" label="&column.item;" width="60" persist="width" />
+								<treecol id="item_id" label="&column.item;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="2" label="&column.detail;" width="60" persist="width" />
+								<treecol id="detail" label="&column.detail;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="3" label="&column.income;" width="60" persist="width" />
+								<treecol id="income" label="&column.income;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="4" label="&column.expense;" width="60" persist="width" />
+								<treecol id="expense" label="&column.expense;" width="60" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="5" label="&column.user;" width="30" persist="width" />
+								<treecol id="user_name" label="&column.user;" width="30" persist="width" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="6" label="&column.type;" width="60" persist="width" />
-								<treecol id="7" label="rowid" hidden="true" ignoreincolumnpicker="true" />
+								<treecol id="type" label="&column.type;" width="60" persist="width" />
+								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="rowid" label="rowid" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 							</treecols>
                             <treechildren />
@@ -185,7 +188,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 </tabpanel>
                 <tabpanel flex="1">
                     <vbox flex="1">
-                        <tree id="km_tree_cash" style="min-height:30em" flex="1" seltype="single"
+                        <tree id="km_tree_cash" style="min-height:30em" flex="1" seltype="multiple"
                         enableColumnDrag="false">
                             <treecols id="km_cols_cash">
 								<treecol id="transaction_date" label="&column.date;" width="60" persist="width" />
@@ -214,7 +217,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 </tabpanel>
                 <tabpanel flex="1">
                     <vbox flex="1">
-                        <tree id="km_tree_bank" style="min-height:30em" flex="1" seltype="single"
+                        <tree id="km_tree_bank" style="min-height:30em" flex="1" seltype="multiple"
                         enableColumnDrag="false">
                             <treecols id="km_cols_bank">
 								<treecol id="transaction_date" label="&column.date;" width="60" persist="width" />
@@ -249,7 +252,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 </tabpanel>
                 <tabpanel flex="1">
                     <vbox flex="1">
-                        <tree id="km_tree_creditcard" style="min-height:30em" flex="1" seltype="single"
+                        <tree id="km_tree_creditcard" style="min-height:30em" flex="1" seltype="multiple"
                         enableColumnDrag="false">
                             <treecols id="km_cols_creditcard">
 								<treecol id="transaction_date" label="&column.date;" width="60" persist="width" />
@@ -281,7 +284,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 </tabpanel>
                 <tabpanel flex="1">
                     <vbox flex="1">
-                        <tree id="km_tree_emoney" style="min-height:30em" flex="1" seltype="single"
+                        <tree id="km_tree_emoney" style="min-height:30em" flex="1" seltype="multiple"
                         enableColumnDrag="false">
                             <treecols id="km_cols_emoney">
 								<treecol id="transaction_date" label="&column.date;" width="60" persist="width" />
@@ -375,5 +378,8 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 				</hbox>
         </vbox>
     </vbox>
-    <statusbar id="km_statusbar"></statusbar>
+    <statusbar id="km_statusbar">
+        <spacer flex="1"/>
+        <statusbarpanel id="km_status_sum"/>
+    </statusbar>
 </window>

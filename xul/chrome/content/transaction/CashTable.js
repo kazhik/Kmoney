@@ -9,7 +9,7 @@ CashTable.prototype.initialize = function (db) {
     this.mTree.init(this.load.bind(this));
 };
 
-CashTable.prototype.load = function (queryParams, sortParams) {
+CashTable.prototype.load = function (sortParams) {
     var orderBy = "";
     if (sortParams !== undefined) {
         for (var i = 0; i < sortParams.length; i++) {
@@ -65,7 +65,7 @@ CashTable.prototype.load = function (queryParams, sortParams) {
             where += " escape '/'";
         }
 
-        if (key2 !== "none") {
+        if ($$('km_list_query_andor').value !== "none") {
             where += " " + $$('km_list_query_andor').value + " ";
 
             if (key2 === "date") {
@@ -165,6 +165,20 @@ CashTable.prototype.onSelect = function () {
     $$('km_edit_amount').value = amount;
     $$('km_edit_user').value = this.mTree.getSelectedRowValue('user_id');
     $$('km_edit_internal').value = this.mTree.getSelectedRowValue('internal');
+
+    // 選択行の収支を計算してステータスバーに表示
+    var incomeArray = this.mTree.getSelectedRowValueList('income');
+    var expenseArray = this.mTree.getSelectedRowValueList('expense');
+    var sum = 0;
+    var i = 0;
+    for (i = 0; i < incomeArray.length; i++) {
+        sum += parseInt(incomeArray[i]);
+    }
+    for (i = 0; i < expenseArray.length; i++) {
+        sum -= parseInt(expenseArray[i]);
+    }
+    $$('km_status_sum').label = km_getLStr("status.sum") + "=" + sum;
+
 };
 CashTable.prototype.addRecord = function () {
     var incomeValue;

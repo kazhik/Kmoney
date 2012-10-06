@@ -54,6 +54,10 @@ CreditCardTable.prototype.load = function (sortParams) {
             keyCol = "A.user_id";
             operator1 = "=";
             value1 = $$('km_edit_query_list1').value;
+        } else if (key1 === "creditcard") {
+            keyCol = "A.card_id";
+            operator1 = "=";
+            value1 = $$('km_edit_query_list1').value;
         }
         where = " where ";
         where += keyCol;
@@ -65,7 +69,7 @@ CreditCardTable.prototype.load = function (sortParams) {
             where += " escape '/'";
         }
 
-        if (key2 !== "none") {
+        if ($$('km_list_query_andor').value !== "none") {
             where += " " + $$('km_list_query_andor').value + " ";
 
             if (key2 === "date") {
@@ -82,6 +86,10 @@ CreditCardTable.prototype.load = function (sortParams) {
                 value2 = $$('km_edit_query_text2').value;
             } else if (key2 === "user") {
                 keyCol = "A.user_id";
+                operator2 = "=";
+                value2 = $$('km_edit_query_list2').value;
+            } else if (key2 === "creditcard") {
+                keyCol = "A.card_id";
                 operator2 = "=";
                 value2 = $$('km_edit_query_list2').value;
             }
@@ -160,6 +168,16 @@ CreditCardTable.prototype.onSelect = function () {
     $$('income_expense').selectedItem = $$('km_edit_expense');
     $$('km_edit_user').value = this.mTree.getSelectedRowValue('user_id');
     $$('km_edit_creditcard').value = this.mTree.getSelectedRowValue('card_id');
+
+    // 選択行の収支を計算してステータスバーに表示
+    var expenseArray = this.mTree.getSelectedRowValueList('expense');
+    var sum = 0;
+    var i = 0;
+    for (i = 0; i < expenseArray.length; i++) {
+        sum -= parseInt(expenseArray[i]);
+    }
+    $$('km_status_sum').label = km_getLStr("status.sum") + "=" + sum;
+
 };
 CreditCardTable.prototype.loadCardList = function () {
     this.mDb.selectQuery("select rowid, name, user_id from km_creditcard_info");

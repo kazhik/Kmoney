@@ -54,6 +54,10 @@ BankTable.prototype.load = function (sortParams) {
             keyCol = "A.user_id";
             operator1 = "=";
             value1 = $$('km_edit_query_list1').value;
+        } else if (key1 === "bank") {
+            keyCol = "A.bank_id";
+            operator1 = "=";
+            value1 = $$('km_edit_query_list1').value;
         }
         where = " where ";
         where += keyCol;
@@ -65,7 +69,7 @@ BankTable.prototype.load = function (sortParams) {
             where += " escape '/'";
         }
 
-        if (key2 !== "none") {
+        if ($$('km_list_query_andor').value !== "none") {
             where += " " + $$('km_list_query_andor').value + " ";
 
             if (key2 === "date") {
@@ -82,6 +86,10 @@ BankTable.prototype.load = function (sortParams) {
                 value2 = $$('km_edit_query_text2').value;
             } else if (key2 === "user") {
                 keyCol = "A.user_id";
+                operator2 = "=";
+                value2 = $$('km_edit_query_list2').value;
+            } else if (key2 === "bank") {
+                keyCol = "A.bank_id";
                 operator2 = "=";
                 value2 = $$('km_edit_query_list2').value;
             }
@@ -174,6 +182,18 @@ BankTable.prototype.onSelect = function () {
     $$('km_edit_user').value = this.mTree.getSelectedRowValue('user_id');
     $$('km_edit_internal').value = this.mTree.getSelectedRowValue('internal');
 
+    // 選択行の収支を計算してステータスバーに表示
+    var incomeArray = this.mTree.getSelectedRowValueList('income');
+    var expenseArray = this.mTree.getSelectedRowValueList('expense');
+    var sum = 0;
+    var i = 0;
+    for (i = 0; i < incomeArray.length; i++) {
+        sum += parseInt(incomeArray[i]);
+    }
+    for (i = 0; i < expenseArray.length; i++) {
+        sum -= parseInt(expenseArray[i]);
+    }
+    $$('km_status_sum').label = km_getLStr("status.sum") + "=" + sum;
 }
 BankTable.prototype.loadBankList = function () {
     this.mDb.selectQuery("select rowid, name, user_id from km_bank_info");

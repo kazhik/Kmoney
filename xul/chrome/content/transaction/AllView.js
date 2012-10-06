@@ -7,7 +7,21 @@ AllView.prototype.initialize = function (db) {
     this.mDb = db;
     this.mTree.init(this.load.bind(this));
 };
+AllView.prototype.onSelect = function () {
+    // 選択行の収支を計算してステータスバーに表示
+    var incomeArray = this.mTree.getSelectedRowValueList('income');
+    var expenseArray = this.mTree.getSelectedRowValueList('expense');
+    var sum = 0;
+    var i = 0;
+    for (i = 0; i < incomeArray.length; i++) {
+        sum += parseInt(incomeArray[i]);
+    }
+    for (i = 0; i < expenseArray.length; i++) {
+        sum -= parseInt(expenseArray[i]);
+    }
+    $$('km_status_sum').label = km_getLStr("status.sum") + "=" + sum;
 
+};
 AllView.prototype.load = function (sortParams) {
     var orderBy = "";
     if (sortParams !== undefined) {
@@ -64,7 +78,7 @@ AllView.prototype.load = function (sortParams) {
             where += " escape '/'";
         }
 
-        if (key2 !== "none") {
+        if ($$('km_list_query_andor').value !== "none") {
             where += " " + $$('km_list_query_andor').value + " ";
 
             if (key2 === "date") {

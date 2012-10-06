@@ -119,8 +119,9 @@
 <!ENTITY select.importtype.accesskey          "T">
 
 <!ENTITY menulist.selecttype          "Please select type">
-<!ENTITY menu.query.and          "AND">
-<!ENTITY menu.query.or          "OR">
+<!ENTITY menuitem.query.none          "-">
+<!ENTITY menuitem.query.and          "AND">
+<!ENTITY menuitem.query.or          "OR">
 
 <!ENTITY first "First">
 <!ENTITY previous "Previous">
