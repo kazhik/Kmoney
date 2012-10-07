@@ -17,11 +17,11 @@
    <vbox>
         <tabbox id="km_master_tabbox" handleCtrlPageUpDown="true">
             <tabs id="km_tabs">
-                <tab id="km_tab_master_user" label="&tab.user;" persist="selected" />
-                <tab id="km_tab_master_item" label="&tab.item;" persist="selected" />
-                <tab id="km_tab_master_bank" label="&tab.bank;" persist="selected" />
-                <tab id="km_tab_master_creditcard" label="&tab.creditcard;" persist="selected" />
-                <tab id="km_tab_master_emoney" label="&tab.emoney;" persist="selected" />
+                <tab id="km_tab_master_user" label="&tab.user_master;" persist="selected" />
+                <tab id="km_tab_master_item" label="&tab.item_master;" persist="selected" />
+                <tab id="km_tab_master_bank" label="&tab.bank_master;" persist="selected" />
+                <tab id="km_tab_master_creditcard" label="&tab.creditcard_master;" persist="selected" />
+                <tab id="km_tab_master_emoney" label="&tab.emoney_master;" persist="selected" />
             </tabs>
             <tabpanels>
                 <tabpanel flex="1">
@@ -31,12 +31,9 @@
                             <treecols id="km_cols_master_user">
 								<treecol id="master_user_id"
 										 hidden="true" ignoreincolumnpicker="true" />
-								<splitter class="tree-splitter" resizebefore="closest"
-										  resizeafter="grow" />  
+								<splitter class="tree-splitter" />  
 								<treecol id="master_user_name" label="&column.username;"
-										 sortDirection="ascending" width="100" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest"
-										  resizeafter="grow" />  
+										 flex="1" persist="width" />
 							</treecols>
                             <treechildren />
                         </tree>
@@ -48,14 +45,15 @@
 							enableColumnDrag="false">
                             <treecols id="km_cols_master_item">
 								<treecol id="master_item_id" hidden="true" ignoreincolumnpicker="true" />
-								<treecol id="master_item_name" label="&column.itemname;"
-										 width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest"
-										  resizeafter="grow" />  
+								<splitter class="tree-splitter" />  
+								<treecol id="master_item_name" label="&column.itemname;" flex="1"
+                                         persist="width"/>
+								<splitter class="tree-splitter" />  
 								<treecol id="master_item_internal" label="&column.internal;"
-										 width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest"
-										  resizeafter="grow" />  
+										 flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="master_item_sum" label="&column.sum_include;"
+										 flex="1" persist="width" />
 							</treecols>
                             <treechildren />
                         </tree>
@@ -67,18 +65,15 @@
 							enableColumnDrag="false">
                             <treecols id="km_cols_master_bank">
 								<treecol id="master_bank_id" hidden="true" ignoreincolumnpicker="true" />
-								<splitter class="tree-splitter" resizebefore="closest"
-										  resizeafter="grow" />  
+								<splitter class="tree-splitter" />  
 								<treecol id="master_bank_name" label="&column.bankname;"
-										 width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest"
-										  resizeafter="grow" />  
-								<treecol id="master_bank_userid" label="&column.userid;"
+										 flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="master_bank_userid"
 										 hidden="true" ignoreincolumnpicker="true" />
+								<splitter class="tree-splitter" />  
 								<treecol id="master_bank_username" label="&column.username;"
-										 width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest"
-										  resizeafter="grow" />  
+										 flex="1" persist="width" />
 							</treecols>
                             <treechildren />
                         </tree>
@@ -91,28 +86,21 @@
                             <treecols id="km_cols_master_creditcard">
 								<treecol id="master_creditcard_id" hidden="true"
 										 ignoreincolumnpicker="true" />
-								<splitter class="tree-splitter" resizebefore="closest"
-										  resizeafter="grow" />  
+								<splitter class="tree-splitter" />  
 								<treecol id="master_creditcard_name" label="&column.cardname;"
-										 width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest"
-										  resizeafter="grow" />  
+										 flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
 								<treecol id="master_creditcard_userid" hidden="true"
 										ignoreincolumnpicker="true" />
-								<splitter class="tree-splitter" resizebefore="closest"
-										  resizeafter="grow" />  
+								<splitter class="tree-splitter" />  
 								<treecol id="master_creditcard_username" label="&column.username;"
-										 width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest"
-										  resizeafter="grow" />  
+										 flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
 								<treecol id="master_creditcard_bankid" hidden="true"
 										ignoreincolumnpicker="true" />
-								<splitter class="tree-splitter" resizebefore="closest"
-										resizeafter="grow" />  
+								<splitter class="tree-splitter" />  
 								<treecol id="master_creditcard_bankname" label="&column.bankname;"
-										 width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest"
-										resizeafter="grow" />  
+										 flex="1" persist="width" />
 							</treecols>
                             <treechildren />
                         </tree>
@@ -125,28 +113,21 @@
                             <treecols id="km_cols_master_emoney">
 								<treecol id="master_emoney_id" hidden="true"
 										 ignoreincolumnpicker="true" />
-								<splitter class="tree-splitter" resizebefore="closest"
-										  resizeafter="grow" />  
+								<splitter class="tree-splitter" />  
 								<treecol id="master_emoney_name" label="&column.emoneyname;"
-										 width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest"
-										  resizeafter="grow" />  
+										 flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
 								<treecol id="master_emoney_userid" hidden="true"
-										 ignoreincolumnpicker="true" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest"
-										  resizeafter="grow" />  
+										 ignoreincolumnpicker="true" />
+								<splitter class="tree-splitter" />  
 								<treecol id="master_emoney_username" label="&column.username;"
-										 width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest"
-										  resizeafter="grow" />  
+										 flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
 								<treecol id="master_emoney_cardid" hidden="true"
 										 ignoreincolumnpicker="true"/>
-								<splitter class="tree-splitter" resizebefore="closest"
-										  resizeafter="grow" />  
+								<splitter class="tree-splitter" />  
 								<treecol id="master_emoney_cardname" label="&column.cardname;"
-										 width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest"
-										  resizeafter="grow" />  
+										 flex="1" persist="width" />
 							</treecols>
                             <treechildren />
                         </tree>
@@ -176,10 +157,13 @@
 						<menupopup></menupopup>
 					</menulist>
 				</hbox>
-				<label id="label_internal" control="km_edit_internal" value="&edit.internal;" />
-				<menulist id="km_edit_internal">
-					<menupopup></menupopup>
-				</menulist>
+                <hbox id="itembox" align="center">
+                    <label id="label_internal" control="km_edit_internal" value="&edit.internal;" />
+                    <menulist id="km_edit_internal">
+                        <menupopup></menupopup>
+                    </menulist>
+    				<checkbox id="km_master_sum" label="&column.sum_include;" />
+                </hbox>
 			</hbox>
 			<hbox align="right">
 				<button id="km_button_master_add" accesskey="&button.add.accesskey;"

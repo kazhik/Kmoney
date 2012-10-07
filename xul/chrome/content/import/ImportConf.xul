@@ -22,20 +22,16 @@
               enableColumnDrag="false">
             <treecols id="km_cols_import_conf">
                 <treecol id="import_conf_id" hidden="true" ignoreincolumnpicker="true" />
+                <splitter class="tree-splitter" />  
                 <treecol id="import_conf_source_type" hidden="true" ignoreincolumnpicker="true" />
-                <splitter class="tree-splitter" resizebefore="closest"
-                          resizeafter="grow" />  
+                <splitter class="tree-splitter" />  
                 <treecol id="import_conf_detail" label="&column.detail;"
-                         width="60" persist="width" />
-                <splitter class="tree-splitter" resizebefore="closest"
-                          resizeafter="grow" />  
+                         flex="1" persist="width" />
+                <splitter class="tree-splitter" />  
                 <treecol id="import_conf_itemid" hidden="true" ignoreincolumnpicker="true" />
-                <splitter class="tree-splitter" resizebefore="closest"
-                          resizeafter="grow" />  
+                <splitter class="tree-splitter" />  
                 <treecol id="import_conf_itemname" label="&column.itemname;"
-                         width="90" persist="width" />
-                <splitter class="tree-splitter" resizebefore="closest"
-                          resizeafter="grow" />  
+                         flex="1" persist="width" />
                 <treecol id="import_conf_default" hidden="true" ignoreincolumnpicker="true" />
                 <treecol id="import_conf_internal" hidden="true" ignoreincolumnpicker="true" />
                 <treecol id="import_conf_permission" hidden="true" ignoreincolumnpicker="true" />

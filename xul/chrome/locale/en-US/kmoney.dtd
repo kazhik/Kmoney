@@ -59,6 +59,12 @@
 <!ENTITY tab.item          "Item">
 <!ENTITY tab.source          "DataSource">
 
+<!ENTITY tab.user_master          "User">
+<!ENTITY tab.item_master          "Item">
+<!ENTITY tab.bank_master          "Bank">
+<!ENTITY tab.creditcard_master          "CreditCard">
+<!ENTITY tab.emoney_master          "E-Money">
+
 <!-- column -->
 <!ENTITY column.date          "Date">
 <!ENTITY column.income          "Income">
@@ -76,6 +82,7 @@
 <!ENTITY column.type          "Type">
 <!ENTITY column.sourcetype          "SourceType">
 <!ENTITY column.paymonth          "PayMonth">
+<!ENTITY column.sum_include          "IncludeInSum">
 
 <!-- edit -->
 <!ENTITY edit.date          "Date">

@@ -42,27 +42,28 @@ SummaryView.prototype.drawGraph = function () {
 
     var params = {};
     params['startYearMonth'] = startYearMonth;
-    var sqlArray = ["select",
+    var sql = ["select",
                         "strftime('%Y/%m', transaction_date) as transaction_month,",
                         "sum(expense - income) as sumpermonth",
                         "from kmv_transactions",
-                        "where transaction_month >= :startYearMonth"];
+                        "where transaction_month >= :startYearMonth"].join(" ");
+    // ユーザが指定された場合、家計内フラグが「家族」のデータも集計に含める
     if (userid !== 0 && itemid !== 0) {
-        sqlArray.push("and user_id = :user_id", "and internal <> 1", "and item_id = :item_id");
+        sql += " and user_id = :user_id and internal <> 1 and item_id = :item_id ";
         params['user_id'] = userid;
         params['item_id'] = itemid;
     } else if (userid !== 0 && itemid === 0) {
-        sqlArray.push("and user_id = :user_id", "and internal <> 1");
+        sql += " and user_id = :user_id and internal <> 1 ";
         params['user_id'] = userid;
     } else if (userid === 0 && itemid !== 0) {
-        sqlArray.push("and item_id = :item_id", "and internal = 0");
+        sql += " and item_id = :item_id and internal = 0 ";
         params['item_id'] = itemid;
     } else {
-        sqlArray.push("and internal = 0");
+        sql += " and internal = 0 ";
     }
-    sqlArray.push("group by transaction_month");
+    sql += " and sum_include = 1 ";
+    sql += " group by transaction_month ";
 
-    var sql = sqlArray.join(" ");
     km_log(sql);
     this.mDb.selectWithParams(sql, params);
     var records = this.mDb.getRecords();

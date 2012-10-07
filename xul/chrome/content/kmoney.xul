@@ -165,22 +165,21 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                         <tree id="km_tree_all" style="min-height:30em" flex="1" seltype="multiple"
                         enableColumnDrag="false">
                             <treecols id="km_cols_all">
-								<treecol id="transaction_date" label="&column.date;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="item_id" label="&column.item;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="detail" label="&column.detail;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="income" label="&column.income;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="expense" label="&column.expense;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="user_name" label="&column.user;" width="30" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="type" label="&column.type;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="transaction_date" label="&column.date;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="item_id" label="&column.item;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="detail" label="&column.detail;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="income" label="&column.income;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="expense" label="&column.expense;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="user_name" label="&column.user;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="type" label="&column.type;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
 								<treecol id="rowid" label="rowid" hidden="true" ignoreincolumnpicker="true" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
 							</treecols>
                             <treechildren />
                         </tree>
@@ -191,25 +190,25 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                         <tree id="km_tree_cash" style="min-height:30em" flex="1" seltype="multiple"
                         enableColumnDrag="false">
                             <treecols id="km_cols_cash">
-								<treecol id="transaction_date" label="&column.date;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="item_id" label="item_id" hidden="true" ignoreincolumnpicker="true" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="item_name" label="&column.item;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="detail" label="&column.detail;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="income" label="&column.income;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="expense" label="&column.expense;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="user_id" label="user_id" hidden="true" ignoreincolumnpicker="true" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="user_name" label="&column.user;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="internal" label="&column.internal;" hidden="true" ignoreincolumnpicker="true" />
-								<treecol id="rowid" label="rowid" hidden="true" ignoreincolumnpicker="true" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="transaction_date" label="&column.date;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="item_id" hidden="true" ignoreincolumnpicker="true" />
+								<splitter class="tree-splitter" />  
+								<treecol id="item_name" label="&column.item;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="detail" label="&column.detail;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="income" label="&column.income;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="expense" label="&column.expense;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="user_id" hidden="true" ignoreincolumnpicker="true" />
+								<splitter class="tree-splitter" />  
+								<treecol id="user_name" label="&column.user;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="internal" hidden="true" ignoreincolumnpicker="true" />
+								<treecol id="rowid" hidden="true" ignoreincolumnpicker="true" />
+								<splitter class="tree-splitter" />  
 							</treecols>
                             <treechildren context="mp-editTableRow" />
                         </tree>
@@ -220,31 +219,31 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                         <tree id="km_tree_bank" style="min-height:30em" flex="1" seltype="multiple"
                         enableColumnDrag="false">
                             <treecols id="km_cols_bank">
-								<treecol id="transaction_date" label="&column.date;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="item_id" label="item_id" hidden="true" ignoreincolumnpicker="true" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="item_name" label="&column.item;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="detail" label="&column.detail;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="income" label="&column.income;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="expense" label="&column.expense;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="bank_id" label="bank_id" hidden="true" ignoreincolumnpicker="true" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="bank_name" label="&column.bankname;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="user_id" label="user_id" hidden="true" ignoreincolumnpicker="true" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="user_name" label="&column.user;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="source" label="&column.sourcetype;" width="60" hidden="true" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="internal" label="&column.internal;" width="60" hidden="true" persist="width" />
-								<treecol id="rowid" label="rowid" hidden="true" ignoreincolumnpicker="true" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="transaction_date" label="&column.date;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="item_id" hidden="true" ignoreincolumnpicker="true" />
+								<splitter class="tree-splitter" />  
+								<treecol id="item_name" label="&column.item;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="detail" label="&column.detail;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="income" label="&column.income;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="expense" label="&column.expense;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="bank_id" hidden="true" ignoreincolumnpicker="true" />
+								<splitter class="tree-splitter" />  
+								<treecol id="bank_name" label="&column.bankname;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="user_id" hidden="true" ignoreincolumnpicker="true" />
+								<splitter class="tree-splitter" />  
+								<treecol id="user_name" label="&column.user;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="source" label="&column.sourcetype;" flex="1" hidden="true" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="internal" label="&column.internal;" flex="1" hidden="true" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="rowid" hidden="true" ignoreincolumnpicker="true" />
 							</treecols>
                             <treechildren context="mp-editTableRow" />
                         </tree>
@@ -255,27 +254,27 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                         <tree id="km_tree_creditcard" style="min-height:30em" flex="1" seltype="multiple"
                         enableColumnDrag="false">
                             <treecols id="km_cols_creditcard">
-								<treecol id="transaction_date" label="&column.date;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="item_id" label="item_id" hidden="true" ignoreincolumnpicker="true" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="item_name" label="&column.item;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="detail" label="&column.detail;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="expense" label="&column.expense;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="card_id" label="card_id" hidden="true" ignoreincolumnpicker="true" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="card_name" label="&column.cardname;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="user_id" label="user_id" hidden="true" ignoreincolumnpicker="true" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="user_name" label="&column.user;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="pay_month" label="&column.paymonth;" width="60" persist="width" />
-								<treecol id="rowid" label="rowid" hidden="true" ignoreincolumnpicker="true" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="transaction_date" label="&column.date;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="item_id" hidden="true" ignoreincolumnpicker="true" />
+								<splitter class="tree-splitter" />  
+								<treecol id="item_name" label="&column.item;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="detail" label="&column.detail;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="expense" label="&column.expense;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="card_id" hidden="true" ignoreincolumnpicker="true" />
+								<splitter class="tree-splitter" />  
+								<treecol id="card_name" label="&column.cardname;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="user_id" hidden="true" ignoreincolumnpicker="true" />
+								<splitter class="tree-splitter" />  
+								<treecol id="user_name" label="&column.user;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="pay_month" label="&column.paymonth;" flex="1" persist="width" />
+								<treecol id="rowid" hidden="true" ignoreincolumnpicker="true" />
+								<splitter class="tree-splitter" />  
 								
 							</treecols>
                             <treechildren context="mp-editTableRow" />
@@ -287,31 +286,31 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                         <tree id="km_tree_emoney" style="min-height:30em" flex="1" seltype="multiple"
                         enableColumnDrag="false">
                             <treecols id="km_cols_emoney">
-								<treecol id="transaction_date" label="&column.date;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="item_id" label="item_id" hidden="true" ignoreincolumnpicker="true" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="item_name" label="&column.item;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="detail" label="&column.detail;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="income" label="&column.income;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="expense" label="&column.expense;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="money_id" label="money_id" hidden="true" ignoreincolumnpicker="true" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="money_name" label="&column.emoneyname;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="user_id" label="user_id" hidden="true" ignoreincolumnpicker="true" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="user_name" label="&column.user;" width="60" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="source" label="&column.sourcetype;" width="60" hidden="true" persist="width" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
-								<treecol id="internal" label="&column.internal;" width="60" hidden="true" persist="width" />
-								<treecol id="rowid" label="rowid" hidden="true" ignoreincolumnpicker="true" />
-								<splitter class="tree-splitter" resizebefore="closest" resizeafter="grow" />  
+								<treecol id="transaction_date" label="&column.date;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="item_id" hidden="true" ignoreincolumnpicker="true" />
+								<splitter class="tree-splitter" />  
+								<treecol id="item_name" label="&column.item;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="detail" label="&column.detail;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="income" label="&column.income;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="expense" label="&column.expense;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="money_id" hidden="true" ignoreincolumnpicker="true" />
+								<splitter class="tree-splitter" />  
+								<treecol id="money_name" label="&column.emoneyname;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="user_id" hidden="true" ignoreincolumnpicker="true" />
+								<splitter class="tree-splitter" />  
+								<treecol id="user_name" label="&column.user;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="source" label="&column.sourcetype;" flex="1" hidden="true" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="internal" label="&column.internal;" flex="1" hidden="true" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="rowid" hidden="true" ignoreincolumnpicker="true" />
 							</treecols>
                             <treechildren context="mp-editTableRow" />
                         </tree>

@@ -49,15 +49,21 @@
 
 <!-- tab -->
 <!ENTITY tab.summary          "集計">
-<!ENTITY tab.cash          "現金">
-<!ENTITY tab.bank          "銀行口座">
-<!ENTITY tab.creditcard          "クレジットカード">
-<!ENTITY tab.emoney          "電子マネー">
-<!ENTITY tab.all          "全て">
+<!ENTITY tab.all          "全明細">
+<!ENTITY tab.cash          "現金明細">
+<!ENTITY tab.bank          "銀行口座明細">
+<!ENTITY tab.creditcard      "クレジットカード明細">
+<!ENTITY tab.emoney          "電子マネー明細">
 
 <!ENTITY tab.user          "ユーザー">
 <!ENTITY tab.item          "費目">
 <!ENTITY tab.source          "入力元">
+
+<!ENTITY tab.user_master          "ユーザー">
+<!ENTITY tab.item_master          "費目">
+<!ENTITY tab.bank_master          "銀行">
+<!ENTITY tab.creditcard_master      "クレジットカード">
+<!ENTITY tab.emoney_master          "電子マネー">
 
 <!-- column -->
 <!ENTITY column.date          "日付">
@@ -76,6 +82,7 @@
 <!ENTITY column.type          "種別">
 <!ENTITY column.sourcetype          "入力元">
 <!ENTITY column.paymonth          "支払月">
+<!ENTITY column.sum_include          "集計対象">
 
 <!-- edit -->
 <!ENTITY edit.date          "日付">

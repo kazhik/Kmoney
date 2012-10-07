@@ -172,24 +172,21 @@ MasterData.prototype.onTabSelected = function (e) {
     switch ($$('km_master_tabbox').selectedTab.id) {
     case 'km_tab_master_user':
         $$('km_edit_label_name').value = km_getLStr("master.username")
-        $$('label_internal').hidden = true;
-        $$('km_edit_internal').hidden = true;
+        $$('itembox').hidden = true;
         $$('userbox').hidden = true;
         $$('creditcardbox').hidden = true;
         $$('bankbox').hidden = true;
         break;
     case 'km_tab_master_item':
         $$('km_edit_label_name').value = km_getLStr("master.itemname")
-        $$('label_internal').hidden = false;
-        $$('km_edit_internal').hidden = false;
+        $$('itembox').hidden = false;
         $$('userbox').hidden = true;
         $$('creditcardbox').hidden = true;
         $$('bankbox').hidden = true;
         break;
     case 'km_tab_master_bank':
         $$('km_edit_label_name').value = km_getLStr("master.bankname")
-        $$('label_internal').hidden = true;
-        $$('km_edit_internal').hidden = true;
+        $$('itembox').hidden = true;
         $$('userbox').hidden = false;
         $$('km_edit_label_user').value = km_getLStr("master.username")
         $$('creditcardbox').hidden = true;
@@ -198,8 +195,7 @@ MasterData.prototype.onTabSelected = function (e) {
         break;
     case 'km_tab_master_creditcard':
         $$('km_edit_label_name').value = km_getLStr("master.cardname")
-        $$('label_internal').hidden = true;
-        $$('km_edit_internal').hidden = true;
+        $$('itembox').hidden = true;
         $$('userbox').hidden = false;
         $$('km_edit_label_user').value = km_getLStr("master.username")
         $$('creditcardbox').hidden = true;
@@ -209,8 +205,7 @@ MasterData.prototype.onTabSelected = function (e) {
         break;
     case 'km_tab_master_emoney':
         $$('km_edit_label_name').value = km_getLStr("master.emoneyname")
-        $$('label_internal').hidden = true;
-        $$('km_edit_internal').hidden = true;
+        $$('itembox').hidden = true;
         $$('userbox').hidden = false;
         $$('km_edit_label_user').value = km_getLStr("master.username")
         $$('creditcardbox').hidden = false;
