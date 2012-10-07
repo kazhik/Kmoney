@@ -408,7 +408,7 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_edit2').hidden = true;
         $$('km_edit_buttons').hidden = true;
         $$('km_summary_viewchanger').hidden = false;
-        $$('km_query1').hidden = false;
+        $$('km_query1').hidden = true;
         $$('km_query2').hidden = true;
         break;
     }
