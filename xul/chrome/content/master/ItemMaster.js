@@ -18,7 +18,7 @@ ItemMaster.prototype.initialize = function(db) {
   this.load();
 };
 ItemMaster.prototype.load = function() {
-  this.mDb.selectQuery("select rowid, name, internal, sum_include from km_item");
+  this.mDb.selectQuery("select rowid, name, sum_include from km_item");
   var records = this.mDb.getRecords();
   var types = this.mDb.getRecordTypes();
   var columns = this.mDb.getColumns();
@@ -34,11 +34,9 @@ ItemMaster.prototype.addRecord = function() {
     
   var sql = ["insert into km_item ("
     + "name, "
-    + "internal, "
     + "sum_include "
     + ") values ( "
     + "'" + $$('km_edit_name').value + "', "
-    + $$('km_edit_internal').value + ", "
     + sumInclude + ")"];
   this.mDb.executeTransaction(sql);
   this.load();
@@ -51,7 +49,6 @@ ItemMaster.prototype.updateRecord = function() {
   var sql = ["update km_item "
     + "set "
     + "name = '" + $$('km_edit_name').value + "', "
-    + "internal = " + $$('km_edit_internal').value + ", "
     + "sum_include = " + sumInclude + " "
     + "where rowid = " + rowid];
   km_log(sql);
@@ -61,21 +58,83 @@ ItemMaster.prototype.updateRecord = function() {
 };
 
 ItemMaster.prototype.deleteRecord = function() {
-  var rowid = this.mTree.getColumnValue(0);
-  if (rowid === "") {
-    return;
-  }
-  var sql = ["delete from km_item where rowid = " + rowid];
-  km_log(sql);
-  this.mDb.executeTransaction(sql);
+    var itemId = this.mTree.getSelectedRowValue('master_item_id');
+    if (itemId === "") {
+        return;
+    }
+    
+    // 削除する費目のトランザクションデータ、インポート設定が存在するかどうかチェック
+    var sql = "select count(*) from kmv_transactions where item_id = :item_id";
+             
+    var stmt = this.mDb.createStatement(sql);
+    if (stmt === null) {
+        return;
+    }
+    stmt.params["item_id"] = itemId;
+    this.mDb.execSelect(stmt);
+    var records = this.mDb.getRecords();
+    if (parseInt(records[0][0]) === 0) {
+        sql = "select count(*) from km_import where item_id = :item_id";
+        stmt = this.mDb.createStatement(sql);
+        if (stmt === null) {
+            return;
+        }
+        stmt.params["item_id"] = itemId;
+        this.mDb.execSelect(stmt);
+        records = this.mDb.getRecords();
+    }
+
+    var stmtArray = [];
+    var params = {
+        "item_id": itemId,
+        "new_item_id": 0
+        };
+    var execDelete = false;
+    // トランザクションデータが存在する場合はマージ先を指定させる    
+    if (parseInt(records[0][0]) > 0) {
+        var retVals = { itemid: null };
+        
+        window.openDialog("chrome://kmoney/content/master/MergeDialog.xul", "MergeDialog",
+            "chrome, resizable, centerscreen, modal, dialog",
+            this.mDb, this.mItemList, retVals);
+        
+        // 削除する費目のトランザクションデータとインポート設定を変更
+        if (retVals['itemid'] !== null) {
+            var sqlArray = [
+                "update km_realmoney_trns set item_id = :new_item_id where item_id = :item_id", 
+                "update km_bank_trns set item_id = :new_item_id where item_id = :item_id", 
+                "update km_creditcard_trns set item_id = :new_item_id where item_id = :item_id", 
+                "update km_emoney_trns set item_id = :new_item_id where item_id = :item_id",
+                "update km_import set item_id = :new_item_id where item_id = :item_id"
+            ];
+            params["new_item_id"] = retVals['itemid'];
+            for (var i = 0; i < sqlArray.length; i++) {
+                km_log(sqlArray[i]);
+                var updateStatement = this.mDb.createStatementWithParams(sqlArray[i], params);
+                stmtArray.push(updateStatement);
+            }
+            
+            execDelete = true;     
+        }
+    } else {
+        execDelete = true;
+    }
+    
+    if (execDelete) {
+        sql = "delete from km_item where rowid = :item_id";
+        var deleteStatement = this.mDb.createStatementWithParams(sql, params);
+        km_log(sql);
+        stmtArray.push(deleteStatement);
+        
+        this.mDb.execTransaction(stmtArray);
+    }
   
-  this.load();
+    this.load();
 };
 
 ItemMaster.prototype.onSelect = function() {
   $$('km_edit_name').value = this.mTree.getColumnValue(1);
-  $$('km_edit_internal').value = this.mTree.getColumnValue(2);
-  $$('km_master_sum').checked = (Number(this.mTree.getColumnValue(3)) === 1);
+  $$('km_master_sum').checked = (Number(this.mTree.getColumnValue(2)) === 1);
  
 };
 

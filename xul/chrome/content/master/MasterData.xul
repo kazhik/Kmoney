@@ -49,9 +49,6 @@
 								<treecol id="master_item_name" label="&column.itemname;" flex="1"
                                          persist="width"/>
 								<splitter class="tree-splitter" />  
-								<treecol id="master_item_internal" label="&column.internal;"
-										 flex="1" persist="width" />
-								<splitter class="tree-splitter" />  
 								<treecol id="master_item_sum" label="&column.sum_include;"
 										 flex="1" persist="width" />
 							</treecols>
@@ -158,10 +155,6 @@
 					</menulist>
 				</hbox>
                 <hbox id="itembox" align="center">
-                    <label id="label_internal" control="km_edit_internal" value="&edit.internal;" />
-                    <menulist id="km_edit_internal">
-                        <menupopup></menupopup>
-                    </menulist>
     				<checkbox id="km_master_sum" label="&column.sum_include;" />
                 </hbox>
 			</hbox>

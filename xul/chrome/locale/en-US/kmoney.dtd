@@ -2,6 +2,7 @@
 <!ENTITY dialog.masterData     "Master Data">
 <!ENTITY dialog.import     "Import">
 <!ENTITY dialog.importConf     "Import Conf">
+<!ENTITY dialog.merge     "Merge">
 
 <!-- menu -->
 <!ENTITY menu.file			"File">
@@ -125,6 +126,8 @@
 <!ENTITY select.type          "Type">
 <!ENTITY select.importtype          "Import Type">
 <!ENTITY select.importtype.accesskey          "T">
+<!ENTITY select.merge_into          "Merge Into">
+<!ENTITY select.merge_into.accesskey          "M">
 
 <!ENTITY menulist.selecttype          "Please select type">
 <!ENTITY menuitem.query.none          "-">

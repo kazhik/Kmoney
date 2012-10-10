@@ -111,7 +111,7 @@ InitDB.prototype.createTables = function() {
       '"internal" BOOL,' +
       '"last_update_date" DATETIME,' +
       '"source" INTEGER)',
-    'CREATE TABLE "km_item" ("name" TEXT, "internal" INTEGER DEFAULT 0)',
+    'CREATE TABLE "km_item" ("name" TEXT, "sum_include" INTEGER DEFAULT 1)',
     'CREATE TABLE "km_source" ("type" INTEGER)',
     'CREATE TABLE "km_user" ("id" INTEGER PRIMARY KEY  NOT NULL , "name" TEXT)'
   ];

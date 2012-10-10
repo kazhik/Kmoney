@@ -237,7 +237,7 @@ CreditCardTable.prototype.addRecord = function () {
     };
     // 支払月が指定された場合は支払い情報も更新する
     var payMonthY = $$('km_edit_paymonthY').value;
-    if (payMonthY !== '-') {
+    if (parseInt(payMonthY) !== 0) {
         rec['payMonth'] = payMonthY + "-" + $$('km_edit_paymonthM').value;
         rec['payAmount'] = rec['boughtAmount']; // 分割払いは当面対応しない
         rec['remainingBalance'] = 0;
@@ -256,7 +256,7 @@ CreditCardTable.prototype.updateRecord = function () {
     var userId = $$('km_edit_user').value;
     var cardId = $$('km_edit_creditcard').value;
     var payMonth = $$('km_edit_paymonthY').value;
-    if (payMonth !== '-') {
+    if (payMonth !== 0) {
         payMonth += "-" + $$('km_edit_paymonthM').value;
     }
 
@@ -272,7 +272,7 @@ CreditCardTable.prototype.updateRecord = function () {
                "source = 1 ",
                "where rowid = " + rowid].join(" ")];
     km_log(sqlArray[0]);
-    if (payMonth !== '-') {
+    if (parseInt(payMonthY) !== 0) {
         sqlArray.push(
             ["update km_creditcard_payment ",
              "set ",

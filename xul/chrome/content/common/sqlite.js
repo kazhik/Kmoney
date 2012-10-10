@@ -745,7 +745,18 @@ SQLiteHandler.prototype = {
     }
     return stmt;
   },
-  // selectQuery : execute a select query and store the results
+  // createStatementWithParams : create a query with parameter binding
+  createStatementWithParams: function(sQuery, paramValue) {
+    var stmt = this.createStatement(sQuery);
+    if (stmt === null) {
+        return false;
+    }
+    //bind the parameters
+    for (let paramKey in stmt.params) {
+        stmt.params[paramKey] = paramValue[paramKey];
+    }
+    return stmt;
+  },  // selectQuery : execute a select query and store the results
   selectQuery: function(sQuery, bBlobAsHex) {
     var stmt = this.createStatement(sQuery);
     if (stmt === null) {
@@ -939,6 +950,46 @@ SQLiteHandler.prototype = {
     return true;
   },  
 
+  execTransaction: function(stmtArray) {
+    //IS THIS NEEDED?
+    //commit, if some leftover transaction is in progress
+    if (this.dbConn.transactionInProgress)
+      this.dbConn.commitTransaction();
+
+    var timeStart = Date.now();
+    //begin a transaction, iff no transaction in progress
+    if (!this.dbConn.transactionInProgress)
+      this.dbConn.beginTransaction();
+
+    for(var i = 0; i < stmtArray.length; i++) {
+      try {
+        stmtArray[i].execute();
+      }
+      catch (e) {
+        stmtArray[i].finalize();
+
+        this.setErrorString();
+        var msg = this.onSqlError(e, "", this.dbConn.lastErrorString, true);
+        Cu.reportError(msg);
+        this.setErrorString();
+        if (this.dbConn.transactionInProgress) {
+          this.dbConn.rollbackTransaction();
+        }
+        return false;
+      }
+      finally {
+        if (stmtArray[i] != undefined)
+          stmtArray[i].finalize();
+      }
+    }
+    //commit transaction, if reached here
+    if (this.dbConn.transactionInProgress)
+      this.dbConn.commitTransaction();
+
+    this.miTime = Date.now() - timeStart;
+    return true;
+  },  
+  
   executeTransaction: function(aQueries) {
     //IS THIS NEEDED?
     //commit, if some leftover transaction is in progress

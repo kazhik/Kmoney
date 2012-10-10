@@ -34,8 +34,6 @@ MasterData.prototype.initialize = function (db) {
     this.emoneyMaster = new EMoneyMaster();
     this.emoneyMaster.initialize(db);
 
-    this.populateInternalList();
-
     this.addEventListeners();
 
     this.onTabSelected();
@@ -137,13 +135,6 @@ MasterData.prototype.loadCardList = function () {
     }
     $$("km_edit_creditcard").selectedIndex = 0;
 
-};
-MasterData.prototype.populateInternalList = function () {
-    $$('km_edit_internal').removeAllItems();
-    $$('km_edit_internal').appendItem(km_getLStr("internal.none"), 0);
-    $$('km_edit_internal').appendItem(km_getLStr("internal.self"), 1);
-    $$('km_edit_internal').appendItem(km_getLStr("internal.family"), 2);
-    $$('km_edit_internal').selectedIndex = 0;
 };
 
 MasterData.prototype.loadEMoneyList = function () {
