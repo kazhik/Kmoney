@@ -50,6 +50,7 @@
 
 <!-- tab -->
 <!ENTITY tab.summary          "Summary">
+<!ENTITY tab.balance          "AccountBalance">
 <!ENTITY tab.cash          "Cash">
 <!ENTITY tab.bank          "Bank">
 <!ENTITY tab.creditcard          "CreditCard">

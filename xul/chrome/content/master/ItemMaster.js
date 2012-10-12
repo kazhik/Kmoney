@@ -94,9 +94,15 @@ ItemMaster.prototype.deleteRecord = function() {
     if (parseInt(records[0][0]) > 0) {
         var retVals = { itemid: null };
         
+        var mergeToList = [];
+        for (var i = 0; i < this.mItemList.length; i++) {
+            if (this.mItemList[i][0] != itemId) {
+                mergeToList.push(this.mItemList[i]);
+            }
+        }
         window.openDialog("chrome://kmoney/content/master/MergeDialog.xul", "MergeDialog",
             "chrome, resizable, centerscreen, modal, dialog",
-            this.mDb, this.mItemList, retVals);
+            this.mDb, mergeToList, retVals);
         
         // 削除する費目のトランザクションデータとインポート設定を変更
         if (retVals['itemid'] !== null) {

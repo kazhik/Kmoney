@@ -50,6 +50,7 @@
 
 <!-- tab -->
 <!ENTITY tab.summary          "集計">
+<!ENTITY tab.balance          "収支">
 <!ENTITY tab.all          "全明細">
 <!ENTITY tab.cash          "現金明細">
 <!ENTITY tab.bank          "銀行口座明細">

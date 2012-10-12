@@ -17,6 +17,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
     <script type="application/x-javascript" src="transaction/CreditCardTable.js" />
     <script type="application/x-javascript" src="transaction/EMoneyTable.js" />
     <script type="application/x-javascript" src="summary/SummaryView.js" />
+    <script type="application/x-javascript" src="summary/BalanceView.js" />
 
     <script type="application/x-javascript" src="import/AbstractImport.js" />
     <script type="application/x-javascript" src="import/BankImport.js" />
@@ -99,21 +100,40 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
         <tabbox id="km_tabbox" handleCtrlPageUpDown="true">
             <tabs id="km_tabs">
                 <tab id="km_tab_summary" label="&tab.summary;" persist="selected" />
+                <tab id="km_tab_balance" label="&tab.balance;" persist="selected" />
                 <tab id="km_tab_all" label="&tab.all;" persist="selected" />
                 <tab id="km_tab_cash" label="&tab.cash;" persist="selected" />
                 <tab id="km_tab_bank" label="&tab.bank;" persist="selected" />
                 <tab id="km_tab_creditcard" label="&tab.creditcard;" persist="selected" />
                 <tab id="km_tab_emoney" label="&tab.emoney;" persist="selected" />
             </tabs>
-            <hbox id="km_summary_viewchanger" align="center" hidden="true">
-                <label control="km_summary_period" value="&edit.period;" />
-                <menulist id="km_summary_period">
+            <hbox id="km_summary_condition" align="center" hidden="true">
+                <label control="km_summary_monthfromY" value="&edit.period;" />
+                <menulist id="km_summary_monthfromY">
                     <menupopup></menupopup>
                 </menulist>
-                <label control="km_summary_item" value="&edit.item;" />
-                <menulist id="km_summary_item">
+                <menulist id="km_summary_monthfromM">
                     <menupopup></menupopup>
                 </menulist>
+                <label value="-" />
+                <menulist id="km_summary_monthtoY">
+                    <menupopup></menupopup>
+                </menulist>
+                <menulist id="km_summary_monthtoM">
+                    <menupopup></menupopup>
+                </menulist>
+                <hbox id="km_summary_itembox" align="center">
+                    <label control="km_summary_item" value="&edit.item;" />
+                    <menulist id="km_summary_item">
+                        <menupopup></menupopup>
+                    </menulist>
+                </hbox>
+                <hbox id="km_summary_bankbox" align="center">
+                    <label control="km_summary_bank" value="&edit.bank;" />
+                    <menulist id="km_summary_bank">
+                        <menupopup></menupopup>
+                    </menulist>
+                </hbox>
                 <label control="km_summary_user" value="&edit.user;" />
                 <menulist id="km_summary_user">
                     <menupopup></menupopup>
@@ -158,6 +178,10 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
             <tabpanels>
                 <tabpanel flex="1">
                     <vbox id="km_summary" flex="1">
+                    </vbox>
+                </tabpanel>
+                <tabpanel flex="1">
+                    <vbox id="km_balance" flex="1">
                     </vbox>
                 </tabpanel>
                 <tabpanel flex="1">

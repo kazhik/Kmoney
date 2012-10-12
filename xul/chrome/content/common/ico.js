@@ -9,7 +9,7 @@
  */
 (function(global) {
   var Ico = {
-    VERSION: '0.3.9',
+    VERSION: '0.3.10',
 
     /**
      * Rounds a float to the specified number of decimal places.
@@ -330,7 +330,7 @@ Helpers.extend(Ico.BaseGraph.prototype, {
 
     /* If one colour is specified, map it to a compatible set */
     if (options && options.colour) {
-      options.colours = {};
+      if (!options.colours) options.colours = {};
       for (var key in this.data_sets) {
         if (this.data_sets.hasOwnProperty(key))
           options.colours[key] = options.colour;
@@ -869,6 +869,10 @@ Helpers.extend(Ico.BarGraph.prototype, {
    * @returns {String} The resulting path string 
    */
   drawPlot: function(index, pathString, x, y, colour) {
+    if (this.options.highlight_colours && this.options.highlight_colours.hasOwnProperty(index)) {
+      colour = this.options.highlight_colours[index];
+    }
+
     x = x + this.bar_padding;
     pathString += 'M' + x + ',' + this.start_y;
     pathString += 'L' + x + ',' + y;
@@ -1037,7 +1041,7 @@ Helpers.extend(Ico.LineGraph.prototype, {
   },
 
   calculateStep: function() {
-    return (this.graph_width - (this.options.plot_padding * 2)) / validStepDivider(this.data_size);
+    return this.graph_width / this.data_size;
   },
 
   drawPlot: function(index, pathString, x, y, colour) {
@@ -1049,7 +1053,7 @@ Helpers.extend(Ico.LineGraph.prototype, {
     }
     
     if (index === 0) {
-      this.lastPoint = { x: x, y: y }; 
+      this.lastPoint = { x: x, y: y };
       return pathString + 'M' + x + ',' + y;
     }
 

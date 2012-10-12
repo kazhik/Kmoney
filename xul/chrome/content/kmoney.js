@@ -17,6 +17,7 @@ function Kmoney() {
     this.maFileExt = [];
     this.listeners = [];
     this.summary = null;
+    this.balance = null;
     this.itemMap = {};
     this.importTypeList = {};
     this.importers = {};
@@ -40,6 +41,7 @@ Kmoney.prototype.Startup = function () {
     this.emoneyTree = new EMoneyTable();
     this.bankTree = new BankTable();
     this.summary = new SummaryView();
+    this.balance = new BalanceView();
     this.allView = new AllView();
     
     this.addEventListeners();
@@ -51,12 +53,14 @@ Kmoney.prototype.Startup = function () {
     this.populateItemList();
     this.populateUserList();
     this.populateInternalList();
+    this.populateSummaryPeriodList();
     
     this.cashTree.initialize(this.mDb);
     this.creditcardTree.initialize(this.mDb);
     this.emoneyTree.initialize(this.mDb);
     this.bankTree.initialize(this.mDb);
     this.summary.initialize(this.mDb);
+    this.balance.initialize(this.mDb, this.bankTree.mBankList);
     this.allView.initialize(this.mDb);
 
     this.initImport();
@@ -132,6 +136,8 @@ Kmoney.prototype.initQueryCondition = function () {
         $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.emoney"), "emoney");
         break;
     case 'km_tab_summary':
+        break;
+    case 'km_tab_balance':
         break;
     case 'km_tab_all':
         $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.bank"), "bank");
@@ -310,36 +316,26 @@ Kmoney.prototype.onEMoneySelect = function () {
     this.emoneyTree.onSelect();
 };
 Kmoney.prototype.loadTable = function (tabId) {
-    $$('km_list_query_condition1').removeAllItems();
-    $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.none"), "none");
-    $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.date"), "date");
-    $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.item"), "item");
-    $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.detail"), "detail");
-    $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.user"), "user");
-
-    $$('km_list_query_condition2').removeAllItems();
-    $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.none"), "none");
-    $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.date"), "date");
-    $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.item"), "item");
-    $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.detail"), "detail");
-    $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.user"), "user");
-
-    var tree;
+    var viewMode = "";
+    
+    var panelContent;
     switch (tabId) {
     case 'km_tab_cash':
-        tree = this.cashTree;
+        panelContent = this.cashTree;
+        viewMode = "table";
         $$('bankbox').hidden = true;
         $$('creditcardbox').hidden = true;
         $$('emoneybox').hidden = true;
         $$('km_edit1').hidden = false;
         $$('km_edit2').hidden = false;
         $$('km_edit_buttons').hidden = false;
-        $$('km_summary_viewchanger').hidden = true;
+        $$('km_summary_condition').hidden = true;
         $$('km_query1').hidden = false;
         $$('km_query2').hidden = true;
         break;
     case 'km_tab_bank':
-        tree = this.bankTree;
+        panelContent = this.bankTree;
+        viewMode = "table";
         $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.bank"), "bank");
         $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.bank"), "bank");
         $$('bankbox').hidden = false;
@@ -348,12 +344,13 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_edit1').hidden = false;
         $$('km_edit2').hidden = false;
         $$('km_edit_buttons').hidden = false;
-        $$('km_summary_viewchanger').hidden = true;
+        $$('km_summary_condition').hidden = true;
         $$('km_query1').hidden = false;
         $$('km_query2').hidden = true;
         break;
     case 'km_tab_creditcard':
-        tree = this.creditcardTree;
+        panelContent = this.creditcardTree;
+        viewMode = "table";
         $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.creditcard"),
                                                   "creditcard");
         $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.creditcard"),
@@ -364,12 +361,13 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_edit1').hidden = false;
         $$('km_edit2').hidden = false;
         $$('km_edit_buttons').hidden = false;
-        $$('km_summary_viewchanger').hidden = true;
+        $$('km_summary_condition').hidden = true;
         $$('km_query1').hidden = false;
         $$('km_query2').hidden = true;
         break;
     case 'km_tab_emoney':
-        tree = this.emoneyTree;
+        panelContent = this.emoneyTree;
+        viewMode = "table";
         $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.emoney"), "emoney");
         $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.emoney"), "emoney");
         $$('bankbox').hidden = true;
@@ -378,12 +376,13 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_edit1').hidden = false;
         $$('km_edit2').hidden = false;
         $$('km_edit_buttons').hidden = false;
-        $$('km_summary_viewchanger').hidden = true;
+        $$('km_summary_condition').hidden = true;
         $$('km_query1').hidden = false;
         $$('km_query2').hidden = true;
         break;
     case 'km_tab_all':
-        tree = this.allView;
+        panelContent = this.allView;
+        viewMode = "table";
         $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.bank"), "bank");
         $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.creditcard"),
                                                   "creditcard");
@@ -398,30 +397,83 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_edit1').hidden = true;
         $$('km_edit2').hidden = true;
         $$('km_edit_buttons').hidden = true;
-        $$('km_summary_viewchanger').hidden = true;
+        $$('km_summary_condition').hidden = true;
         $$('km_query1').hidden = false;
         $$('km_query2').hidden = true;
         break;
     case 'km_tab_summary':
-        this.summary.drawGraph();
+        panelContent = this.summary;
+        viewMode = "graph";
         $$('km_edit1').hidden = true;
         $$('km_edit2').hidden = true;
         $$('km_edit_buttons').hidden = true;
-        $$('km_summary_viewchanger').hidden = false;
+        $$('km_summary_condition').hidden = false;
+        $$('km_summary_bankbox').hidden = true;
+        $$('km_summary_itembox').hidden = false;
+        $$('km_query1').hidden = true;
+        $$('km_query2').hidden = true;
+        break;
+    case 'km_tab_balance':
+        panelContent = this.balance;
+        viewMode = "graph";
+        $$('km_edit1').hidden = true;
+        $$('km_edit2').hidden = true;
+        $$('km_edit_buttons').hidden = true;
+        $$('km_summary_condition').hidden = false;
+        $$('km_summary_bankbox').hidden = false;
+        $$('km_summary_itembox').hidden = true;
         $$('km_query1').hidden = true;
         $$('km_query2').hidden = true;
         break;
     }
 
-    $$('km_list_query_condition1').selectedIndex = 1;
-    $$('km_list_query_andor').selectedIndex = 0;
-    $$('km_list_query_condition2').selectedIndex = 0;
-    this.onQueryCondition1Select();
-    this.onQueryCondition2Select();
+    if (viewMode === "table") {
+        $$('km_list_query_condition1').removeAllItems();
+        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.none"), "none");
+        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.date"), "date");
+        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.item"), "item");
+        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.detail"), "detail");
+        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.user"), "user");
+    
+        $$('km_list_query_condition2').removeAllItems();
+        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.none"), "none");
+        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.date"), "date");
+        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.item"), "item");
+        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.detail"), "detail");
+        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.user"), "user");
+    
+        
+        
+        $$('km_list_query_condition1').selectedIndex = 1;
+        $$('km_list_query_andor').selectedIndex = 0;
+        $$('km_list_query_condition2').selectedIndex = 0;
+        this.onQueryCondition1Select();
+        this.onQueryCondition2Select();
 
-    if (typeof tree.load === 'function') {
-        tree.load();
+        panelContent.load();
+    } else if (viewMode === "graph") {
+        // デフォルトは前月までの6ヶ月間
+        var monthToDefault = new Date();
+        var monthValue;
+        monthToDefault.setMonth(monthToDefault.getMonth() - 1);
+        var monthFromDefault = new Date(monthToDefault.getFullYear(),
+                                        monthToDefault.getMonth() - 5,
+                                        1);
+        $$('km_summary_monthfromY').value = monthFromDefault.getFullYear();
+        monthValue = monthFromDefault.getMonth() + 1;
+        if (monthValue < 10) {
+            monthValue = "0" + monthValue;
+        }
+        $$('km_summary_monthfromM').value = monthValue;
+        $$('km_summary_monthtoY').value = monthToDefault.getFullYear();
+        monthValue = monthToDefault.getMonth() + 1;
+        if (monthValue < 10) {
+            monthValue = "0" + monthValue;
+        }
+        $$('km_summary_monthtoM').value = monthValue;
+        panelContent.drawGraph();
     }
+
 };
 Kmoney.prototype.onTabSelected = function (e) {
     $$('km_status_sum').label = "";
@@ -600,6 +652,42 @@ Kmoney.prototype.populateInternalList = function () {
     $$('km_edit_internal').appendItem(km_getLStr("internal.self"), 1);
     $$('km_edit_internal').appendItem(km_getLStr("internal.family"), 2);
     $$('km_edit_internal').selectedIndex = 0;
+};
+Kmoney.prototype.populateSummaryPeriodList = function () {
+    // レコードが存在する最も古い年から今年までをリストに入れる
+    var sql = "select strftime('%Y', min(transaction_date)) from kmv_transactions";
+    this.mDb.selectQuery(sql);
+    var records = this.mDb.getRecords();
+    var oldestYear = parseInt(records[0][0]);
+    var thisYear = (new Date()).getFullYear();
+
+    $$('km_summary_monthfromY').removeAllItems();
+    $$('km_summary_monthtoY').removeAllItems();
+
+    $$('km_summary_monthfromY').appendItem("-", 0);
+    $$('km_summary_monthtoY').appendItem("-", 0);
+    for (var year = oldestYear; year <= thisYear; year++) {
+        $$('km_summary_monthfromY').appendItem(year, year);
+        $$('km_summary_monthtoY').appendItem(year, year);
+    }
+    $$('km_summary_monthfromY').selectedIndex = 0;
+    $$('km_summary_monthtoY').selectedIndex = 0;
+    
+    $$('km_summary_monthfromM').removeAllItems();
+    $$('km_summary_monthfromM').appendItem("-", 0);
+    $$('km_summary_monthtoM').removeAllItems();
+    $$('km_summary_monthtoM').appendItem("-", 0);
+    for (var i = 0; i < 12; i++) {
+        var monthValue = i + 1;
+        if (monthValue < 10) {
+            monthValue = "0" + monthValue;
+        }
+        $$('km_summary_monthfromM').appendItem(i + 1, monthValue);
+        $$('km_summary_monthtoM').appendItem(i + 1, monthValue);
+    }
+    $$('km_summary_monthfromM').selectedIndex = 0;    
+    $$('km_summary_monthtoM').selectedIndex = 0;    
+
 };
 Kmoney.prototype.reset = function () {
     $$('km_edit_transactionDate').value = convDateToYYYYMMDD(new Date(), "-");
@@ -883,6 +971,9 @@ Kmoney.prototype.getSelectedTree = function () {
         break;
     case 'km_tab_summary':
         tab = this.summary;
+        break;
+    case 'km_tab_balance':
+        tab = this.balance;
         break;
     case 'km_tab_all':
         tab = this.allView;

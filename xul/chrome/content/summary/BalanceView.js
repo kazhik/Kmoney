@@ -1,15 +1,17 @@
-function SummaryView() {
+function BalanceView() {
     this.mDb = null;
+    this.mBankList = null;
     this.mGraph = null;
     this.listeners = [];
 };
-SummaryView.prototype.initialize = function (db) {
+BalanceView.prototype.initialize = function (db, bankList) {
     this.mDb = db;
+    this.mBankList = bankList;
 
-    this.listeners['km_summary_item.command'] = this.onGraphItemChanged.bind(this);
-    $$('km_summary_item').addEventListener("command", this.listeners['km_summary_item.command']);
+    this.listeners['km_summary_bank.command'] = this.onGraphItemChanged.bind(this);
+    $$('km_summary_bank').addEventListener("command", this.listeners['km_summary_bank.command']);
 
-    this.listeners['km_summary_user.command'] = this.onGraphItemChanged.bind(this);
+    this.listeners['km_summary_user.command'] = this.onUserSelect.bind(this);
     $$('km_summary_user').addEventListener("command", this.listeners['km_summary_user.command']);
 
     this.listeners['km_summary_monthfromY.command'] = this.onGraphItemChanged.bind(this);
@@ -25,20 +27,31 @@ SummaryView.prototype.initialize = function (db) {
     $$('km_summary_monthtoM').addEventListener("command",
                                                  this.listeners['km_summary_monthtoM.command']);
 };
-SummaryView.prototype.terminate = function () {
-    $$('km_summary_item').removeEventListener("command", this.listeners['km_summary_item.command']);
+BalanceView.prototype.terminate = function () {
 };
-SummaryView.prototype.onGraphItemChanged = function () {
+BalanceView.prototype.onGraphItemChanged = function () {
     this.drawGraph();
 };
+BalanceView.prototype.onUserSelect = function () {
+    $$("km_summary_bank").removeAllItems();
+    var userId = $$('km_summary_user').value;
 
-SummaryView.prototype.drawGraph = function () {
+    for(var i = 0; i < this.mBankList.length; i++) {
+        if(this.mBankList[i][2] == userId) {
+            $$("km_summary_bank").appendItem(this.mBankList[i][1], this.mBankList[i][0]);
+        }
+    }
+    $$("km_summary_bank").selectedIndex = 0;
+
+    this.drawGraph();
+};
+BalanceView.prototype.drawGraph = function () {
     var monthfromY = $$('km_summary_monthfromY').value;
     var monthfromM = $$('km_summary_monthfromM').value;
     var monthtoY = $$('km_summary_monthtoY').value;
     var monthtoM = $$('km_summary_monthtoM').value;
  
-    var itemid = parseInt($$('km_summary_item').value);
+    var bankid = parseInt($$('km_summary_bank').value);
     var userid = parseInt($$('km_summary_user').value);
 
     var params = {};
@@ -46,25 +59,17 @@ SummaryView.prototype.drawGraph = function () {
     params['periodTo'] = monthtoY + "/" + monthtoM;
     var sql = ["select",
                         "strftime('%Y/%m', transaction_date) as transaction_month,",
-                        "sum(expense - income) as sumpermonth",
-                        "from kmv_transactions",
+                        "sum(income - expense) as sumpermonth",
+                        "from km_bank_trns",
                         "where transaction_month >= :periodFrom",
                         "and transaction_month <= :periodTo"].join(" ");
-    // ユーザが指定された場合、家計内フラグが「家族」のデータも集計に含める
-    if (userid !== 0 && itemid !== 0) {
-        sql += " and user_id = :user_id and internal <> 1 and item_id = :item_id ";
+    if (userid !== 0) {
+        sql += " and user_id = :user_id ";
         params['user_id'] = userid;
-        params['item_id'] = itemid;
-    } else if (userid !== 0 && itemid === 0) {
-        sql += " and user_id = :user_id and internal <> 1 ";
-        sql += " and sum_include = 1 ";
-        params['user_id'] = userid;
-    } else if (userid === 0 && itemid !== 0) {
-        sql += " and item_id = :item_id and internal = 0 ";
-        params['item_id'] = itemid;
-    } else {
-        sql += " and internal = 0 ";
-        sql += " and sum_include = 1 ";
+    }
+    if (bankid !== 0) {
+        sql += " and bank_id = :bank_id ";
+        params['bank_id'] = userid;
     }
     sql += " group by transaction_month ";
 
@@ -90,17 +95,16 @@ SummaryView.prototype.drawGraph = function () {
         labelDate.setMonth(labelDate.getMonth() + 1);
     }
 
-    KmGlobals.$empty($$('km_summary'));
-    this.mGraph = new Ico.BarGraph(
-    $$('km_summary'), {
-        expense: valueArray
+    KmGlobals.$empty($$('km_balance'));
+    this.mGraph = new Ico.LineGraph(
+    $$('km_balance'), {
+        balance: valueArray
     }, {
-        colours: {
-            expense: '#990000'
-        },
-        show_vertical_labels: false,
-        labels: labelArray,
-        max_bar_size: 20,
-        bar_labels: true
+        markers: 'circle',
+        show_vertical_labels: true,
+        meanline: true,
+        grid: true,
+        labels: labelArray
     });
+
 };
