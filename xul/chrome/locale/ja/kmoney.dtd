@@ -103,6 +103,8 @@
 <!ENTITY edit.importfrom          "インポート元">
 <!ENTITY edit.default          "既定値">
 <!ENTITY edit.paymonth          "支払月">
+<!ENTITY edit.table          "表">
+<!ENTITY edit.graph          "グラフ">
 
 <!-- confirm dialog -->
 <!ENTITY confirm.button.accept  "はい">

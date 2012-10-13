@@ -64,8 +64,9 @@ BalanceView.prototype.drawGraph = function () {
                         "where transaction_month >= :periodFrom",
                         "and transaction_month <= :periodTo"].join(" ");
     if (userid !== 0) {
-        sql += " and user_id = :user_id ";
+        sql += " and user_id = :user_id";
         params['user_id'] = userid;
+    } else {
     }
     if (bankid !== 0) {
         sql += " and bank_id = :bank_id ";
@@ -82,18 +83,19 @@ BalanceView.prototype.drawGraph = function () {
     var labelDate = new Date(parseInt(monthfromY), parseInt(monthfromM, 10) - 1, 1);
     var endDate = new Date(parseInt(monthtoY), parseInt(monthtoM, 10) - 1, 1);
     var idx = 0;
+    var accumulated = 0;
     while (labelDate <= endDate) {
         var dateStr = convDateToYYYYMM(labelDate, "/");
         labelArray.push(dateStr);
 
         if (records[idx] != undefined && records[idx][0] === dateStr) {
-            valueArray.push(records[idx][1]);
+            accumulated += parseInt(records[idx][1]);
             idx++;
-        } else {
-            valueArray.push(0);
         }
+        valueArray.push(accumulated);
         labelDate.setMonth(labelDate.getMonth() + 1);
     }
+    km_log(valueArray.length);
 
     KmGlobals.$empty($$('km_balance'));
     this.mGraph = new Ico.LineGraph(

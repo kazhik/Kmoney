@@ -108,6 +108,10 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 <tab id="km_tab_emoney" label="&tab.emoney;" persist="selected" />
             </tabs>
             <hbox id="km_summary_condition" align="center" hidden="true">
+                <radiogroup id="km_summary_viewmode" orient="horizontal">
+                    <radio id="km_summary_table" label="&edit.table;" selected="true" />
+                    <radio id="km_summary_graph" label="&edit.graph;" />
+                </radiogroup>
                 <label control="km_summary_monthfromY" value="&edit.period;" />
                 <menulist id="km_summary_monthfromY">
                     <menupopup></menupopup>
@@ -128,16 +132,16 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                         <menupopup></menupopup>
                     </menulist>
                 </hbox>
+                <label control="km_summary_user" value="&edit.user;" />
+                <menulist id="km_summary_user">
+                    <menupopup></menupopup>
+                </menulist>
                 <hbox id="km_summary_bankbox" align="center">
                     <label control="km_summary_bank" value="&edit.bank;" />
                     <menulist id="km_summary_bank">
                         <menupopup></menupopup>
                     </menulist>
                 </hbox>
-                <label control="km_summary_user" value="&edit.user;" />
-                <menulist id="km_summary_user">
-                    <menupopup></menupopup>
-                </menulist>
             </hbox>
             <hbox>
 			<hbox id="km_query1">
@@ -203,7 +207,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<splitter class="tree-splitter" />  
 								<treecol id="type" label="&column.type;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
-								<treecol id="rowid" label="rowid" hidden="true" ignoreincolumnpicker="true" />
+								<treecol id="rowid" hidden="true" ignoreincolumnpicker="true" />
 							</treecols>
                             <treechildren />
                         </tree>

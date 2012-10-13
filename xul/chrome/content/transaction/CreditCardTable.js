@@ -159,7 +159,6 @@ CreditCardTable.prototype.load = function (sortParams) {
     this.mTree.populateTableData(records, columns, types);
     this.mTree.ensureRowIsVisible2('rowid', -1);
     this.mTree.showTable(true);
-    this.onUserSelect();
 };
 CreditCardTable.prototype.onSelect = function () {
     $$('km_edit_transactionDate').value = this.mTree.getSelectedRowValue('transaction_date');
@@ -272,7 +271,7 @@ CreditCardTable.prototype.updateRecord = function () {
                "source = 1 ",
                "where rowid = " + rowid].join(" ")];
     km_log(sqlArray[0]);
-    if (parseInt(payMonthY) !== 0) {
+    if (parseInt(payMonth) !== 0) {
         sqlArray.push(
             ["update km_creditcard_payment ",
              "set ",

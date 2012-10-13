@@ -162,9 +162,6 @@ BankTable.prototype.load = function (sortParams) {
     this.mTree.ensureRowIsVisible2('rowid', -1);
     this.mTree.showTable(true);
 
-    this.onUserSelect();
-
-
 };
 BankTable.prototype.onSelect = function () {
     $$('km_edit_transactionDate').value = this.mTree.getSelectedRowValue('transaction_date');

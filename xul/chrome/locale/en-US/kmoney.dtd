@@ -103,6 +103,8 @@
 <!ENTITY edit.importfrom          "Source">
 <!ENTITY edit.default          "Default">
 <!ENTITY edit.paymonth          "PayMonth">
+<!ENTITY edit.table          "Table">
+<!ENTITY edit.graph          "Graph">
 
 <!-- confirm dialog -->
 <!ENTITY confirm.button.accept  "Yes">

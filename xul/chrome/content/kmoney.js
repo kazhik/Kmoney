@@ -103,59 +103,14 @@ Kmoney.prototype.Shutdown = function () {
     this.removeEventListeners();
     this.closeDatabase(false);
 };
-Kmoney.prototype.initQueryCondition = function () {
-    $$('km_list_query_condition1').removeAllItems();
-    $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.none"), "none");
-    $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.date"), "date");
-    $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.item"), "item");
-    $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.detail"), "detail");
-    $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.user"), "user");
+Kmoney.prototype.initQueryCondition = function (elementId) {
+    $$(elementId).removeAllItems();
+    $$(elementId).appendItem(km_getLStr("query_condition.none"), "none");
+    $$(elementId).appendItem(km_getLStr("query_condition.date"), "date");
+    $$(elementId).appendItem(km_getLStr("query_condition.item"), "item");
+    $$(elementId).appendItem(km_getLStr("query_condition.detail"), "detail");
+    $$(elementId).appendItem(km_getLStr("query_condition.user"), "user");
 
-    $$('km_list_query_condition2').removeAllItems();
-    $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.none"), "none");
-    $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.date"), "date");
-    $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.item"), "item");
-    $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.detail"), "detail");
-    $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.user"), "user");
-
-    switch ($$('km_tabbox').selectedTab.id) {
-    case 'km_tab_cash':
-        break;
-    case 'km_tab_bank':
-        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.bank"), "bank");
-        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.bank"), "bank");
-        break;
-    case 'km_tab_creditcard':
-        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.creditcard"),
-                                                  "creditcard");
-        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.creditcard"),
-                                                  "creditcard");
-        break;
-    case 'km_tab_emoney':
-        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.emoney"), "emoney");
-        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.emoney"), "emoney");
-        break;
-    case 'km_tab_summary':
-        break;
-    case 'km_tab_balance':
-        break;
-    case 'km_tab_all':
-        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.bank"), "bank");
-        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.creditcard"),
-                                                  "creditcard");
-        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.emoney"), "emoney");
-        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.bank"), "bank");
-        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.creditcard"),
-                                                  "creditcard");
-        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.emoney"), "emoney");
-        break;
-    }
-    
-    $$('km_list_query_condition1').selectedIndex = 1;
-    $$('km_list_query_andor').selectedIndex = 0;
-    $$('km_list_query_condition2').selectedIndex = 0;
-    this.onQueryCondition1Select();
-    this.onQueryCondition2Select();
 };
 
 Kmoney.prototype.addEventListeners = function () {
@@ -316,13 +271,12 @@ Kmoney.prototype.onEMoneySelect = function () {
     this.emoneyTree.onSelect();
 };
 Kmoney.prototype.loadTable = function (tabId) {
-    var viewMode = "";
-    
+    var panelType;
     var panelContent;
     switch (tabId) {
     case 'km_tab_cash':
         panelContent = this.cashTree;
-        viewMode = "table";
+        panelType = "table";
         $$('bankbox').hidden = true;
         $$('creditcardbox').hidden = true;
         $$('emoneybox').hidden = true;
@@ -332,12 +286,12 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_summary_condition').hidden = true;
         $$('km_query1').hidden = false;
         $$('km_query2').hidden = true;
+        this.initQueryCondition('km_list_query_condition1');
+        this.initQueryCondition('km_list_query_condition2');
         break;
     case 'km_tab_bank':
         panelContent = this.bankTree;
-        viewMode = "table";
-        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.bank"), "bank");
-        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.bank"), "bank");
+        panelType = "table";
         $$('bankbox').hidden = false;
         $$('creditcardbox').hidden = true;
         $$('emoneybox').hidden = true;
@@ -347,14 +301,14 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_summary_condition').hidden = true;
         $$('km_query1').hidden = false;
         $$('km_query2').hidden = true;
+        this.initQueryCondition('km_list_query_condition1');
+        this.initQueryCondition('km_list_query_condition2');
+        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.bank"), "bank");
+        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.bank"), "bank");
         break;
     case 'km_tab_creditcard':
         panelContent = this.creditcardTree;
-        viewMode = "table";
-        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.creditcard"),
-                                                  "creditcard");
-        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.creditcard"),
-                                                  "creditcard");
+        panelType = "table";
         $$('bankbox').hidden = true;
         $$('creditcardbox').hidden = false;
         $$('emoneybox').hidden = true;
@@ -364,10 +318,16 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_summary_condition').hidden = true;
         $$('km_query1').hidden = false;
         $$('km_query2').hidden = true;
+        this.initQueryCondition('km_list_query_condition1');
+        this.initQueryCondition('km_list_query_condition2');
+        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.creditcard"),
+                                                  "creditcard");
+        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.creditcard"),
+                                                  "creditcard");
         break;
     case 'km_tab_emoney':
         panelContent = this.emoneyTree;
-        viewMode = "table";
+        panelType = "table";
         $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.emoney"), "emoney");
         $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.emoney"), "emoney");
         $$('bankbox').hidden = true;
@@ -379,18 +339,16 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_summary_condition').hidden = true;
         $$('km_query1').hidden = false;
         $$('km_query2').hidden = true;
+        this.initQueryCondition('km_list_query_condition1');
+        this.initQueryCondition('km_list_query_condition2');
+        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.creditcard"),
+                                                  "creditcard");
+        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.creditcard"),
+                                                  "creditcard");
         break;
     case 'km_tab_all':
         panelContent = this.allView;
-        viewMode = "table";
-        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.bank"), "bank");
-        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.creditcard"),
-                                                  "creditcard");
-        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.emoney"), "emoney");
-        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.bank"), "bank");
-        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.creditcard"),
-                                                  "creditcard");
-        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.emoney"), "emoney");
+        panelType = "table";
         $$('bankbox').hidden = true;
         $$('creditcardbox').hidden = true;
         $$('emoneybox').hidden = true;
@@ -400,10 +358,20 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_summary_condition').hidden = true;
         $$('km_query1').hidden = false;
         $$('km_query2').hidden = true;
+        this.initQueryCondition('km_list_query_condition1');
+        this.initQueryCondition('km_list_query_condition2');
+        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.bank"), "bank");
+        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.creditcard"),
+                                                  "creditcard");
+        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.emoney"), "emoney");
+        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.bank"), "bank");
+        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.creditcard"),
+                                                  "creditcard");
+        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.emoney"), "emoney");
         break;
     case 'km_tab_summary':
         panelContent = this.summary;
-        viewMode = "graph";
+        panelType = "graph";
         $$('km_edit1').hidden = true;
         $$('km_edit2').hidden = true;
         $$('km_edit_buttons').hidden = true;
@@ -415,7 +383,7 @@ Kmoney.prototype.loadTable = function (tabId) {
         break;
     case 'km_tab_balance':
         panelContent = this.balance;
-        viewMode = "graph";
+        panelType = "graph";
         $$('km_edit1').hidden = true;
         $$('km_edit2').hidden = true;
         $$('km_edit_buttons').hidden = true;
@@ -427,23 +395,7 @@ Kmoney.prototype.loadTable = function (tabId) {
         break;
     }
 
-    if (viewMode === "table") {
-        $$('km_list_query_condition1').removeAllItems();
-        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.none"), "none");
-        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.date"), "date");
-        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.item"), "item");
-        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.detail"), "detail");
-        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.user"), "user");
-    
-        $$('km_list_query_condition2').removeAllItems();
-        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.none"), "none");
-        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.date"), "date");
-        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.item"), "item");
-        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.detail"), "detail");
-        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.user"), "user");
-    
-        
-        
+    if (panelType === "table") {
         $$('km_list_query_condition1').selectedIndex = 1;
         $$('km_list_query_andor').selectedIndex = 0;
         $$('km_list_query_condition2').selectedIndex = 0;
@@ -451,7 +403,7 @@ Kmoney.prototype.loadTable = function (tabId) {
         this.onQueryCondition2Select();
 
         panelContent.load();
-    } else if (viewMode === "graph") {
+    } else if (panelType === "graph") {
         // デフォルトは前月までの6ヶ月間
         var monthToDefault = new Date();
         var monthValue;

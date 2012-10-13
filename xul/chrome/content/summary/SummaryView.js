@@ -24,12 +24,62 @@ SummaryView.prototype.initialize = function (db) {
     this.listeners['km_summary_monthtoM.command'] = this.onGraphItemChanged.bind(this);
     $$('km_summary_monthtoM').addEventListener("command",
                                                  this.listeners['km_summary_monthtoM.command']);
+    this.listeners['km_summary_viewmode.command'] = this.onViewModeChanged.bind(this);
+    $$('km_summary_viewmode').addEventListener("command", this.listeners['km_summary_viewmode.command']);
+
+                                                 
 };
 SummaryView.prototype.terminate = function () {
     $$('km_summary_item').removeEventListener("command", this.listeners['km_summary_item.command']);
 };
+SummaryView.prototype.onViewModeChanged = function () {
+    if ($$('km_summary_table').selected) {
+        km_log("SummaryView: table");
+    } else {
+        km_log("SummaryView: graph");
+    }
+};
 SummaryView.prototype.onGraphItemChanged = function () {
     this.drawGraph();
+};
+SummaryView.prototype.loadTable = function () {
+    var monthfromY = $$('km_summary_monthfromY').value;
+    var monthfromM = $$('km_summary_monthfromM').value;
+    var monthtoY = $$('km_summary_monthtoY').value;
+    var monthtoM = $$('km_summary_monthtoM').value;
+ 
+    var itemid = parseInt($$('km_summary_item').value);
+    var userid = parseInt($$('km_summary_user').value);
+
+    var params = {};
+    params['periodFrom'] = monthfromY + "/" + monthfromM;
+    params['periodTo'] = monthtoY + "/" + monthtoM;
+    var sql = ["select",
+                        "strftime('%Y/%m', A.transaction_date) as transaction_month,",
+                        "sum(A.expense - A.income) as sumpermonth",
+                        "from kmv_transactions A",
+                        "where transaction_month >= :periodFrom",
+                        "and transaction_month <= :periodTo"].join(" ");
+    // ユーザが指定された場合、家計内フラグが「家族」のデータも集計に含める
+    if (userid !== 0 && itemid !== 0) {
+        sql += " and A.user_id = :user_id and A.internal <> 1 and A.item_id = :item_id ";
+        params['user_id'] = userid;
+        params['item_id'] = itemid;
+    } else if (userid !== 0 && itemid === 0) {
+        sql += " and A.user_id = :user_id and A.internal <> 1 ";
+        sql += " and A.sum_include = 1 ";
+        params['user_id'] = userid;
+    } else if (userid === 0 && itemid !== 0) {
+        sql += " and A.item_id = :item_id and A.internal = 0 ";
+        params['item_id'] = itemid;
+    } else {
+        sql += " and A.internal = 0 ";
+        sql += " and A.sum_include = 1 ";
+    }
+    sql += " group by transaction_month ";
+
+    km_log(sql);
+    this.mDb.selectWithParams(sql, params);
 };
 
 SummaryView.prototype.drawGraph = function () {
@@ -45,26 +95,26 @@ SummaryView.prototype.drawGraph = function () {
     params['periodFrom'] = monthfromY + "/" + monthfromM;
     params['periodTo'] = monthtoY + "/" + monthtoM;
     var sql = ["select",
-                        "strftime('%Y/%m', transaction_date) as transaction_month,",
-                        "sum(expense - income) as sumpermonth",
-                        "from kmv_transactions",
+                        "strftime('%Y/%m', A.transaction_date) as transaction_month,",
+                        "sum(A.expense - A.income) as sumpermonth",
+                        "from kmv_transactions A",
                         "where transaction_month >= :periodFrom",
                         "and transaction_month <= :periodTo"].join(" ");
     // ユーザが指定された場合、家計内フラグが「家族」のデータも集計に含める
     if (userid !== 0 && itemid !== 0) {
-        sql += " and user_id = :user_id and internal <> 1 and item_id = :item_id ";
+        sql += " and A.user_id = :user_id and A.internal <> 1 and A.item_id = :item_id ";
         params['user_id'] = userid;
         params['item_id'] = itemid;
     } else if (userid !== 0 && itemid === 0) {
-        sql += " and user_id = :user_id and internal <> 1 ";
-        sql += " and sum_include = 1 ";
+        sql += " and A.user_id = :user_id and A.internal <> 1 ";
+        sql += " and A.sum_include = 1 ";
         params['user_id'] = userid;
     } else if (userid === 0 && itemid !== 0) {
-        sql += " and item_id = :item_id and internal = 0 ";
+        sql += " and A.item_id = :item_id and A.internal = 0 ";
         params['item_id'] = itemid;
     } else {
-        sql += " and internal = 0 ";
-        sql += " and sum_include = 1 ";
+        sql += " and A.internal = 0 ";
+        sql += " and A.sum_include = 1 ";
     }
     sql += " group by transaction_month ";
 
