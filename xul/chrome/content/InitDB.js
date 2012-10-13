@@ -24,16 +24,16 @@ InitDB.prototype.setInitialRecords = function() {
   sqlArray.splice(0);
   
   var items = [
-    ['食材・生活用品', 0],
-    ['外食', 0],
-    ['交通費', 0],
+    ['食材・生活用品', 1],
+    ['外食', 1],
+    ['交通費', 1],
     ['ATM', 1],
-    ['交際費', 0]
+    ['交際費', 1]
   ];
   for (var i = 0; i < items.length; i++) {
     sql = ["insert into km_item ("
       + "name, "
-      + "internal "
+      + "sum_include "
       + ") values ( "
       + "'" + items[i][0] + "',"
       + items[i][1] + ")"];
@@ -111,8 +111,8 @@ InitDB.prototype.createTables = function() {
       '"internal" BOOL,' +
       '"last_update_date" DATETIME,' +
       '"source" INTEGER)',
-    'CREATE TABLE "km_item" ("name" TEXT, "sum_include" INTEGER DEFAULT 1)',
-    'CREATE TABLE "km_source" ("type" INTEGER)',
+    'CREATE TABLE "km_item" ("id" INTEGER PRIMARY KEY NOT NULL, "name" TEXT, "sum_include" BOOL)',
+    'CREATE TABLE "km_source" ("id" INTEGER PRIMARY KEY NOT NULL, "type" INTEGER, "import" BOOL, "enabled" BOOL)',
     'CREATE TABLE "km_user" ("id" INTEGER PRIMARY KEY  NOT NULL , "name" TEXT)'
   ];
   this.mDb.executeTransaction(sql);

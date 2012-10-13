@@ -18,7 +18,7 @@ ItemMaster.prototype.initialize = function(db) {
   this.load();
 };
 ItemMaster.prototype.load = function() {
-  this.mDb.selectQuery("select rowid, name, sum_include from km_item");
+  this.mDb.selectQuery("select id, name, sum_include from km_item");
   var records = this.mDb.getRecords();
   var types = this.mDb.getRecordTypes();
   var columns = this.mDb.getColumns();
@@ -45,16 +45,16 @@ ItemMaster.prototype.addRecord = function() {
 ItemMaster.prototype.updateRecord = function() {
   var sumInclude = ($$('km_master_sum').checked)? 1: 0;
  
-  var rowid = this.mTree.getColumnValue(0);
+  var id = this.mTree.getSelectedRowValue('master_item_id');
   var sql = ["update km_item "
     + "set "
     + "name = '" + $$('km_edit_name').value + "', "
     + "sum_include = " + sumInclude + " "
-    + "where rowid = " + rowid];
+    + "where id = " + id];
   km_log(sql);
   this.mDb.executeTransaction(sql);
   this.load();
-  this.mTree.ensureRowIsVisible(0, rowid);
+  this.mTree.ensureRowIsVisible2('master_item_id', id);
 };
 
 ItemMaster.prototype.deleteRecord = function() {
@@ -127,7 +127,7 @@ ItemMaster.prototype.deleteRecord = function() {
     }
     
     if (execDelete) {
-        sql = "delete from km_item where rowid = :item_id";
+        sql = "delete from km_item where id = :item_id";
         var deleteStatement = this.mDb.createStatementWithParams(sql, params);
         km_log(sql);
         stmtArray.push(deleteStatement);

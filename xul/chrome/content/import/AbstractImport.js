@@ -8,7 +8,7 @@ function AbstractImport(db) {
 }
 
 AbstractImport.prototype.loadSourceType = function(srcName) {
-    this.mDb.selectQuery("select rowid from km_source where type = '" + srcName + "'" );
+    this.mDb.selectQuery("select id from km_source where type = '" + srcName + "'" );
     var records = this.mDb.getRecords();
     if (records.length === 1) {
       this.sourceType = records[0][0];

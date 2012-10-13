@@ -147,7 +147,7 @@ ImportConf.prototype.onSelect = function () {
 ImportConf.prototype.initImportTypeList = function () {
     $$('km_import_select_type').removeAllItems();
 
-    var sql = "select A.rowid, A.type from km_source A where A.import = 1 and A.enabled = 1";
+    var sql = "select A.id, A.type from km_source A where A.import = 1 and A.enabled = 1";
     this.mDb.selectQuery(sql);
     var records = this.mDb.getRecords();
     for (var i = 0; i < records.length; i++) {
@@ -167,7 +167,7 @@ ImportConf.prototype.onSelectType = function () {
                          + "B.name, A.default_id, A.internal, A.permission "
                          + "from km_import A "
                          + "inner join km_item B "
-                         + "on A.item_id = B.rowid "
+                         + "on A.item_id = B.id "
                          + "where A.source_type = " + type);
     
     var records = this.mDb.getRecords();

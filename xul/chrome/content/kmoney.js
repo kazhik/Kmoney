@@ -565,7 +565,7 @@ Kmoney.prototype.openLastDb = function () {
 };
 
 Kmoney.prototype.populateItemList = function () {
-    this.mDb.selectQuery("select rowid, name from km_item");
+    this.mDb.selectQuery("select id, name from km_item");
     var records = this.mDb.getRecords();
 
     $$('km_edit_item').removeAllItems();

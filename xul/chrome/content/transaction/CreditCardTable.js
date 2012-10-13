@@ -121,7 +121,7 @@ CreditCardTable.prototype.load = function (sortParams) {
                "A.rowid ",
                "from km_creditcard_trns A ",
                "left join km_item B ",
-               " on A.item_id = B.rowid ",
+               " on A.item_id = B.id ",
                "inner join km_user C ",
                " on A.user_id = C.id ",
                "inner join km_creditcard_info D ",
