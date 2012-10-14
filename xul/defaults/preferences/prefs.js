@@ -15,9 +15,6 @@ pref("extensions.kmoney.posInTargetApp", 1);
 //default extension for sqlite db files
 pref("extensions.kmoney.sqliteFileExtensions", "sqlite");
 
-//how many records to display when browsing and searching; -1 means all
-pref("extensions.kmoney.displayNumRecords", 100);
-
 //stores JSON object for MRU
 pref("extensions.kmoney.jsonMruData", '{"meta":{"version":"1"},"size":10,"list":[]}');
 

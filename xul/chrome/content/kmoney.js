@@ -49,7 +49,10 @@ Kmoney.prototype.Startup = function () {
     var bOpenLastDb = true;
     if (bOpenLastDb) {
         this.openLastDb();
+        this.loadData();
     }
+};
+Kmoney.prototype.loadData = function() {
     this.populateItemList();
     this.populateUserList();
     this.populateInternalList();
@@ -431,20 +434,6 @@ Kmoney.prototype.onTabSelected = function (e) {
     $$('km_status_sum').label = "";
     this.loadTable($$('km_tabbox').selectedTab.id);
 };
-Kmoney.prototype.openDatabaseFile = function (dbFile) {
-    if (this.closeDatabase(false)) {
-        try {
-            this.mDb.openDatabase(dbFile, true);
-        } catch (e) {
-            Components.utils.reportError('in function openDatabaseFile - ' + e);
-            km_message("Connect to '" + dbFile.path + "' failed: " + e, 0x3);
-            return false;
-        }
-        KmGlobals.mru.add(this.mDb.getFile().path);
-        return true;
-    }
-    return false;
-};
 Kmoney.prototype.importFile = function () {
     var retVals = { file: null, importtype: null, user: null };
     
@@ -461,6 +450,22 @@ Kmoney.prototype.importFile = function () {
         importer.importDb(retVals['file'], retVals["user"]);
     }
     return true;
+};
+Kmoney.prototype.openDatabaseFile = function (dbFile) {
+    if (this.closeDatabase(false)) {
+        try {
+            //create backup before opening
+            this.createTimestampedBackup(dbFile);
+            this.mDb.openDatabase(dbFile, true);
+        } catch (e) {
+            Components.utils.reportError('in function openDatabaseFile - ' + e);
+            km_message("Connect to '" + dbFile.path + "' failed: " + e, 0x3);
+            return false;
+        }
+        KmGlobals.mru.add(this.mDb.getFile().path);
+        return true;
+    }
+    return false;
 };
 Kmoney.prototype.newDatabase = function () {
     const nsIFilePicker = Ci.nsIFilePicker;
@@ -482,6 +487,7 @@ Kmoney.prototype.newDatabase = function () {
         var initDatabase = new InitDB();
         initDatabase.execute(this.mDb);
     }
+    this.loadData();
     return true;
 };
 Kmoney.prototype.closeDatabase = function (bAlert) {
@@ -523,6 +529,7 @@ Kmoney.prototype.openDatabase = function () {
 //          bConnected = this.mDb.openDatabase(nsiFileObj, bSharedPagerCache);
         this.openDatabaseFile(fp.file);
     }
+    this.loadData();
     return true;
 
 };
@@ -533,6 +540,7 @@ Kmoney.prototype.openLastDb = function () {
     if (!bPrefVal) return;
 
     var sPath = KmGlobals.mru.getLatest();
+    km_debug("latest: " + sPath);
     if (sPath == null) return;
 
     //Last used DB found, open this DB
@@ -551,6 +559,7 @@ Kmoney.prototype.openLastDb = function () {
 
     bPrefVal = km_prefsBranch.getBoolPref("promptForLastDb");
     if (bPrefVal) {
+    km_debug("openLastDb: 1");
         var check = {
             value: false
         }; // default the checkbox to false
@@ -566,6 +575,48 @@ Kmoney.prototype.openLastDb = function () {
     }
     //assign the new file (nsIFile) to the current database
     this.openDatabaseFile(newfile);
+};
+
+Kmoney.prototype.createTimestampedBackup = function (nsiFileObj) {
+    if (!nsiFileObj.exists()) //exit if no such file
+    return false;
+
+    switch (km_prefsBranch.getCharPref("autoBackup")) {
+        case "off":
+            return false;
+        case "on":
+            break;
+        case "prompt":
+            var bAnswer = kmPrompt.confirm(null,
+                                           km_getLStr("extName"),
+                                           km_getLStr("db.confirmBackup"));
+            if (!bAnswer) return false;
+            break;
+        default:
+            return false;
+    }
+
+    //construct a name for the new file as originalname_timestamp.ext
+    //    var dt = new Date();
+    //    var sTimestamp = dt.getFullYear() + dt.getMonth() + dt.getDate();
+    var sTimestamp = KmGlobals.getISODateTimeFormat(null, "", "s"); //Date.now();
+    var sFileName = nsiFileObj.leafName;
+    var sMainName = sFileName,
+        sExt = "";
+    var iPos = sFileName.lastIndexOf(".");
+    if (iPos > 0) {
+        sMainName = sFileName.substr(0, iPos);
+        sExt = sFileName.substr(iPos);
+    }
+    var sBackupFileName = sMainName + "_" + sTimestamp + sExt;
+
+    //copy the file in the same location as the original file
+    try {
+        nsiFileObj.copyTo(null, sBackupFileName);
+    } catch (e) {
+        alert(sm_getLFStr("db.backup.failed", [sBackupFileName, e.message]));
+    }
+    return true;
 };
 
 Kmoney.prototype.populateItemList = function () {
@@ -614,8 +665,13 @@ Kmoney.prototype.populateSummaryPeriodList = function () {
     var sql = "select strftime('%Y', min(transaction_date)) from kmv_transactions";
     this.mDb.selectQuery(sql);
     var records = this.mDb.getRecords();
+
     var oldestYear = parseInt(records[0][0]);
     var thisYear = (new Date()).getFullYear();
+    if (isNaN(oldestYear)) {
+        // レコード0件の場合は今年
+        oldestYear = thisYear;
+    }
 
     $$('km_summary_monthfromY').removeAllItems();
     $$('km_summary_monthtoY').removeAllItems();
@@ -983,6 +1039,7 @@ KmGlobals.mru = {
             //remove the extra entries
             this.mList.splice(this.mSize, this.mList.length - this.mSize);
         }
+        km_debug("mList.add: " + sPath);
 
         this.setPref();
     },
