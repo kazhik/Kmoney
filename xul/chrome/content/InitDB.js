@@ -120,7 +120,73 @@ InitDB.prototype.createTables = function() {
       '"source" INTEGER)',
     'CREATE TABLE "km_item" ("id" INTEGER PRIMARY KEY NOT NULL, "name" TEXT, "sum_include" BOOL)',
     'CREATE TABLE "km_source" ("id" INTEGER PRIMARY KEY NOT NULL, "type" INTEGER, "import" BOOL, "enabled" BOOL)',
-    'CREATE TABLE "km_user" ("id" INTEGER PRIMARY KEY  NOT NULL , "name" TEXT)'
+    'CREATE TABLE "km_user" ("id" INTEGER PRIMARY KEY  NOT NULL , "name" TEXT)',
+    'CREATE VIEW "kmv_transactions" AS   select ' +
+    '   A.transaction_date, ' +
+    '   A.item_id, ' +
+    '   B.name as item_name, ' +
+    '   B.sum_include as sum_include, ' +
+    '   A.detail, ' +
+    '   A.income, ' +
+    '   A.expense, ' +
+    '   A.user_id, ' +
+    '   C.name as user_name, ' +
+    '   A.internal, ' +
+    '   A.type, ' +
+    '   A.id ' +
+    'from ( ' +
+    'select ' +
+    '   transaction_date, ' +
+    '   item_id, ' +
+    '   detail, ' +
+    '   0 as income, ' +
+    '   expense, ' +
+    '   user_id, ' +
+    '   internal, ' +
+    '   "emoney" as type, ' +
+    '   id ' +
+    'from km_emoney_trns ' +
+    'union ' +
+    'select ' +
+    '   transaction_date, ' +
+    '   item_id, ' +
+    '   detail, ' +
+    '   0 as income, ' +
+    '   expense, ' +
+    '   user_id, ' +
+    '   internal, ' +
+    '   "creditcard" as type, ' +
+    '   id ' +
+    'from km_creditcard_trns ' +
+    'union ' +
+    'select ' +
+    '   transaction_date, ' +
+    '   item_id, ' +
+    '   detail, ' +
+    '   income, ' +
+    '   expense, ' +
+    '   user_id, ' +
+    '   internal, ' +
+    '   "realmoney" as type, ' +
+    '   id ' +
+    'from km_realmoney_trns ' +
+    'union ' +
+    'select ' +
+    '   transaction_date, ' +
+    '   item_id, ' +
+    '   detail, ' +
+    '   income, ' +
+    '   expense, ' +
+    '   user_id, ' +
+    '   internal, ' +
+    '   "bank" as type, ' +
+    '   id ' +
+    'from km_bank_trns ' +
+    ') A ' +
+    'inner join km_item B ' +
+    'on A.item_id = B.id ' +
+    'inner join km_user C ' +
+    'on A.user_id = C.id '
   ];
   this.mDb.executeTransaction(sql);
 };

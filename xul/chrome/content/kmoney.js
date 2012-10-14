@@ -487,13 +487,13 @@ Kmoney.prototype.newDatabase = function () {
 Kmoney.prototype.closeDatabase = function (bAlert) {
     //nothing to close if no database is already open
     if (!this.mDb.isConnected()) {
-        if (bAlert) alert(km_getLStr("noOpenDb"));
+        if (bAlert) alert(km_getLStr("db.noOpenDb"));
         return true;
     }
 
     //if another file is already open, confirm before closing
     var answer = true;
-    if (bAlert) answer = kmPrompt.confirm(null, km_getLStr("extName"), km_getLStr("confirmClose"));
+    if (bAlert) answer = kmPrompt.confirm(null, km_getLStr("extName"), km_getLStr("db.confirmClose"));
 
     if (!answer) return false;
 
@@ -507,7 +507,7 @@ Kmoney.prototype.closeDatabase = function (bAlert) {
 Kmoney.prototype.openDatabase = function () {
     const nsIFilePicker = Ci.nsIFilePicker;
     var fp = Cc["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
-    fp.init(window, km_getLStr("selectDb"), nsIFilePicker.modeOpen);
+    fp.init(window, km_getLStr("db.select"), nsIFilePicker.modeOpen);
     
     this.maFileExt = km_prefsBranch.getCharPref("sqliteFileExtensions").split(",");
     
@@ -515,7 +515,7 @@ Kmoney.prototype.openDatabase = function () {
     for (var iCnt = 0; iCnt < this.maFileExt.length; iCnt++) {
         sExt += "*." + this.maFileExt[iCnt] + ";";
     }
-    fp.appendFilter(km_getLStr("sqliteDbFiles") + " (" + sExt + ")", sExt);
+    fp.appendFilter(km_getLStr("db.dbFiles") + " (" + sExt + ")", sExt);
     fp.appendFilters(nsIFilePicker.filterAll);
 
     var rv = fp.show();
@@ -545,7 +545,7 @@ Kmoney.prototype.openLastDb = function () {
     }
     //if the last used file is not found, bail out
     if (!newfile.exists()) {
-        kmPrompt.alert(null, km_getLStr("extName"), km_getLFStr("lastDbDoesNotExist", [sPath]));
+        kmPrompt.alert(null, km_getLStr("extName"), km_getLFStr("db.lastDbDoesNotExist", [sPath]));
         return;
     }
 
@@ -554,7 +554,11 @@ Kmoney.prototype.openLastDb = function () {
         var check = {
             value: false
         }; // default the checkbox to false
-        var result = kmPrompt.confirmCheck(null, km_getLStr("extName") + " - " + km_getLStr("promptLastDbTitle"), km_getLStr("promptLastDbAsk") + "\n" + sPath + "?", km_getLStr("promptLastDbOpen"), check);
+        var result = kmPrompt.confirmCheck(null,
+            km_getLStr("extName") + " - " + km_getLStr("db.promptLastDbTitle"),
+            km_getLStr("db.promptLastDbAsk") + "\n" + sPath + "?",
+            km_getLStr("db.promptLastDbOpen"),
+            check);
 
         if (!result) return;
         //update the promptForLastDb preference

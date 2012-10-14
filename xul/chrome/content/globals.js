@@ -192,12 +192,6 @@ function km_notify(sBoxId, sMessage, sType, oExtra) {
     }, iTime);
 }
 
-//not yet called anywhere
-KmGlobals.launchHelp = function () {
-    var urlHelp = km_getLStr("sm.url.help");
-    KmGlobals.openURL(urlHelp);
-};
-
 KmGlobals.openURL = function (UrlToGoTo) {
     var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
     var uri = ios.newURI(UrlToGoTo, null, null);
