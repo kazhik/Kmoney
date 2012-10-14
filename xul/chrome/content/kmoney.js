@@ -106,15 +106,6 @@ Kmoney.prototype.Shutdown = function () {
     this.removeEventListeners();
     this.closeDatabase(false);
 };
-Kmoney.prototype.initQueryCondition = function (elementId) {
-    $$(elementId).removeAllItems();
-    $$(elementId).appendItem(km_getLStr("query_condition.none"), "none");
-    $$(elementId).appendItem(km_getLStr("query_condition.date"), "date");
-    $$(elementId).appendItem(km_getLStr("query_condition.item"), "item");
-    $$(elementId).appendItem(km_getLStr("query_condition.detail"), "detail");
-    $$(elementId).appendItem(km_getLStr("query_condition.user"), "user");
-
-};
 
 Kmoney.prototype.addEventListeners = function () {
     this.listeners['kmc-openDb.command'] = this.openDatabase.bind(this);
@@ -167,7 +158,7 @@ Kmoney.prototype.addEventListeners = function () {
     $$('km_list_query_condition2').addEventListener(
         "command", this.listeners['km_list_query_condition2.command']);
 
-    this.listeners['km_list_query_andor.command'] = this.onQueryAndOrSelect.bind(this);
+    this.listeners['km_list_query_andor.command'] = this.onQueryConditionChanged.bind(this);
     $$('km_list_query_andor').addEventListener(
         "command", this.listeners['km_list_query_andor.command']);
 
@@ -288,7 +279,7 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_edit_buttons').hidden = false;
         $$('km_summary_condition').hidden = true;
         $$('km_query1').hidden = false;
-        $$('km_query2').hidden = true;
+        $$('km_query2').hidden = false;
         this.initQueryCondition('km_list_query_condition1');
         this.initQueryCondition('km_list_query_condition2');
         break;
@@ -303,7 +294,7 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_edit_buttons').hidden = false;
         $$('km_summary_condition').hidden = true;
         $$('km_query1').hidden = false;
-        $$('km_query2').hidden = true;
+        $$('km_query2').hidden = false;
         this.initQueryCondition('km_list_query_condition1');
         this.initQueryCondition('km_list_query_condition2');
         $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.bank"), "bank");
@@ -320,7 +311,7 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_edit_buttons').hidden = false;
         $$('km_summary_condition').hidden = true;
         $$('km_query1').hidden = false;
-        $$('km_query2').hidden = true;
+        $$('km_query2').hidden = false;
         this.initQueryCondition('km_list_query_condition1');
         this.initQueryCondition('km_list_query_condition2');
         $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.creditcard"),
@@ -341,7 +332,7 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_edit_buttons').hidden = false;
         $$('km_summary_condition').hidden = true;
         $$('km_query1').hidden = false;
-        $$('km_query2').hidden = true;
+        $$('km_query2').hidden = false;
         this.initQueryCondition('km_list_query_condition1');
         this.initQueryCondition('km_list_query_condition2');
         $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.creditcard"),
@@ -360,7 +351,7 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_edit_buttons').hidden = true;
         $$('km_summary_condition').hidden = true;
         $$('km_query1').hidden = false;
-        $$('km_query2').hidden = true;
+        $$('km_query2').hidden = false;
         this.initQueryCondition('km_list_query_condition1');
         this.initQueryCondition('km_list_query_condition2');
         $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.bank"), "bank");
@@ -762,207 +753,134 @@ Kmoney.prototype.query = function () {
     }
     tree.load();
 };
+Kmoney.prototype.initQueryCondition = function (elementId) {
+    $$(elementId).removeAllItems();
+    $$(elementId).appendItem(km_getLStr("query_condition.none"), "none");
+    $$(elementId).appendItem(km_getLStr("query_condition.date"), "date");
+    $$(elementId).appendItem(km_getLStr("query_condition.item"), "item");
+    $$(elementId).appendItem(km_getLStr("query_condition.detail"), "detail");
+    $$(elementId).appendItem(km_getLStr("query_condition.user"), "user");
 
-Kmoney.prototype.onQueryCondition1Select = function() {
-    var key = $$('km_list_query_condition1').value;
+};
+
+Kmoney.prototype.onQueryConditionSelect = function(elementNo) {
+    var key = $$('km_list_query_condition' + elementNo).value;
     
     var mapKey;
     
     if (key === "none") {
-        $$('km_edit_query_date1').hidden = true;
-        $$('km_edit_query_text1').hidden = true;
-        $$('km_edit_query_list1').hidden = true;
-        $$('km_list_query_operator1').hidden = true;
+        $$('km_edit_query_date' + elementNo).hidden = true;
+        $$('km_edit_query_text' + elementNo).hidden = true;
+        $$('km_edit_query_list' + elementNo).hidden = true;
+        $$('km_list_query_operator' + elementNo).hidden = true;
 
-        $$('km_list_query_operator1').removeAllItems();
+        $$('km_list_query_operator' + elementNo).removeAllItems();
     } else if (key === "date") {
-        $$('km_edit_query_date1').hidden = false;
-        $$('km_edit_query_text1').hidden = true;
-        $$('km_edit_query_list1').hidden = true;
+        $$('km_edit_query_date' + elementNo).hidden = false;
+        $$('km_edit_query_text' + elementNo).hidden = true;
+        $$('km_edit_query_list' + elementNo).hidden = true;
         
-        $$('km_list_query_operator1').hidden = false;
-        $$('km_list_query_operator1').removeAllItems();
-        $$('km_list_query_operator1').appendItem(km_getLStr("query_operator.ge"), ">=");
-        $$('km_list_query_operator1').appendItem(km_getLStr("query_operator.le"), "<=");
+        $$('km_list_query_operator' + elementNo).hidden = false;
+        $$('km_list_query_operator' + elementNo).removeAllItems();
+        $$('km_list_query_operator' + elementNo).appendItem(km_getLStr("query_operator.ge"), ">=");
+        $$('km_list_query_operator' + elementNo).appendItem(km_getLStr("query_operator.le"), "<=");
 
-        $$('km_list_query_operator1').selectedIndex = 0;
+        $$('km_list_query_operator' + elementNo).selectedIndex = 0;
         var now = new Date();
         now.setMonth(now.getMonth() - 2);
         now.setDate(1);
-        $$('km_edit_query_date1').value = convDateToYYYYMMDD(now, "-");
+        $$('km_edit_query_date' + elementNo).value = convDateToYYYYMMDD(now, "-");
     } else if (key === "item") {
-        $$('km_edit_query_date1').hidden = true;
-        $$('km_edit_query_text1').hidden = true;
-        $$('km_edit_query_list1').hidden = false;
-        $$('km_list_query_operator1').hidden = true;
+        $$('km_edit_query_date' + elementNo).hidden = true;
+        $$('km_edit_query_text' + elementNo).hidden = true;
+        $$('km_edit_query_list' + elementNo).hidden = false;
+        $$('km_list_query_operator' + elementNo).hidden = true;
         
-        $$('km_edit_query_list1').removeAllItems();
+        $$('km_edit_query_list' + elementNo).removeAllItems();
         for (mapKey in this.itemMap) {
-            $$('km_edit_query_list1').appendItem(mapKey, this.itemMap[mapKey]);
+            $$('km_edit_query_list' + elementNo).appendItem(mapKey, this.itemMap[mapKey]);
         }
+        $$('km_edit_query_list' + elementNo).selectedIndex = 0;
     } else if (key === "detail") {
-        $$('km_edit_query_date1').hidden = true;
-        $$('km_edit_query_text1').hidden = false;
-        $$('km_edit_query_list1').hidden = true;
+        $$('km_edit_query_date' + elementNo).hidden = true;
+        $$('km_edit_query_text' + elementNo).hidden = false;
+        $$('km_edit_query_list' + elementNo).hidden = true;
 
-        $$('km_list_query_operator1').hidden = false;
-        $$('km_list_query_operator1').removeAllItems();
-        $$('km_list_query_operator1').appendItem(
+        $$('km_list_query_operator' + elementNo).hidden = false;
+        $$('km_list_query_operator' + elementNo).removeAllItems();
+        $$('km_list_query_operator' + elementNo).appendItem(
             km_getLStr("query_operator.equals"), "=");
-        $$('km_list_query_operator1').appendItem(
+        $$('km_list_query_operator' + elementNo).appendItem(
             km_getLStr("query_operator.contains"), "like");
+        $$('km_list_query_operator' + elementNo).selectedIndex = 0;
         
-        $$('km_edit_query_text1').value = "";
+        $$('km_edit_query_text' + elementNo).value = "";
     } else if (key === "user") {
-        $$('km_edit_query_date1').hidden = true;
-        $$('km_edit_query_text1').hidden = true;
-        $$('km_edit_query_list1').hidden = false;
-        $$('km_list_query_operator1').hidden = true;
+        $$('km_edit_query_date' + elementNo).hidden = true;
+        $$('km_edit_query_text' + elementNo).hidden = true;
+        $$('km_edit_query_list' + elementNo).hidden = false;
+        $$('km_list_query_operator' + elementNo).hidden = true;
         
-        $$('km_edit_query_list1').removeAllItems();
+        $$('km_edit_query_list' + elementNo).removeAllItems();
         for (mapKey in this.users) {
-            $$('km_edit_query_list1').appendItem(this.users[mapKey], mapKey);
+            $$('km_edit_query_list' + elementNo).appendItem(this.users[mapKey], mapKey);
         }
+        $$('km_edit_query_list' + elementNo).selectedIndex = 0;
     } else if (key === "bank") {
-        $$('km_edit_query_date1').hidden = true;
-        $$('km_edit_query_text1').hidden = true;
-        $$('km_edit_query_list1').hidden = false;
-        $$('km_list_query_operator1').hidden = true;
+        $$('km_edit_query_date' + elementNo).hidden = true;
+        $$('km_edit_query_text' + elementNo).hidden = true;
+        $$('km_edit_query_list' + elementNo).hidden = false;
+        $$('km_list_query_operator' + elementNo).hidden = true;
         
-        $$('km_edit_query_list1').removeAllItems();
+        $$('km_edit_query_list' + elementNo).removeAllItems();
         for (var i = 0; i < this.bankTree.mBankList.length; i++) {
-            $$('km_edit_query_list1').appendItem(this.bankTree.mBankList[i][1],
+            $$('km_edit_query_list' + elementNo).appendItem(this.bankTree.mBankList[i][1],
                                                  this.bankTree.mBankList[i][0]);
         }
+        $$('km_edit_query_list' + elementNo).selectedIndex = 0;
     } else if (key === "creditcard") {
-        $$('km_edit_query_date1').hidden = true;
-        $$('km_edit_query_text1').hidden = true;
-        $$('km_edit_query_list1').hidden = false;
-        $$('km_list_query_operator1').hidden = true;
+        $$('km_edit_query_date' + elementNo).hidden = true;
+        $$('km_edit_query_text' + elementNo).hidden = true;
+        $$('km_edit_query_list' + elementNo).hidden = false;
+        $$('km_list_query_operator' + elementNo).hidden = true;
         
-        $$('km_edit_query_list1').removeAllItems();
+        $$('km_edit_query_list' + elementNo).removeAllItems();
         for (var i = 0; i < this.creditcardTree.mCardList.length; i++) {
-            $$('km_edit_query_list1').appendItem(this.creditcardTree.mCardList[i][1],
+            $$('km_edit_query_list' + elementNo).appendItem(this.creditcardTree.mCardList[i][1],
                                                  this.creditcardTree.mCardList[i][0]);
         }
+        $$('km_edit_query_list' + elementNo).selectedIndex = 0;
     } else if (key === "emoney") {
-        $$('km_edit_query_date1').hidden = true;
-        $$('km_edit_query_text1').hidden = true;
-        $$('km_edit_query_list1').hidden = false;
-        $$('km_list_query_operator1').hidden = true;
+        $$('km_edit_query_date' + elementNo).hidden = true;
+        $$('km_edit_query_text' + elementNo).hidden = true;
+        $$('km_edit_query_list' + elementNo).hidden = false;
+        $$('km_list_query_operator' + elementNo).hidden = true;
         
-        $$('km_edit_query_list1').removeAllItems();
+        $$('km_edit_query_list' + elementNo).removeAllItems();
         for (var i = 0; i < this.emoneyTree.mMoneyList.length; i++) {
-            $$('km_edit_query_list1').appendItem(this.emoneyTree.mMoneyList[i][1],
+            $$('km_edit_query_list' + elementNo).appendItem(this.emoneyTree.mMoneyList[i][1],
                                                  this.emoneyTree.mMoneyList[i][0]);
         }
+        $$('km_edit_query_list' + elementNo).selectedIndex = 0;
     }
-    
+    this.query();
+};
+
+Kmoney.prototype.onQueryCondition1Select = function() {
+    this.onQueryConditionSelect('1');    
+
+    if ($$('km_list_query_condition1').value === "none") {
+        $$('km_list_query_condition2').disabled = true;
+    } else {
+        $$('km_list_query_condition2').disabled = false;
+    }
+
 };
 
 Kmoney.prototype.onQueryCondition2Select = function() {
-    var key = $$('km_list_query_condition2').value;
-    
-    var mapKey;
-    
-    if (key === "none") {
-        $$('km_edit_query_date2').hidden = true;
-        $$('km_edit_query_text2').hidden = true;
-        $$('km_edit_query_list2').hidden = true;
-        $$('km_list_query_operator2').hidden = true;
-
-        $$('km_list_query_operator2').removeAllItems();
-    } else if (key === "date") {
-        $$('km_edit_query_date2').hidden = false;
-        $$('km_edit_query_text2').hidden = true;
-        $$('km_edit_query_list2').hidden = true;
-        
-        $$('km_list_query_operator2').hidden = false;
-        $$('km_list_query_operator2').removeAllItems();
-        $$('km_list_query_operator2').appendItem(km_getLStr("query_operator.ge"), ">=");
-        $$('km_list_query_operator2').appendItem(km_getLStr("query_operator.le"), "<=");
-
-        $$('km_list_query_operator2').selectedIndex = 0;
-        var now = new Date();
-        now.setDate(2);
-        $$('km_edit_query_date2').value = convDateToYYYYMMDD(now, "-");
-    } else if (key === "item") {
-        $$('km_edit_query_date2').hidden = true;
-        $$('km_edit_query_text2').hidden = true;
-        $$('km_edit_query_list2').hidden = false;
-        $$('km_list_query_operator2').hidden = true;
-        
-        $$('km_edit_query_list2').removeAllItems();
-        for (mapKey in this.itemMap) {
-            $$('km_edit_query_list2').appendItem(mapKey, this.itemMap[mapKey]);
-        }
-    } else if (key === "detail") {
-        $$('km_edit_query_date2').hidden = true;
-        $$('km_edit_query_text2').hidden = false;
-        $$('km_edit_query_list2').hidden = true;
-
-        $$('km_list_query_operator2').hidden = false;
-        $$('km_list_query_operator2').removeAllItems();
-        $$('km_list_query_operator2').appendItem(
-            km_getLStr("query_operator.equals"), "=");
-        $$('km_list_query_operator2').appendItem(
-            km_getLStr("query_operator.contains"), "like");
-        
-        $$('km_edit_query_text2').value = "";
-    } else if (key === "user") {
-        $$('km_edit_query_date2').hidden = true;
-        $$('km_edit_query_text2').hidden = true;
-        $$('km_edit_query_list2').hidden = false;
-        $$('km_list_query_operator2').hidden = true;
-        
-        $$('km_edit_query_list2').removeAllItems();
-        for (mapKey in this.users) {
-            $$('km_edit_query_list2').appendItem(this.users[mapKey], mapKey);
-        }
-    } else if (key === "bank") {
-        $$('km_edit_query_date2').hidden = true;
-        $$('km_edit_query_text2').hidden = true;
-        $$('km_edit_query_list2').hidden = false;
-        $$('km_list_query_operator2').hidden = true;
-        
-        $$('km_edit_query_list2').removeAllItems();
-        for (var i = 0; i < this.bankTree.mBankList.length; i++) {
-            $$('km_edit_query_list2').appendItem(this.bankTree.mBankList[i][1],
-                                                 this.bankTree.mBankList[i][0]);
-        }
-    } else if (key === "creditcard") {
-        $$('km_edit_query_date2').hidden = true;
-        $$('km_edit_query_text2').hidden = true;
-        $$('km_edit_query_list2').hidden = false;
-        $$('km_list_query_operator2').hidden = true;
-        
-        $$('km_edit_query_list2').removeAllItems();
-        for (var i = 0; i < this.creditcardTree.mCardList.length; i++) {
-            $$('km_edit_query_list2').appendItem(this.creditcardTree.mCardList[i][1],
-                                                 this.creditcardTree.mCardList[i][0]);
-        }
-    } else if (key === "emoney") {
-        $$('km_edit_query_date2').hidden = true;
-        $$('km_edit_query_text2').hidden = true;
-        $$('km_edit_query_list2').hidden = false;
-        $$('km_list_query_operator2').hidden = true;
-        
-        $$('km_edit_query_list2').removeAllItems();
-        for (var i = 0; i < this.emoneyTree.mMoneyList.length; i++) {
-            $$('km_edit_query_list2').appendItem(this.emoneyTree.mMoneyList[i][1],
-                                                 this.emoneyTree.mMoneyList[i][0]);
-        }
-    }
+    this.onQueryConditionSelect('2');    
 };
 
-Kmoney.prototype.onQueryAndOrSelect = function() {
-    var andor = $$('km_list_query_andor').value;
-    if (andor === "none") {
-        $$('km_query2').hidden = true;
-    } else {
-        $$('km_query2').hidden = false;
-    }
-};
 Kmoney.prototype.onQueryConditionChanged = function() {
     this.query();
 };

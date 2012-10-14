@@ -159,7 +159,6 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 
 				<menulist id="km_list_query_andor">
 					<menupopup>
-                        <menuitem label="&menuitem.query.none;" value="none" />
                         <menuitem label="&menuitem.query.and;" value="and" />
                         <menuitem label="&menuitem.query.or;" value="or" />
                     </menupopup>

@@ -70,7 +70,7 @@ CreditCardTable.prototype.load = function (sortParams) {
             where += " escape '/'";
         }
 
-        if ($$('km_list_query_andor').value !== "none") {
+        if (key2 !== "none") {
             where += " " + $$('km_list_query_andor').value + " ";
 
             if (key2 === "date") {
