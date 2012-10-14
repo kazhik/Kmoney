@@ -49,8 +49,9 @@ InitDB.prototype.setInitialRecords = function() {
 };
 InitDB.prototype.createTables = function() {
   var sql = [
-    'CREATE TABLE "km_bank_info" ("name" TEXT,"user_id" INTEGER)',
+    'CREATE TABLE "km_bank_info" ("id" INTEGER PRIMARY KEY,"name" TEXT,"user_id" INTEGER)',
     'CREATE TABLE "km_bank_trns" (' +
+      '"id" INTEGER PRIMARY KEY,' +
       '"transaction_date" DATETIME,' +
       '"income" INTEGER,' +
       '"expense" INTEGER,' +
@@ -62,10 +63,12 @@ InitDB.prototype.createTables = function() {
       '"user_id" INTEGER,' +
       '"source" INTEGER)',
     'CREATE TABLE "km_creditcard_info" (' +
+      '"id" INTEGER PRIMARY KEY,' +
       '"name" TEXT,' +
       '"bank_id" INTEGER,' +
       '"user_id" INTEGER)',
     'CREATE TABLE "km_creditcard_payment" (' +
+      '"id" INTEGER PRIMARY KEY,' +
       '"transaction_id" INTEGER,' +
       '"pay_month" DATETIME,' +
       '"pay_amount" INTEGER,' +
@@ -77,6 +80,7 @@ InitDB.prototype.createTables = function() {
       '"last_update_date" DATETIME,' +
       '"bought_amount" INTEGER)',
     'CREATE TABLE "km_creditcard_trns" (' +
+      '"id" INTEGER PRIMARY KEY,' +
       '"transaction_date" DATETIME,' +
       '"detail" TEXT,' +
       '"expense" INTEGER,' +
@@ -87,10 +91,12 @@ InitDB.prototype.createTables = function() {
       '"internal" BOOL,' +
       '"source" INTEGER)',
     'CREATE TABLE "km_emoney_info" (' +
+      '"id" INTEGER PRIMARY KEY,' +
       '"name" TEXT,' +
       '"creditcard_id" INTEGER,' +
       '"user_id" INTEGER)',
     'CREATE TABLE "km_emoney_trns" (' +
+      '"id" INTEGER PRIMARY KEY,' +
       '"transaction_date" DATETIME,' +
       '"expense" INTEGER,' +
       '"detail" TEXT,' +
@@ -102,6 +108,7 @@ InitDB.prototype.createTables = function() {
       '"internal" BOOL,' +
       '"income" INTEGER)',
     'CREATE TABLE "km_realmoney_trns" (' +
+      '"id" INTEGER PRIMARY KEY,' +
       '"transaction_date" DATETIME NOT NULL ,' +
       '"income" INTEGER,' +
       '"expense" INTEGER,' +

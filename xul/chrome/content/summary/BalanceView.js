@@ -95,7 +95,6 @@ BalanceView.prototype.drawGraph = function () {
         valueArray.push(accumulated);
         labelDate.setMonth(labelDate.getMonth() + 1);
     }
-    km_log(valueArray.length);
 
     KmGlobals.$empty($$('km_balance'));
     this.mGraph = new Ico.LineGraph(

@@ -123,7 +123,7 @@ AllView.prototype.load = function (sortParams) {
                " when A.type = 'creditcard' then '" + km_getLStr("transaction_type.creditcard") + "'",
                " when A.type = 'emoney' then '" + km_getLStr("transaction_type.emoney") + "'",
                " end as type, ",
-               "A.rowid ",
+               "A.id ",
                "from kmv_transactions A "].join(" ");
 
     if (where.length > 0) {

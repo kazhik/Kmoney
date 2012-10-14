@@ -280,6 +280,9 @@ function km_log(sMsg) {
 
     aConsoleService.logStringMessage("Kmoney: " + sMsg);
 }
+function km_debug(sMsg) {
+    km_log(sMsg);
+}
 
 KmGlobals.confirmBeforeExecuting = function (aQ, sMessage, confirmPrefName) {
     if (confirmPrefName == undefined) confirmPrefName = "confirm.otherSql";

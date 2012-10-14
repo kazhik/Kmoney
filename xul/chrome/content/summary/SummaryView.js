@@ -34,9 +34,9 @@ SummaryView.prototype.terminate = function () {
 };
 SummaryView.prototype.onViewModeChanged = function () {
     if ($$('km_summary_table').selected) {
-        km_log("SummaryView: table");
+        km_debug("SummaryView: table");
     } else {
-        km_log("SummaryView: graph");
+        km_debug("SummaryView: graph");
     }
 };
 SummaryView.prototype.onGraphItemChanged = function () {
