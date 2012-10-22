@@ -1,5 +1,4 @@
 "use strict";
-Components.utils.import("chrome://kmoney/content/common/sqlite.js");
 Components.utils.import("chrome://kmoney/content/appInfo.js");
 
 
@@ -14,7 +13,6 @@ function Kmoney() {
     this.bankTree = null;
     this.emoneyTree = null;
     this.allView = null;
-    this.maFileExt = [];
     this.listeners = [];
     this.summary = null;
     this.balance = null;
@@ -22,6 +20,7 @@ function Kmoney() {
     this.importTypeList = {};
     this.importers = {};
     this.users = {};
+    
 }
 
 function Startup() {
@@ -34,8 +33,7 @@ function Shutdown() {
 }
 
 Kmoney.prototype.Startup = function () {
-    this.mDb = new SQLiteHandler();
-    this.maFileExt = [];
+    km_debug("Kmoney.Startup start");
     this.cashTree = new CashTable();
     this.creditcardTree = new CreditCardTable();
     this.emoneyTree = new EMoneyTable();
@@ -44,15 +42,16 @@ Kmoney.prototype.Startup = function () {
     this.balance = new BalanceView();
     this.allView = new AllView();
     
+    this.mDb = new KmDatabase();
+    
     this.addEventListeners();
 
-    var bOpenLastDb = true;
-    if (bOpenLastDb) {
-        this.openLastDb();
-        this.loadData();
-    }
+    this.mDb.openLastDb();
+    this.loadData();
+    km_debug("Kmoney.Startup end");
 };
 Kmoney.prototype.loadData = function() {
+    km_debug("Kmoney.loadData start");
     this.populateItemList();
     this.populateUserList();
     this.populateInternalList();
@@ -63,12 +62,13 @@ Kmoney.prototype.loadData = function() {
     this.emoneyTree.initialize(this.mDb);
     this.bankTree.initialize(this.mDb);
     this.summary.initialize(this.mDb);
-    this.balance.initialize(this.mDb, this.bankTree.mBankList);
+    this.balance.initialize(this.mDb);
     this.allView.initialize(this.mDb);
 
     this.initImport();
     
     this.loadTable($$('km_tabbox').selectedTab.id);
+    km_debug("Kmoney.loadData end");
 };
 Kmoney.prototype.initImport = function () {
     this.importTypeList["bank"] =
@@ -94,17 +94,17 @@ Kmoney.prototype.initImport = function () {
 
     this.importers["view"] = new ViewCard(this.mDb, this.creditcardTree);
     this.importers["saison"] = new SaisonCard(this.mDb, this.creditcardTree);
-    this.importers["uc"] = new UCCard(this.mDb, this.creditcardTree);
-    this.importers["shinsei"] = new ShinseiBank(this.mDb, this.bankTree);
-    this.importers["mizuho"] = new MizuhoBank(this.mDb, this.bankTree);
-    this.importers["suica"] = new Suica(this.mDb, this.emoneyTree);
-    this.importers["kantan"] = new KantanKakeibo(this.mDb, this.cashTree);
+    this.importers["uc"] = new UCCard(this.mDb);
+    this.importers["shinsei"] = new ShinseiBank(this.mDb);
+    this.importers["mizuho"] = new MizuhoBank(this.mDb);
+    this.importers["suica"] = new Suica(this.mDb);
+    this.importers["kantan"] = new KantanKakeibo(this.mDb);
 };
 
 Kmoney.prototype.Shutdown = function () {
     this.summary.terminate();
     this.removeEventListeners();
-    this.closeDatabase(false);
+    this.mDb.closeDatabase(false);
 };
 
 Kmoney.prototype.addEventListeners = function () {
@@ -228,7 +228,7 @@ Kmoney.prototype.removeEventListeners = function () {
 };
 Kmoney.prototype.openSetMaster = function () {
     if (!this.mDb.isConnected()) {
-      return;
+        return;
     }
 
     window.openDialog("chrome://kmoney/content/master/MasterData.xul", "MasterData",
@@ -237,7 +237,7 @@ Kmoney.prototype.openSetMaster = function () {
 };
 Kmoney.prototype.openImportConf = function () {
     if (!this.mDb.isConnected()) {
-      return;
+        return;
     }
 
     window.openDialog("chrome://kmoney/content/import/ImportConf.xul", "ImportConf",
@@ -426,6 +426,9 @@ Kmoney.prototype.onTabSelected = function (e) {
     this.loadTable($$('km_tabbox').selectedTab.id);
 };
 Kmoney.prototype.importFile = function () {
+    function importCallback() {
+        
+    }
     var retVals = { file: null, importtype: null, user: null };
     
     window.openDialog("chrome://kmoney/content/import/ImportDialog.xul", "ImportDialog",
@@ -438,211 +441,52 @@ Kmoney.prototype.importFile = function () {
             km_alert("Error", "Not implemented yet");
             return false;
         }
-        importer.importDb(retVals['file'], retVals["user"]);
+        importer.importDb(retVals['file'], retVals["user"], importCallback.bind(this));
     }
     return true;
-};
-Kmoney.prototype.openDatabaseFile = function (dbFile) {
-    if (this.closeDatabase(false)) {
-        try {
-            //create backup before opening
-            this.createTimestampedBackup(dbFile);
-            this.mDb.openDatabase(dbFile, true);
-        } catch (e) {
-            Components.utils.reportError('in function openDatabaseFile - ' + e);
-            km_message("Connect to '" + dbFile.path + "' failed: " + e, 0x3);
-            return false;
-        }
-        KmGlobals.mru.add(this.mDb.getFile().path);
-        return true;
-    }
-    return false;
 };
 Kmoney.prototype.newDatabase = function () {
-    const nsIFilePicker = Ci.nsIFilePicker;
-    var fp = Cc["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
-    fp.init(window, km_getLStr("newdatabase.title"), nsIFilePicker.modeSave);
-    fp.defaultString = "Kmoney.sqlite";
-
-    var rv = fp.show();
-    if (rv == nsIFilePicker.returnOK || rv == nsIFilePicker.returnReplace) {
-        try {
-            this.mDb.openDatabase(fp.file, true);
-        } catch (e) {
-            Components.utils.reportError('in function newDatabase - ' + e);
-            km_message("Connect to '" + fp.file.path + "' failed: " + e, 0x3);
-            return false;
-        }
-        KmGlobals.mru.add(this.mDb.getFile().path);
-
-        var initDatabase = new InitDB();
-        initDatabase.execute(this.mDb);
-    }
+    this.mDb.newDatabase();
     this.loadData();
-    return true;
 };
-Kmoney.prototype.closeDatabase = function (bAlert) {
-    //nothing to close if no database is already open
-    if (!this.mDb.isConnected()) {
-        if (bAlert) alert(km_getLStr("db.noOpenDb"));
-        return true;
-    }
-
-    //if another file is already open, confirm before closing
-    var answer = true;
-    if (bAlert) answer = kmPrompt.confirm(null, km_getLStr("extName"), km_getLStr("db.confirmClose"));
-
-    if (!answer) return false;
-
-
-    //make the current database as null and
-    //call setDatabase to do appropriate things
-    this.mDb.closeConnection();
-    return true;
-};
-
 Kmoney.prototype.openDatabase = function () {
-    const nsIFilePicker = Ci.nsIFilePicker;
-    var fp = Cc["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
-    fp.init(window, km_getLStr("db.select"), nsIFilePicker.modeOpen);
-    
-    this.maFileExt = km_prefsBranch.getCharPref("sqliteFileExtensions").split(",");
-    
-    var sExt = "";
-    for (var iCnt = 0; iCnt < this.maFileExt.length; iCnt++) {
-        sExt += "*." + this.maFileExt[iCnt] + ";";
-    }
-    fp.appendFilter(km_getLStr("db.dbFiles") + " (" + sExt + ")", sExt);
-    fp.appendFilters(nsIFilePicker.filterAll);
-
-    var rv = fp.show();
-    if (rv == nsIFilePicker.returnOK || rv == nsIFilePicker.returnReplace) {
-//          bConnected = this.mDb.openDatabase(nsiFileObj, bSharedPagerCache);
-        this.openDatabaseFile(fp.file);
-    }
+    this.mDb.openDatabase();
     this.loadData();
-    return true;
-
-};
-
-Kmoney.prototype.openLastDb = function () {
-    // opening with last used DB if preferences set to do so
-    var bPrefVal = km_prefsBranch.getBoolPref("openWithLastDb");
-    if (!bPrefVal) return;
-
-    var sPath = KmGlobals.mru.getLatest();
-    km_debug("latest: " + sPath);
-    if (sPath == null) return;
-
-    //Last used DB found, open this DB
-    var newfile = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
-    try {
-        newfile.initWithPath(sPath);
-    } catch (e) {
-        kmPrompt.alert(null, km_getLStr("extName"), 'Failed to init local file using ' + sPath);
-        return;
-    }
-    //if the last used file is not found, bail out
-    if (!newfile.exists()) {
-        kmPrompt.alert(null, km_getLStr("extName"), km_getLFStr("db.lastDbDoesNotExist", [sPath]));
-        return;
-    }
-
-    bPrefVal = km_prefsBranch.getBoolPref("promptForLastDb");
-    if (bPrefVal) {
-    km_debug("openLastDb: 1");
-        var check = {
-            value: false
-        }; // default the checkbox to false
-        var result = kmPrompt.confirmCheck(null,
-            km_getLStr("extName") + " - " + km_getLStr("db.promptLastDbTitle"),
-            km_getLStr("db.promptLastDbAsk") + "\n" + sPath + "?",
-            km_getLStr("db.promptLastDbOpen"),
-            check);
-
-        if (!result) return;
-        //update the promptForLastDb preference
-        bPrefVal = km_prefsBranch.setBoolPref("promptForLastDb", !check.value);
-    }
-    //assign the new file (nsIFile) to the current database
-    this.openDatabaseFile(newfile);
-};
-
-Kmoney.prototype.createTimestampedBackup = function (nsiFileObj) {
-    if (!nsiFileObj.exists()) //exit if no such file
-    return false;
-
-    switch (km_prefsBranch.getCharPref("autoBackup")) {
-        case "off":
-            return false;
-        case "on":
-            break;
-        case "prompt":
-            var bAnswer = kmPrompt.confirm(null,
-                                           km_getLStr("extName"),
-                                           km_getLStr("db.confirmBackup"));
-            if (!bAnswer) return false;
-            break;
-        default:
-            return false;
-    }
-
-    //construct a name for the new file as originalname_timestamp.ext
-    //    var dt = new Date();
-    //    var sTimestamp = dt.getFullYear() + dt.getMonth() + dt.getDate();
-    var sTimestamp = KmGlobals.getISODateTimeFormat(null, "", "s"); //Date.now();
-    var sFileName = nsiFileObj.leafName;
-    var sMainName = sFileName,
-        sExt = "";
-    var iPos = sFileName.lastIndexOf(".");
-    if (iPos > 0) {
-        sMainName = sFileName.substr(0, iPos);
-        sExt = sFileName.substr(iPos);
-    }
-    var sBackupFileName = sMainName + "_" + sTimestamp + sExt;
-
-    //copy the file in the same location as the original file
-    try {
-        nsiFileObj.copyTo(null, sBackupFileName);
-    } catch (e) {
-        alert(sm_getLFStr("db.backup.failed", [sBackupFileName, e.message]));
-    }
-    return true;
 };
 
 Kmoney.prototype.populateItemList = function () {
-    this.mDb.selectQuery("select id, name from km_item");
-    var records = this.mDb.getRecords();
-
-    $$('km_edit_item').removeAllItems();
-    $$('km_summary_item').removeAllItems();
-    $$('km_summary_item').appendItem(km_getLStr("query_condition.none"), 0);
-    for (var i = 0; i < records.length; i++) {
-        $$('km_edit_item').appendItem(records[i][1], records[i][0]);
-        $$('km_summary_item').appendItem(records[i][1], records[i][0]);
-        this.itemMap[records[i][1]] = records[i][0];
+    function loadCallback(records) {
+        $$('km_edit_item').removeAllItems();
+        $$('km_summary_item').removeAllItems();
+        $$('km_summary_item').appendItem(km_getLStr("query_condition.none"), 0);
+        for (var i = 0; i < records.length; i++) {
+            $$('km_edit_item').appendItem(records[i][1], records[i][0]);
+            $$('km_summary_item').appendItem(records[i][1], records[i][0]);
+            this.itemMap[records[i][1]] = records[i][0];
+        }
+        $$('km_edit_item').selectedIndex = 0;
+        $$('km_summary_item').selectedIndex = 0;
     }
-    $$('km_edit_item').selectedIndex = 0;
-    $$('km_summary_item').selectedIndex = 0;
+    this.mDb.itemInfo.loadItemList(loadCallback.bind(this));
+
 
 };
 Kmoney.prototype.populateUserList = function () {
-    $$('km_edit_user').removeAllItems();
-    $$('km_summary_user').removeAllItems();
-
-    this.mDb.selectQuery("select id, name from km_user");
-    var records = this.mDb.getRecords();
-
-    $$('km_summary_user').appendItem(km_getLStr('query_condition.none'), 0);
-    for (var i = 0; i < records.length; i++) {
-        $$('km_edit_user').appendItem(records[i][1], records[i][0]);
-        $$('km_summary_user').appendItem(records[i][1], records[i][0]);
-        this.users[records[i][0]] = records[i][1];
+    function loadCallback(records) {
+        $$('km_edit_user').removeAllItems();
+        $$('km_summary_user').removeAllItems();
+        $$('km_summary_user').appendItem(km_getLStr('query_condition.none'), 0);
+        for (var i = 0; i < records.length; i++) {
+            $$('km_edit_user').appendItem(records[i][1], records[i][0]);
+            $$('km_summary_user').appendItem(records[i][1], records[i][0]);
+            this.users[records[i][0]] = records[i][1];
+        }
+    
+        $$('km_edit_user').selectedIndex = 0;
+        $$('km_summary_user').selectedIndex = 0;
+        
     }
-
-    $$('km_edit_user').selectedIndex = 0;
-    $$('km_summary_user').selectedIndex = 0;
-
+    this.mDb.userInfo.load(loadCallback.bind(this));
 };
 Kmoney.prototype.populateInternalList = function () {
     $$('km_edit_internal').removeAllItems();
@@ -653,43 +497,43 @@ Kmoney.prototype.populateInternalList = function () {
 };
 Kmoney.prototype.populateSummaryPeriodList = function () {
     // レコードが存在する最も古い年から今年までをリストに入れる
-    var sql = "select strftime('%Y', min(transaction_date)) from kmv_transactions";
-    this.mDb.selectQuery(sql);
-    var records = this.mDb.getRecords();
 
-    var oldestYear = parseInt(records[0][0]);
-    var thisYear = (new Date()).getFullYear();
-    if (isNaN(oldestYear)) {
-        // レコード0件の場合は今年
-        oldestYear = thisYear;
-    }
-
-    $$('km_summary_monthfromY').removeAllItems();
-    $$('km_summary_monthtoY').removeAllItems();
-
-    $$('km_summary_monthfromY').appendItem("-", 0);
-    $$('km_summary_monthtoY').appendItem("-", 0);
-    for (var year = oldestYear; year <= thisYear; year++) {
-        $$('km_summary_monthfromY').appendItem(year, year);
-        $$('km_summary_monthtoY').appendItem(year, year);
-    }
-    $$('km_summary_monthfromY').selectedIndex = 0;
-    $$('km_summary_monthtoY').selectedIndex = 0;
-    
-    $$('km_summary_monthfromM').removeAllItems();
-    $$('km_summary_monthfromM').appendItem("-", 0);
-    $$('km_summary_monthtoM').removeAllItems();
-    $$('km_summary_monthtoM').appendItem("-", 0);
-    for (var i = 0; i < 12; i++) {
-        var monthValue = i + 1;
-        if (monthValue < 10) {
-            monthValue = "0" + monthValue;
+    function getCallback(oldestYear) {
+        var thisYear = (new Date()).getFullYear();
+        if (isNaN(oldestYear)) {
+            // レコード0件の場合は今年
+            oldestYear = thisYear;
         }
-        $$('km_summary_monthfromM').appendItem(i + 1, monthValue);
-        $$('km_summary_monthtoM').appendItem(i + 1, monthValue);
+    
+        $$('km_summary_monthfromY').removeAllItems();
+        $$('km_summary_monthtoY').removeAllItems();
+    
+        $$('km_summary_monthfromY').appendItem("-", 0);
+        $$('km_summary_monthtoY').appendItem("-", 0);
+        for (var year = oldestYear; year <= thisYear; year++) {
+            $$('km_summary_monthfromY').appendItem(year, year);
+            $$('km_summary_monthtoY').appendItem(year, year);
+        }
+        $$('km_summary_monthfromY').selectedIndex = 0;
+        $$('km_summary_monthtoY').selectedIndex = 0;
+        
+        $$('km_summary_monthfromM').removeAllItems();
+        $$('km_summary_monthfromM').appendItem("-", 0);
+        $$('km_summary_monthtoM').removeAllItems();
+        $$('km_summary_monthtoM').appendItem("-", 0);
+        for (var i = 0; i < 12; i++) {
+            var monthValue = i + 1;
+            if (monthValue < 10) {
+                monthValue = "0" + monthValue;
+            }
+            $$('km_summary_monthfromM').appendItem(i + 1, monthValue);
+            $$('km_summary_monthtoM').appendItem(i + 1, monthValue);
+        }
+        $$('km_summary_monthfromM').selectedIndex = 0;    
+        $$('km_summary_monthtoM').selectedIndex = 0;    
+        
     }
-    $$('km_summary_monthfromM').selectedIndex = 0;    
-    $$('km_summary_monthtoM').selectedIndex = 0;    
+    this.mDb.transactions.getOldestYear(getCallback.bind(this));
 
 };
 Kmoney.prototype.reset = function () {
@@ -699,9 +543,26 @@ Kmoney.prototype.reset = function () {
 };
 Kmoney.prototype.addRecord = function () {
     var tree = this.getSelectedTree();
-    if (typeof tree.addRecord === 'function') {
-        tree.addRecord();
+    if (typeof tree.addRecord !== 'function') {
+        return;
     }
+
+    var amount = $$('km_edit_amount').value;
+    if (!isNumber(amount)) {
+        km_alert(km_getLStr("error.title"), km_getLStr("error.amount.invalid"));
+        return;
+    }
+
+    var params = {
+        "transactionDate": $$('km_edit_transactionDate').value,
+        "itemId": $$('km_edit_item').value,
+        "detail": $$('km_edit_detail').value,
+        "amount": amount,
+        "userId": $$('km_edit_user').value
+    };
+
+    tree.addRecord(params);
+    
 };
 Kmoney.prototype.updateRecord = function () {
     var tree = this.getSelectedTree();
@@ -718,7 +579,25 @@ Kmoney.prototype.updateRecord = function () {
         return;
     }
 
-    tree.updateRecord();
+    var id = this.mTree.getSelectedRowValue('id');
+    if (id === "") {
+        km_alert(km_getLStr("no_selectedrow"));
+    }
+
+    var amount = $$('km_edit_amount').value;
+    if (!isNumber(amount)) {
+        km_alert(km_getLStr("error.title"), km_getLStr("error.amount.invalid"));
+        return;
+    }
+
+    var params = {
+        "transactionDate": $$('km_edit_transactionDate').value,
+        "itemId": $$('km_edit_item').value,
+        "detail": $$('km_edit_detail').value,
+        "amount": amount,
+        "userId": $$('km_edit_user').value
+    };
+    tree.updateRecord(id, params);
 };
 Kmoney.prototype.deleteRecord = function () {
     var tree = this.getSelectedTree();
@@ -738,7 +617,8 @@ Kmoney.prototype.deleteRecord = function () {
     if (!bConfirm) {
         return;
     }
-    tree.deleteRecord();
+    var id = this.mTree.getSelectedRowValue('id');
+    tree.deleteRecord(id);
 };
 Kmoney.prototype.onUserSelect = function () {
     var tree = this.getSelectedTree();
@@ -910,116 +790,4 @@ Kmoney.prototype.getSelectedTree = function () {
         break;
     }
     return tab;
-};
-//this object handles MRU using one preference 'jsonMruData'
-KmGlobals.mru = {
-    mbInit: false,
-    mSize: 0,
-    mList: [],
-    mProfilePath: '',
-
-    initialize: function () {
-        try {
-            this.convert();
-        } catch (e) {}
-
-        this.getPref();
-
-        this.mProfilePath = Cc["@mozilla.org/file/directory_service;1"].getService(Ci.nsIProperties).get("ProfD", Ci.nsIFile).path;
-        this.mbInit = true;
-    },
-
-    convert: function () {
-        //use the two prefs and remove them; so, the following can happen only once.
-        var sPref = km_prefsBranch.getComplexValue("mruPath.1", Ci.nsISupportsString).data;
-        this.mList = sPref.split(",");
-        this.mSize = km_prefsBranch.getIntPref("mruSize");
-
-        km_prefsBranch.clearUserPref("mruPath.1");
-        km_prefsBranch.clearUserPref("mruSize");
-
-        this.setPref();
-        return true;
-    },
-
-    add: function (sPath) {
-        if (sPath.indexOf(this.mProfilePath) == 0) sPath = "[ProfD]" + sPath.substring(this.mProfilePath.length);
-
-        var iPos = this.mList.indexOf(sPath);
-        if (iPos >= 0) {
-            //remove at iPos
-            this.mList.splice(iPos, 1);
-        }
-        //add in the beginning
-        this.mList.splice(0, 0, sPath);
-
-        if (this.mList.length > this.mSize) {
-            //remove the extra entries
-            this.mList.splice(this.mSize, this.mList.length - this.mSize);
-        }
-        km_debug("mList.add: " + sPath);
-
-        this.setPref();
-    },
-
-    remove: function (sPath) {
-        if (sPath.indexOf(this.mProfilePath) == 0) sPath = "[ProfD]" + sPath.substring(this.mProfilePath.length);
-
-        var iPos = this.mList.indexOf(sPath);
-        if (iPos >= 0) {
-            //remove at iPos
-            this.mList.splice(iPos, 1);
-            this.setPref();
-            return true;
-        }
-        return false;
-    },
-
-    getList: function () {
-        if (!this.mbInit) this.initialize();
-
-        var aList = [];
-        for (var i = 0; i < this.mList.length; i++) {
-            aList.push(this.getFullPath(this.mList[i]));
-        }
-        return aList;
-    },
-
-    getLatest: function () {
-        if (!this.mbInit) this.initialize();
-
-        if (this.mList.length > 0) return this.getFullPath(this.mList[0]);
-        else return null;
-    },
-
-    getFullPath: function (sVal) {
-        var sRelConst = "[ProfD]";
-        if (sVal.indexOf(sRelConst) == 0) sVal = this.mProfilePath + sVal.substring(sRelConst.length);
-
-        return sVal;
-    },
-
-    getPref: function () {
-        try {
-            var sPref = km_prefsBranch.getComplexValue("jsonMruData", Ci.nsISupportsString).data;
-        } catch (e) {
-            var sPref = km_prefsBranch.getCharPref("jsonMruData");
-        }
-        var obj = JSON.parse(sPref);
-        this.mList = obj.list;
-        this.mSize = obj.size;
-    },
-
-    setPref: function () {
-        try {
-            var sPref = km_prefsBranch.getComplexValue("jsonMruData", Ci.nsISupportsString).data;
-        } catch (e) {
-            var sPref = km_prefsBranch.getCharPref("jsonMruData");
-        }
-        var obj = JSON.parse(sPref);
-        obj.list = this.mList;
-        obj.size = this.mSize;
-        sPref = JSON.stringify(obj);
-        km_setUnicodePref("jsonMruData", sPref);
-    }
 };

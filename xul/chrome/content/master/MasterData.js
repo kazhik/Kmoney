@@ -21,6 +21,7 @@ function openMasterDataDialog() {
 };
 
 MasterData.prototype.initialize = function (db) {
+    km_log("MasterData.initialize start");
     this.mDb = db;
 
     this.userMaster = new UserMaster();
@@ -37,6 +38,7 @@ MasterData.prototype.initialize = function (db) {
     this.addEventListeners();
 
     this.onTabSelected();
+    km_log("MasterData.initialize end");
 };
 MasterData.prototype.addRecord = function () {
     var tab = this.getSelectedTab();
@@ -111,53 +113,55 @@ MasterData.prototype.addEventListeners = function () {
     $$('km_tabs').addEventListener("select", this.listeners['km_tabs.select']);
 };
 MasterData.prototype.loadUserList = function () {
-    $$('km_edit_user').removeAllItems();
-
-    this.mDb.selectQuery("select id, name from km_user");
-    var records = this.mDb.getRecords();
-
-    for (var i = 0; i < records.length; i++) {
-        $$('km_edit_user').appendItem(records[i][1], records[i][0]);
+    function loadCallback(records) {
+        $$('km_edit_user').removeAllItems();
+    
+        for (var i = 0; i < records.length; i++) {
+            $$('km_edit_user').appendItem(records[i][1], records[i][0]);
+        }
+    
+        $$('km_edit_user').selectedIndex = 0;
     }
-
-    $$('km_edit_user').selectedIndex = 0;
+    this.mDb.userInfo.load(loadCallback.bind(this));
 
 };
 MasterData.prototype.loadCardList = function () {
-
-    this.mDb.selectQuery("select rowid, name from km_creditcard_info");
-    var cardList = this.mDb.getRecords();
-
-    $$("km_edit_creditcard").removeAllItems();
-
-    for (var i = 0; i < cardList.length; i++) {
-        $$("km_edit_creditcard").appendItem(cardList[i][1], cardList[i][0]);
+    function loadCallback(records) {
+        $$("km_edit_creditcard").removeAllItems();
+    
+        for (var i = 0; i < records.length; i++) {
+            $$("km_edit_creditcard").appendItem(records[i][1], records[i][0]);
+        }
+        $$("km_edit_creditcard").selectedIndex = 0;
+        
     }
-    $$("km_edit_creditcard").selectedIndex = 0;
+    this.mDb.creditCardInfo.load(loadCallback.bind(this));
 
 };
 
 MasterData.prototype.loadEMoneyList = function () {
-    this.mDb.selectQuery("select rowid, name from km_emoney_info");
-    var moneyList = this.mDb.getRecords();
-
-    $$("km_edit_emoney").removeAllItems();
-
-    for (var i = 0; i < moneyList.length; i++) {
-        $$("km_edit_emoney").appendItem(moneyList[i][1], moneyList[i][0]);
+    function loadCallback(records) {
+        $$("km_edit_emoney").removeAllItems();
+    
+        for (var i = 0; i < records.length; i++) {
+            $$("km_edit_emoney").appendItem(records[i][1], records[i][0]);
+        }
+        $$("km_edit_emoney").selectedIndex = 0;
     }
-    $$("km_edit_emoney").selectedIndex = 0;
+    this.mDb.emoneyInfo.load(loadCallback.bind(this));
+
 };
 MasterData.prototype.loadBankList = function () {
-    this.mDb.selectQuery("select rowid, name from km_bank_info");
-    var bankList = this.mDb.getRecords();
-
-    $$("km_edit_bank").removeAllItems();
-
-    for (var i = 0; i < bankList.length; i++) {
-        $$("km_edit_bank").appendItem(bankList[i][1], bankList[i][0]);
+    function loadCallback(records) {
+        $$("km_edit_bank").removeAllItems();
+    
+        for (var i = 0; i < records.length; i++) {
+            $$("km_edit_bank").appendItem(records[i][1], records[i][0]);
+        }
+        $$("km_edit_bank").selectedIndex = 0;
     }
-    $$("km_edit_bank").selectedIndex = 0;
+    this.mDb.bankInfo.load(loadCallback.bind(this));
+
 };
 MasterData.prototype.onTabSelected = function (e) {
     switch ($$('km_master_tabbox').selectedTab.id) {

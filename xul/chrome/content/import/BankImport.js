@@ -1,11 +1,10 @@
 
-function BankImport(db, bankTbl) {
+function BankImport(db) {
   AbstractImport.call(this, db);
   
-  this.bankTable = bankTbl;
-  this.bankId = 0;
 }
 BankImport.prototype = Object.create(AbstractImport.prototype);
+
 
 
 

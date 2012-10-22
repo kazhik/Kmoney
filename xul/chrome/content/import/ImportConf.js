@@ -57,125 +57,108 @@ ImportConf.prototype.addEventListeners = function () {
 };
 
 ImportConf.prototype.addRecord = function () {
-    var sourceType = $$("km_import_select_type").value;
-    var detail = $$("conf_edit_detail").value;
-    var itemId = $$('conf_edit_item').value;
-    var defaultId = ($$('conf_edit_default').checked)? 1: 0;
-    var internal = $$("conf_edit_internal").value;
+    function insertCallback(id) {
+        this.onSelectType();
+    }
+    var params = {
+        "sourceType": $$("km_import_select_type").value,
+        "detail": $$("conf_edit_detail").value,
+        "itemId": $$('conf_edit_item').value,
+        "defaultId": ($$('conf_edit_default').checked)? 1: 0,
+        "internal": $$("conf_edit_internal").value
+    };
     
-    var sql = ["insert into km_import ("
-      + "source_type, "
-      + "detail, "
-      + "item_id, "
-      + "default_id, "
-      + "permission, "
-      + "internal "
-      + ") values ( "
-      + sourceType + ", "
-      + "'" + detail + "', "
-      + itemId + ", "
-      + defaultId + ", "
-      + "1, "
-      + internal + ")"];
-    this.mDb.executeTransaction(sql);
-    this.onSelectType();
+    this.mDb.import.insert(params, insertCallback.bind(this));
+    
 };
 ImportConf.prototype.updateRecord = function () {
+    function updateCallback() {
+        this.onSelectType();
+    }
+
     if (this.mTree.checkSelected() === false) {
-      km_alert(km_getLStr("error.title"), km_getLStr("error.update.notSelected"));
-      return;
+        km_alert(km_getLStr("error.title"), km_getLStr("error.update.notSelected"));
+        return;
     }
     
-    var rowid = this.mTree.getColumnValue(0);
-    var detail = $$("conf_edit_detail").value;
-    var itemId = $$('conf_edit_item').value;
-    var defaultId = ($$('conf_edit_default').checked)? 1: 0;
-    var internal = $$("conf_edit_internal").value;
+    var params = {
+        "detail": $$("conf_edit_detail").value,
+        "itemId": $$('conf_edit_item').value,
+        "defaultId": ($$('conf_edit_default').checked)? 1: 0,
+        "internal": $$("conf_edit_internal").value
+    };
+    var id = this.mTree.getSelectedRowValue("import_conf_id");
     
     // permissionがなければdetailは変更不可
-    var permission = this.mTree.getColumnValue(7);
+    var permission = this.mTree.getSelectedRowValue("import_conf_permission");
     var orgDetail = "";
-    if (permission != 0) {
-        orgDetail = this.mTree.getColumnValue(2);
-        if (detail != orgDetail) {
+    if (parseInt(permission) !== 0) {
+        orgDetail = this.mTree.getSelectedRowValue("import_conf_detail");
+        if (params["detail"] !== orgDetail) {
             km_alert(km_getLStr("error.title"), km_getLStr("error.update.cannotUpdate"));
             return;
         }
     }
+    this.mDb.import.update(id, params, updateCallback.bind(this));
     
-    var sql = ["update km_import "
-      + "set detail = '" + detail + "', "
-      + "item_id = " + itemId + ", "
-      + "default_id = " + defaultId + ", "
-      + "internal = " + internal + " "
-      + "where rowid = " + rowid];
-    this.mDb.executeTransaction(sql);
-    this.onSelectType();
 };
 ImportConf.prototype.deleteRecord = function () {
+    function deleteCallback() {
+        this.onSelectType();
+    }
+
     if (this.mTree.checkSelected() === false) {
-      km_alert(km_getLStr("error.title"), km_getLStr("error.delete.notSelected"));
-      return;
+        km_alert(km_getLStr("error.title"), km_getLStr("error.delete.notSelected"));
+        return;
     }
 
     // 削除不可
-    var permission = this.mTree.getColumnValue(7);
-    if (permission != 0) {
+    var permission = this.mTree.getSelectedRowValue("import_conf_permission");
+    if (parseInt(permission) !== 0) {
         km_alert(km_getLStr("error.title"), km_getLStr("error.update.cannotDelete"));
     }
     
-    
-    var rowid = this.mTree.getColumnValue(0);
-    if (rowid === "") {
-      return;
+    var id = this.mTree.getSelectedRowValue("import_conf_id");
+    if (id === "") {
+        return;
     }
-    var sql = ["delete from km_import where rowid = " + rowid];
-    km_log(sql);
-    this.mDb.executeTransaction(sql);
+    this.mDb.import.delete(id, deleteCallback.bind(this));
     
-    this.onSelectType();
 };
 
 ImportConf.prototype.onSelect = function () {
-    $$("conf_edit_detail").value = this.mTree.getColumnValue(2);
-    $$('conf_edit_item').value = this.mTree.getColumnValue(3);
-    $$('conf_edit_default').checked = (Number(this.mTree.getColumnValue(5)) === 1);
-    $$("conf_edit_internal").value = this.mTree.getColumnValue(6);
+    $$("conf_edit_detail").value =
+        this.mTree.getSelectedRowValue("import_conf_detail");
+    $$('conf_edit_item').value =
+        this.mTree.getSelectedRowValue("import_conf_itemid");
+    $$('conf_edit_default').checked =
+        (Number(this.mTree.getSelectedRowValue("import_conf_default")) === 1);
+    $$("conf_edit_internal").value =
+        this.mTree.getSelectedRowValue("import_conf_internal");
         
 };
 
 ImportConf.prototype.initImportTypeList = function () {
-    $$('km_import_select_type').removeAllItems();
-
-    var sql = "select A.id, A.type from km_source A where A.import = 1 and A.enabled = 1";
-    this.mDb.selectQuery(sql);
-    var records = this.mDb.getRecords();
-    for (var i = 0; i < records.length; i++) {
-        $$('km_import_select_type').appendItem(records[i][1], records[i][0]);
+    function loadCallback(records) {
+        $$('km_import_select_type').removeAllItems();
+        for (var i = 0; i < records.length; i++) {
+            $$('km_import_select_type').appendItem(records[i][1], records[i][0]);
+        }
     }
-
+    this.mDb.source.load(loadCallback.bind(this));
 };
 ImportConf.prototype.onSelectType = function () {
-    
+    function loadCallback(records, columns) {
+        this.mTree.populateTableData(records, columns);
+        this.mTree.showTable(true);
+    }
     var type = $$("km_import_select_type").value;
     
-    if (type === 0) {
+    if (parseInt(type) === 0) {
         return;
     }
-    
-    this.mDb.selectQuery("select A.rowid, A.source_type, A.detail, A.item_id,"
-                         + "B.name, A.default_id, A.internal, A.permission "
-                         + "from km_import A "
-                         + "inner join km_item B "
-                         + "on A.item_id = B.id "
-                         + "where A.source_type = " + type);
-    
-    var records = this.mDb.getRecords();
-    var types = this.mDb.getRecordTypes();
-    var columns = this.mDb.getColumns();
+    this.mDb.import.loadConf(type, loadCallback.bind(this));
   
-    this.mTree.populateTableData(records, columns, types);
-    this.mTree.showTable(true);
 };
 ImportConf.prototype.initItemList = function (itemMap) {
     $$('conf_edit_item').removeAllItems();

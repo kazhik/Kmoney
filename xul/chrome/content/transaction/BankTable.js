@@ -1,6 +1,5 @@
 function BankTable() {
     this.mDb = null;
-    this.mBankList = null;
     this.mTree = new TreeViewController("km_tree_bank");
 };
 BankTable.prototype.initialize = function (db) {
@@ -10,158 +9,50 @@ BankTable.prototype.initialize = function (db) {
 };
 
 BankTable.prototype.load = function (sortParams) {
-    var orderBy = "";
-    if (sortParams !== undefined) {
-        for (var i = 0; i < sortParams.length; i++) {
-            orderBy += sortParams[i]['column'];
-            if (sortParams[i]['order'] != undefined) {
-                orderBy += " " + sortParams[i]['order'];
-            }
-        }
-    } else {
+    function loadCallback(records, columns) {
+        this.mTree.populateTableData(records, columns);
+        this.mTree.ensureRowIsVisible('id', -1);
+        this.mTree.showTable(true);
+    }
+
+    km_debug("BankTable.load start");
+    if (sortParams === undefined) {
         if (this.mTree.mSortOrder != null) {
-            orderBy += this.mTree.mSortCol;
-            orderBy += " " + this.mTree.mSortOrder;
-        } else {
-            orderBy += "A.transaction_date asc";
-            this.mTree.mSortCol = "A.transaction_date";
-            this.mTree.mSortOrder = "asc";
+            sortParams = [
+                {
+                    "column": this.mTree.mSortCol,
+                    "order": this.mTree.mSortOrder
+                }
+            ];
         }
     }
-
-    var where = "";
-    var key1 = $$('km_list_query_condition1').value;
-    var operator1 = "";
-    var value1 = "";
-    var key2 = $$('km_list_query_condition2').value;
-    var operator2 = "";
-    var value2 = "";
-    var keyCol;
-    if (key1 !== "none") {
-        if (key1 === "date") {
-            keyCol = "A.transaction_date";
-            operator1 = $$('km_list_query_operator1').value;
-            value1 = $$('km_edit_query_date1').value;
-        } else if (key1 === "item") {
-            keyCol = "A.item_id";
-            operator1 = "=";
-            value1 = $$('km_edit_query_list1').value;
-        } else if (key1 === "detail") {
-            keyCol = "A.detail";
-            operator1 = $$('km_list_query_operator1').value;
-            value1 = $$('km_edit_query_text1').value;
-        } else if (key1 === "user") {
-            keyCol = "A.user_id";
-            operator1 = "=";
-            value1 = $$('km_edit_query_list1').value;
-        } else if (key1 === "bank") {
-            keyCol = "A.bank_id";
-            operator1 = "=";
-            value1 = $$('km_edit_query_list1').value;
-        }
-        where = " where ";
-        where += keyCol;
-        where += " ";
-        where += operator1;
-        where += " ";
-        where += ":" + key1 + "_1";
-        if (operator1 === 'like') {
-            where += " escape '/'";
-        }
-
-        if (key2 !== "none") {
-            where += " " + $$('km_list_query_andor').value + " ";
-
-            if (key2 === "date") {
-                keyCol = "A.transaction_date";
-                operator2 = $$('km_list_query_operator2').value;
-                value2 = $$('km_edit_query_date2').value;
-            } else if (key2 === "item") {
-                keyCol = "A.item_id";
-                operator2 = "=";
-                value2 = $$('km_edit_query_list2').value;
-            } else if (key2 === "detail") {
-                keyCol = "A.detail";
-                operator2 = "=";
-                value2 = $$('km_edit_query_text2').value;
-            } else if (key2 === "user") {
-                keyCol = "A.user_id";
-                operator2 = "=";
-                value2 = $$('km_edit_query_list2').value;
-            } else if (key2 === "bank") {
-                keyCol = "A.bank_id";
-                operator2 = "=";
-                value2 = $$('km_edit_query_list2').value;
-            }
-            
-            where += keyCol;
-            where += " ";
-            where += operator2;
-            where += " ";
-            where += ":" + key2 + "_2";
-            if (operator2 === 'like') {
-                where += " escape '/'";
-            }
-        }
-    }
-
-    var sql = [
-        "select ",
-        "A.transaction_date, ",
-        "A.item_id, ",
-        "B.name as item_name, ",
-        "A.detail, ",
-        "A.income, ",
-        "A.expense, ",
-        "A.bank_id, ",
-        "D.name as bank_name, ",
-        "A.user_id, ",
-        "C.name as user_name, ",
-        "A.source, ",
-        "A.internal, ",
-        "A.rowid ",
-        "from km_bank_trns A ",
-        "left join km_item B ",
-        " on A.item_id = B.id ",
-        "inner join km_user C ",
-        " on A.user_id = C.id ",
-        "inner join km_bank_info D ",
-        " on A.bank_id = D.rowid "
-    ].join(" ");
-    if (where.length > 0) {
-        sql += where;
-    }
-    sql += " order by " + orderBy;
     
-    km_log(sql);
+    var queryParams = [];
+    for (var i = 1; i <= 2; i++) {
+        var param = {
+            "key": $$('km_list_query_condition' + i).value,
+            "operator": $$('km_list_query_operator' + i).value
+        };
+        if (param['key'] === "date") {
+            param['value'] = $$('km_edit_query_date' + i).value;
+        } else if (param['key'] === "item") {
+            param['value'] = $$('km_edit_query_list' + i).value;
+        } else if (param['key'] === "detail") {
+            param['value'] = $$('km_edit_query_text' + i).value;
+        } else if (param['key'] === "user") {
+            param['value'] = $$('km_edit_query_list' + i).value;
+        } else if (param['key'] === "bank") {
+            param['value'] = $$('km_edit_query_list' + i).value;
+        }
+        if (i != 1) {
+            param['andor'] = $$('km_list_query_andor').value;
+        }
+        queryParams.push(param);
+    }
     
-    var stmt = this.mDb.createStatement(sql);
-    if (stmt === null) {
-        return;
-    }
-    if (key1 !== "none") {
-        if (operator1 === "like") {
-            stmt.params[key1 + "_1"] = "%" + stmt.escapeStringForLIKE(value1, "/") + "%";    
-        } else {
-            stmt.params[key1 + "_1"] = value1;    
-        }
-    }
-    if (key2 !== "none") {
-        if (operator2 === "like") {
-            stmt.params[key2 + "_2"] = "%" + stmt.escapeStringForLIKE(value2, "/") + "%";    
-        } else {
-            stmt.params[key2 + "_2"] = value2;    
-        }
-    }
+    this.mDb.bankTrns.load(sortParams, queryParams, loadCallback.bind(this));
 
-    this.mDb.execSelect(stmt);
-    var records = this.mDb.getRecords();
-    var types = this.mDb.getRecordTypes();
-    var columns = this.mDb.getColumns();
-    this.mTree.populateTableData(records, columns, types);
-    this.mTree.ensureRowIsVisible2('rowid', -1);
-    this.mTree.showTable(true);
-
+    km_debug("BankTable.load end");
 };
 BankTable.prototype.onSelect = function () {
     $$('km_edit_transactionDate').value = this.mTree.getSelectedRowValue('transaction_date');
@@ -193,138 +84,64 @@ BankTable.prototype.onSelect = function () {
     $$('km_status_sum').label = km_getLStr("status.sum") + "=" + sum;
 }
 BankTable.prototype.loadBankList = function () {
-    this.mDb.selectQuery("select rowid, name, user_id from km_bank_info");
-    this.mBankList = this.mDb.getRecords();
+    function onLoad(records) {
+        this.onUserSelect();
+    }
+    km_debug("BankTable.loadBankList");
+    this.mDb.bankInfo.load(onLoad.bind(this));
 
-    this.onUserSelect();
 };
 BankTable.prototype.onUserSelect = function () {
-    $$("km_edit_bank").removeAllItems();
-    var userId = $$('km_edit_user').value;
+    var bankList = this.mDb.bankInfo.getBankList($$('km_edit_user').value);
 
-    for(var i = 0; i < this.mBankList.length; i++) {
-        if(this.mBankList[i][2] == userId) {
-            $$("km_edit_bank").appendItem(this.mBankList[i][1], this.mBankList[i][0]);
-        }
+    $$("km_edit_bank").removeAllItems();
+    for(var i = 0; i < bankList.length; i++) {
+        $$("km_edit_bank").appendItem(bankList[i][1], bankList[i][0]);
     }
     $$("km_edit_bank").selectedIndex = 0;
 
 };
 
-BankTable.prototype.addRecord = function () {
-    var incomeValue;
-    var expenseValue;
-    if($$('km_edit_income').selected) {
-        incomeValue = $$('km_edit_amount').value;
-        expenseValue = 0;
-    } else {
-        incomeValue = 0;
-        expenseValue = $$('km_edit_amount').value;
+BankTable.prototype.addRecord = function (params) {
+    function insertCallback(id) {
+        this.load();
+        this.mTree.ensureRowIsVisible('id', id);
     }
     
-    var recArray = [{
-        "transactionDate": $$('km_edit_transactionDate').value,
-        "itemId": $$('km_edit_item').value,
-        "detail": $$('km_edit_detail').value,
-        "income": incomeValue,
-        "expense": expenseValue,
-        "userId": $$('km_edit_user').value,
-        "bankId": $$('km_edit_bank').value,
-        "source": 1,
-        "internal": $$('km_edit_internal').value
-        }];
-    this.executeInsert(recArray);
-    
-    this.load();
-};
-BankTable.prototype.updateRecord = function () {
-    var incomeValue;
-    var expenseValue;
-    if($$('km_edit_income').selected) {
-        incomeValue = $$('km_edit_amount').value;
-        expenseValue = 0;
+    if ($$('km_edit_income').selected) {
+        params['income'] = params['amount'];
     } else {
-        incomeValue = 0;
-        expenseValue = $$('km_edit_amount').value;
+        params['expense'] = params['amount'];
     }
-    var rowid = this.mTree.getSelectedRowValue('rowid');
-    if(rowid === "") {
-        km_alert(km_getLStr("no_selectedrow"));
+    params['bankId'] = $$('km_edit_bank').value;
+    params['source'] = 1;
+    params['internal'] = $$('km_edit_internal').value;
+
+    this.mDb.bankTrns.insert([params], insertCallback.bind(this));
+    
+};
+BankTable.prototype.updateRecord = function (id, params) {
+    function updateCallback() {
+        this.load();
+        this.mTree.ensureRowIsVisible('id', id);
     }
-    var sql = ["update km_bank_trns ",
-               "set ",
-               "transaction_date = " + "'" + $$('km_edit_transactionDate').value + "', ",
-               "income = " + incomeValue + ", ",
-               "expense = " + expenseValue + ", ",
-               "item_id = " + $$('km_edit_item').value + ", ",
-               "detail = " + "\"" + $$('km_edit_detail').value + "\", ",
-               "user_id = " + $$('km_edit_user').value + ", ",
-               "bank_id = " + $$('km_edit_bank').value + ", ",
-               "last_update_date = datetime('now', 'localtime'), ",
-               "internal = " + $$('km_edit_internal').value + ", ",
-               "source = 1 ",
-               "where rowid = " + rowid].join(" ");
-    this.mDb.executeTransaction([sql]);
-    this.load();
-    this.mTree.ensureRowIsVisible2('rowid', rowid);
+
+    if ($$('km_edit_income').selected) {
+        params['income'] = params['amount'];
+    } else {
+        params['expense'] = params['amount'];
+    }
+    params['bankId'] = $$('km_edit_bank').value;
+    params['internal'] = $$('km_edit_internal').value;
+    
+    this.mDb.bankTrns.update(id, params, updateCallback.bind(this));
+
 };
 
-BankTable.prototype.deleteRecord = function () {
-    var rowid = this.mTree.getSelectedRowValue('rowid');
-    if(rowid === "") {
-        return;
+BankTable.prototype.deleteRecord = function (id) {
+    function deleteCallback() {
+        this.load();
     }
-    var sql = ["delete from km_bank_trns where rowid = " + rowid];
-    km_log(sql);
-    this.mDb.executeTransaction(sql);
 
-    this.load();
-};
-
-BankTable.prototype.executeInsert = function (newRecordArray) {
-    var sqlArray = [];
-    for(var i = 0; i < newRecordArray.length; i++) {
-        var sql = ["insert into km_bank_trns (",
-                   "transaction_date, ",
-                   "item_id, ",
-                   "detail, ",
-                   "income, ",
-                   "expense, ",
-                   "user_id, ",
-                   "bank_id, ",
-                   "internal, ",
-                   "source, ",
-                   "last_update_date " + ") ",
-                   "select ",
-                   "'" + newRecordArray[i]["transactionDate"] + "', ",
-                   newRecordArray[i]["itemId"] + ", ",
-                   "\"" + newRecordArray[i]["detail"] + "\", ",
-                   newRecordArray[i]["income"] + ", ",
-                   newRecordArray[i]["expense"] + ", ",
-                   newRecordArray[i]["userId"] + ", ",
-                   newRecordArray[i]["bankId"] + ", ",
-                   newRecordArray[i]["internal"] + ", ",
-                   newRecordArray[i]["source"] + ", ",
-                   "datetime('now', 'localtime') ",
-                   "where not exists (",
-                   " select 1 from km_bank_trns ",
-                   " where transaction_date = '" + newRecordArray[i]["transactionDate"] + "'",
-                   " and income = " + newRecordArray[i]["income"],
-                   " and expense = " + newRecordArray[i]["expense"],
-                   " and bank_id = " + newRecordArray[i]["bankId"],
-                   " and user_id = " + newRecordArray[i]["userId"] + ")"].join(" ");
-        km_log(sql);
-        sqlArray.push(sql);
-
-    }
-    this.mDb.executeTransaction(sqlArray);
-};
-BankTable.prototype.getBankId = function (name, userId) {
-    for(var i = 0; i < this.mBankList.length; i++) {
-        if(this.mBankList[i][1] === name && this.mBankList[i][2] == userId) {
-            return this.mBankList[i][0];
-        }
-    }
-    return 0;
-
+    this.mDb.bankTrns.delete(id, deleteCallback.bind(this));
 };

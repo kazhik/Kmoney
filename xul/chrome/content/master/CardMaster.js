@@ -1,86 +1,73 @@
 "use strict";
 
 function CardMaster() {
-  this.mDb = null;
-  this.mTree = new TreeViewController("km_tree_master_creditcard");
-  this.listeners = [];
+    this.mDb = null;
+    this.mTree = new TreeViewController("km_tree_master_creditcard");
+    this.listeners = [];
 };
-CardMaster.prototype.initialize = function(db) {
-  this.mDb = db;
-  
-  this.mTree.init(this, this.load.bind(this));
+CardMaster.prototype.initialize = function (db) {
+    this.mDb = db;
 
-  this.listeners['km_tree_master_creditcard.select'] = this.onSelect.bind(this);
-  $$('km_tree_master_creditcard').addEventListener("select",
+    this.mTree.init(this, this.load.bind(this));
+
+    this.listeners['km_tree_master_creditcard.select'] = this.onSelect.bind(this);
+    $$('km_tree_master_creditcard').addEventListener("select",
     this.listeners['km_tree_master_creditcard.select']);
 
-  this.load();
+    this.load();
 };
-CardMaster.prototype.load = function() {
-  this.mDb.selectQuery("select A.rowid, A.name, A.user_id, B.name, A.bank_id, C.name "
-                       + "from km_creditcard_info A "
-                       + "inner join km_user B "
-                       + "on A.user_id = B.id "
-                       + "inner join km_bank_info C "
-                       + "on A.bank_id = C.rowid");
-  
-  var records = this.mDb.getRecords();
-  var types = this.mDb.getRecordTypes();
-  var columns = this.mDb.getColumns();
+CardMaster.prototype.load = function () {
+    function loadCallback(records, columns) {
+        this.mTree.populateTableData(records, columns);
+        this.mTree.showTable(true);
+    }
+    km_debug("CardMaster.load");
+    this.mDb.creditCardInfo.loadMaster(loadCallback.bind(this));
 
-  this.mTree.populateTableData(records, columns, types);
-  this.mTree.showTable(true);
-  
 };
-CardMaster.prototype.addRecord = function() {
-  var name = $$('km_edit_name').value;
-  var userId = $$('km_edit_user').value;
-  var bankId = $$('km_edit_bank').value;
-  var sql = ["insert into km_creditcard_info ("
-    + "name, "
-    + "user_id, "
-    + "bank_id "
-    + ") values ( "
-    + "'" + name + "', "
-    + userId + ", "
-    + bankId + ")"];
-  this.mDb.executeTransaction(sql);
-  this.load();
-  
+CardMaster.prototype.addRecord = function () {
+    function onCompleted(id) {
+        this.load();
+        this.mTree.ensureRowIsVisible('master_creditcard_id', id);
+    }
+    var params = {
+        "name": $$('km_edit_name').value,
+        "userId": $$('km_edit_user').value,
+        "bankId": $$('km_edit_bank').value
+    };
+    
+    this.mDb.creditCardInfo.insert(params, onCompleted.bind(this));
+
 }
-CardMaster.prototype.updateRecord = function() {
-  var name = $$('km_edit_name').value;
-  var userId = $$('km_edit_user').value;
-  
-  var rowid = this.mTree.getColumnValue(0);
-  var sql = ["update km_creditcard_info "
-    + "set "
-    + "name = '" + name + "', "
-    + "user_id = " + userId + ", "
-    + "bank_id = " + bankId + " "
-    + "where rowid = " + rowid];
-  this.mDb.executeTransaction(sql);
-  this.load();
-  this.mTree.ensureRowIsVisible(0, rowid);
+CardMaster.prototype.updateRecord = function () {
+    function onCompleted() {
+        this.load();
+        this.mTree.ensureRowIsVisible('master_creditcard_id', id);
+    }
+    var params = {
+        "name": $$('km_edit_name').value,
+        "userId": $$('km_edit_user').value,
+        "bankId": $$('km_edit_bank').value
+    };
+    var id = this.mTree.getSelectedRowValue('master_creditcard_id');
+    this.mDb.creditCardInfo.update(id, params, onCompleted.bind(this));
+
 };
 
-CardMaster.prototype.deleteRecord = function() {
-  var rowid = this.mTree.getColumnValue(0);
-  if (rowid === "") {
-    return;
-  }
-  var sql = ["delete from km_creditcard_info where rowid = " + rowid];
-  this.mDb.executeTransaction(sql);
-  
-  this.load();
+CardMaster.prototype.deleteRecord = function () {
+    function onCompleted() {
+        this.load();
+        this.mTree.ensurePreviousRowIsVisible();
+    }
+    var id = this.mTree.getSelectedRowValue('master_creditcard_id');
+    if (id === "") {
+      return;
+    }
+    this.mDb.creditCardInfo.delete(id, onCompleted.bind(this));
 };
 
-CardMaster.prototype.onSelect = function() {
-  $$('km_edit_name').value = this.mTree.getColumnValue(1);
-  $$('km_edit_user').value = this.mTree.getColumnValue(2);
-  $$('km_edit_bank').value = this.mTree.getColumnValue(4);
- 
+CardMaster.prototype.onSelect = function () {
+    $$('km_edit_name').value = this.mTree.getSelectedRowValue('master_creditcard_name');
+    $$('km_edit_user').value = this.mTree.getSelectedRowValue('master_creditcard_userid');
+    $$('km_edit_bank').value = this.mTree.getSelectedRowValue('master_creditcard_bankid');
 };
-
-
-

@@ -15,7 +15,7 @@ var KmGlobals = {
     },
 
     //these are the preferences which are being observed and which need to be initially read.
-    observedPrefs: ["sqliteFileExtensions", "displayNumRecords", "jsonMruData",
+    observedPrefs: ["sqliteFileExtensions", "jsonMruData",
                 "posInTargetApp" /* this one for firefox only*/ ,
                 "handleADS" /* this one for Windows only*/ ],
 
@@ -326,7 +326,18 @@ function convertZen2han(str) {
         new Array('０', '１', '２', '３', '４', '５', '６', '７', '８', '９')[i], 'g'), i);
     }
     return str;
-};
+}
+
+// http://stackoverflow.com/questions/18082/validate-numbers-in-javascript-isnumeric
+function isNumber(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+}
+function strToInt(str) {
+    if (isNumber(str)) {
+        return parseInt(str);
+    }
+    return 0;
+}
 // http://stackoverflow.com/questions/1293147/javascript-code-to-parse-csv-data
 // This will parse a delimited string into an array of
 // arrays. The default delimiter is the comma, but this

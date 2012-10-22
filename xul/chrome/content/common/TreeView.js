@@ -9,7 +9,6 @@ function KmDataTreeView(sTreeId) {
 
   // Column information
   this.aColumns = [];
-  this.aTypes = [];
 
   this.colInfo = {};
   
@@ -17,14 +16,13 @@ function KmDataTreeView(sTreeId) {
 };
 
 KmDataTreeView.prototype = {
-  init: function(aTableData, aColumns, aTypes, callbackFunc) {
+  init: function(aTableData, aColumns, callbackFunc) {
     this.aTableData = aTableData;
     // Column information
     this.aColumns = aColumns;
-    this.aTypes = aTypes;
 
     if (Object.keys(this.colInfo).length === 0) {
-      for (var i = 0; i < this.aColumns.length; i++) {
+      for (var i = 0; i < aColumns.length; i++) {
         this.colInfo[aColumns[i][0]] = 
           {'index': i,
            'type': aColumns[i][1],
@@ -116,7 +114,7 @@ TreeViewController.prototype = {
       this.sortTable = callbackFunc;
     }
     this.treeView = new KmDataTreeView(this.mTreeId);
-    this.treeView.init([], [], [], this.onClickColumnHeader.bind(this));
+    this.treeView.init([], [], this.onClickColumnHeader.bind(this));
     //init must be done before assigning to treeTable.view otherwise it does not work
     //this.treetable.view.init() also fails.
     this.treeTable.view = this.treeView;
@@ -150,11 +148,11 @@ TreeViewController.prototype = {
   // populateTableData: Assign our custom treeview
   populateTableData: function(aTableData, aColumns, aTypes) {
     //populate the tree's view with fresh data
-    this.treeView.init(aTableData, aColumns, aTypes);
+    this.treeView.init(aTableData, aColumns);
     
   },
   
-  ensureRowIsVisible2: function(rowidLabel, rowId) {
+  ensureRowIsVisible: function(rowidLabel, rowId) {
     var idxRow;
     if (rowId === -1) {
       this.treeTable.boxObject.ensureRowIsVisible(this.treeTable.view.rowCount - 1);
@@ -162,24 +160,7 @@ TreeViewController.prototype = {
       var col = this.treeTable.columns.getNamedColumn(rowidLabel);
       for (var i = 0; i < this.treeTable.view.rowCount; i++) {
         var val = this.treeTable.view.getCellText(i, col)
-        if (val === rowId) {
-          this.treeTable.boxObject.ensureRowIsVisible(i);
-          break;
-        }
-      }
-      
-    }
-  },
-
-  ensureRowIsVisible: function(rowIdColIdx, rowId) {
-    var idxRow;
-    if (rowId === -1) {
-      this.treeTable.boxObject.ensureRowIsVisible(this.treeTable.view.rowCount - 1);
-    } else {
-      var col = this.treeTable.columns.getColumnAt(rowIdColIdx);
-      for (var i = 0; i < this.treeTable.view.rowCount; i++) {
-        var val = this.treeTable.view.getCellText(i, col)
-        if (val === rowId) {
+        if (parseInt(val) === rowId) {
           this.treeTable.boxObject.ensureRowIsVisible(i);
           break;
         }

@@ -1,69 +1,64 @@
 "use strict";
 
 function UserMaster() {
-  this.mDb = null;
-  this.mUserList = null;
-  this.mTree = new TreeViewController("km_tree_master_user");
-  this.listeners = [];
+    this.mDb = null;
+    this.mUserList = null;
+    this.mTree = new TreeViewController("km_tree_master_user");
+    this.listeners = [];
 };
-UserMaster.prototype.initialize = function(db) {
-  this.mDb = db;
-  
-  this.mTree.init(this, this.load.bind(this));
+UserMaster.prototype.initialize = function (db) {
+    km_debug("UserMaster.initialize start");
+    this.mDb = db;
 
-  this.listeners['km_tree_master_user.select'] = this.onSelect.bind(this);
-  $$('km_tree_master_user').addEventListener("select",
-    this.listeners['km_tree_master_user.select']);
-  
-  this.load();
+    this.mTree.init(this, this.load.bind(this));
+
+    this.listeners['km_tree_master_user.select'] = this.onSelect.bind(this);
+    $$('km_tree_master_user').addEventListener("select",
+        this.listeners['km_tree_master_user.select']);
+
+    this.load();
+    km_debug("UserMaster.initialize end");
 };
-UserMaster.prototype.load = function() {
-  this.mDb.selectQuery("select id, name from km_user");
-  var records = this.mDb.getRecords();
-  var types = this.mDb.getRecordTypes();
-  var columns = this.mDb.getColumns();
-
-  this.mUserList = this.mDb.getRecords();
-
-  this.mTree.populateTableData(records, columns, types);
-  this.mTree.showTable(true);
-  
+UserMaster.prototype.load = function () {
+    function loadCallback(records, columns) {
+        this.mUserList = records;
+    
+        this.mTree.populateTableData(records, columns);
+        this.mTree.showTable(true);
+    }
+    km_debug("UserMaster.load");
+    this.mDb.userInfo.load(loadCallback.bind(this));
 };
-UserMaster.prototype.addRecord = function() {
-  var name = $$('km_edit_name').value;
-  var sql = ["insert into km_user ("
-    + "name "
-    + ") values ( "
-    + "'" + name + "') "];
-  this.mDb.executeTransaction(sql);
-  this.load();
-  
+UserMaster.prototype.addRecord = function () {
+    function insertCallback() {
+        this.load();
+    }
+    var name = $$('km_edit_name').value;
+    this.mDb.userInfo.insert(name, insertCallback.bind(this));
+
 }
-UserMaster.prototype.updateRecord = function() {
-  var name = $$('km_edit_name').value;
-  
-  var rowid = this.mTree.getColumnValue(0);
-  var sql = ["update km_user "
-    + "set "
-    + "name = '" + name + "' "
-    + "where id = " + rowid];
-  this.mDb.executeTransaction(sql);
-  this.load();
-  this.mTree.ensureRowIsVisible(0, rowid);
+UserMaster.prototype.updateRecord = function () {
+    function updateCallback() {
+        this.load();
+        this.mTree.ensureRowIsVisible("master_user_id", id);
+    }
+    var id = this.mTree.getSelectedRowValue("master_user_id");
+    var name = $$('km_edit_name').value;
+    this.mDb.userInfo.update(id, name, updateCallback.bind(this));
 };
 
-UserMaster.prototype.deleteRecord = function() {
-  var rowid = this.mTree.getColumnValue(0);
-  if (rowid === "") {
-    return;
-  }
-  var sql = ["delete from km_user where id = " + rowid];
-  this.mDb.executeTransaction(sql);
-  
-  this.load();
+UserMaster.prototype.deleteRecord = function () {
+    function updateCallback() {
+        this.load();
+    }
+    var id = this.mTree.getSelectedRowValue("master_user_id");
+    if (id === "") {
+        return;
+    }
+    this.mDb.userInfo.delete(id, deleteCallback.bind(this));
 };
 
-UserMaster.prototype.onSelect = function() {
-  $$('km_edit_name').value = this.mTree.getColumnValue(1);
- 
+UserMaster.prototype.onSelect = function () {
+    $$('km_edit_name').value = this.mTree.getSelectedRowValue("master_user_name");
+
 };

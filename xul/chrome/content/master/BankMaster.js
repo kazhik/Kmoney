@@ -17,60 +17,51 @@ BankMaster.prototype.initialize = function(db) {
   this.load();
 };
 BankMaster.prototype.load = function() {
-  this.mDb.selectQuery("select A.rowid, A.name, A.user_id, B.name "
-                       + "from km_bank_info A, km_user B "
-                       + "where A.user_id = B.id");
-  
-  var records = this.mDb.getRecords();
-  var types = this.mDb.getRecordTypes();
-  var columns = this.mDb.getColumns();
-
-  this.mTree.populateTableData(records, columns, types);
-  this.mTree.showTable(true);
+    function loadCallback(records, columns) {
+        this.mTree.populateTableData(records, columns);
+        this.mTree.showTable(true);
+    }
+    km_debug("BankMaster.load");
+    this.mDb.bankInfo.loadMaster(loadCallback.bind(this));
   
 };
 BankMaster.prototype.addRecord = function() {
-  var name = $$('km_edit_name').value;
-  var userId = $$('km_edit_user').value;
-  var sql = ["insert into km_bank_info ("
-    + "name, "
-    + "user_id "
-    + ") values ( "
-    + "'" + name + "', "
-    + userId + ")"];
-  this.mDb.executeTransaction(sql);
-  this.load();
-  
+    function onCompleted() {
+        this.load();
+    }
+    var params = {
+        "name": $$('km_edit_name').value,
+        "userId": $$('km_edit_user').value
+    };
+    
+    this.mDb.bankInfo.insert(params, onCompleted.bind(this));
 }
 BankMaster.prototype.updateRecord = function() {
-  var name = $$('km_edit_name').value;
-  var userId = $$('km_edit_user').value;
-  
-  var rowid = this.mTree.getColumnValue(0);
-  var sql = ["update km_bank_info "
-    + "set "
-    + "name = '" + name + "', "
-    + "user_id = " + userId + " "
-    + "where rowid = " + rowid];
-  this.mDb.executeTransaction(sql);
-  this.load();
-  this.mTree.ensureRowIsVisible(0, rowid);
+    function onCompleted() {
+        this.load();
+        this.mTree.ensureRowIsVisible("master_bank_id", id);
+    }
+    var id = this.mTree.getSelectedRowValue("master_bank_id");
+    var params = {
+        "name": $$('km_edit_name').value,
+        "userId": $$('km_edit_user').value
+    };
+    
+    this.mDb.bankInfo.update(id, params, onCompleted.bind(this));
 };
 
 BankMaster.prototype.deleteRecord = function() {
-  var rowid = this.mTree.getColumnValue(0);
-  if (rowid === "") {
-    return;
-  }
-  var sql = ["delete from km_bank_info where rowid = " + rowid];
-  this.mDb.executeTransaction(sql);
-  
-  this.load();
+    function onCompleted() {
+        this.load();
+    }
+    var id = this.mTree.getSelectedRowValue("master_bank_id");
+    this.mDb.bankInfo.delete(id, onCompleted.bind(this));
+
 };
 
 BankMaster.prototype.onSelect = function() {
-  $$('km_edit_name').value = this.mTree.getColumnValue(1);
-  $$('km_edit_user').value = this.mTree.getColumnValue(2);
+    $$('km_edit_name').value = this.mTree.getSelectedRowValue("master_bank_name");
+    $$('km_edit_user').value = this.mTree.getSelectedRowValue("master_bank_userid");
  
 };
 
