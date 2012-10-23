@@ -76,7 +76,7 @@ UCCard.prototype.importDb = function (csvFile, userId, importCallback) {
                                            insertCallback.bind(this));
         
         }
-        NetUtil.asyncFetch(csvFile, this.onFileOpen.bind(this));
+        NetUtil.asyncFetch(csvFile, onFileOpen.bind(this));
     }
     cardId = this.mDb.creditCardInfo.getCardId("UCカード", userId);
     this.loadImportConf("UCカード", onLoadImportConf.bind(this));

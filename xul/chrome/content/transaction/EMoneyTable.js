@@ -121,7 +121,7 @@ EMoneyTable.prototype.addRecord = function (params) {
     params['source'] = 1;
     params['internal'] = $$('km_edit_internal').value;
 
-    this.mDb.emoneyTrns.insert([rec], insertCallback.bind(this));
+    this.mDb.emoneyTrns.insert([params], insertCallback.bind(this));
 
 };
 EMoneyTable.prototype.updateRecord = function (id, params) {
@@ -144,6 +144,7 @@ EMoneyTable.prototype.updateRecord = function (id, params) {
 EMoneyTable.prototype.deleteRecord = function (id) {
     function deleteCallback() {
         this.load();
+        this.mTree.ensurePreviousRowIsVisible();
     }
 
     this.mDb.emoneyTrns.delete(id, deleteCallback.bind(this));

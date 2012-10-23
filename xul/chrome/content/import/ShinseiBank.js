@@ -68,7 +68,7 @@ ShinseiBank.prototype.importDb = function (csvFile, userId, importCallback) {
             }
             this.mDb.bankTrns.insert(newRecordArray, insertCallback.bind(this));
         }
-        NetUtil.asyncFetch(csvFile, this.onFileOpen.bind(this));
+        NetUtil.asyncFetch(csvFile, onFileOpen.bind(this));
     }
     bankId = this.mDb.bankInfo.getBankId("新生銀行", userId);
     this.loadImportConf("新生銀行", onLoadImportConf.bind(this))

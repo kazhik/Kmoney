@@ -87,7 +87,7 @@ ViewCard.prototype.importDb = function (suicaHtmlFile, userId, importCallback) {
             this.mDb.creditCardTrns.insert(newRecordArray,
                                            insertCallback.bind(this));
         }
-        NetUtil.asyncFetch(suicaHtmlFile, this.onFileOpen.bind(this));
+        NetUtil.asyncFetch(suicaHtmlFile, onFileOpen.bind(this));
     }
     cardId = this.mDb.creditCardInfo.getCardId("Viewカード", userId);
     this.loadImportConf("ビューカード", onLoadImportConf.bind(this));

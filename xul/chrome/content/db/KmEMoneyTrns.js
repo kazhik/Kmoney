@@ -133,6 +133,7 @@ KmEMoneyTrns.prototype.insert = function (newRecordArray, insertCallback) {
                   + "where not exists ("
                   + " select 1 from km_emoney_trns "
                   + " where transaction_date = '" + newRecordArray[i]["transactionDate"] + "'"
+                  + " and detail = '" + newRecordArray[i]["detail"] + "'"
                   + " and income = " + newRecordArray[i]["income"]
                   + " and expense = " + newRecordArray[i]["expense"]
                   + " and user_id = " + newRecordArray[i]["userId"]

@@ -557,6 +557,8 @@ Kmoney.prototype.addRecord = function () {
         "transactionDate": $$('km_edit_transactionDate').value,
         "itemId": $$('km_edit_item').value,
         "detail": $$('km_edit_detail').value,
+        "income": 0,
+        "expense": 0,
         "amount": amount,
         "userId": $$('km_edit_user').value
     };
@@ -579,7 +581,7 @@ Kmoney.prototype.updateRecord = function () {
         return;
     }
 
-    var id = this.mTree.getSelectedRowValue('id');
+    var id = tree.mTree.getSelectedRowValue('id');
     if (id === "") {
         km_alert(km_getLStr("no_selectedrow"));
     }
@@ -617,7 +619,7 @@ Kmoney.prototype.deleteRecord = function () {
     if (!bConfirm) {
         return;
     }
-    var id = this.mTree.getSelectedRowValue('id');
+    var id = tree.mTree.getSelectedRowValue('id');
     tree.deleteRecord(id);
 };
 Kmoney.prototype.onUserSelect = function () {

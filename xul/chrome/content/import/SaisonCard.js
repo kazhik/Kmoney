@@ -88,7 +88,7 @@ SaisonCard.prototype.importDb = function (csvFile, userId, importCallback) {
             this.mDb.creditCardTrns.insert(newRecordArray,
                 insertCallback.bind(this));
         }
-        NetUtil.asyncFetch(csvFile, this.onFileOpen.bind(this));
+        NetUtil.asyncFetch(csvFile, onFileOpen.bind(this));
     }
 
     cardId = this.mDb.creditCardInfo.getCardId("セゾンカード", userId);

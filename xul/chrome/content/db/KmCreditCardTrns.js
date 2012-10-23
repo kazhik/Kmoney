@@ -131,6 +131,7 @@ KmCreditCardTrns.prototype.insert = function (newRecordArray, insertCallback) {
                           "where not exists (",
                           " select 1 from km_creditcard_trns ",
                           " where transaction_date = '" + newRecordArray[i]["transactionDate"] + "'",
+                          " and detail = '" + newRecordArray[i]["detail"] + "'",
                           " and item_id = " + newRecordArray[i]["itemId"],
                           " and expense = " + newRecordArray[i]["boughtAmount"],
                           " and card_id = " + newRecordArray[i]["cardId"],
@@ -160,6 +161,7 @@ KmCreditCardTrns.prototype.insert = function (newRecordArray, insertCallback) {
                           newRecordArray[i]["cardId"] + ", ",
                           "(select max(id) from km_creditcard_trns ", // 同一内容のレコードが複数件
                           " where transaction_date = '" + newRecordArray[i]["transactionDate"] + "'",
+                          " and detail = '" + newRecordArray[i]["detail"] + "'",
                           " and expense = " + newRecordArray[i]["boughtAmount"],
                           " and card_id = " + newRecordArray[i]["cardId"],
                           " and user_id = " + newRecordArray[i]["userId"] + "), ",
@@ -167,6 +169,7 @@ KmCreditCardTrns.prototype.insert = function (newRecordArray, insertCallback) {
                           "where not exists (",
                           " select 1 from km_creditcard_payment ",
                           " where transaction_date = '" + newRecordArray[i]["transactionDate"] + "'",
+                          " and detail = '" + newRecordArray[i]["detail"] + "'",
                           " and bought_amount = " + newRecordArray[i]["boughtAmount"],
                           " and card_id = " + newRecordArray[i]["cardId"],
                           " and user_id = " + newRecordArray[i]["userId"] + ")"].join(" ");

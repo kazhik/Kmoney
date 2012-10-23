@@ -6,6 +6,9 @@ KantanKakeibo.prototype = Object.create(AbstractImport.prototype);
 KantanKakeibo.prototype.importDb = function (kantanDbFile, userId, importCallback) {
     function onLoadImportConf(sourceType) {
         function loadCallback(records) {
+            function insertCallback() {
+                importCallback();
+            }
             var newRecordArray = [];
             for (var i = 0; i < records.length; i++) {
                 var rec = {
@@ -45,7 +48,7 @@ KantanKakeibo.prototype.importDb = function (kantanDbFile, userId, importCallbac
         
                 newRecordArray.push(rec);
             }
-            
+            this.mDb.cashTrns.insert(newRecordArray, insertCallback.bind(this));
         }
         var kantanDb = new KantanKakeiboDb();
         kantanDb.load(kantanDbFile, loadCallback.bind(this));

@@ -135,6 +135,7 @@ KmBankTrns.prototype.insert = function(newRecordArray, insertCallback) {
                    "where not exists (",
                    " select 1 from km_bank_trns ",
                    " where transaction_date = '" + newRecordArray[i]["transactionDate"] + "'",
+                   " and detail = '" + newRecordArray[i]["detail"] + "'",
                    " and income = " + newRecordArray[i]["income"],
                    " and expense = " + newRecordArray[i]["expense"],
                    " and bank_id = " + newRecordArray[i]["bankId"],
