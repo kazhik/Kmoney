@@ -102,7 +102,15 @@ KmCreditCardTrns.prototype.load = function(sortParams, queryParams, loadCallback
     
     loadCallback(this.mDb.getRecords(), this.mDb.getColumns());
 };
-KmCreditCardTrns.prototype.insert = function (newRecordArray, insertCallback) {
+
+KmCreditCardTrns.prototype.import = function(newRecordArray, insertCallback) {
+    this.execInsert(newRecordArray, true, insertCallback);
+};
+KmCreditCardTrns.prototype.insert = function(newRecordArray, insertCallback) {
+    this.execInsert(newRecordArray, false, insertCallback);
+};
+
+KmCreditCardTrns.prototype.execInsert = function (newRecordArray, importFlag, insertCallback) {
     var sqlArray = [];
     var sqlPayment;
     var sqlTransaction;
@@ -127,15 +135,16 @@ KmCreditCardTrns.prototype.insert = function (newRecordArray, insertCallback) {
                           newRecordArray[i]["cardId"] + ", ",
                           newRecordArray[i]["internal"] + ", ",
                           newRecordArray[i]["source"] + ", ",
-                          "datetime('now', 'localtime') ",
-                          "where not exists (",
-                          " select 1 from km_creditcard_trns ",
-                          " where transaction_date = '" + newRecordArray[i]["transactionDate"] + "'",
-                          " and detail = '" + newRecordArray[i]["detail"] + "'",
-                          " and item_id = " + newRecordArray[i]["itemId"],
-                          " and expense = " + newRecordArray[i]["boughtAmount"],
-                          " and card_id = " + newRecordArray[i]["cardId"],
-                          " and user_id = " + newRecordArray[i]["userId"] + ")"].join(" ");
+                          "datetime('now', 'localtime') "].join(" ");
+        // 同じ入力元から同一期間のインポートは不可
+        if (importFlag) {
+            sqlTransaction += [" where not exists (",
+                    "select 1 from km_import_history",
+                    "where source_type =" + newRecordArray[i]["source"],
+                    "and period_from <= '" + newRecordArray[i]["transactionDate"] + "'",
+                    "and period_to > '" + newRecordArray[i]["transactionDate"] + "'",
+                    ")"].join(" ");
+        }
         km_log(sqlTransaction);
         sqlArray.push(sqlTransaction);
         if (newRecordArray[i]['payAmount'] !== undefined) {
@@ -165,14 +174,15 @@ KmCreditCardTrns.prototype.insert = function (newRecordArray, insertCallback) {
                           " and expense = " + newRecordArray[i]["boughtAmount"],
                           " and card_id = " + newRecordArray[i]["cardId"],
                           " and user_id = " + newRecordArray[i]["userId"] + "), ",
-                          "datetime('now', 'localtime') ",
-                          "where not exists (",
-                          " select 1 from km_creditcard_payment ",
-                          " where transaction_date = '" + newRecordArray[i]["transactionDate"] + "'",
-                          " and detail = '" + newRecordArray[i]["detail"] + "'",
-                          " and bought_amount = " + newRecordArray[i]["boughtAmount"],
-                          " and card_id = " + newRecordArray[i]["cardId"],
-                          " and user_id = " + newRecordArray[i]["userId"] + ")"].join(" ");
+                          "datetime('now', 'localtime') "].join(" ");
+            if (importFlag) {
+                sqlPayment += [" where not exists (",
+                        "select 1 from km_import_history",
+                        "where source_type =" + newRecordArray[i]["source"],
+                        "and period_from <= '" + newRecordArray[i]["transactionDate"] + "'",
+                        "and period_to > '" + newRecordArray[i]["transactionDate"] + "'",
+                        ")"].join(" ");
+            }
             km_log(sqlPayment);
             sqlArray.push(sqlPayment);
         }
@@ -190,10 +200,10 @@ KmCreditCardTrns.prototype.update = function(id, params, updateCallback) {
                "user_id = " + params['userId'] + ", ",
                "card_id = " + params['cardId'] + ", ",
                "last_update_date = datetime('now', 'localtime'), ",
-               "source = 1 ",
+               "source = " + params['source'] + " ",
                "where id = " + id].join(" ")];
     km_log(sqlArray[0]);
-    if (parseInt(params['payMonth']) !== 0) {
+    if (params['payMonth'] !== undefined) {
         sqlArray.push(
             ["update km_creditcard_payment ",
              "set ",

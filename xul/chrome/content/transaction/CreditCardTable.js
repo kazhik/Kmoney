@@ -131,7 +131,6 @@ CreditCardTable.prototype.addRecord = function (params) {
 
     params['boughtAmount'] = params['amount'];
     params['cardId'] = $$('km_edit_creditcard').value;
-    params['source'] = 1;
     params['internal'] = 0;
 
     // 支払月が指定された場合は支払い情報も更新する
@@ -165,7 +164,7 @@ CreditCardTable.prototype.updateRecord = function (id, params) {
     this.mDb.creditCardTrns.update(id, params, updateCallback.bind(this));
 
 };
-CreditCardTable.prototype.deleteRecord = function () {
+CreditCardTable.prototype.deleteRecord = function (id) {
     function deleteCallback() {
         this.load();
         this.mTree.ensurePreviousRowIsVisible();

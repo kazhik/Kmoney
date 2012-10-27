@@ -11,7 +11,13 @@ ShinseiBank.prototype.importDb = function (csvFile, userId, importCallback) {
     function onLoadImportConf(sourceType) {
         function onFileOpen(inputStream, status) {
             function insertCallback() {
-                importCallback();
+                var importHistory = {
+                    "source_type": sourceType,
+                    "source_url": csvFile.path,
+                    "period_from": newRecordArray[0]["transactionDate"],
+                    "period_to": newRecordArray[newRecordArray.length - 1]["transactionDate"]
+                };
+                this.mDb.importHistory.insert(importHistory, importCallback.bind(this));
             }
             if (!Components.isSuccessCode(status)) {
                 return;
@@ -66,7 +72,7 @@ ShinseiBank.prototype.importDb = function (csvFile, userId, importCallback) {
                 }
         
             }
-            this.mDb.bankTrns.insert(newRecordArray, insertCallback.bind(this));
+            this.mDb.bankTrns.import(newRecordArray, insertCallback.bind(this));
         }
         NetUtil.asyncFetch(csvFile, onFileOpen.bind(this));
     }

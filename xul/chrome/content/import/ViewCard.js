@@ -5,12 +5,18 @@ function ViewCard(db) {
 }
 ViewCard.prototype = Object.create(AbstractImport.prototype);
 
-ViewCard.prototype.importDb = function (suicaHtmlFile, userId, importCallback) {
+ViewCard.prototype.importDb = function (htmlFile, userId, importCallback) {
     var cardId;
     function onLoadImportConf(sourceType) {
-        ViewCard.prototype.onFileOpen = function (inputStream, status) {
+        function onFileOpen(inputStream, status) {
             function insertCallback() {
-                importCallback();
+                var importHistory = {
+                    "source_type": sourceType,
+                    "source_url": htmlFile.path,
+                    "period_from": newRecordArray[0]["transactionDate"],
+                    "period_to": newRecordArray[newRecordArray.length - 1]["transactionDate"]
+                };
+                this.mDb.importHistory.insert(importHistory, importCallback.bind(this));
             }
             if (!Components.isSuccessCode(status)) {
                 return;
@@ -84,10 +90,10 @@ ViewCard.prototype.importDb = function (suicaHtmlFile, userId, importCallback) {
                     newRecordArray.push(rec);
                 }
             }
-            this.mDb.creditCardTrns.insert(newRecordArray,
+            this.mDb.creditCardTrns.import(newRecordArray,
                                            insertCallback.bind(this));
         }
-        NetUtil.asyncFetch(suicaHtmlFile, onFileOpen.bind(this));
+        NetUtil.asyncFetch(htmlFile, onFileOpen.bind(this));
     }
     cardId = this.mDb.creditCardInfo.getCardId("Viewカード", userId);
     this.loadImportConf("ビューカード", onLoadImportConf.bind(this));

@@ -94,7 +94,6 @@ CashTable.prototype.addRecord = function (params) {
     } else {
         params['expense'] = params['amount'];
     }
-    params['source'] = 1;
     params['internal'] = $$('km_edit_internal').value;
     
     this.mDb.cashTrns.insert([params], insertCallback.bind(this));
@@ -119,6 +118,7 @@ CashTable.prototype.updateRecord = function (id, params) {
 CashTable.prototype.deleteRecord = function (id) {
     function deleteCallback() {
         this.load();
+        this.mTree.ensurePreviousRowIsVisible();
     }
 
     this.mDb.cashTrns.delete(id, deleteCallback.bind(this));

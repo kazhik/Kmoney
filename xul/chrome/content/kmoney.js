@@ -1,9 +1,9 @@
 "use strict";
 Components.utils.import("chrome://kmoney/content/appInfo.js");
 
-
 KmGlobals.disableChrome();
 
+const SOURCE_KMONEY = 1;
 var kmoney;
 
 function Kmoney() {
@@ -560,7 +560,8 @@ Kmoney.prototype.addRecord = function () {
         "income": 0,
         "expense": 0,
         "amount": amount,
-        "userId": $$('km_edit_user').value
+        "userId": $$('km_edit_user').value,
+        "source": SOURCE_KMONEY
     };
 
     tree.addRecord(params);
@@ -597,7 +598,8 @@ Kmoney.prototype.updateRecord = function () {
         "itemId": $$('km_edit_item').value,
         "detail": $$('km_edit_detail').value,
         "amount": amount,
-        "userId": $$('km_edit_user').value
+        "userId": $$('km_edit_user').value,
+        "source": SOURCE_KMONEY
     };
     tree.updateRecord(id, params);
 };

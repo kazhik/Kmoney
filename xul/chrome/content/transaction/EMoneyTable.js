@@ -118,7 +118,6 @@ EMoneyTable.prototype.addRecord = function (params) {
         params['expense'] = params['amount'];
     }
     params['moneyId'] = $$('km_edit_emoney').value;
-    params['source'] = 1;
     params['internal'] = $$('km_edit_internal').value;
 
     this.mDb.emoneyTrns.insert([params], insertCallback.bind(this));

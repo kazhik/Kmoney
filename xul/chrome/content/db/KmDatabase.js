@@ -20,6 +20,7 @@ function KmDatabase() {
     this.itemInfo = new KmItemInfo(this.mDb);
     this.source = new KmSource(this.mDb);
     this.import = new KmImport(this.mDb);
+    this.importHistory = new KmImportHistory(this.mDb);
     this.transactions = new KmvTransactions(this.mDb);
 }
 KmDatabase.prototype.isConnected = function () {
@@ -304,7 +305,7 @@ KmDatabase.prototype.createTables = function() {
       '"last_update_date" DATETIME,' +
       '"source" INTEGER)',
     'CREATE TABLE "km_item" ("id" INTEGER PRIMARY KEY NOT NULL, "name" TEXT, "sum_include" BOOL)',
-    'CREATE TABLE "km_source" ("id" INTEGER PRIMARY KEY NOT NULL, "type" INTEGER, "import" BOOL, "enabled" BOOL)',
+    'CREATE TABLE "km_source" ("id" INTEGER PRIMARY KEY NOT NULL, "type" TEXT, "import" BOOL, "enabled" BOOL)',
     'CREATE TABLE "km_user" ("id" INTEGER PRIMARY KEY  NOT NULL , "name" TEXT)',
     'CREATE VIEW "kmv_transactions" AS   select ' +
     '   A.transaction_date, ' +

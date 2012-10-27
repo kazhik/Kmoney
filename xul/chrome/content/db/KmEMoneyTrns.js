@@ -103,8 +103,14 @@ KmEMoneyTrns.prototype.load = function(sortParams, queryParams, loadCallback) {
     
     loadCallback(this.mDb.getRecords(), this.mDb.getColumns());
 };
+KmEMoneyTrns.prototype.import = function(newRecordArray, insertCallback) {
+    this.execInsert(newRecordArray, true, insertCallback);
+};
+KmEMoneyTrns.prototype.insert = function(newRecordArray, insertCallback) {
+    this.execInsert(newRecordArray, false, insertCallback);
+};
 
-KmEMoneyTrns.prototype.insert = function (newRecordArray, insertCallback) {
+KmEMoneyTrns.prototype.execInsert = function (newRecordArray, importFlag, insertCallback) {
     var sqlArray = [];
     for (var i = 0; i < newRecordArray.length; i++) {
         var sql = ["insert into km_emoney_trns ("
@@ -129,15 +135,16 @@ KmEMoneyTrns.prototype.insert = function (newRecordArray, insertCallback) {
                   + newRecordArray[i]["moneyId"] + ", "
                   + "datetime('now', 'localtime'), "
                   + newRecordArray[i]["internal"] + ", "
-                  + newRecordArray[i]["source"] + " "
-                  + "where not exists ("
-                  + " select 1 from km_emoney_trns "
-                  + " where transaction_date = '" + newRecordArray[i]["transactionDate"] + "'"
-                  + " and detail = '" + newRecordArray[i]["detail"] + "'"
-                  + " and income = " + newRecordArray[i]["income"]
-                  + " and expense = " + newRecordArray[i]["expense"]
-                  + " and user_id = " + newRecordArray[i]["userId"]
-                  + ")"];
+                  + newRecordArray[i]["source"] ];
+        // 同じ入力元から同一期間のインポートは不可
+        if (importFlag) {
+            sql += [" where not exists (",
+                    "select 1 from km_import_history",
+                    "where source_type =" + newRecordArray[i]["source"],
+                    "and period_from <= '" + newRecordArray[i]["transactionDate"] + "'",
+                    "and period_to > '" + newRecordArray[i]["transactionDate"] + "'",
+                    ")"].join(" ");
+        }
         km_debug(sql);
         sqlArray.push(sql);
     }
@@ -156,7 +163,7 @@ KmEMoneyTrns.prototype.update = function(id, params, updateCallback) {
             + "money_id = " + params['moneyId'] + ", "
             + "last_update_date = datetime('now', 'localtime'), "
             + "internal = " + params['internal'] + ", "
-            + "source = 1 "
+            + "source = " + params['source']
             + "where id = " + id];
     km_debug(sql);
     this.mDb.executeTransaction([sql]);

@@ -154,6 +154,7 @@ TreeViewController.prototype = {
   
   ensureRowIsVisible: function(rowidLabel, rowId) {
     var idxRow;
+    rowId = parseInt(rowId);
     if (rowId === -1) {
       this.treeTable.boxObject.ensureRowIsVisible(this.treeTable.view.rowCount - 1);
     } else {

@@ -11,7 +11,13 @@ Suica.prototype.importDb = function (suicaHtmlFile, userId, importCallback) {
     function onLoadImportConf(sourceType) {
         function onFileOpen(inputStream, status) {
             function insertCallback() {
-                importCallback();
+                var importHistory = {
+                    "source_type": sourceType,
+                    "source_url": suicaHtmlFile.path,
+                    "period_from": newRecordArray[0]["transactionDate"],
+                    "period_to": newRecordArray[newRecordArray.length - 1]["transactionDate"]
+                };
+                this.mDb.importHistory.insert(importHistory, importCallback.bind(this));
             }
             var strBuff = "";
             var parser = new DOMParser();
@@ -105,7 +111,8 @@ Suica.prototype.importDb = function (suicaHtmlFile, userId, importCallback) {
         
                 newRecordArray.push(rec);
             }
-            this.mDb.emoneyTrns.insert(newRecordArray, insertCallback.bind(this));
+            this.mDb.emoneyTrns.import(newRecordArray, insertCallback.bind(this));
+            
         }
         NetUtil.asyncFetch(suicaHtmlFile, onFileOpen.bind(this));
     }

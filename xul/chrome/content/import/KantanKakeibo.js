@@ -7,7 +7,13 @@ KantanKakeibo.prototype.importDb = function (kantanDbFile, userId, importCallbac
     function onLoadImportConf(sourceType) {
         function loadCallback(records) {
             function insertCallback() {
-                importCallback();
+                var importHistory = {
+                    "source_type": sourceType,
+                    "source_url": kantanDbFile.path,
+                    "period_from": newRecordArray[0]["transactionDate"],
+                    "period_to": newRecordArray[newRecordArray.length - 1]["transactionDate"]
+                };
+                this.mDb.importHistory.insert(importHistory, importCallback.bind(this));
             }
             var newRecordArray = [];
             for (var i = 0; i < records.length; i++) {
@@ -48,7 +54,7 @@ KantanKakeibo.prototype.importDb = function (kantanDbFile, userId, importCallbac
         
                 newRecordArray.push(rec);
             }
-            this.mDb.cashTrns.insert(newRecordArray, insertCallback.bind(this));
+            this.mDb.cashTrns.import(newRecordArray, insertCallback.bind(this));
         }
         var kantanDb = new KantanKakeiboDb();
         kantanDb.load(kantanDbFile, loadCallback.bind(this));

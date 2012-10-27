@@ -19,6 +19,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
     <script type="application/x-javascript" src="db/KmEMoneyInfo.js" />
     <script type="application/x-javascript" src="db/KmEMoneyTrns.js" />
     <script type="application/x-javascript" src="db/KmImport.js" />
+    <script type="application/x-javascript" src="db/KmImportHistory.js" />
     <script type="application/x-javascript" src="db/KmItemInfo.js" />
     <script type="application/x-javascript" src="db/KmSource.js" />
     <script type="application/x-javascript" src="db/KmUserInfo.js" />

@@ -114,7 +114,6 @@ BankTable.prototype.addRecord = function (params) {
         params['expense'] = params['amount'];
     }
     params['bankId'] = $$('km_edit_bank').value;
-    params['source'] = 1;
     params['internal'] = $$('km_edit_internal').value;
 
     this.mDb.bankTrns.insert([params], insertCallback.bind(this));
@@ -141,6 +140,7 @@ BankTable.prototype.updateRecord = function (id, params) {
 BankTable.prototype.deleteRecord = function (id) {
     function deleteCallback() {
         this.load();
+        this.mTree.ensurePreviousRowIsVisible();
     }
 
     this.mDb.bankTrns.delete(id, deleteCallback.bind(this));
