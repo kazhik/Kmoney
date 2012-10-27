@@ -69,7 +69,7 @@ BalanceView.prototype.drawGraph = function () {
             labelArray.push(dateStr);
     
             if (records[idx] != undefined && records[idx][0] === dateStr) {
-                accumulated += parseInt(records[idx][1]);
+                accumulated = calcFloat(accumulated + parseFloat(records[idx][1]));
                 idx++;
             }
             valueArray.push(accumulated);

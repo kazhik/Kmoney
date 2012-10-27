@@ -159,39 +159,39 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 </hbox>
             </hbox>
             <hbox>
-			<hbox id="km_query1">
-				<menulist id="km_list_query_condition1">
-					<menupopup></menupopup>
-				</menulist>
-				<menulist id="km_list_query_operator1">
-					<menupopup></menupopup>
-				</menulist>
-				<datepicker id="km_edit_query_date1" type="popup" hidden="true" />
-				<textbox id="km_edit_query_text1" size="10" hidden="true" />
-				<menulist id="km_edit_query_list1" hidden="true" >
-					<menupopup></menupopup>
-				</menulist>
-                
-				<menulist id="km_list_query_andor">
-					<menupopup>
-                        <menuitem label="&menuitem.query.and;" value="and" />
-                        <menuitem label="&menuitem.query.or;" value="or" />
-                    </menupopup>
-				</menulist>
-			</hbox>
-			<hbox id="km_query2">
-				<menulist id="km_list_query_condition2">
-					<menupopup></menupopup>
-				</menulist>
-				<menulist id="km_list_query_operator2">
-					<menupopup></menupopup>
-				</menulist>
-				<datepicker id="km_edit_query_date2" type="popup" hidden="true" />
-				<textbox id="km_edit_query_text2" size="10" hidden="true" />
-				<menulist id="km_edit_query_list2" hidden="true" >
-					<menupopup></menupopup>
-				</menulist>
-			</hbox>
+                <hbox id="km_query1">
+                    <menulist id="km_list_query_condition1">
+                        <menupopup></menupopup>
+                    </menulist>
+                    <menulist id="km_list_query_operator1">
+                        <menupopup></menupopup>
+                    </menulist>
+                    <datepicker id="km_edit_query_date1" type="popup" hidden="true" />
+                    <textbox id="km_edit_query_text1" size="10" hidden="true" />
+                    <menulist id="km_edit_query_list1" hidden="true" >
+                        <menupopup></menupopup>
+                    </menulist>
+                    
+                    <menulist id="km_list_query_andor">
+                        <menupopup>
+                            <menuitem label="&menuitem.query.and;" value="and" />
+                            <menuitem label="&menuitem.query.or;" value="or" />
+                        </menupopup>
+                    </menulist>
+                </hbox>
+                <hbox id="km_query2">
+                    <menulist id="km_list_query_condition2">
+                        <menupopup></menupopup>
+                    </menulist>
+                    <menulist id="km_list_query_operator2">
+                        <menupopup></menupopup>
+                    </menulist>
+                    <datepicker id="km_edit_query_date2" type="popup" hidden="true" />
+                    <textbox id="km_edit_query_text2" size="10" hidden="true" />
+                    <menulist id="km_edit_query_list2" hidden="true" >
+                        <menupopup></menupopup>
+                    </menulist>
+                </hbox>
             </hbox>
             <tabpanels>
                 <tabpanel flex="1">

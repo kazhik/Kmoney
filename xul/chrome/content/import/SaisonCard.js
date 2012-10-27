@@ -57,12 +57,12 @@ SaisonCard.prototype.importDb = function (csvFile, userId, importCallback) {
                         "remainingBalance": 0
                     };
                     rec["transactionDate"] = rowArray[i][0].replace("/", "-", "g");
-                    rec["boughtAmount"] = parseInt(rowArray[i][5]);
+                    rec["boughtAmount"] = parseFloat(rowArray[i][5]);
                     strBuff = convertZen2han(rowArray[i][6]);
                     strBuff = strBuff.replace("，", "");
                     strBuff = strBuff.replace("円", "");
                     strBuff = strBuff.replace("割引対象優待後金額：", "");
-                    rec["payAmount"] = parseInt(strBuff);
+                    rec["payAmount"] = parseFloat(strBuff);
                     rec["detail"] = rowArray[i][1];
                     var itemInfo = this.getItemInfo(rowArray[i][1]);
                     if (itemInfo["itemId"] === undefined) {
@@ -83,7 +83,7 @@ SaisonCard.prototype.importDb = function (csvFile, userId, importCallback) {
                     matched = rowArray[i][6].match(/割引除外金額　　　：([０-９]+)円/);
 
                     newRecordArray[newRecordArray.length - 1]["payAmount"] +=
-                        parseInt(convertZen2han(matched[1]));
+                        parseFloat(convertZen2han(matched[1]));
                 } else if (rowArray[i][0] === "お支払日") {
                     matched = rowArray[i][1].match(/(\d{4})\/(\d{2})\/\d{2}$/);
                     payMonth = matched[1] + "-" + matched[2];

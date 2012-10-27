@@ -56,8 +56,8 @@ UCCard.prototype.importDb = function (csvFile, userId, importCallback) {
                         "remainingBalance": 0
                     };
                     rec["transactionDate"] = rowArray[i][1].replace("/", "-", "g");
-                    rec["boughtAmount"] = parseInt(rowArray[i][6]);
-                    rec["payAmount"] = parseInt(rowArray[i][7]);
+                    rec["boughtAmount"] = parseFloat(rowArray[i][6]);
+                    rec["payAmount"] = parseFloat(rowArray[i][7]);
                     rec["detail"] = rowArray[i][3];
                     var itemInfo = this.getItemInfo(rowArray[i][3]);
                     if (itemInfo["itemId"] === undefined) {

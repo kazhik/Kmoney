@@ -76,10 +76,10 @@ BankTable.prototype.onSelect = function () {
     var sum = 0;
     var i = 0;
     for (i = 0; i < incomeArray.length; i++) {
-        sum += parseInt(incomeArray[i]);
+        sum = calcFloat(sum + parseFloat(incomeArray[i]));
     }
     for (i = 0; i < expenseArray.length; i++) {
-        sum -= parseInt(expenseArray[i]);
+        sum = calcFloat(sum - parseFloat(expenseArray[i]));
     }
     $$('km_status_sum').label = km_getLStr("status.sum") + "=" + sum;
 }

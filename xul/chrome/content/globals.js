@@ -338,6 +338,12 @@ function strToInt(str) {
     }
     return 0;
 }
+
+// http://stackoverflow.com/questions/588004/is-javascripts-math-broken
+function calcFloat(floatVal) {
+    return parseFloat(floatVal.toFixed(12));
+}
+
 // http://stackoverflow.com/questions/1293147/javascript-code-to-parse-csv-data
 // This will parse a delimited string into an array of
 // arrays. The default delimiter is the comma, but this

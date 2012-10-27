@@ -68,7 +68,7 @@ CreditCardTable.prototype.onSelect = function () {
     $$('km_edit_user').value = this.mTree.getSelectedRowValue('user_id');
     $$('km_edit_creditcard').value = this.mTree.getSelectedRowValue('card_id');
     var payMonth = this.mTree.getSelectedRowValue('pay_month');
-    if (payMonth.length > 0) {
+    if (payMonth !== null && payMonth.length > 0) {
         var payMonthSplitted = payMonth.split('-');
         $$('km_edit_paymonthY').value = payMonthSplitted[0];
         $$('km_edit_paymonthM').value = payMonthSplitted[1];
@@ -78,8 +78,9 @@ CreditCardTable.prototype.onSelect = function () {
     var expenseArray = this.mTree.getSelectedRowValueList('expense');
     var sum = 0;
     var i = 0;
+    km_debug("CreditCardTable.onSelect expenseArray.length = " + expenseArray.length);
     for (i = 0; i < expenseArray.length; i++) {
-        sum -= parseInt(expenseArray[i]);
+        sum = calcFloat(sum - parseFloat(expenseArray[i]));
     }
     $$('km_status_sum').label = km_getLStr("status.sum") + "=" + sum;
 

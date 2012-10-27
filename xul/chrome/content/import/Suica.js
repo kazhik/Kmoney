@@ -78,7 +78,7 @@ Suica.prototype.importDb = function (suicaHtmlFile, userId, importCallback) {
         
                 rec["detail"] = columnData[1].textContent.trim();
         
-                balance = parseInt(columnData[5].textContent.replace(/[^\d.]+/g, ""));
+                balance = parseFloat(columnData[5].textContent.replace(/[^\d.]+/g, ""));
         
                 if (rec["detail"] === "繰") {
                     prevBalance = balance;

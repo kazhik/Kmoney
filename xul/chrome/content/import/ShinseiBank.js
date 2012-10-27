@@ -52,8 +52,8 @@ ShinseiBank.prototype.importDb = function (csvFile, userId, importCallback) {
                         "internal": 0
                     };
                     rec["transactionDate"] = rowArray[i][0].replace("/", "-", "g");
-                    rec["expense"] = parseInt(rowArray[i][3]) || 0;
-                    rec["income"] = parseInt(rowArray[i][4]) || 0;
+                    rec["expense"] = parseFloat(rowArray[i][3]) || 0;
+                    rec["income"] = parseFloat(rowArray[i][4]) || 0;
                     rec["detail"] = rowArray[i][2];
                     var itemInfo = this.getItemInfo(rowArray[i][2]);
                     if (itemInfo["itemId"] === undefined) {

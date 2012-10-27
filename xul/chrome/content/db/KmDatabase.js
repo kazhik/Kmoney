@@ -235,12 +235,14 @@ KmDatabase.prototype.setInitialRecords = function() {
 };
 KmDatabase.prototype.createTables = function() {
   var sql = [
-    'CREATE TABLE "km_bank_info" ("id" INTEGER PRIMARY KEY,"name" TEXT,"user_id" INTEGER)',
+    'CREATE TABLE "km_bank_info" (' +
+        '"id" INTEGER PRIMARY KEY,' +
+        '"name" TEXT,"user_id" INTEGER)',
     'CREATE TABLE "km_bank_trns" (' +
       '"id" INTEGER PRIMARY KEY,' +
       '"transaction_date" DATETIME,' +
-      '"income" INTEGER,' +
-      '"expense" INTEGER,' +
+      '"income" REAL,' +
+      '"expense" REAL,' +
       '"detail" TEXT,' +
       '"bank_id" INTEGER,' +
       '"internal" INTEGER DEFAULT (0) ,' +
@@ -257,19 +259,19 @@ KmDatabase.prototype.createTables = function() {
       '"id" INTEGER PRIMARY KEY,' +
       '"transaction_id" INTEGER,' +
       '"pay_month" DATETIME,' +
-      '"pay_amount" INTEGER,' +
-      '"remaining_balance" INTEGER,' +
+      '"pay_amount" REAL,' +
+      '"remaining_balance" REAL,' +
       '"detail" TEXT,' +
       '"card_id" INTEGER,' +
       '"user_id" INTEGER,' +
       '"transaction_date" DATETIME,' +
       '"last_update_date" DATETIME,' +
-      '"bought_amount" INTEGER)',
+      '"bought_amount" REAL)',
     'CREATE TABLE "km_creditcard_trns" (' +
       '"id" INTEGER PRIMARY KEY,' +
       '"transaction_date" DATETIME,' +
       '"detail" TEXT,' +
-      '"expense" INTEGER,' +
+      '"expense" REAL,' +
       '"card_id" INTEGER,' +
       '"last_update_date" DATETIME,' +
       '"item_id" INTEGER,' +
@@ -284,7 +286,7 @@ KmDatabase.prototype.createTables = function() {
     'CREATE TABLE "km_emoney_trns" (' +
       '"id" INTEGER PRIMARY KEY,' +
       '"transaction_date" DATETIME,' +
-      '"expense" INTEGER,' +
+      '"expense" REAL,' +
       '"detail" TEXT,' +
       '"money_id" INTEGER,' +
       '"last_update_date" DATETIME,' +
@@ -292,21 +294,45 @@ KmDatabase.prototype.createTables = function() {
       '"user_id" INTEGER,' +
       '"source" INTEGER,' +
       '"internal" BOOL,' +
-      '"income" INTEGER)',
+      '"income" REAL)',
     'CREATE TABLE "km_realmoney_trns" (' +
       '"id" INTEGER PRIMARY KEY,' +
       '"transaction_date" DATETIME NOT NULL ,' +
-      '"income" INTEGER,' +
-      '"expense" INTEGER,' +
+      '"income" REAL,' +
+      '"expense" REAL,' +
       '"item_id" INTEGER,' +
       '"detail" TEXT,' +
       '"user_id" INTEGER,' +
       '"internal" BOOL,' +
       '"last_update_date" DATETIME,' +
       '"source" INTEGER)',
-    'CREATE TABLE "km_item" ("id" INTEGER PRIMARY KEY NOT NULL, "name" TEXT, "sum_include" BOOL)',
-    'CREATE TABLE "km_source" ("id" INTEGER PRIMARY KEY NOT NULL, "type" TEXT, "import" BOOL, "enabled" BOOL)',
-    'CREATE TABLE "km_user" ("id" INTEGER PRIMARY KEY  NOT NULL , "name" TEXT)',
+    'CREATE TABLE "km_item" (' +
+        '"id" INTEGER PRIMARY KEY NOT NULL,' +
+        '"name" TEXT, ' +
+        '"sum_include" BOOL)',
+    'CREATE TABLE "km_source" (' +
+        '"id" INTEGER PRIMARY KEY NOT NULL,' +
+        '"type" TEXT, ' +
+        '"import" BOOL, ' +
+        '"enabled" BOOL)',
+    'CREATE TABLE "km_user" (' +
+        '"id" INTEGER PRIMARY KEY  NOT NULL ,' +
+        '"name" TEXT)',
+    'CREATE TABLE "km_import" (' +
+        '"id" INTEGER PRIMARY KEY ,' +
+        '"source_type" INTEGER,' +
+        '"detail" TEXT,' +
+        '"item_id" INTEGER,' +
+        '"default_id" BOOL,' +
+        '"permission" BOOL,' +
+        '"internal" INTEGER)',
+    'CREATE TABLE "km_import_history" (' +
+        '"id" INTEGER PRIMARY KEY  NOT NULL ,' +
+        '"source_type" INTEGER,' +
+        '"source_url" TEXT,' +
+        '"period_from" DATETIME,' +
+        '"period_to" DATETIME,' +
+        '"import_date" DATETIME)',
     'CREATE VIEW "kmv_transactions" AS   select ' +
     '   A.transaction_date, ' +
     '   A.item_id, ' +
@@ -325,7 +351,7 @@ KmDatabase.prototype.createTables = function() {
     '   transaction_date, ' +
     '   item_id, ' +
     '   detail, ' +
-    '   0 as income, ' +
+    '   income, ' +
     '   expense, ' +
     '   user_id, ' +
     '   internal, ' +
