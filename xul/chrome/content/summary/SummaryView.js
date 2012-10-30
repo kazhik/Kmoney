@@ -30,7 +30,22 @@ SummaryView.prototype.initialize = function (db) {
                                                  
 };
 SummaryView.prototype.terminate = function () {
-    $$('km_summary_item').removeEventListener("command", this.listeners['km_summary_item.command']);
+    $$('km_summary_item').removeEventListener("command",
+                                              this.listeners['km_summary_item.command']);
+
+    $$('km_summary_user').removeEventListener("command",
+                                              this.listeners['km_summary_user.command']);
+
+    $$('km_summary_monthfromY').removeEventListener("command",
+                                                 this.listeners['km_summary_monthfromY.command']);
+    $$('km_summary_monthfromM').removeEventListener("command",
+                                                 this.listeners['km_summary_monthfromM.command']);
+    $$('km_summary_monthtoY').removeEventListener("command",
+                                                 this.listeners['km_summary_monthtoY.command']);
+    $$('km_summary_monthtoM').removeEventListener("command",
+                                                 this.listeners['km_summary_monthtoM.command']);
+    $$('km_summary_viewmode').removeEventListener("command",
+                                                  this.listeners['km_summary_viewmode.command']);
 };
 SummaryView.prototype.onViewModeChanged = function () {
     if ($$('km_summary_table').selected) {

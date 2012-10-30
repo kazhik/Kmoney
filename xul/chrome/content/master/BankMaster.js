@@ -10,12 +10,17 @@ BankMaster.prototype.initialize = function(db) {
   
   this.mTree.init(this, this.load.bind(this));
 
-  this.listeners['km_tree_master_bank.select'] = this.onSelect.bind(this);
-  $$('km_tree_master_bank').addEventListener("select",
-    this.listeners['km_tree_master_bank.select']);
+  this.listeners['km_tree_master_bank.command'] = this.onSelect.bind(this);
+  $$('km_tree_master_bank').addEventListener("command",
+    this.listeners['km_tree_master_bank.command']);
 
   this.load();
 };
+BankMaster.prototype.terminate = function() {
+  $$('km_tree_master_bank').removeEventListener("command",
+    this.listeners['km_tree_master_bank.command']);
+};
+
 BankMaster.prototype.load = function() {
     function loadCallback(records, columns) {
         this.mTree.populateTableData(records, columns);

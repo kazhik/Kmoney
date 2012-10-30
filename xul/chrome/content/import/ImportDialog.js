@@ -1,16 +1,14 @@
 "use strict";
 
 var importDialog;
-
-var retVals = { file: null, importtype: null, user: null };
-
+    
 function ImportDialog() {
     this.listeners = [];
 
     this.mDb = window.arguments[0];
     this.importTypeList = window.arguments[1];
     this.users = window.arguments[2];
-    retVals = window.arguments[3];
+    this.retVals = window.arguments[3];
 
     this.populateImportTypeList();
     this.populateUserList();
@@ -23,46 +21,76 @@ function openImportDialog() {
 };
 
 
-function onAccept() {
-    return true;    
+ImportDialog.prototype.onAccept = function () {
+    this.removeEventListeners();
 };
-function onCancel() {
-    retVals['importtype'] = null;
-    retVals['file'] = null;
-    retVals['user'] = null;
-    return true;    
+
+ImportDialog.prototype.onCancel = function () {
+    this.retVals['importtype'] = null;
+    this.retVals['file'] = null;
+    this.retVals['user'] = null;
+
+    this.removeEventListeners();
 };
+
 ImportDialog.prototype.addEventListeners = function () {
     this.listeners['km_button_importfrom.command'] = this.selectFile.bind(this);
     $$('km_button_importfrom').addEventListener("command",
         this.listeners['km_button_importfrom.command']);
 
-    this.listeners['km_select_importtype.select'] = this.onSelectImportType.bind(this);
-    $$('km_select_importtype').addEventListener("select",
-        this.listeners['km_select_importtype.select']);
+    this.listeners['km_select_importtype.command'] = this.onSelectImportType.bind(this);
+    $$('km_select_importtype').addEventListener("command",
+        this.listeners['km_select_importtype.command']);
     
-    this.listeners['km_select_user.select'] = this.onSelectUser.bind(this);
-    $$('km_select_user').addEventListener("select",
-        this.listeners['km_select_user.select']);
+    this.listeners['km_select_user.command'] = this.onSelectUser.bind(this);
+    $$('km_select_user').addEventListener("command",
+        this.listeners['km_select_user.command']);
+    
+    this.listeners['km_dialog_import.dialogaccept'] = this.onAccept.bind(this);
+    $$('km_dialog_import').addEventListener("dialogaccept",
+        this.listeners['km_dialog_import.dialogaccept']);
+
+    this.listeners['km_dialog_import.dialogcancel'] = this.onCancel.bind(this);
+    $$('km_dialog_import').addEventListener("dialogcancel",
+        this.listeners['km_dialog_import.dialogcancel']);
+
 };
+
+ImportDialog.prototype.removeEventListeners = function () {
+    $$('km_button_importfrom').removeEventListener("command",
+        this.listeners['km_button_importfrom.command']);
+
+    $$('km_select_importtype').removeEventListener("command",
+        this.listeners['km_select_importtype.command']);
+    
+    $$('km_select_user').removeEventListener("command",
+        this.listeners['km_select_user.command']);
+    
+    $$('km_dialog_import').removeEventListener("dialogaccept",
+        this.listeners['km_dialog_import.dialogaccept']);
+
+    $$('km_dialog_import').removeEventListener("dialogcancel",
+        this.listeners['km_dialog_import.dialogcancel']);
+};
+
 ImportDialog.prototype.onSelectImportType = function () {
-    retVals['importtype'] = $$("km_select_importtype").value;
+    this.retVals['importtype'] = $$("km_select_importtype").value;
 };
 ImportDialog.prototype.onSelectUser = function () {
-    retVals['user'] = $$("km_select_user").value;
+    this.retVals['user'] = $$("km_select_user").value;
 };
 ImportDialog.prototype.selectFile = function () {
     const nsIFilePicker = Ci.nsIFilePicker;
     var fp = Cc["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
     fp.init(window, km_getLStr("import.title"), nsIFilePicker.modeOpen);
     
-    var importType = this.importTypeList[retVals["importtype"]];
+    var importType = this.importTypeList[this.retVals["importtype"]];
     fp.appendFilter(
         importType["label"] + "(" + importType["ext"] + ")",
         importType["ext"]);
     var rv = fp.show();
     if (rv == nsIFilePicker.returnOK || rv == nsIFilePicker.returnReplace) {
-        retVals['file'] = fp.file;
+        this.retVals['file'] = fp.file;
         $$('km_edit_importfrom').value = fp.file.path;
     }
 };

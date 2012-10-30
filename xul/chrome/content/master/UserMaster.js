@@ -12,13 +12,18 @@ UserMaster.prototype.initialize = function (db) {
 
     this.mTree.init(this, this.load.bind(this));
 
-    this.listeners['km_tree_master_user.select'] = this.onSelect.bind(this);
-    $$('km_tree_master_user').addEventListener("select",
-        this.listeners['km_tree_master_user.select']);
+    this.listeners['km_tree_master_user.command'] = this.onSelect.bind(this);
+    $$('km_tree_master_user').addEventListener("command",
+        this.listeners['km_tree_master_user.command']);
 
     this.load();
     km_debug("UserMaster.initialize end");
 };
+UserMaster.prototype.terminate = function () {
+    $$('km_tree_master_user').removeEventListener("command",
+        this.listeners['km_tree_master_user.command']);
+};
+
 UserMaster.prototype.load = function () {
     function loadCallback(records, columns) {
         this.mUserList = records;

@@ -5,7 +5,7 @@ KmGlobals.disableChrome();
 
 const SOURCE_KMONEY = 1;
 var kmoney;
-
+   
 function Kmoney() {
     this.mDb = null;
     this.cashTree = null;
@@ -102,9 +102,11 @@ Kmoney.prototype.initImport = function () {
 };
 
 Kmoney.prototype.Shutdown = function () {
+    km_debug("Kmoney.Shutdown start");
     this.summary.terminate();
     this.removeEventListeners();
     this.mDb.closeDatabase(false);
+    km_debug("Kmoney.Shutdown end");
 };
 
 Kmoney.prototype.addEventListeners = function () {
@@ -150,11 +152,11 @@ Kmoney.prototype.addEventListeners = function () {
     this.listeners['kmc-delete'] = this.deleteRecord.bind(this);
     $$('kmc-delete').addEventListener("command", this.listeners['kmc-delete']);
 
-    this.listeners['km_list_query_condition1.command'] = this.onQueryCondition1Select.bind(this);
+    this.listeners['km_list_query_condition1.command'] = this.onQueryCondition1Select.bind(this, true);
     $$('km_list_query_condition1').addEventListener(
         "command", this.listeners['km_list_query_condition1.command']);
 
-    this.listeners['km_list_query_condition2.command'] = this.onQueryCondition2Select.bind(this);
+    this.listeners['km_list_query_condition2.command'] = this.onQueryCondition2Select.bind(this, true);
     $$('km_list_query_condition2').addEventListener(
         "command", this.listeners['km_list_query_condition2.command']);
 
@@ -210,21 +212,74 @@ Kmoney.prototype.addEventListeners = function () {
 
 Kmoney.prototype.removeEventListeners = function () {
     $$('kmc-openDb').removeEventListener("command", this.listeners['kmc-openDb.command']);
+
+    $$('kmc-newDb').removeEventListener("command", this.listeners['kmc-newDb.command']);
+
     $$('kmc-import').removeEventListener("command", this.listeners['kmc-import.command']);
+    
     $$('km_tabs').removeEventListener("select", this.listeners['km_tabs.select']);
+
     $$('km_button_add').removeEventListener("command", this.listeners['km_button_add.command']);
+
     $$('km_button_update').removeEventListener("command", this.listeners['km_button_update.command']);
+
+    $$('km_button_delete').removeEventListener("command", this.listeners['km_button_delete.command']);
+
     $$('km_button_reset').removeEventListener("command", this.listeners['km_button_reset.command']);
 
+    $$('km_tree_all').removeEventListener("select", this.listeners['km_tree_all.select']);
+
     $$('km_tree_cash').removeEventListener("select", this.listeners['km_tree_cash.select']);
+
     $$('km_tree_creditcard').removeEventListener("select", this.listeners['km_tree_creditcard.select']);
+
     $$('km_tree_emoney').removeEventListener("select", this.listeners['km_tree_emoney.select']);
+
     $$('km_tree_bank').removeEventListener("select", this.listeners['km_tree_bank.select']);
+
     $$('kmc-delete').removeEventListener("command", this.listeners['kmc-delete']);
+
+    $$('km_list_query_condition1').removeEventListener(
+        "command", this.listeners['km_list_query_condition1.command']);
+
+    $$('km_list_query_condition2').removeEventListener(
+        "command", this.listeners['km_list_query_condition2.command']);
+
+    $$('km_list_query_andor').removeEventListener(
+        "command", this.listeners['km_list_query_andor.command']);
+
+    $$('km_list_query_operator1').removeEventListener(
+        "command", this.listeners['km_list_query_operator1.command']);
+
+    $$('km_list_query_operator2').removeEventListener(
+        "command", this.listeners['km_list_query_operator2.command']);
+        
+    $$('km_edit_query_date1').removeEventListener(
+        "change", this.listeners['km_edit_query_date1.change']);
+
+    $$('km_edit_query_date2').removeEventListener(
+        "change", this.listeners['km_edit_query_date2.change']);
+
+    $$('km_edit_query_text1').removeEventListener(
+        "change", this.listeners['km_edit_query_text1.change']);
+
+    $$('km_edit_query_text2').removeEventListener(
+        "change", this.listeners['km_edit_query_text2.change']);
+    
+    $$('km_edit_query_list1').removeEventListener(
+        "command", this.listeners['km_edit_query_list1.command']);
+
+    $$('km_edit_query_list2').removeEventListener(
+        "command", this.listeners['km_edit_query_list2.command']);
+
     $$('km_edit_user').removeEventListener("select", this.listeners['km_edit_user.select']);
 
     $$('kmc-setmaster').removeEventListener("command", this.listeners['kmc-setmaster.command']);
+
     $$('kmc-setprefs').removeEventListener("command", this.listeners['kmc-setprefs.command']);
+
+    $$('kmc-importconf').removeEventListener("command", this.listeners['kmc-importconf.command']);
+
 };
 Kmoney.prototype.openSetMaster = function () {
     if (!this.mDb.isConnected()) {
@@ -393,8 +448,8 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_list_query_condition1').selectedIndex = 1;
         $$('km_list_query_andor').selectedIndex = 0;
         $$('km_list_query_condition2').selectedIndex = 0;
-        this.onQueryCondition1Select();
-        this.onQueryCondition2Select();
+        this.onQueryCondition1Select(false);
+        this.onQueryCondition2Select(false);
 
         panelContent.load();
     } else if (panelType === "graph") {
@@ -747,10 +802,9 @@ Kmoney.prototype.onQueryConditionSelect = function(elementNo) {
         }
         $$('km_edit_query_list' + elementNo).selectedIndex = 0;
     }
-    this.query();
 };
 
-Kmoney.prototype.onQueryCondition1Select = function() {
+Kmoney.prototype.onQueryCondition1Select = function(execQuery) {
     this.onQueryConditionSelect('1');    
 
     if ($$('km_list_query_condition1').value === "none") {
@@ -758,11 +812,17 @@ Kmoney.prototype.onQueryCondition1Select = function() {
     } else {
         $$('km_list_query_condition2').disabled = false;
     }
+    if (execQuery === true) {
+        this.query();
+    }
 
 };
 
-Kmoney.prototype.onQueryCondition2Select = function() {
+Kmoney.prototype.onQueryCondition2Select = function(execQuery) {
     this.onQueryConditionSelect('2');    
+    if (execQuery === true) {
+        this.query();
+    }
 };
 
 Kmoney.prototype.onQueryConditionChanged = function() {

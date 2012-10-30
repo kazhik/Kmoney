@@ -11,11 +11,15 @@ ItemMaster.prototype.initialize = function(db) {
     
     this.mTree.init(this, this.load.bind(this));
   
-    this.listeners['km_tree_master_item.select'] = this.onSelect.bind(this);
-    $$('km_tree_master_item').addEventListener("select",
-      this.listeners['km_tree_master_item.select']);
+    this.listeners['km_tree_master_item.command'] = this.onSelect.bind(this);
+    $$('km_tree_master_item').addEventListener("command",
+      this.listeners['km_tree_master_item.command']);
     
     this.load();
+};
+ItemMaster.prototype.terminate = function() {
+    $$('km_tree_master_item').removeEventListener("command",
+      this.listeners['km_tree_master_item.command']);
 };
 ItemMaster.prototype.load = function() {
     function loadCallback(records, columns) {

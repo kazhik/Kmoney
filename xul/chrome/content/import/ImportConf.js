@@ -26,6 +26,7 @@ ImportConf.prototype.initialize = function(db, itemMap) {
     this.initItemList(itemMap);
 };
 ImportConf.prototype.close = function () {
+    this.removeEventListeners();
     window.close();
 };
 
@@ -46,16 +47,34 @@ ImportConf.prototype.addEventListeners = function () {
     $$('import_conf_close').addEventListener("command",
         this.listeners['import_conf_close.command']);
 
-    this.listeners['km_import_select_type.select'] = this.onSelectType.bind(this);
-    $$('km_import_select_type').addEventListener("select",
-        this.listeners['km_import_select_type.select']);
+    this.listeners['km_import_select_type.command'] = this.onSelectType.bind(this);
+    $$('km_import_select_type').addEventListener("command",
+        this.listeners['km_import_select_type.command']);
     
-    this.listeners['km_tree_import_conf.select'] = this.onSelect.bind(this);
-    $$('km_tree_import_conf').addEventListener("select",
-        this.listeners['km_tree_import_conf.select']);
+    this.listeners['km_tree_import_conf.command'] = this.onSelect.bind(this);
+    $$('km_tree_import_conf').addEventListener("command",
+        this.listeners['km_tree_import_conf.command']);
     
 };
+ImportConf.prototype.removeEventListeners = function () {
+    $$('import_conf_add').removeEventListener("command",
+        this.listeners['import_conf_add.command']);
 
+    $$('import_conf_update').removeEventListener("command",
+        this.listeners['import_conf_update.command']);
+
+    $$('import_conf_delete').removeEventListener("command",
+        this.listeners['import_conf_delete.command']);
+        
+    $$('import_conf_close').removeEventListener("command",
+        this.listeners['import_conf_close.command']);
+
+    $$('km_import_select_type').removeEventListener("command",
+        this.listeners['km_import_select_type.command']);
+
+    $$('km_tree_import_conf').removeEventListener("command",
+        this.listeners['km_tree_import_conf.command']);
+};
 ImportConf.prototype.addRecord = function () {
     function insertCallback(id) {
         this.onSelectType();

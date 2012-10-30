@@ -2,13 +2,11 @@
 
 var mergeDialog;
 
-var retVals = { itemid: null };
-
 function MergeDialog() {
     this.listeners = [];
 
     this.mDb = window.arguments[0];
-    retVals = window.arguments[2];
+    this.retVals = window.arguments[2];
 
     this.addEventListeners();  
 
@@ -19,18 +17,42 @@ function openMergeDialog() {
     mergeDialog = new MergeDialog();
 };
 
-function onAccept() {
-    return true;    
+ImportDialog.prototype.onAccept = function () {
+    this.removeEventListeners();
 };
-function onCancel() {
-    retVals['itemid'] = null;
-    return true;    
+
+ImportDialog.prototype.onCancel = function () {
+    this.retVals['itemid'] = null;
+
+    this.removeEventListeners();
 };
+
+
 MergeDialog.prototype.addEventListeners = function () {
     this.listeners['km_merge_item.command'] = this.onSelectItem.bind(this);
     $$('km_merge_item').addEventListener("command",
         this.listeners['km_merge_item.command']);
+
+    this.listeners['km_dialog_merge.dialogaccept'] = this.onAccept.bind(this);
+    $$('km_dialog_merge').addEventListener("dialogaccept",
+        this.listeners['km_dialog_merge.dialogaccept']);
+
+    this.listeners['km_dialog_merge.dialogcancel'] = this.onCancel.bind(this);
+    $$('km_dialog_merge').addEventListener("dialogcancel",
+        this.listeners['km_dialog_merge.dialogcancel']);
+
 };
+MergeDialog.prototype.removeEventListeners = function () {
+    $$('km_merge_item').removeEventListener("command",
+        this.listeners['km_merge_item.command']);
+
+    $$('km_dialog_merge').removeEventListener("dialogaccept",
+        this.listeners['km_dialog_merge.dialogaccept']);
+
+    $$('km_dialog_merge').removeEventListener("dialogcancel",
+        this.listeners['km_dialog_merge.dialogcancel']);
+};
+
 MergeDialog.prototype.populateItemList = function (itemList) {
     $$('km_merge_item').removeAllItems();
 
@@ -41,5 +63,5 @@ MergeDialog.prototype.populateItemList = function (itemList) {
     $$('km_merge_item').selectedIndex = 0;
 };
 MergeDialog.prototype.onSelectItem = function () {
-    retVals['itemid'] = $$("km_merge_item").value;
+    this.retVals['itemid'] = $$("km_merge_item").value;
 };

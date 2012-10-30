@@ -40,6 +40,13 @@ MasterData.prototype.initialize = function (db) {
     this.onTabSelected();
     km_log("MasterData.initialize end");
 };
+MasterData.prototype.terminate = function () {
+    this.userMaster.terminate();
+    this.itemMaster.terminate();
+    this.cardMaster.terminate();
+    this.bankMaster.terminate();
+    this.emoneyMaster.terminate();
+};
 MasterData.prototype.addRecord = function () {
     var tab = this.getSelectedTab();
     if (typeof tab.addRecord === 'function') {
@@ -90,6 +97,7 @@ MasterData.prototype.getSelectedTab = function () {
     return tab;
 };
 MasterData.prototype.close = function () {
+    this.removeEventListeners();
     window.close();
 };
 MasterData.prototype.addEventListeners = function () {
@@ -112,6 +120,23 @@ MasterData.prototype.addEventListeners = function () {
     this.listeners['km_tabs.select'] = this.onTabSelected.bind(this);
     $$('km_tabs').addEventListener("select", this.listeners['km_tabs.select']);
 };
+
+MasterData.prototype.removeEventListeners = function () {
+    $$('km_button_master_add').removeEventListener("command",
+    this.listeners['km_button_master_add.command']);
+
+    $$('km_button_master_update').removeEventListener("command",
+    this.listeners['km_button_master_update.command']);
+
+    $$('km_button_master_delete').removeEventListener("command",
+    this.listeners['km_button_master_delete.command']);
+
+    $$('km_button_master_close').removeEventListener("command",
+    this.listeners['km_button_master_close.command']);
+
+    $$('km_tabs').removeEventListener("select", this.listeners['km_tabs.select']);
+};
+
 MasterData.prototype.loadUserList = function () {
     function loadCallback(records) {
         $$('km_edit_user').removeAllItems();

@@ -38,6 +38,18 @@ BalanceView.prototype.loadBankList = function () {
 };
 
 BalanceView.prototype.terminate = function () {
+    $$('km_summary_bank').removeEventListener("command", this.listeners['km_summary_bank.command']);
+
+    $$('km_summary_user').removeEventListener("command", this.listeners['km_summary_user.command']);
+
+    $$('km_summary_monthfromY').removeEventListener("command",
+                                                 this.listeners['km_summary_monthfromY.command']);
+    $$('km_summary_monthfromM').removeEventListener("command",
+                                                 this.listeners['km_summary_monthfromM.command']);
+    $$('km_summary_monthtoY').removeEventListener("command",
+                                                 this.listeners['km_summary_monthtoY.command']);
+    $$('km_summary_monthtoM').removeEventListener("command",
+                                                 this.listeners['km_summary_monthtoM.command']);
 };
 BalanceView.prototype.onGraphItemChanged = function () {
     this.drawGraph();
