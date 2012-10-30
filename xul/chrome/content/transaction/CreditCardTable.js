@@ -138,12 +138,10 @@ CreditCardTable.prototype.addRecord = function (params) {
     var payMonthY = $$('km_edit_paymonthY').value;
     if (parseInt(payMonthY) !== 0) {
         params['payMonth'] = payMonthY + "-" + $$('km_edit_paymonthM').value;
-        params['payAmount'] = rec['boughtAmount']; // 分割払いは当面対応しない
+        params['payAmount'] = params['boughtAmount']; // 分割払いは当面対応しない
         params['remainingBalance'] = 0;
     }
     this.mDb.creditCardTrns.insert([params], insertCallback.bind(this));
-    
-    this.load();
 };
 CreditCardTable.prototype.updateRecord = function (id, params) {
     function updateCallback() {

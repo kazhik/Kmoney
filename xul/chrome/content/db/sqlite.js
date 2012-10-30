@@ -757,8 +757,14 @@ SQLiteHandler.prototype = {
     }
     return stmt;
   },
-  getLastInsertRowId: function() {
-    var stmt = this.createStatement("select last_insert_rowid()");
+  getLastInsertRowId: function(tbl) {
+    var sql;
+    if (tbl !== undefined) {
+        sql = "select max(rowid) from " + tbl;
+    } else {
+        sql = "select last_insert_rowid()";
+    }
+    var stmt = this.createStatement(sql);
     if (stmt === null) {
         return -1;
     }
