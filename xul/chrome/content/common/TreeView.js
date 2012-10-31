@@ -221,7 +221,7 @@ TreeViewController.prototype = {
         var valueArray = [];
         var col = this.treeTable.columns.getNamedColumn(columnName);
         
-        if (col !== undefined) {
+        if (col !== null) {
             for (var t = 0; t < numRanges; t++) {
                 this.treeTable.view.selection.getRangeAt(t, start, end);
                 for (var v = start.value; v <= end.value; v++) {
