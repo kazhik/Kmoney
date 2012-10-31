@@ -167,7 +167,7 @@ KmEMoneyTrns.prototype.update = function(id, params, updateCallback) {
             + "where id = " + id];
     km_debug(sql);
     this.mDb.executeTransaction([sql]);
-    updateCallback();
+    updateCallback(id);
 };
 
 KmEMoneyTrns.prototype.delete = function(id, deleteCallback) {

@@ -173,7 +173,7 @@ KmBankTrns.prototype.update = function(id, params, updateCallback) {
     km_debug(sql);
     this.mDb.executeTransaction([sql]);
     
-    updateCallback();
+    updateCallback(id);
 };
 KmBankTrns.prototype.delete = function(id, deleteCallback) {
     var sql = ["delete from km_bank_trns where id = " + id];

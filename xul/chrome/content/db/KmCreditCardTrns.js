@@ -217,7 +217,7 @@ KmCreditCardTrns.prototype.update = function(id, params, updateCallback) {
     }
     this.mDb.executeTransaction(sqlArray);
 
-    updateCallback();
+    updateCallback(id);
 };
 KmCreditCardTrns.prototype.delete = function(id, deleteCallback) {
     var sql = ["delete from km_creditcard_trns where id = " + id,

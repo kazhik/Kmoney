@@ -1,56 +1,30 @@
+
 function BankTable() {
-    this.mDb = null;
-    this.mTree = new TreeViewController("km_tree_bank");
-};
+    Transaction.call(this, "km_tree_bank");
+}
+
+BankTable.prototype = Object.create(Transaction.prototype);
+
 BankTable.prototype.initialize = function (db) {
-    this.mDb = db;
-    this.mTree.init(this.load.bind(this));
+    Transaction.prototype.initialize.call(this, db);
     this.loadBankList();
 };
 
 BankTable.prototype.load = function (sortParams) {
-    function loadCallback(records, columns) {
-        this.mTree.populateTableData(records, columns);
-        this.mTree.ensureRowIsVisible('id', -1);
-        this.mTree.showTable(true);
-    }
-
     km_debug("BankTable.load start");
     if (sortParams === undefined) {
-        if (this.mTree.mSortOrder != null) {
-            sortParams = [
-                {
-                    "column": this.mTree.mSortCol,
-                    "order": this.mTree.mSortOrder
-                }
-            ];
-        }
+        sortParams = this.mTree.getCurrentSortParams();
     }
     
     var queryParams = [];
     for (var i = 1; i <= 2; i++) {
-        var param = {
-            "key": $$('km_list_query_condition' + i).value,
-            "operator": $$('km_list_query_operator' + i).value
-        };
-        if (param['key'] === "date") {
-            param['value'] = $$('km_edit_query_date' + i).value;
-        } else if (param['key'] === "item") {
+        var param = this.getCommonQueryParam(i);
+        if (param['key'] === "bank") {
             param['value'] = $$('km_edit_query_list' + i).value;
-        } else if (param['key'] === "detail") {
-            param['value'] = $$('km_edit_query_text' + i).value;
-        } else if (param['key'] === "user") {
-            param['value'] = $$('km_edit_query_list' + i).value;
-        } else if (param['key'] === "bank") {
-            param['value'] = $$('km_edit_query_list' + i).value;
-        }
-        if (i != 1) {
-            param['andor'] = $$('km_list_query_andor').value;
         }
         queryParams.push(param);
     }
-    
-    this.mDb.bankTrns.load(sortParams, queryParams, loadCallback.bind(this));
+    this.mDb.bankTrns.load(sortParams, queryParams, this.loadCallback.bind(this));
 
     km_debug("BankTable.load end");
 };
@@ -71,17 +45,7 @@ BankTable.prototype.onSelect = function () {
     $$('km_edit_internal').value = this.mTree.getSelectedRowValue('internal');
 
     // 選択行の収支を計算してステータスバーに表示
-    var incomeArray = this.mTree.getSelectedRowValueList('income');
-    var expenseArray = this.mTree.getSelectedRowValueList('expense');
-    var sum = 0;
-    var i = 0;
-    for (i = 0; i < incomeArray.length; i++) {
-        sum = calcFloat(sum + parseFloat(incomeArray[i]));
-    }
-    for (i = 0; i < expenseArray.length; i++) {
-        sum = calcFloat(sum - parseFloat(expenseArray[i]));
-    }
-    $$('km_status_sum').label = km_getLStr("status.sum") + "=" + sum;
+    this.showSumOfSelectedRows();
 }
 BankTable.prototype.loadBankList = function () {
     function onLoad(records) {
@@ -103,11 +67,6 @@ BankTable.prototype.onUserSelect = function () {
 };
 
 BankTable.prototype.addRecord = function (params) {
-    function insertCallback(id) {
-        this.load();
-        this.mTree.ensureRowIsVisible('id', id);
-    }
-    
     if ($$('km_edit_income').selected) {
         params['income'] = params['amount'];
     } else {
@@ -116,15 +75,10 @@ BankTable.prototype.addRecord = function (params) {
     params['bankId'] = $$('km_edit_bank').value;
     params['internal'] = $$('km_edit_internal').value;
 
-    this.mDb.bankTrns.insert([params], insertCallback.bind(this));
+    this.mDb.bankTrns.insert([params], this.insertCallback.bind(this));
     
 };
 BankTable.prototype.updateRecord = function (id, params) {
-    function updateCallback() {
-        this.load();
-        this.mTree.ensureRowIsVisible('id', id);
-    }
-
     if ($$('km_edit_income').selected) {
         params['income'] = params['amount'];
     } else {
@@ -133,15 +87,10 @@ BankTable.prototype.updateRecord = function (id, params) {
     params['bankId'] = $$('km_edit_bank').value;
     params['internal'] = $$('km_edit_internal').value;
     
-    this.mDb.bankTrns.update(id, params, updateCallback.bind(this));
+    this.mDb.bankTrns.update(id, params, this.updateCallback.bind(this));
 
 };
 
 BankTable.prototype.deleteRecord = function (id) {
-    function deleteCallback() {
-        this.load();
-        this.mTree.ensurePreviousRowIsVisible();
-    }
-
-    this.mDb.bankTrns.delete(id, deleteCallback.bind(this));
+    this.mDb.bankTrns.delete(id, this.deleteCallback.bind(this));
 };

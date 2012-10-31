@@ -1,58 +1,31 @@
 function EMoneyTable() {
-    this.mDb = null;
-    this.mTree = new TreeViewController("km_tree_emoney");
-};
+    Transaction.call(this, "km_tree_emoney");
+}
+EMoneyTable.prototype = Object.create(Transaction.prototype);
+
 EMoneyTable.prototype.initialize = function (db) {
     km_debug("EMoneyTable.initialize start");
-    this.mDb = db;
-    this.mTree.init(this.load.bind(this));
+    Transaction.prototype.initialize.call(this, db);
     this.loadEMoneyList();
     km_debug("EMoneyTable.initialize end");
 };
 
 EMoneyTable.prototype.load = function (sortParams) {
-    function loadCallback(records, columns) {
-        this.mTree.populateTableData(records, columns);
-        this.mTree.ensureRowIsVisible('id', -1);
-        this.mTree.showTable(true);
-    }
-
     km_debug("EMoneyTable.load start");
     if (sortParams === undefined) {
-        if (this.mTree.mSortOrder != null) {
-            sortParams = [
-                {
-                    "column": this.mTree.mSortCol,
-                    "order": this.mTree.mSortOrder
-                }
-            ];
-        }
+        sortParams = this.mTree.getCurrentSortParams();
     }
     
     var queryParams = [];
     for (var i = 1; i <= 2; i++) {
-        var param = {
-            "key": $$('km_list_query_condition' + i).value,
-            "operator": $$('km_list_query_operator' + i).value
-        };
-        if (param['key'] === "date") {
-            param['value'] = $$('km_edit_query_date' + i).value;
-        } else if (param['key'] === "item") {
+        var param = this.getCommonQueryParam(i);
+        if (param['key'] === "emoney") {
             param['value'] = $$('km_edit_query_list' + i).value;
-        } else if (param['key'] === "detail") {
-            param['value'] = $$('km_edit_query_text' + i).value;
-        } else if (param['key'] === "user") {
-            param['value'] = $$('km_edit_query_list' + i).value;
-        } else if (param['key'] === "emoney") {
-            param['value'] = $$('km_edit_query_list' + i).value;
-        }
-        if (i != 1) {
-            param['andor'] = $$('km_list_query_andor').value;
         }
         queryParams.push(param);
     }
     
-    this.mDb.emoneyTrns.load(sortParams, queryParams, loadCallback.bind(this));
+    this.mDb.emoneyTrns.load(sortParams, queryParams, this.loadCallback.bind(this));
 
     km_debug("EMoneyTable.load end");
 };
@@ -73,17 +46,7 @@ EMoneyTable.prototype.onSelect = function () {
     $$('km_edit_internal').value = this.mTree.getSelectedRowValue('internal');
 
     // 選択行の収支を計算してステータスバーに表示
-    var incomeArray = this.mTree.getSelectedRowValueList('income');
-    var expenseArray = this.mTree.getSelectedRowValueList('expense');
-    var sum = 0;
-    var i = 0;
-    for (i = 0; i < incomeArray.length; i++) {
-        sum = calcFloat(sum + parseFloat(incomeArray[i]));
-    }
-    for (i = 0; i < expenseArray.length; i++) {
-        sum = calcFloat(sum - parseFloat(expenseArray[i]));
-    }
-    $$('km_status_sum').label = km_getLStr("status.sum") + "=" + sum;
+    this.showSumOfSelectedRows();
 
 };
 EMoneyTable.prototype.loadEMoneyList = function () {
@@ -107,11 +70,6 @@ EMoneyTable.prototype.onUserSelect = function () {
 
 
 EMoneyTable.prototype.addRecord = function (params) {
-    function insertCallback(id) {
-        this.load();
-        this.mTree.ensureRowIsVisible('id', id);
-    }
-
     if ($$('km_edit_income').selected) {
         params['income'] = params['amount'];
     } else {
@@ -120,15 +78,10 @@ EMoneyTable.prototype.addRecord = function (params) {
     params['moneyId'] = $$('km_edit_emoney').value;
     params['internal'] = $$('km_edit_internal').value;
 
-    this.mDb.emoneyTrns.insert([params], insertCallback.bind(this));
+    this.mDb.emoneyTrns.insert([params], this.insertCallback.bind(this));
 
 };
 EMoneyTable.prototype.updateRecord = function (id, params) {
-    function updateCallback() {
-        this.load();
-        this.mTree.ensureRowIsVisible('id', id);
-    }
-
     if ($$('km_edit_income').selected) {
         params['income'] = params['amount'];
     } else {
@@ -137,16 +90,11 @@ EMoneyTable.prototype.updateRecord = function (id, params) {
     params['moneyId'] = $$('km_edit_emoney').value;
     params['internal'] = $$('km_edit_internal').value;
     
-    this.mDb.emoneyTrns.update(id, params, updateCallback.bind(this));
+    this.mDb.emoneyTrns.update(id, params, updateCallback.bind(this, id));
 };
 
 EMoneyTable.prototype.deleteRecord = function (id) {
-    function deleteCallback() {
-        this.load();
-        this.mTree.ensurePreviousRowIsVisible();
-    }
-
-    this.mDb.emoneyTrns.delete(id, deleteCallback.bind(this));
+    this.mDb.emoneyTrns.delete(id, this.deleteCallback.bind(this));
 
 
 };

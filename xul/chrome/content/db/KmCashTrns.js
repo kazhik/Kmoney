@@ -161,7 +161,7 @@ KmCashTrns.prototype.update = function(id, params, updateCallback) {
                "where id = " + id].join(" ");
     km_debug(sql);
     this.mDb.executeTransaction([sql]);
-    updateCallback();
+    updateCallback(id);
 };
 KmCashTrns.prototype.delete = function(id, deleteCallback) {
     var sql = ["delete from km_realmoney_trns where id = " + id];

@@ -26,6 +26,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
     <script type="application/x-javascript" src="db/KmvTransactions.js" />
     <script type="application/x-javascript" src="db/KantanKakeiboDb.js" />
 
+    <script type="application/x-javascript" src="transaction/Transaction.js" />
     <script type="application/x-javascript" src="transaction/AllView.js" />
     <script type="application/x-javascript" src="transaction/CashTable.js" />
     <script type="application/x-javascript" src="transaction/BankTable.js" />
