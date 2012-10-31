@@ -170,14 +170,6 @@ KmCreditCardTrns.prototype.execInsert = function (newRecordArray, importFlag, in
                           newRecordArray[i]["userId"] + ", ",
                           newRecordArray[i]["cardId"] + ", ",
                           "last_insert_rowid(), ",
-                          /*
-                          "(select max(id) from km_creditcard_trns ", // 同一内容のレコードが複数件
-                          " where transaction_date = '" + newRecordArray[i]["transactionDate"] + "'",
-                          " and detail = '" + newRecordArray[i]["detail"] + "'",
-                          " and expense = " + newRecordArray[i]["boughtAmount"],
-                          " and card_id = " + newRecordArray[i]["cardId"],
-                          " and user_id = " + newRecordArray[i]["userId"] + "), ",
-                          */
                           "datetime('now', 'localtime') "].join(" ");
             if (importFlag) {
                 sqlPayment += [" where not exists (",
@@ -188,7 +180,6 @@ KmCreditCardTrns.prototype.execInsert = function (newRecordArray, importFlag, in
                         ")"].join(" ");
             }
             km_log(sqlPayment);
-            // km_creditcard_trnsに対するlast rowidを取るため、km_creditcard_paymentのsql文を先に実行
             sqlArray.push(sqlPayment);
         }
     }
