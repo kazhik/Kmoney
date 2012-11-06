@@ -561,6 +561,10 @@ KmDatabase.prototype.createTables = function() {
         '"period_from" DATETIME,' +
         '"period_to" DATETIME,' +
         '"import_date" DATETIME)',
+    'CREATE TABLE "km_sys_transaction" (' +
+        '"id" INTEGER PRIMARY KEY  NOT NULL , "execution_date" DATETIME)',
+    'CREATE TABLE "km_sys_undo" (' +
+        '"id" INTEGER PRIMARY KEY  NOT NULL ,"undo_sql" TEXT,"db_transaction_id" INTEGER)',
     'CREATE VIEW "kmv_transactions" AS   select ' +
     '   A.transaction_date, ' +
     '   A.item_id, ' +
