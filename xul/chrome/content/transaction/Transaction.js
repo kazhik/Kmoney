@@ -36,15 +36,18 @@ Transaction.prototype.loadCallback = function (records, columns) {
 Transaction.prototype.insertCallback = function (id) {
     this.load();
     this.mTree.ensureRowIsVisible('id', id);
+    $$('kmc-undo').setAttribute("disabled", false);
 };
     
 Transaction.prototype.updateCallback = function (id) {
     this.load();
     this.mTree.ensureRowIsVisible('id', id);
+    $$('kmc-undo').setAttribute("disabled", false);
 };
 Transaction.prototype.deleteCallback = function () {
     this.load();
     this.mTree.ensurePreviousRowIsVisible();
+    $$('kmc-undo').setAttribute("disabled", false);
 };
 Transaction.prototype.showSumOfSelectedRows = function (id) {
     var incomeArray = this.mTree.getSelectedRowValueList('income');

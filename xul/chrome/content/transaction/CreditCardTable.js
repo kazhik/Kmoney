@@ -103,7 +103,7 @@ CreditCardTable.prototype.addRecord = function (params) {
         params['payAmount'] = params['boughtAmount']; // 分割払いは当面対応しない
         params['remainingBalance'] = 0;
     }
-    this.mDb.creditCardTrns.insert([params], this.insertCallback.bind(this));
+    this.mDb.creditCardInsert([params], this.insertCallback.bind(this));
 };
 CreditCardTable.prototype.updateRecord = function (id, params) {
     params['boughtAmount'] = params['amount'];
@@ -117,10 +117,10 @@ CreditCardTable.prototype.updateRecord = function (id, params) {
         params['remainingBalance'] = 0;
     }
     
-    this.mDb.creditCardTrns.update(id, params, this.updateCallback.bind(this));
+    this.mDb.creditCardUpdate(id, params, this.updateCallback.bind(this));
 
 };
-CreditCardTable.prototype.deleteRecord = function (id) {
-    this.mDb.creditCardTrns.delete(id, this.deleteCallback.bind(this));
+CreditCardTable.prototype.deleteRecord = function (idList) {
+    this.mDb.creditCardDelete(idList, this.deleteCallback.bind(this));
 
 };

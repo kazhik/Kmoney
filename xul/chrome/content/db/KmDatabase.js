@@ -233,6 +233,235 @@ KmDatabase.prototype.setInitialRecords = function() {
   // km_emoney_info
   
 };
+
+KmDatabase.prototype.cashInsert = function(params, callback) {
+    function insertCallback(id) {
+        this.dropTrigger("km_realmoney_trns_insert");
+        callback(id);
+    }
+    this.createTriggerOnInsert("km_realmoney_trns", "km_realmoney_trns_insert");
+    this.createTransactionId();
+    this.cashTrns.insert(params, insertCallback.bind(this));
+    
+};
+KmDatabase.prototype.cashUpdate = function(id, params, callback) {
+    function updateCallback(id) {
+        this.dropTrigger("km_realmoney_trns_update");
+        callback();
+    }
+    
+    this.createTriggerOnUpdate("km_realmoney_trns", "km_realmoney_trns_update");
+    this.createTransactionId();
+    this.cashTrns.update(id, params, updateCallback.bind(this));
+};
+KmDatabase.prototype.cashDelete = function(idList, callback) {
+    function deleteCallback() {
+        this.dropTrigger("km_realmoney_trns_delete");
+        callback();
+    }
+    
+    this.createTriggerOnDelete("km_realmoney_trns", "km_realmoney_trns_delete");
+    this.createTransactionId();
+    this.cashTrns.delete(idList, deleteCallback.bind(this));
+};
+
+KmDatabase.prototype.bankInsert = function(params, callback) {
+    function insertCallback(id) {
+        this.dropTrigger("km_bank_trns_insert");
+        callback(id);
+    }
+    this.createTriggerOnInsert("km_bank_trns", "km_bank_trns_insert");
+    this.createTransactionId();
+    this.bankTrns.insert(params, insertCallback.bind(this));
+    
+};
+KmDatabase.prototype.bankUpdate = function(id, params, callback) {
+    function updateCallback(id) {
+        this.dropTrigger("km_bank_trns_update");
+        callback();
+    }
+    
+    this.createTriggerOnUpdate("km_bank_trns", "km_bank_trns_update");
+    this.createTransactionId();
+    this.bankTrns.update(id, params, updateCallback.bind(this));
+};
+KmDatabase.prototype.bankDelete = function(idList, callback) {
+    function deleteCallback() {
+        this.dropTrigger("km_bank_trns_delete");
+        callback();
+    }
+    
+    this.createTriggerOnDelete("km_bank_trns", "km_bank_trns_delete");
+    this.createTransactionId();
+    this.bankTrns.delete(idList, deleteCallback.bind(this));
+};
+
+KmDatabase.prototype.emoneyInsert = function(params, callback) {
+    function insertCallback(id) {
+        this.dropTrigger("km_emoney_trns_insert");
+        callback(id);
+    }
+    this.createTriggerOnInsert("km_emoney_trns", "km_emoney_trns_insert");
+    this.createTransactionId();
+    this.emoneyTrns.insert(params, insertCallback.bind(this));
+    
+};
+KmDatabase.prototype.emoneyUpdate = function(id, params, callback) {
+    function updateCallback(id) {
+        this.dropTrigger("km_emoney_trns_update");
+        callback();
+    }
+    
+    this.createTriggerOnUpdate("km_emoney_trns", "km_emoney_trns_update");
+    this.createTransactionId();
+    this.emoneyTrns.update(id, params, updateCallback.bind(this));
+};
+
+KmDatabase.prototype.emoneyDelete = function(idList, callback) {
+    function deleteCallback() {
+        this.dropTrigger("km_emoney_trns_delete");
+        callback();
+    }
+    
+    this.createTriggerOnDelete("km_emoney_trns", "km_emoney_trns_delete");
+    this.createTransactionId();
+    this.emoneyTrns.delete(idList, deleteCallback.bind(this));
+};
+
+KmDatabase.prototype.creditCardInsert = function(params, callback) {
+    function insertCallback(id) {
+        this.dropTrigger("km_creditcard_trns_insert");
+        callback(id);
+    }
+    this.createTriggerOnInsert("km_creditcard_trns", "km_creditcard_trns_insert");
+    this.createTransactionId();
+    this.creditCardTrns.insert(params, insertCallback.bind(this));
+    
+};
+KmDatabase.prototype.creditCardUpdate = function(id, params, callback) {
+    function updateCallback(id) {
+        this.dropTrigger("km_creditcard_trns_update");
+        callback();
+    }
+    
+    this.createTriggerOnUpdate("km_creditcard_trns", "km_creditcard_trns_update");
+    this.createTransactionId();
+    this.creditCardTrns.update(id, params, updateCallback.bind(this));
+};
+
+KmDatabase.prototype.creditCardDelete = function(idList, callback) {
+    function deleteCallback() {
+        this.dropTrigger("km_creditcard_trns_delete");
+        callback();
+    }
+    
+    this.createTriggerOnDelete("km_creditcard_trns", "km_creditcard_trns_delete");
+    this.createTransactionId();
+    this.creditCardTrns.delete(idList, deleteCallback.bind(this));
+};
+
+KmDatabase.prototype.undo = function() {
+    var sql = ["select undo_sql from km_sys_undo",
+               "where db_transaction_id = (select max(db_transaction_id) from km_sys_undo)"].join(" ");
+
+    this.mDb.selectQuery(sql);
+    var records = this.mDb.getRecords();
+    km_log(records[0][0]);
+    this.mDb.executeTransaction([records[0][0]]);
+    
+};
+KmDatabase.prototype.createTransactionId = function() {
+    var sql = "insert into km_sys_transaction (execution_date) values(datetime('now', 'localtime'))";
+    this.mDb.executeTransaction([sql]);
+};
+
+KmDatabase.prototype.dropTrigger = function(triggerName) {
+    var sql = "drop trigger " + triggerName;
+    km_log(sql);
+    this.mDb.executeTransaction([sql]);
+};
+
+KmDatabase.prototype.createTriggerOnInsert = function(tableName, triggerName) {
+    var sql = ["create temporary trigger",
+               triggerName,
+               "after insert on " + tableName,
+               "begin",
+               "insert into km_sys_undo",
+               "(db_transaction_id, undo_sql)",
+               "values (",
+               "(select max(id) from km_sys_transaction),",
+               "'",
+               "delete from " + tableName,
+               "where id='" + "||new.id",
+               ");",
+               "end"].join(" ");
+    km_log(sql);
+    this.mDb.executeTransaction([sql]);
+};
+
+KmDatabase.prototype.createTriggerOnUpdate = function(tableName, triggerName) {
+    var tableInfo = this.mDb.getTableInfo(tableName, "");
+    
+    var setList = [];
+    for (var i = 0; i < tableInfo.length; i++) {
+        if (tableInfo[i]["pk"] == 1) {
+            continue;
+        }
+        setList.push(tableInfo[i]["name"] + " = '||quote(old." + tableInfo[i]["name"] + ")||'")
+    }
+    
+    var sql = ["create temporary trigger ",
+               triggerName,
+               "after update on " + tableName,
+               "begin",
+               "insert into km_sys_undo",
+               "(db_transaction_id, undo_sql)",
+               "values (",
+               "(select max(id) from km_sys_transaction),",
+               "'",
+               "update " + tableName,
+               "set ",
+               setList.join(","),
+               "');",
+               "end"].join(" ");
+
+    km_log(sql);
+    this.mDb.executeTransaction([sql]);
+};
+
+KmDatabase.prototype.createTriggerOnDelete = function(tableName, triggerName) {
+    var tableInfo = this.mDb.getTableInfo(tableName, "");
+    
+    var colList = [];
+    var valList = [];
+    for (var i = 0; i < tableInfo.length; i++) {
+        if (tableInfo[i]["pk"] == 1) {
+            continue;
+        }
+        colList.push(tableInfo[i]["name"]);
+        valList.push("'||quote(old." + tableInfo[i]["name"] + ")||'");
+    }
+    
+    var sql = ["create temporary trigger ",
+               triggerName,
+               "after delete on " + tableName,
+               "begin",
+               "insert into km_sys_undo",
+               "(db_transaction_id, undo_sql)",
+               "values (",
+               "(select max(id) from km_sys_transaction),",
+               "'",
+               "insert into " + tableName,
+               "(" + colList.join(",") + ")",
+               "values",
+               "(" + valList.join(",") + ")",
+               "');",
+               "end"].join(" ");
+
+    km_log(sql);
+    this.mDb.executeTransaction([sql]);
+};
+
 KmDatabase.prototype.createTables = function() {
   var sql = [
     'CREATE TABLE "km_bank_info" (' +
@@ -281,7 +510,6 @@ KmDatabase.prototype.createTables = function() {
     'CREATE TABLE "km_emoney_info" (' +
       '"id" INTEGER PRIMARY KEY,' +
       '"name" TEXT,' +
-      '"creditcard_id" INTEGER,' +
       '"user_id" INTEGER)',
     'CREATE TABLE "km_emoney_trns" (' +
       '"id" INTEGER PRIMARY KEY,' +

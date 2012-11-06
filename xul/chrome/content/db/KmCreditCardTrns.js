@@ -219,9 +219,9 @@ KmCreditCardTrns.prototype.update = function(id, params, updateCallback) {
 
     updateCallback(id);
 };
-KmCreditCardTrns.prototype.delete = function(id, deleteCallback) {
-    var sql = ["delete from km_creditcard_trns where id = " + id,
-               "delete from km_creditcard_payment where transaction_id = " + id];
+KmCreditCardTrns.prototype.delete = function(idList, deleteCallback) {
+    var sql = ["delete from km_creditcard_trns where id in (" + idList.join(",") + ")",
+               "delete from km_creditcard_payment where transaction_id in (" + idList.join(",") + ")"];
     km_debug(sql);
     this.mDb.executeTransaction(sql);
     

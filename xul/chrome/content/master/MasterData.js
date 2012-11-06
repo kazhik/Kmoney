@@ -228,10 +228,9 @@ MasterData.prototype.onTabSelected = function (e) {
         $$('itembox').hidden = true;
         $$('userbox').hidden = false;
         $$('km_edit_label_user').value = km_getLStr("master.username")
-        $$('creditcardbox').hidden = false;
+        $$('creditcardbox').hidden = true;
         $$('bankbox').hidden = true;
         this.loadUserList();
-        this.loadCardList();
         break;
     }
 };

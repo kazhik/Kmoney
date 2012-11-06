@@ -20,6 +20,8 @@
 
 <!ENTITY menu.edit          "編集">
 <!ENTITY menu.edit.accesskey          "E">
+<!ENTITY menu.edit.undo          "元に戻す">
+<!ENTITY menu.edit.undo.accesskey          "U">
 <!ENTITY menu.edit.delete          "削除">
 <!ENTITY menu.edit.delete.accesskey          "D">
 

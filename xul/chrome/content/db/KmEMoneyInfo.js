@@ -27,12 +27,10 @@ KmEMoneyInfo.prototype.load = function(loadCallback) {
 };
 
 KmEMoneyInfo.prototype.loadMaster = function(loadCallback) {
-    this.mDb.selectQuery("select A.id, A.name, A.user_id, B.name, A.creditcard_id, C.name "
+    this.mDb.selectQuery("select A.id, A.name, A.user_id, B.name "
                        + "from km_emoney_info A "
                        + "inner join km_user B "
-                       + "on A.user_id = B.id "
-                       + "inner join km_creditcard_info C "
-                       + "on A.creditcard_id = C.id");
+                       + "on A.user_id = B.id ");
 
     loadCallback(this.mDb.getRecords(), this.mDb.getColumns());    
     
@@ -41,12 +39,10 @@ KmEMoneyInfo.prototype.loadMaster = function(loadCallback) {
 KmEMoneyInfo.prototype.insert = function(params, insertCallback) {
     var sql = ["insert into km_emoney_info ("
       + "name, "
-      + "user_id, "
-      + "creditcard_id "
+      + "user_id "
       + ") values ( "
       + "'" + params['name'] + "', "
-      + params['userId'] + ", "
-      + params['cardId'] + ")"];
+      + params['userId'] + ")"];
 
     this.mDb.executeTransaction(sql);
     
@@ -57,8 +53,7 @@ KmEMoneyInfo.prototype.update = function(id, params, updateCallback) {
     var sql = ["update km_emoney_info "
       + "set "
       + "name = '" + params['name'] + "', "
-      + "user_id = " + params['userId'] + ", "
-      + "creditcard_id = " + params['cardId'] + " "
+      + "user_id = " + params['userId'] + " "
       + "where id = " + id];
 
     this.mDb.executeTransaction(sql);

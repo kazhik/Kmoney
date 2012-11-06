@@ -78,7 +78,7 @@ EMoneyTable.prototype.addRecord = function (params) {
     params['moneyId'] = $$('km_edit_emoney').value;
     params['internal'] = $$('km_edit_internal').value;
 
-    this.mDb.emoneyTrns.insert([params], this.insertCallback.bind(this));
+    this.mDb.emoneyInsert([params], this.insertCallback.bind(this));
 
 };
 EMoneyTable.prototype.updateRecord = function (id, params) {
@@ -90,11 +90,11 @@ EMoneyTable.prototype.updateRecord = function (id, params) {
     params['moneyId'] = $$('km_edit_emoney').value;
     params['internal'] = $$('km_edit_internal').value;
     
-    this.mDb.emoneyTrns.update(id, params, updateCallback.bind(this, id));
+    this.mDb.emoneyUpdate(id, params, updateCallback.bind(this, id));
 };
 
-EMoneyTable.prototype.deleteRecord = function (id) {
-    this.mDb.emoneyTrns.delete(id, this.deleteCallback.bind(this));
+EMoneyTable.prototype.deleteRecord = function (idList) {
+    this.mDb.emoneyDelete(idList, this.deleteCallback.bind(this));
 
 
 };

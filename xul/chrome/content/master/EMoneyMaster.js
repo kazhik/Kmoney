@@ -36,8 +36,7 @@ EMoneyMaster.prototype.addRecord = function() {
     }
     var params = {
         "name": $$('km_edit_name').value,
-        "userId": $$('km_edit_user').value,
-        "cardId": $$('km_edit_creditcard').value
+        "userId": $$('km_edit_user').value
     };
     
     this.mDb.emoneyInfo.insert(params, onCompleted.bind(this));
@@ -50,8 +49,7 @@ EMoneyMaster.prototype.updateRecord = function() {
     }
     var params = {
         "name": $$('km_edit_name').value,
-        "userId": $$('km_edit_user').value,
-        "cardId": $$('km_edit_creditcard').value
+        "userId": $$('km_edit_user').value
     };
     var id = this.mTree.getSelectedRowValue('master_emoney_id');
     this.mDb.emoneyInfo.update(id, params, onCompleted.bind(this));
@@ -74,7 +72,6 @@ EMoneyMaster.prototype.deleteRecord = function() {
 EMoneyMaster.prototype.onSelect = function() {
     $$('km_edit_name').value = this.mTree.getSelectedRowValue('master_emoney_name');
     $$('km_edit_user').value = this.mTree.getSelectedRowValue('master_emoney_userid');
-    $$('km_edit_creditcard').value = this.mTree.getSelectedRowValue('master_emoney_cardid');
  
 };
 

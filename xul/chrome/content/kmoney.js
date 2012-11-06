@@ -152,6 +152,9 @@ Kmoney.prototype.addEventListeners = function () {
     this.listeners['kmc-delete'] = this.deleteRecord.bind(this);
     $$('kmc-delete').addEventListener("command", this.listeners['kmc-delete']);
 
+    this.listeners['kmc-undo'] = this.undo.bind(this);
+    $$('kmc-undo').addEventListener("command", this.listeners['kmc-undo']);
+
     this.listeners['km_list_query_condition1.command'] = this.onQueryCondition1Select.bind(this, true);
     $$('km_list_query_condition1').addEventListener(
         "command", this.listeners['km_list_query_condition1.command']);
@@ -238,6 +241,8 @@ Kmoney.prototype.removeEventListeners = function () {
     $$('km_tree_bank').removeEventListener("select", this.listeners['km_tree_bank.select']);
 
     $$('kmc-delete').removeEventListener("command", this.listeners['kmc-delete']);
+
+    $$('kmc-undo').removeEventListener("command", this.listeners['kmc-undo']);
 
     $$('km_list_query_condition1').removeEventListener(
         "command", this.listeners['km_list_query_condition1.command']);
@@ -652,6 +657,8 @@ Kmoney.prototype.updateRecord = function () {
         "transactionDate": $$('km_edit_transactionDate').value,
         "itemId": $$('km_edit_item').value,
         "detail": $$('km_edit_detail').value,
+        "income": 0,
+        "expense": 0,
         "amount": amount,
         "userId": $$('km_edit_user').value,
         "source": SOURCE_KMONEY
@@ -676,9 +683,17 @@ Kmoney.prototype.deleteRecord = function () {
     if (!bConfirm) {
         return;
     }
-    var id = tree.mTree.getSelectedRowValue('id');
-    tree.deleteRecord(id);
+    var idList = tree.mTree.getSelectedRowValueList('id');
+    tree.deleteRecord(idList);
 };
+
+Kmoney.prototype.undo = function() {
+    // この時点で開いていないタブでundoが行われたらどうする？
+    this.mDb.undo();
+    this.query();
+    $$('kmc-undo').setAttribute("disabled", true);
+};
+
 Kmoney.prototype.onUserSelect = function () {
     var tree = this.getSelectedTree();
     if (typeof tree.onUserSelect === 'function') {
@@ -701,7 +716,6 @@ Kmoney.prototype.initQueryCondition = function (elementId) {
     $$(elementId).appendItem(km_getLStr("query_condition.user"), "user");
 
 };
-
 Kmoney.prototype.onQueryConditionSelect = function(elementNo) {
     var key = $$('km_list_query_condition' + elementNo).value;
     

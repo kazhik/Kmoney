@@ -75,7 +75,7 @@ BankTable.prototype.addRecord = function (params) {
     params['bankId'] = $$('km_edit_bank').value;
     params['internal'] = $$('km_edit_internal').value;
 
-    this.mDb.bankTrns.insert([params], this.insertCallback.bind(this));
+    this.mDb.bankInsert([params], this.insertCallback.bind(this));    
     
 };
 BankTable.prototype.updateRecord = function (id, params) {
@@ -87,10 +87,10 @@ BankTable.prototype.updateRecord = function (id, params) {
     params['bankId'] = $$('km_edit_bank').value;
     params['internal'] = $$('km_edit_internal').value;
     
-    this.mDb.bankTrns.update(id, params, this.updateCallback.bind(this));
+    this.mDb.bankUpdate(id, params, this.updateCallback.bind(this));
 
 };
 
-BankTable.prototype.deleteRecord = function (id) {
-    this.mDb.bankTrns.delete(id, this.deleteCallback.bind(this));
+BankTable.prototype.deleteRecord = function (idList) {
+    this.mDb.bankDelete(idList, this.deleteCallback.bind(this));
 };

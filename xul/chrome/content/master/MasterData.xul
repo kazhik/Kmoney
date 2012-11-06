@@ -119,12 +119,6 @@
 								<splitter class="tree-splitter" />  
 								<treecol id="master_emoney_username" label="&column.username;"
 										 flex="1" persist="width" />
-								<splitter class="tree-splitter" />  
-								<treecol id="master_emoney_cardid" hidden="true"
-										 ignoreincolumnpicker="true"/>
-								<splitter class="tree-splitter" />  
-								<treecol id="master_emoney_cardname" label="&column.cardname;"
-										 flex="1" persist="width" />
 							</treecols>
                             <treechildren />
                         </tree>

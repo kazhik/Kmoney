@@ -53,6 +53,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
         <command id="kmc-newDb" />
         <command id="kmc-openDb" />
         <command id="kmc-import" />
+        <command id="kmc-undo" disabled="true"/>
         <command id="kmc-delete" />
         <command id="kmc-setmaster" />
         <command id="kmc-importconf" />
@@ -83,6 +84,8 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 </menu>
                 <menu id="km_menu_edit" label="&menu.edit;" accesskey="&menu.edit.accesskey;">
                     <menupopup>
+						<menuitem label="&menu.edit.undo;" accesskey="&menu.edit.undo.accesskey;"
+                                  command="kmc-undo" />
 						<menuitem label="&menu.edit.delete;" accesskey="&menu.edit.delete.accesskey;"
 						command="kmc-delete" />
 					</menupopup>
