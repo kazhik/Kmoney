@@ -1,7 +1,7 @@
 Components.utils.import("resource://gre/modules/NetUtil.jsm");
 
 function SaisonCard(db) {
-    AbstractImport.call(this, db);
+    AbstractImport.call(this, db, "セゾンカード");
 }
 SaisonCard.prototype = Object.create(AbstractImport.prototype);
 
@@ -96,7 +96,7 @@ SaisonCard.prototype.importDb = function (csvFile, userId, importCallback) {
         NetUtil.asyncFetch(csvFile, onFileOpen.bind(this));
     }
 
-    cardId = this.mDb.creditCardInfo.getCardId("セゾンカード", userId);
-    this.loadImportConf("セゾンカード", onLoadImportConf.bind(this));
+    cardId = this.mDb.creditCardInfo.getCardId(this.name, userId);
+    this.loadImportConf(this.name, onLoadImportConf.bind(this));
 
 };

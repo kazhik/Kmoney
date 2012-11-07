@@ -5,7 +5,9 @@
 <window id="km_import_conf" title="&window.title; - &dialog.importConf;"
   onload="openImportConfDialog()"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml">
+  persist="screenX screenY width height sizemode"  
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:h="http://www.w3.org/1999/xhtml">
 
   <script type="application/x-javascript" src="../globals.js"/>  
   <script type="application/x-javascript" src="ImportConf.js"/>  

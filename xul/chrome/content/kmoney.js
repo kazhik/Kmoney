@@ -71,34 +71,41 @@ Kmoney.prototype.loadData = function() {
     km_debug("Kmoney.loadData end");
 };
 Kmoney.prototype.initImport = function () {
-    this.importTypeList["bank"] =
-        {"label": km_getLStr("import.bank"), "ext": "*.csv"};
-    this.importTypeList["mizuho"] =
-        {"label": km_getLStr("import.mizuho"), "ext": "*.ofx"};
-    this.importTypeList["shinsei"] =
-        {"label": km_getLStr("import.shinsei"), "ext": "*.csv"};
-    this.importTypeList["creditcard"] =
-        {"label": km_getLStr("import.creditcard"), "ext": "*.csv"};
-    this.importTypeList["saison"] =
-        {"label": km_getLStr("import.saison"), "ext": "*.csv"};
-    this.importTypeList["uc"] =
-        {"label": km_getLStr("import.uc"), "ext": "*.csv"};
-    this.importTypeList["view"] =
-        {"label": km_getLStr("import.view"), "ext": "*.html"};
-    this.importTypeList["emoney"] =
-        {"label": km_getLStr("import.emoney"), "ext": "*.csv"};
-    this.importTypeList["suica"] =
-        {"label": km_getLStr("import.suica"), "ext": "*.html"};
-    this.importTypeList["kantan"] =
-        {"label": km_getLStr("import.kantan"), "ext": "*.db"};
+    function loadCallback(records) {
+        for (var i = 0; i < records.length; i++) {
+            if (this.importers[records[i][1]] !== undefined) {
+                this.importTypeList[records[i][1]] = {
+                    "label": records[i][1],
+                    "ext": "*." + records[i][2]
+                }
+            }
+        }
+    }
 
-    this.importers["view"] = new ViewCard(this.mDb, this.creditcardTree);
-    this.importers["saison"] = new SaisonCard(this.mDb, this.creditcardTree);
-    this.importers["uc"] = new UCCard(this.mDb);
-    this.importers["shinsei"] = new ShinseiBank(this.mDb);
-    this.importers["mizuho"] = new MizuhoBank(this.mDb);
-    this.importers["suica"] = new Suica(this.mDb);
-    this.importers["kantan"] = new KantanKakeibo(this.mDb);
+    var importer;
+    importer = new BankImport(this.mDb);
+    this.importers[importer["name"]] = importer;
+    importer = new CreditCardImport(this.mDb);
+    this.importers[importer["name"]] = importer;
+    importer = new EMoneyImport(this.mDb);
+    this.importers[importer["name"]] = importer;
+    importer = new ViewCard(this.mDb);
+    this.importers[importer["name"]] = importer;
+    importer = new SaisonCard(this.mDb);
+    this.importers[importer["name"]] = importer;
+    importer = new UCCard(this.mDb);
+    this.importers[importer["name"]] = importer;
+    importer = new ShinseiBank(this.mDb);
+    this.importers[importer["name"]] = importer;
+    importer = new MizuhoBank(this.mDb);
+    this.importers[importer["name"]] = importer;
+    importer = new Suica(this.mDb);
+    this.importers[importer["name"]] = importer;
+    importer = new KantanKakeibo(this.mDb);
+    this.importers[importer["name"]] = importer;
+    
+    
+    this.mDb.source.load(loadCallback.bind(this));
 };
 
 Kmoney.prototype.Shutdown = function () {

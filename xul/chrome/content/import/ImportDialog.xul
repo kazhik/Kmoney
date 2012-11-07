@@ -4,6 +4,7 @@
  
 <dialog id="km_dialog_import" title="&window.title; - &dialog.import;"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  persist="screenX screenY width height sizemode"
   buttons="accept,cancel"
   onload="openImportDialog()"
   flex="1">
@@ -13,12 +14,15 @@
 
   <vbox>
     <hbox align="center">
+        <label control="km_select_user" value="&edit.user;" />
+        <menulist id="km_select_user">
+            <menupopup></menupopup>
+        </menulist>
         <label control="km_select_importtype" value="&select.importtype;" />
         <menulist id="km_select_importtype">
             <menupopup></menupopup>
         </menulist>
-        <label control="km_select_user" value="&edit.user;" />
-        <menulist id="km_select_user">
+        <menulist id="km_select_source" hidden="true">
             <menupopup></menupopup>
         </menulist>
     </hbox>

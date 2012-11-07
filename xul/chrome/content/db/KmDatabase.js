@@ -540,9 +540,10 @@ KmDatabase.prototype.createTables = function() {
         '"sum_include" BOOL)',
     'CREATE TABLE "km_source" (' +
         '"id" INTEGER PRIMARY KEY NOT NULL,' +
-        '"type" TEXT, ' +
+        '"name" TEXT, ' +
         '"import" BOOL, ' +
-        '"enabled" BOOL)',
+        '"enabled" BOOL, ' +
+        '"file_ext" TEXT)',
     'CREATE TABLE "km_user" (' +
         '"id" INTEGER PRIMARY KEY  NOT NULL ,' +
         '"name" TEXT)',

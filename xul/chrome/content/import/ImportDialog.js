@@ -10,8 +10,8 @@ function ImportDialog() {
     this.users = window.arguments[2];
     this.retVals = window.arguments[3];
 
-    this.populateImportTypeList();
     this.populateUserList();
+    this.populateImportTypeList();
 
     this.addEventListeners();  
 };
@@ -72,12 +72,36 @@ ImportDialog.prototype.removeEventListeners = function () {
     $$('km_dialog_import').removeEventListener("dialogcancel",
         this.listeners['km_dialog_import.dialogcancel']);
 };
+ImportDialog.prototype.populateSourceList = function () {
+    var importType = $$("km_select_importtype").value;
 
+    var nameList = [];
+    if (importType === km_getLStr("import.bank")) {
+        nameList = this.mDb.bankInfo.getBankList(this.retVals['user']);
+    } else if (importType === km_getLStr("import.emoney")) {
+        nameList = this.mDb.emoneyInfo.getMoneyList(this.retVals['user']);
+    } else if (importType === km_getLStr("import.creditcard")) {
+        nameList = this.mDb.creditCardInfo.getCardList(this.retVals['user']);
+    }
+    if (nameList.length > 0) {
+        $$("km_select_source").hidden = false;
+        
+        $$("km_select_source").removeAllItems();
+        for (var i = 0; i < nameList.length; i++) {
+            $$("km_select_source").appendItem(nameList[i][1], nameList[i][1]);
+        }
+        $$("km_select_source").selectedIndex = 0;
+    } else {
+        $$("km_select_source").hidden = true;
+    }
+};
 ImportDialog.prototype.onSelectImportType = function () {
     this.retVals['importtype'] = $$("km_select_importtype").value;
+    this.populateSourceList();    
 };
 ImportDialog.prototype.onSelectUser = function () {
     this.retVals['user'] = $$("km_select_user").value;
+    this.populateSourceList();    
 };
 ImportDialog.prototype.selectFile = function () {
     const nsIFilePicker = Ci.nsIFilePicker;

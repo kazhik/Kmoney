@@ -1,5 +1,5 @@
 function KantanKakeibo(db) {
-    AbstractImport.call(this, db);
+    AbstractImport.call(this, db, "かんたん家計簿");
 }
 KantanKakeibo.prototype = Object.create(AbstractImport.prototype);
 
@@ -60,7 +60,7 @@ KantanKakeibo.prototype.importDb = function (kantanDbFile, userId, importCallbac
         kantanDb.load(kantanDbFile, loadCallback.bind(this));
         
     }
-    this.loadImportConf("かんたん家計簿", onLoadImportConf.bind(this))
+    this.loadImportConf(this.name, onLoadImportConf.bind(this))
     
 };
 

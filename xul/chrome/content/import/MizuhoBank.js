@@ -1,7 +1,7 @@
 Components.utils.import("resource://gre/modules/NetUtil.jsm");
 
 function MizuhoBank(db) {
-    AbstractImport.call(this, db);
+    AbstractImport.call(this, db, "みずほ銀行");
 }
 
 MizuhoBank.prototype = Object.create(AbstractImport.prototype);
@@ -97,7 +97,7 @@ MizuhoBank.prototype.importDb = function (inputFile, userId, importCallback) {
         }
         NetUtil.asyncFetch(inputFile, onFileOpen.bind(this));
     }
-    bankId = this.mDb.bankInfo.getBankId("みずほ銀行", userId);
-    this.loadImportConf("みずほ銀行", onLoadImportConf.bind(this))
+    bankId = this.mDb.bankInfo.getBankId(this.name, userId);
+    this.loadImportConf(this.name, onLoadImportConf.bind(this))
 
 };

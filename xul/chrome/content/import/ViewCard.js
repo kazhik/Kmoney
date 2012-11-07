@@ -1,7 +1,7 @@
 Components.utils.import("resource://gre/modules/NetUtil.jsm");
 
 function ViewCard(db) {
-    AbstractImport.call(this, db);
+    AbstractImport.call(this, db, "ビューカード");
 }
 ViewCard.prototype = Object.create(AbstractImport.prototype);
 
@@ -95,8 +95,8 @@ ViewCard.prototype.importDb = function (htmlFile, userId, importCallback) {
         }
         NetUtil.asyncFetch(htmlFile, onFileOpen.bind(this));
     }
-    cardId = this.mDb.creditCardInfo.getCardId("Viewカード", userId);
-    this.loadImportConf("ビューカード", onLoadImportConf.bind(this));
+    cardId = this.mDb.creditCardInfo.getCardId(this.name, userId);
+    this.loadImportConf(this.name, onLoadImportConf.bind(this));
 
 
 };

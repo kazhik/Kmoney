@@ -2,7 +2,7 @@ Components.utils.import("resource://gre/modules/NetUtil.jsm");
 
 
 function ShinseiBank(db) {
-    AbstractImport.call(this, db);
+    AbstractImport.call(this, db, "新生銀行");
 }
 ShinseiBank.prototype = Object.create(AbstractImport.prototype);
 
@@ -76,7 +76,7 @@ ShinseiBank.prototype.importDb = function (csvFile, userId, importCallback) {
         }
         NetUtil.asyncFetch(csvFile, onFileOpen.bind(this));
     }
-    bankId = this.mDb.bankInfo.getBankId("新生銀行", userId);
-    this.loadImportConf("新生銀行", onLoadImportConf.bind(this))
+    bankId = this.mDb.bankInfo.getBankId(this.name, userId);
+    this.loadImportConf(this.name, onLoadImportConf.bind(this))
 
 };

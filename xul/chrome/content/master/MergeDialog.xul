@@ -4,6 +4,7 @@
  
 <dialog id="km_dialog_merge" title="&window.title; - &dialog.merge;"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  persist="screenX screenY width height sizemode"
   buttons="accept,cancel"
   onload="openMergeDialog()"
   flex="1">

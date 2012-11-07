@@ -1,7 +1,7 @@
 Components.utils.import("resource://gre/modules/NetUtil.jsm");
 
 function Suica(db) {
-    AbstractImport.call(this, db);
+    AbstractImport.call(this, db, "Suica");
 }
 Suica.prototype = Object.create(AbstractImport.prototype);
 
@@ -116,7 +116,7 @@ Suica.prototype.importDb = function (suicaHtmlFile, userId, importCallback) {
         }
         NetUtil.asyncFetch(suicaHtmlFile, onFileOpen.bind(this));
     }
-    emoneyId = this.mDb.emoneyInfo.getMoneyId("Suica", userId);
-    this.loadImportConf("Suica", onLoadImportConf.bind(this))
+    emoneyId = this.mDb.emoneyInfo.getMoneyId(this.name, userId);
+    this.loadImportConf(this.name, onLoadImportConf.bind(this))
     
 };
