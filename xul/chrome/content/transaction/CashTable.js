@@ -57,7 +57,7 @@ CashTable.prototype.updateRecord = function (id, params) {
     }
     params['internal'] = $$('km_edit_internal').value;
 
-    this.mDb.cashUpdate(id, params, this.updateCallback.bind(this));
+    this.mDb.cashUpdate([id], params, this.updateCallback.bind(this));
 };
 
 CashTable.prototype.deleteRecord = function (idList) {

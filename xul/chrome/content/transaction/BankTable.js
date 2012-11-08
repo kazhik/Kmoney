@@ -87,7 +87,7 @@ BankTable.prototype.updateRecord = function (id, params) {
     params['bankId'] = $$('km_edit_bank').value;
     params['internal'] = $$('km_edit_internal').value;
     
-    this.mDb.bankUpdate(id, params, this.updateCallback.bind(this));
+    this.mDb.bankUpdate([id], params, this.updateCallback.bind(this));
 
 };
 

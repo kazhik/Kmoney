@@ -117,7 +117,7 @@ CreditCardTable.prototype.updateRecord = function (id, params) {
         params['remainingBalance'] = 0;
     }
     
-    this.mDb.creditCardUpdate(id, params, this.updateCallback.bind(this));
+    this.mDb.creditCardUpdate([id], params, this.updateCallback.bind(this));
 
 };
 CreditCardTable.prototype.deleteRecord = function (idList) {

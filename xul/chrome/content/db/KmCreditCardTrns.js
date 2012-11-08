@@ -111,7 +111,8 @@ KmCreditCardTrns.prototype.insert = function(newRecordArray, insertCallback) {
 };
 
 KmCreditCardTrns.prototype.execInsert = function (newRecordArray, importFlag, insertCallback) {
-    var sqlArray = [];
+    var sqlStatement;
+    var sqlStmtArray = [];
     var sqlPayment;
     var sqlTransaction;
     var lastRowId = 0;
@@ -128,26 +129,27 @@ KmCreditCardTrns.prototype.execInsert = function (newRecordArray, importFlag, in
                           "last_update_date ",
                           ") ",
                           "select ",
-                          "'" + newRecordArray[i]["transactionDate"] + "', ",
-                          newRecordArray[i]["itemId"] + ", ",
-                          "\"" + newRecordArray[i]["detail"] + "\", ",
-                          newRecordArray[i]["boughtAmount"] + ", ",
-                          newRecordArray[i]["userId"] + ", ",
-                          newRecordArray[i]["cardId"] + ", ",
-                          newRecordArray[i]["internal"] + ", ",
-                          newRecordArray[i]["source"] + ", ",
+                          ":transactionDate, ",
+                          ":itemId, ",
+                          ":detail, ",
+                          ":boughtAmount, ",
+                          ":userId, ",
+                          ":cardId, ",
+                          ":internal, ",
+                          ":source, ",
                           "datetime('now', 'localtime') "].join(" ");
         // 同じ入力元から同一期間のインポートは不可
         if (importFlag) {
             sqlTransaction += [" where not exists (",
                     "select 1 from km_import_history",
-                    "where source_type =" + newRecordArray[i]["source"],
-                    "and period_from <= '" + newRecordArray[i]["transactionDate"] + "'",
-                    "and period_to > '" + newRecordArray[i]["transactionDate"] + "'",
+                    "where source_type = :source",
+                    "and period_from <= :transactionDate",
+                    "and period_to > :transactionDate",
                     ")"].join(" ");
         }
         km_log(sqlTransaction);
-        sqlArray.push(sqlTransaction);
+        sqlStatement = this.mDb.createStatementWithParams(sqlTransaction, newRecordArray[i]);
+        sqlStmtArray.push(sqlStatement);
         if (newRecordArray[i]['payAmount'] !== undefined) {
             sqlPayment = ["insert into km_creditcard_payment (",
                           "transaction_date, ",
@@ -161,69 +163,109 @@ KmCreditCardTrns.prototype.execInsert = function (newRecordArray, importFlag, in
                           "transaction_id, ",
                           "last_update_date " + ") ",
                           "select ",
-                          "'" + newRecordArray[i]["transactionDate"] + "', ",
-                          newRecordArray[i]["boughtAmount"] + ", ",
-                          newRecordArray[i]["payAmount"] + ", ",
-                          "'" + newRecordArray[i]["payMonth"] + "', ",
-                          newRecordArray[i]["remainingBalance"] + ", ",
-                          "\"" + newRecordArray[i]["detail"] + "\", ",
-                          newRecordArray[i]["userId"] + ", ",
-                          newRecordArray[i]["cardId"] + ", ",
+                          ":transactionDate, ",
+                          ":boughtAmount, ",
+                          ":payAmount, ",
+                          ":payMonth, ",
+                          ":remainingBalance, ",
+                          ":detail, ",
+                          ":userId, ",
+                          ":cardId, ",
                           "last_insert_rowid(), ",
                           "datetime('now', 'localtime') "].join(" ");
             if (importFlag) {
                 sqlPayment += [" where not exists (",
                         "select 1 from km_import_history",
-                        "where source_type =" + newRecordArray[i]["source"],
-                        "and period_from <= '" + newRecordArray[i]["transactionDate"] + "'",
-                        "and period_to > '" + newRecordArray[i]["transactionDate"] + "'",
+                        "where source_type = :source",
+                        "and period_from <= :transactionDate",
+                        "and period_to > :transactionDate",
                         ")"].join(" ");
             }
             km_log(sqlPayment);
-            sqlArray.push(sqlPayment);
+            sqlStatement = this.mDb.createStatementWithParams(sqlPayment, newRecordArray[i]);
+            sqlStmtArray.push(sqlStatement);
         }
     }
-    this.mDb.executeTransaction(sqlArray);
+    this.mDb.execTransaction(sqlStmtArray);
     insertCallback(this.mDb.getLastInsertRowId("km_creditcard_trns"));
 };
-KmCreditCardTrns.prototype.update = function(id, params, updateCallback) {
-    var sqlArray = [["update km_creditcard_trns ",
-               "set ",
-               "transaction_date = " + "'" + params['transactionDate'] + "', ",
-               "expense = " + params['boughtAmount'] + ", ",
-               "item_id = " + params['itemId'] + ", ",
-               "detail = \"" + params['detail'] + "\", ",
-               "user_id = " + params['userId'] + ", ",
-               "card_id = " + params['cardId'] + ", ",
-               "last_update_date = datetime('now', 'localtime'), ",
-               "source = " + params['source'] + " ",
-               "where id = " + id].join(" ")];
-    km_log(sqlArray[0]);
-    if (params['payMonth'] !== undefined) {
-        sqlArray.push(
-            ["update km_creditcard_payment ",
-             "set ",
-             "transaction_date = '" + params['transactionDate'] + "', ",
-             "detail = \"" + params['detail'] + "\", ",
-             "bought_amount = " + params['boughtAmount'] + ", ",
-             "pay_amount = " + params['payAmount'] + ", ",
-             "pay_month = '" + params['payMonth'] + "', ",
-             "user_id = " + params['userId'] + ", ",
-             "card_id = " + params['cardId'] + ", ",
-             "last_update_date = datetime('now', 'localtime') ",
-             "where transaction_id = " + id].join(" ")
-                      );
-        km_log(sqlArray[1]);
+KmCreditCardTrns.prototype.update = function(idList, params, updateCallback) {
+    var sql;
+    var sqlStatement;
+    var sqlStmtArray = [];
+    if (idList.length > 1) {
+        sql = ["update km_creditcard_trns ",
+                   "set ",
+                   "transaction_date = :transactionDate, ",
+                   "item_id = :itemId, ",
+                   "detail = :detail, ",
+                   "user_id = :userId, ",
+                   "card_id = :cardId, ",
+                   "last_update_date = datetime('now', 'localtime'), ",
+                   "source = :source",
+                   "where id in (:idList)"].join(" ");
+    } else {
+        sql = ["update km_creditcard_trns ",
+                   "set ",
+                   "transaction_date = :transactionDate, ",
+                   "expense = :boughtAmount, ",
+                   "item_id = :itemId, ",
+                   "detail = :detail, ",
+                   "user_id = :userId, ",
+                   "card_id = :cardId, ",
+                   "last_update_date = datetime('now', 'localtime'), ",
+                   "source = :source",
+                   "where id in (:idList)"].join(" ");
     }
-    this.mDb.executeTransaction(sqlArray);
-
-    updateCallback(id);
+    km_log(sql);
+    params["idList"] = idList.join(",");
+    sqlStatement = this.mDb.createStatementWithParams(sql, params);
+    sqlStmtArray.push(sqlStatement);
+    
+    if (params['payMonth'] !== undefined) {
+        if (idList.length > 1) {
+            sql = ["update km_creditcard_payment ",
+                 "set ",
+                 "transaction_date = :transactionDate, ",
+                 "detail = :detail, ",
+                 "pay_month = :payMonth, ",
+                 "user_id = :userId, ",
+                 "card_id = :cardId, ",
+                 "last_update_date = datetime('now', 'localtime') ",
+                 "where transaction_id in (:idList)"].join(" ");
+        } else {
+            sql = ["update km_creditcard_payment ",
+                 "set ",
+                 "transaction_date = :transactionDate, ",
+                 "detail = :detail, ",
+                 "bought_amount = :boughtAmount, ",
+                 "pay_amount = :payAmount, ",
+                 "pay_month = :payMonth, ",
+                 "user_id = :userId, ",
+                 "card_id = :cardId, ",
+                 "last_update_date = datetime('now', 'localtime') ",
+                 "where transaction_id in (:idList)"].join(" ");
+        }
+        km_log(sql);
+        sqlStatement = this.mDb.createStatementWithParams(sql, params);
+        sqlStmtArray.push(sqlStatement);
+    }
+    this.mDb.execTransaction(sqlStmtArray);
+    updateCallback(idList[0]);
 };
 KmCreditCardTrns.prototype.delete = function(idList, deleteCallback) {
-    var sql = ["delete from km_creditcard_trns where id in (" + idList.join(",") + ")",
-               "delete from km_creditcard_payment where transaction_id in (" + idList.join(",") + ")"];
-    km_debug(sql);
-    this.mDb.executeTransaction(sql);
+    var params = {
+        "idList": idList.join(",")
+    }
+    var sqlArray = ["delete from km_creditcard_trns where id in (:idList)",
+               "delete from km_creditcard_payment where transaction_id in (:idList)"];
+    var sqlStmtArray = [];
+    for (var i = 0; i < sqlArray.length; i++) {
+        km_log(sqlArray[i]);
+        var sqlStatement = this.mDb.createStatementWithParams(sqlArray[i], params);
+        sqlStmtArray.push(sqlStatement);
+    }
+    this.mDb.execTransaction(sqlStmtArray);
     
     deleteCallback();
 };

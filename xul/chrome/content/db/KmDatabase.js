@@ -244,15 +244,15 @@ KmDatabase.prototype.cashInsert = function(params, callback) {
     this.cashTrns.insert(params, insertCallback.bind(this));
     
 };
-KmDatabase.prototype.cashUpdate = function(id, params, callback) {
+KmDatabase.prototype.cashUpdate = function(idList, params, callback) {
     function updateCallback(id) {
         this.dropTrigger("km_realmoney_trns_update");
-        callback();
+        callback(id);
     }
     
     this.createTriggerOnUpdate("km_realmoney_trns", "km_realmoney_trns_update");
     this.createTransactionId();
-    this.cashTrns.update(id, params, updateCallback.bind(this));
+    this.cashTrns.update(idList, params, updateCallback.bind(this));
 };
 KmDatabase.prototype.cashDelete = function(idList, callback) {
     function deleteCallback() {
@@ -275,15 +275,15 @@ KmDatabase.prototype.bankInsert = function(params, callback) {
     this.bankTrns.insert(params, insertCallback.bind(this));
     
 };
-KmDatabase.prototype.bankUpdate = function(id, params, callback) {
+KmDatabase.prototype.bankUpdate = function(idList, params, callback) {
     function updateCallback(id) {
         this.dropTrigger("km_bank_trns_update");
-        callback();
+        callback(id);
     }
     
     this.createTriggerOnUpdate("km_bank_trns", "km_bank_trns_update");
     this.createTransactionId();
-    this.bankTrns.update(id, params, updateCallback.bind(this));
+    this.bankTrns.update(idList, params, updateCallback.bind(this));
 };
 KmDatabase.prototype.bankDelete = function(idList, callback) {
     function deleteCallback() {
@@ -306,15 +306,15 @@ KmDatabase.prototype.emoneyInsert = function(params, callback) {
     this.emoneyTrns.insert(params, insertCallback.bind(this));
     
 };
-KmDatabase.prototype.emoneyUpdate = function(id, params, callback) {
+KmDatabase.prototype.emoneyUpdate = function(idList, params, callback) {
     function updateCallback(id) {
         this.dropTrigger("km_emoney_trns_update");
-        callback();
+        callback(id);
     }
     
     this.createTriggerOnUpdate("km_emoney_trns", "km_emoney_trns_update");
     this.createTransactionId();
-    this.emoneyTrns.update(id, params, updateCallback.bind(this));
+    this.emoneyTrns.update(idList, params, updateCallback.bind(this));
 };
 
 KmDatabase.prototype.emoneyDelete = function(idList, callback) {
@@ -341,7 +341,7 @@ KmDatabase.prototype.creditCardInsert = function(params, callback) {
 KmDatabase.prototype.creditCardUpdate = function(id, params, callback) {
     function updateCallback(id) {
         this.dropTrigger("km_creditcard_trns_update");
-        callback();
+        callback(id);
     }
     
     this.createTriggerOnUpdate("km_creditcard_trns", "km_creditcard_trns_update");

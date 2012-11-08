@@ -107,7 +107,7 @@ KmCashTrns.prototype.insert = function(newRecordArray, insertCallback) {
 };
 
 KmCashTrns.prototype.execInsert = function (newRecordArray, importFlag, insertCallback) {
-    var sqlStmt = [];
+    var sqlStmtArray = [];
     for (var i = 0; i < newRecordArray.length; i++) {
         var sql = ["insert into km_realmoney_trns (",
                         "transaction_date, ",
@@ -121,52 +121,74 @@ KmCashTrns.prototype.execInsert = function (newRecordArray, importFlag, insertCa
                         "source ",
                         ") ",
                         "select ",
-                        "'" + newRecordArray[i]["transactionDate"] + "',",
-                        newRecordArray[i]["income"] + ",",
-                        newRecordArray[i]["expense"] + ",",
-                        newRecordArray[i]["itemId"] + ", ",
-                        "'" + newRecordArray[i]["detail"] + "',",
-                        newRecordArray[i]["userId"] + ",",
-                        newRecordArray[i]["internal"] + ",",
+                        ":transactionDate,",
+                        ":income,",
+                        ":expense,",
+                        ":itemId,",
+                        ":detail,",
+                        ":userId,",
+                        ":internal,",
                         "datetime('now', 'localtime'), ",
-                        newRecordArray[i]["source"]].join(" ");
+                        ":source"].join(" ");
         // 同じ入力元から同一期間のインポートは不可
         if (importFlag) {
             sql += [" where not exists (",
                     "select 1 from km_import_history",
-                    "where source_type =" + newRecordArray[i]["source"],
-                    "and period_from <= '" + newRecordArray[i]["transactionDate"] + "'",
-                    "and period_to > '" + newRecordArray[i]["transactionDate"] + "'",
+                    "where source_type =:source",
+                    "and period_from <= :transactionDate",
+                    "and period_to > :transactionDate",
                     ")"].join(" ");
         }
-        km_debug(sql);
-        sqlStmt.push(sql);
+        km_log(sql);
+        var sqlStatement = this.mDb.createStatementWithParams(sql, newRecordArray[i]);
+        sqlStmtArray.push(sqlStatement);
+
     }
-    this.mDb.executeTransaction(sqlStmt);
+    this.mDb.execTransaction(sqlStmtArray);
 
     insertCallback(this.mDb.getLastInsertRowId());
 };
-KmCashTrns.prototype.update = function(id, params, updateCallback) {
-    var sql = ["update km_realmoney_trns ",
-               "set ",
-               "transaction_date = " + "'" + params['transactionDate'] + "', ",
-               "income = " + params['income'] + ", ",
-               "expense = " + params['expense'] + ", ",
-               "item_id = " + params['itemId'] + ", ",
-               "detail = " + "\"" + params['detail'] + "\", ",
-               "user_id = " + params['userId'] + ", ",
-               "last_update_date = datetime('now', 'localtime'), ",
-               "internal = " + params['internal'] + ", ",
-               "source = " + params['source'] + " ",
-               "where id = " + id].join(" ");
-    km_debug(sql);
-    this.mDb.executeTransaction([sql]);
-    updateCallback(id);
+KmCashTrns.prototype.update = function(idList, params, updateCallback) {
+    var sql;
+    if (idList.length > 1) {
+        sql = ["update km_realmoney_trns ",
+                   "set ",
+                   "transaction_date = :transactionDate, ",
+                   "item_id = :itemId, ",
+                   "detail = :detail, ",
+                   "user_id = :userId, ",
+                   "last_update_date = datetime('now', 'localtime'), ",
+                   "internal = :internal, ",
+                   "source = :source ",
+                   "where id in (:idList)"].join(" ");
+    } else {
+        sql = ["update km_realmoney_trns ",
+                   "set ",
+                   "transaction_date = :transactionDate, ",
+                   "income = :income, ",
+                   "expense = :expense, ",
+                   "item_id = :itemId, ",
+                   "detail = :detail, ",
+                   "user_id = :userId, ",
+                   "last_update_date = datetime('now', 'localtime'), ",
+                   "internal = :internal, ",
+                   "source = :source ",
+                   "where id in (:idList)"].join(" ");
+    }
+    params["idList"] = idList.join(",");
+    km_log(sql);
+    var sqlStatement = this.mDb.createStatementWithParams(sql, params);
+    this.mDb.execTransaction([sqlStatement]);
+    updateCallback(idList[0]);
 };
 KmCashTrns.prototype.delete = function(idList, deleteCallback) {
-    var sql = ["delete from km_realmoney_trns where id in (" + idList.join(",") + ")"];
-    km_debug(sql);
-    this.mDb.executeTransaction(sql);
+    var params = {
+        "idList": idList.join(",")
+    }
+    var sql = "delete from km_realmoney_trns where id in (:idList)";
+    km_log(sql);
+    var sqlStatement = this.mDb.createStatementWithParams(sql, params);
+    this.mDb.execTransaction([sqlStatement]);
     
     deleteCallback();
 };

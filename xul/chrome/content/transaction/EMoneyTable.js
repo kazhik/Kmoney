@@ -90,7 +90,7 @@ EMoneyTable.prototype.updateRecord = function (id, params) {
     params['moneyId'] = $$('km_edit_emoney').value;
     params['internal'] = $$('km_edit_internal').value;
     
-    this.mDb.emoneyUpdate(id, params, updateCallback.bind(this, id));
+    this.mDb.emoneyUpdate([id], params, this.updateCallback.bind(this));
 };
 
 EMoneyTable.prototype.deleteRecord = function (idList) {
