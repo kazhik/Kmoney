@@ -9,25 +9,35 @@ KmUserInfo.prototype.load = function (loadCallback) {
     loadCallback(this.mUserList, this.mDb.getColumns());
 };
 KmUserInfo.prototype.insert = function (name, insertCallback) {
-    var sql = ["insert into km_user ("
+    var sql = "insert into km_user ("
             + "name "
             + ") values ( "
-            + "'" + name + "') "];
-    this.mDb.executeTransaction(sql);
+            + ":name) ";
+    var sqlStatement = this.mDb.createStatementWithParams(sql, params);
+    this.mDb.execTransaction([sqlStatement]);
     
     insertCallback();
 };
 
 KmUserInfo.prototype.update = function (id, name, updateCallback) {
-    var sql = ["update km_user "
+    var sql = "update km_user "
             + "set "
-            + "name = '" + name + "' "
-            + "where id = " + id];
-    this.mDb.executeTransaction(sql);
+            + "name = :name "
+            + "where id = :id";
+    var params = {
+        "id": id,
+        "name": name
+    };
+    var sqlStatement = this.mDb.createStatementWithParams(sql, params);
+    this.mDb.execTransaction([sqlStatement]);
     updateCallback();
 };
 KmUserInfo.prototype.delete = function (id, deleteCallback) {
-    var sql = ["delete from km_user where id = " + id];
-    this.mDb.executeTransaction(sql);
+    var sql = "delete from km_user where id = :id";
+    var params = {
+        "id": id
+    };
+    var sqlStatement = this.mDb.createStatementWithParams(sql, params);
+    this.mDb.execTransaction([sqlStatement]);
     deleteCallback();
 };

@@ -9,15 +9,16 @@ KmImportHistory.prototype.insert = function(params, insertCallback) {
                "period_to, ",
                "import_date ",
                ") values (",
-               params["source_type"] + ",",
-               "'" + params["source_url"] + "',",
-               "'" + params["period_from"] + "',",
-               "'" + params["period_to"] + "',",
+               ":source_type,",
+               ":source_url,",
+               ":period_from,",
+               ":period_to,",
                "datetime('now', 'localtime') ",
                ")"].join(" ");
 
     km_log(sql);
-    this.mDb.executeTransaction([sql]);
+    var sqlStatement = this.mDb.createStatementWithParams(sql, params);
+    this.mDb.execTransaction([sqlStatement]);
     
     insertCallback(this.mDb.getLastInsertRowId());
 };

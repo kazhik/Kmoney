@@ -21,7 +21,7 @@ KmImport.prototype.loadConf = function(sourceType, loadCallback) {
     loadCallback(this.mDb.getRecords(), this.mDb.getColumns());
 };
 KmImport.prototype.insert = function(params, insertCallback) {
-    var sql = ["insert into km_import ("
+    var sql = "insert into km_import ("
       + "source_type, "
       + "detail, "
       + "item_id, "
@@ -29,31 +29,38 @@ KmImport.prototype.insert = function(params, insertCallback) {
       + "permission, "
       + "internal "
       + ") values ( "
-      + params["sourceType"] + ", "
-      + "'" + params["detail"] + "', "
-      + params["itemId"] + ", "
-      + params["defaultId"] + ", "
+      + ":sourceType, "
+      + ":detail, "
+      + ":itemId, "
+      + ":defaultId, "
       + "1, "
-      + params["internal"] + ")"];
-    km_debug(sql);
-    this.mDb.executeTransaction(sql);
+      + ":internal)";
+    km_log(sql);
+    var sqlStatement = this.mDb.createStatementWithParams(sql, params);
+    this.mDb.execTransaction([sqlStatement]);
     insertCallback(this.mDb.getLastInsertRowId());
 
 };
 KmImport.prototype.update = function(id, params, updateCallback) {
-    var sql = ["update km_import "
-      + "set detail = '" + params["detail"] + "', "
-      + "item_id = " + params["itemId"] + ", "
-      + "default_id = " + params["defaultId"] + ", "
-      + "internal = " + params["internal"] + " "
-      + "where id = " + id];
-    km_debug(sql);
-    this.mDb.executeTransaction(sql);
+    var sql = "update km_import "
+      + "set detail = :detail, "
+      + "item_id = :itemId, "
+      + "default_id = :defaultId, "
+      + "internal = :internal "
+      + "where id = :id";
+
+    km_log(sql);
+    params["id"] = id;
+    var sqlStatement = this.mDb.createStatementWithParams(sql, params);
+    this.mDb.execTransaction([sqlStatement]);
     updateCallback();
 };
 KmImport.prototype.delete = function(id, deleteCallback) {
-    var sql = ["delete from km_import where id = " + id];
-    km_debug(sql);
-    this.mDb.executeTransaction(sql);
+    var sql = "delete from km_import where id = :id";
+    var params = {
+        "id": id
+    };
+    var sqlStatement = this.mDb.createStatementWithParams(sql, params);
+    this.mDb.execTransaction([sqlStatement]);
     deleteCallback();
 };

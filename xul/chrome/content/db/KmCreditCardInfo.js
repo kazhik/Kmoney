@@ -21,34 +21,41 @@ KmCreditCardInfo.prototype.loadMaster = function(loadCallback) {
 };
 
 KmCreditCardInfo.prototype.insert = function(params, insertCallback) {
-    var sql = ["insert into km_creditcard_info ("
+    var sql = "insert into km_creditcard_info ("
             + "name, "
             + "user_id, "
             + "bank_id "
             + ") values ( "
-            + "'" + params['name'] + "', "
-            + params['userId'] + ", "
-            + params['bankId'] + ")"];
+            + ":name, "
+            + ":userId, "
+            + ":bankId)";
 
-    this.mDb.executeTransaction(sql);
+    var sqlStatement = this.mDb.createStatementWithParams(sql, params);
+    this.mDb.execTransaction([sqlStatement]);
     
     insertCallback(this.mDb.getLastInsertRowId());
 };
 KmCreditCardInfo.prototype.update = function(id, params, updateCallback) {
-    var sql = ["update km_creditcard_info "
+    var sql = "update km_creditcard_info "
             + "set "
-            + "name = '" + params['name'] + "', "
-            + "user_id = " + params['userId'] + ", "
-            + "bank_id = " + params['bankId'] + " "
-            + "where id = " + id];
+            + "name = :name, "
+            + "user_id = :userId, "
+            + "bank_id = :bankId "
+            + "where id = :id";
 
-    this.mDb.executeTransaction(sql);
+    params["id"] = id;
+    var sqlStatement = this.mDb.createStatementWithParams(sql, params);
+    this.mDb.execTransaction([sqlStatement]);
     
     updateCallback();
 };
 KmCreditCardInfo.prototype.delete = function(id, deleteCallback) {
-    var sql = ["delete from km_creditcard_info where id = " + id];
-    this.mDb.executeTransaction(sql);
+    var sql = "delete from km_creditcard_info where id = :id";
+    var params = {
+        "id": id
+    };
+    var sqlStatement = this.mDb.createStatementWithParams(sql, params);
+    this.mDb.execTransaction([sqlStatement]);
     deleteCallback();
 };
 KmCreditCardInfo.prototype.getCardId = function (name, userId) {

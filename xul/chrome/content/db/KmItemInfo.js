@@ -16,23 +16,36 @@ KmItemInfo.prototype.loadMaster = function(loadCallback) {
 };
 
 KmItemInfo.prototype.insert = function(name, sumInclude, insertCallback) {
-    var sql = ["insert into km_item ("
+    var sql = "insert into km_item ("
       + "name, "
       + "sum_include "
       + ") values ( "
-      + "'" + name + "', "
-      + sumInclude + ")"];
-    this.mDb.executeTransaction(sql);
+      + ":name, "
+      + ":sumInclude)";
+    
+    var params = {
+        "name": name,
+        "sumInclude": sumInclude
+    };
+    km_log(sql);
+    var sqlStatement = this.mDb.createStatementWithParams(sql, params);
+    this.mDb.execTransaction([sqlStatement]);
     insertCallback(this.mDb.getLastInsertRowId());
 };
 KmItemInfo.prototype.update = function(id, name, sumInclude, updateCallback) {
-    var sql = ["update km_item "
+    var sql = "update km_item "
           + "set "
-          + "name = '" + name + "', "
-          + "sum_include = " + sumInclude + " "
-          + "where id = " + id];
-        km_debug(sql);
-    this.mDb.executeTransaction(sql);
+          + "name = :name, "
+          + "sum_include = :sumInclude "
+          + "where id = :id";
+    var params = {
+        "id": id,
+        "name": name,
+        "sumInclude": sumInclude
+    };
+    km_log(sql);
+    var sqlStatement = this.mDb.createStatementWithParams(sql, params);
+    this.mDb.execTransaction([sqlStatement]);
     
     updateCallback();
 };

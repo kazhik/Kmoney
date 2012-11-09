@@ -37,31 +37,40 @@ KmEMoneyInfo.prototype.loadMaster = function(loadCallback) {
 };
 
 KmEMoneyInfo.prototype.insert = function(params, insertCallback) {
-    var sql = ["insert into km_emoney_info ("
+    var sql = "insert into km_emoney_info ("
       + "name, "
       + "user_id "
       + ") values ( "
-      + "'" + params['name'] + "', "
-      + params['userId'] + ")"];
+      + ":name, "
+      + ":userId)";
 
-    this.mDb.executeTransaction(sql);
+    km_log(sql);
+    var sqlStatement = this.mDb.createStatementWithParams(sql, params);
+    this.mDb.execTransaction([sqlStatement]);
     
     insertCallback(this.mDb.getLastInsertRowId());
 };
 
 KmEMoneyInfo.prototype.update = function(id, params, updateCallback) {
-    var sql = ["update km_emoney_info "
+    var sql = "update km_emoney_info "
       + "set "
-      + "name = '" + params['name'] + "', "
-      + "user_id = " + params['userId'] + " "
-      + "where id = " + id];
+      + "name = :name, "
+      + "user_id = :userId "
+      + "where id = :id";
 
-    this.mDb.executeTransaction(sql);
+    km_log(sql);
+    var sqlStatement = this.mDb.createStatementWithParams(sql, params);
+    this.mDb.execTransaction([sqlStatement]);
     
     updateCallback();
 };
 KmEMoneyInfo.prototype.delete = function(id, deleteCallback) {
-    var sql = ["delete from km_emoney_info where id = " + id];
-    this.mDb.executeTransaction(sql);
+    var sql = "delete from km_emoney_info where id = :id";
+    var params = {
+        "id": id
+    };
+    km_log(sql);
+    var sqlStatement = this.mDb.createStatementWithParams(sql, params);
+    this.mDb.execTransaction([sqlStatement]);
     deleteCallback();
 };
