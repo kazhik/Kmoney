@@ -190,6 +190,13 @@ KmCreditCardTrns.prototype.execInsert = function (newRecordArray, importFlag, in
     insertCallback(this.mDb.getLastInsertRowId("km_creditcard_trns"));
 };
 KmCreditCardTrns.prototype.update = function(idList, params, updateCallback) {
+    var keyList = [];
+    for (var i = 0; i < idList.length; i++) {
+        var key = "id_" + i;
+        keyList.push(":" + key);
+        params[key] = idList[i];
+    }
+    var inClause = keyList.join(",");
     var sql;
     var sqlStatement;
     var sqlStmtArray = [];
@@ -203,7 +210,7 @@ KmCreditCardTrns.prototype.update = function(idList, params, updateCallback) {
                    "card_id = :cardId, ",
                    "last_update_date = datetime('now', 'localtime'), ",
                    "source = :source",
-                   "where id in (:idList)"].join(" ");
+                   "where id in (" + inClause + ")"].join(" ");
     } else {
         sql = ["update km_creditcard_trns ",
                    "set ",
@@ -215,10 +222,9 @@ KmCreditCardTrns.prototype.update = function(idList, params, updateCallback) {
                    "card_id = :cardId, ",
                    "last_update_date = datetime('now', 'localtime'), ",
                    "source = :source",
-                   "where id in (:idList)"].join(" ");
+                   "where id in (" + inClause + ")"].join(" ");
     }
     km_log(sql);
-    params["idList"] = idList.join(",");
     sqlStatement = this.mDb.createStatementWithParams(sql, params);
     sqlStmtArray.push(sqlStatement);
     
@@ -232,7 +238,7 @@ KmCreditCardTrns.prototype.update = function(idList, params, updateCallback) {
                  "user_id = :userId, ",
                  "card_id = :cardId, ",
                  "last_update_date = datetime('now', 'localtime') ",
-                 "where transaction_id in (:idList)"].join(" ");
+                 "where transaction_id in (" + inClause +")"].join(" ");
         } else {
             sql = ["update km_creditcard_payment ",
                  "set ",
@@ -244,7 +250,7 @@ KmCreditCardTrns.prototype.update = function(idList, params, updateCallback) {
                  "user_id = :userId, ",
                  "card_id = :cardId, ",
                  "last_update_date = datetime('now', 'localtime') ",
-                 "where transaction_id in (:idList)"].join(" ");
+                 "where transaction_id in (" + inClause + ")"].join(" ");
         }
         km_log(sql);
         sqlStatement = this.mDb.createStatementWithParams(sql, params);
@@ -254,11 +260,16 @@ KmCreditCardTrns.prototype.update = function(idList, params, updateCallback) {
     updateCallback(idList[0]);
 };
 KmCreditCardTrns.prototype.delete = function(idList, deleteCallback) {
-    var params = {
-        "idList": idList.join(",")
+    var params = {};
+    var keyList = [];
+    for (var i = 0; i < idList.length; i++) {
+        var key = "id_" + i;
+        keyList.push(":" + key);
+        params[key] = idList[i];
     }
-    var sqlArray = ["delete from km_creditcard_trns where id in (:idList)",
-               "delete from km_creditcard_payment where transaction_id in (:idList)"];
+    var inClause = keyList.join(",");
+    var sqlArray = ["delete from km_creditcard_trns where id in (" + inClause + ")",
+               "delete from km_creditcard_payment where transaction_id in (" + inClause + ")"];
     var sqlStmtArray = [];
     for (var i = 0; i < sqlArray.length; i++) {
         km_log(sqlArray[i]);

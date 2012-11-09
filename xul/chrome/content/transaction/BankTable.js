@@ -78,7 +78,7 @@ BankTable.prototype.addRecord = function (params) {
     this.mDb.bankInsert([params], this.insertCallback.bind(this));    
     
 };
-BankTable.prototype.updateRecord = function (id, params) {
+BankTable.prototype.updateRecord = function (idList, params) {
     if ($$('km_edit_income').selected) {
         params['income'] = params['amount'];
     } else {
@@ -87,7 +87,7 @@ BankTable.prototype.updateRecord = function (id, params) {
     params['bankId'] = $$('km_edit_bank').value;
     params['internal'] = $$('km_edit_internal').value;
     
-    this.mDb.bankUpdate([id], params, this.updateCallback.bind(this));
+    this.mDb.bankUpdate(idList, params, this.updateCallback.bind(this));
 
 };
 

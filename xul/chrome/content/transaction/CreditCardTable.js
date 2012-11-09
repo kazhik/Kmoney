@@ -105,7 +105,7 @@ CreditCardTable.prototype.addRecord = function (params) {
     }
     this.mDb.creditCardInsert([params], this.insertCallback.bind(this));
 };
-CreditCardTable.prototype.updateRecord = function (id, params) {
+CreditCardTable.prototype.updateRecord = function (idList, params) {
     params['boughtAmount'] = params['amount'];
     params['cardId'] = $$('km_edit_creditcard').value;
     params['internal'] = $$('km_edit_internal').value;
@@ -113,11 +113,11 @@ CreditCardTable.prototype.updateRecord = function (id, params) {
     var payMonthY = $$('km_edit_paymonthY').value;
     if (parseInt(payMonthY) !== 0) {
         params['payMonth'] = payMonthY + "-" + $$('km_edit_paymonthM').value;
-        params['payAmount'] = params['boughtAmount']; // 分割払いは当面対応しない
+        params['payAmount'] = params['boughtAmount']; // 分割払いは当面対応しない(Issue #10)
         params['remainingBalance'] = 0;
     }
     
-    this.mDb.creditCardUpdate([id], params, this.updateCallback.bind(this));
+    this.mDb.creditCardUpdate(idList, params, this.updateCallback.bind(this));
 
 };
 CreditCardTable.prototype.deleteRecord = function (idList) {

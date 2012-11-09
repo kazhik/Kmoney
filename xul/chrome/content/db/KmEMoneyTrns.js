@@ -154,6 +154,13 @@ KmEMoneyTrns.prototype.execInsert = function (newRecordArray, importFlag, insert
     insertCallback(this.mDb.getLastInsertRowId());
 };
 KmEMoneyTrns.prototype.update = function(idList, params, updateCallback) {
+    var keyList = [];
+    for (var i = 0; i < idList.length; i++) {
+        var key = "id_" + i;
+        keyList.push(":" + key);
+        params[key] = idList[i];
+    }
+    var inClause = keyList.join(",");
     var sql;
     if (idList.length > 1) {
         sql = "update km_emoney_trns "
@@ -166,7 +173,7 @@ KmEMoneyTrns.prototype.update = function(idList, params, updateCallback) {
                 + "last_update_date = datetime('now', 'localtime'), "
                 + "internal = :internal, "
                 + "source = :source "
-                + "where id in (:idList) ";
+                + "where id in (" + inClause + ") ";
     } else {
         sql = "update km_emoney_trns "
                 + "set "
@@ -180,10 +187,10 @@ KmEMoneyTrns.prototype.update = function(idList, params, updateCallback) {
                 + "last_update_date = datetime('now', 'localtime'), "
                 + "internal = :internal, "
                 + "source = :source "
-                + "where id in (:idList) ";
+                + "where id in (" + inClause + ") ";
     }
     km_log(sql);
-    params["idList"] = idList.join(",");
+    km_debug(JSON.stringify(params));
     var sqlStatement = this.mDb.createStatementWithParams(sql, params);
     this.mDb.execTransaction([sqlStatement]);
     
@@ -192,10 +199,15 @@ KmEMoneyTrns.prototype.update = function(idList, params, updateCallback) {
 };
 
 KmEMoneyTrns.prototype.delete = function(idList, deleteCallback) {
-    var params = {
-        "idList": idList.join(",")
+    var params = {};
+    var keyList = [];
+    for (var i = 0; i < idList.length; i++) {
+        var key = "id_" + i;
+        keyList.push(":" + key);
+        params[key] = idList[i];
     }
-    var sql = "delete from km_emoney_trns where id in (:idList)";
+    var inClause = keyList.join(",");
+    var sql = "delete from km_emoney_trns where id in (" + inClause + ")";
     km_log(sql);
     var sqlStatement = this.mDb.createStatementWithParams(sql, params);
     this.mDb.execTransaction([sqlStatement]);

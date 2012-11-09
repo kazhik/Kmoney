@@ -49,7 +49,7 @@ CashTable.prototype.addRecord = function (params) {
 
     this.mDb.cashInsert([params], this.insertCallback.bind(this));    
 };
-CashTable.prototype.updateRecord = function (id, params) {
+CashTable.prototype.updateRecord = function (idList, params) {
     if ($$('km_edit_income').selected) {
         params['income'] = params['amount'];
     } else {
@@ -57,7 +57,7 @@ CashTable.prototype.updateRecord = function (id, params) {
     }
     params['internal'] = $$('km_edit_internal').value;
 
-    this.mDb.cashUpdate([id], params, this.updateCallback.bind(this));
+    this.mDb.cashUpdate(idList, params, this.updateCallback.bind(this));
 };
 
 CashTable.prototype.deleteRecord = function (idList) {

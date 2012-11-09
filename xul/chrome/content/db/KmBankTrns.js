@@ -159,6 +159,13 @@ KmBankTrns.prototype.execInsert = function(newRecordArray, importFlag, insertCal
     insertCallback(this.mDb.getLastInsertRowId());
 };
 KmBankTrns.prototype.update = function(idList, params, updateCallback) {
+    var keyList = [];
+    for (var i = 0; i < idList.length; i++) {
+        var key = "id_" + i;
+        keyList.push(":" + key);
+        params[key] = idList[i];
+    }
+    var inClause = keyList.join(",");
     var sql;
     if (idList.length > 1) {
         sql = ["update km_bank_trns ",
@@ -171,7 +178,7 @@ KmBankTrns.prototype.update = function(idList, params, updateCallback) {
                    "last_update_date = datetime('now', 'localtime'), ",
                    "internal = :internal, ",
                    "source = :source ",
-                   "where id in (:idList)"].join(" ");
+                   "where id in (" + inClause + ")"].join(" ");
     } else {
         sql = ["update km_bank_trns ",
                    "set ",
@@ -185,20 +192,24 @@ KmBankTrns.prototype.update = function(idList, params, updateCallback) {
                    "last_update_date = datetime('now', 'localtime'), ",
                    "internal = :internal, ",
                    "source = :source ",
-                   "where id in (:idList)"].join(" ");
+                   "where id in (" +inClause + ")"].join(" ");
     }
     km_log(sql);
-    params["idList"] = idList.join(",");
     var sqlStatement = this.mDb.createStatementWithParams(sql, params);
     this.mDb.execTransaction([sqlStatement]);
     
     updateCallback(idList[0]);
 };
 KmBankTrns.prototype.delete = function(idList, deleteCallback) {
-    var params = {
-        "idList": idList.join(",")
+    var params = {};
+    var keyList = [];
+    for (var i = 0; i < idList.length; i++) {
+        var key = "id_" + i;
+        keyList.push(":" + key);
+        params[key] = idList[i];
     }
-    var sql = "delete from km_bank_trns where id in (:idList)";
+    var inClause = keyList.join(",");
+    var sql = "delete from km_bank_trns where id in (" + inClause + ")";
     km_log(sql);
     var sqlStatement = this.mDb.createStatementWithParams(sql, params);
     this.mDb.execTransaction([sqlStatement]);
