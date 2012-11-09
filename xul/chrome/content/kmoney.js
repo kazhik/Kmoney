@@ -338,30 +338,18 @@ Kmoney.prototype.loadTable = function (tabId) {
     case 'km_tab_cash':
         panelContent = this.cashTree;
         panelType = "table";
-        $$('bankbox').hidden = true;
-        $$('creditcardbox').hidden = true;
-        $$('emoneybox').hidden = true;
-        $$('km_edit1').hidden = false;
-        $$('km_edit2').hidden = false;
-        $$('km_edit_buttons').hidden = false;
-        $$('km_summary_condition').hidden = true;
-        $$('km_query1').hidden = false;
-        $$('km_query2').hidden = false;
+        hideElements(['bankbox', 'creditcardbox', 'emoneybox', 'km_summary_condition']);
+        showElements(['km_edit1', 'km_edit2', 'km_edit_buttons', 'km_query1', 'km_query2',
+                      'income_expense']);
         this.initQueryCondition('km_list_query_condition1');
         this.initQueryCondition('km_list_query_condition2');
         break;
     case 'km_tab_bank':
         panelContent = this.bankTree;
         panelType = "table";
-        $$('bankbox').hidden = false;
-        $$('creditcardbox').hidden = true;
-        $$('emoneybox').hidden = true;
-        $$('km_edit1').hidden = false;
-        $$('km_edit2').hidden = false;
-        $$('km_edit_buttons').hidden = false;
-        $$('km_summary_condition').hidden = true;
-        $$('km_query1').hidden = false;
-        $$('km_query2').hidden = false;
+        hideElements(['creditcardbox', 'emoneybox', 'km_summary_condition']);
+        showElements(['bankbox', 'km_edit1', 'km_edit2', 'income_expense',
+                      'km_edit_buttons', 'km_query1', 'km_query2']);
         this.initQueryCondition('km_list_query_condition1');
         this.initQueryCondition('km_list_query_condition2');
         $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.bank"), "bank");
@@ -370,15 +358,8 @@ Kmoney.prototype.loadTable = function (tabId) {
     case 'km_tab_creditcard':
         panelContent = this.creditcardTree;
         panelType = "table";
-        $$('bankbox').hidden = true;
-        $$('creditcardbox').hidden = false;
-        $$('emoneybox').hidden = true;
-        $$('km_edit1').hidden = false;
-        $$('km_edit2').hidden = false;
-        $$('km_edit_buttons').hidden = false;
-        $$('km_summary_condition').hidden = true;
-        $$('km_query1').hidden = false;
-        $$('km_query2').hidden = false;
+        hideElements(['bankbox', 'emoneybox', 'km_summary_condition', 'income_expense']);
+        showElements(['creditcardbox', 'km_edit1', 'km_edit2', 'km_edit_buttons', 'km_query1', 'km_query2']);
         this.initQueryCondition('km_list_query_condition1');
         this.initQueryCondition('km_list_query_condition2');
         $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.creditcard"),
@@ -391,15 +372,9 @@ Kmoney.prototype.loadTable = function (tabId) {
         panelType = "table";
         $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.emoney"), "emoney");
         $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.emoney"), "emoney");
-        $$('bankbox').hidden = true;
-        $$('creditcardbox').hidden = true;
-        $$('emoneybox').hidden = false;
-        $$('km_edit1').hidden = false;
-        $$('km_edit2').hidden = false;
-        $$('km_edit_buttons').hidden = false;
-        $$('km_summary_condition').hidden = true;
-        $$('km_query1').hidden = false;
-        $$('km_query2').hidden = false;
+        hideElements(['bankbox', 'creditcardbox', 'km_summary_condition']);
+        showElements(['emoneybox', 'km_edit1', 'km_edit2', 'km_edit_buttons',
+                      'km_query1', 'km_query2', 'income_expense']);
         this.initQueryCondition('km_list_query_condition1');
         this.initQueryCondition('km_list_query_condition2');
         $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.creditcard"),
@@ -410,15 +385,9 @@ Kmoney.prototype.loadTable = function (tabId) {
     case 'km_tab_all':
         panelContent = this.allView;
         panelType = "table";
-        $$('bankbox').hidden = true;
-        $$('creditcardbox').hidden = true;
-        $$('emoneybox').hidden = true;
-        $$('km_edit1').hidden = true;
-        $$('km_edit2').hidden = true;
-        $$('km_edit_buttons').hidden = true;
-        $$('km_summary_condition').hidden = true;
-        $$('km_query1').hidden = false;
-        $$('km_query2').hidden = false;
+        hideElements(['bankbox', 'creditcardbox', 'emoneybox', 'km_edit1', 'km_edit2',
+                      'km_edit_buttons', 'km_summary_condition']);
+        showElements(['km_query1', 'km_query2']);
         this.initQueryCondition('km_list_query_condition1');
         this.initQueryCondition('km_list_query_condition2');
         $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.bank"), "bank");
@@ -433,26 +402,16 @@ Kmoney.prototype.loadTable = function (tabId) {
     case 'km_tab_summary':
         panelContent = this.summary;
         panelType = "graph";
-        $$('km_edit1').hidden = true;
-        $$('km_edit2').hidden = true;
-        $$('km_edit_buttons').hidden = true;
-        $$('km_summary_condition').hidden = false;
-        $$('km_summary_bankbox').hidden = true;
-        $$('km_summary_itembox').hidden = false;
-        $$('km_query1').hidden = true;
-        $$('km_query2').hidden = true;
+        hideElements(['km_summary_bankbox', 'km_edit1', 'km_edit2',
+                      'km_query1', 'km_query2', 'km_edit_buttons']);
+        showElements(['km_summary_itembox', 'km_summary_condition']);
         break;
     case 'km_tab_balance':
         panelContent = this.balance;
         panelType = "graph";
-        $$('km_edit1').hidden = true;
-        $$('km_edit2').hidden = true;
-        $$('km_edit_buttons').hidden = true;
-        $$('km_summary_condition').hidden = false;
-        $$('km_summary_bankbox').hidden = false;
-        $$('km_summary_itembox').hidden = true;
-        $$('km_query1').hidden = true;
-        $$('km_query2').hidden = true;
+        hideElements(['km_summary_itembox', 'km_edit1', 'km_edit2',
+                      'km_query1', 'km_query2', 'km_edit_buttons']);
+        showElements(['km_summary_bankbox', 'km_summary_condition']);
         break;
     }
 
