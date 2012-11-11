@@ -19,3 +19,6 @@
 
 <!ENTITY pref-displayNumRecords.label "表示するレコード数">
 <!ENTITY pref-displayNumRecords.ak "N">
+
+<!ENTITY confirmBeforeExecute "以下を実行する前に確認">
+<!ENTITY pref-confirm.update.label "レコードの更新・削除">

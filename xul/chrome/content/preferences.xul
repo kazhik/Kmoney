@@ -62,5 +62,13 @@
         </hbox>
       </prefpane>
   <prefpane id="confirm-options" label="&panePrompts.title;">
+    <preferences>
+      <preference id="pref-confirm.update" name="extensions.kmoney.confirm.update" type="bool"/>
+    </preferences>
+    <groupbox>
+    <caption label="&confirmBeforeExecute;"/>
+      <checkbox id="cb-pref-confirm.update" label="&pref-confirm.update.label;"
+                preference="pref-confirm.update" checked="true"/>
+    </groupbox>
   </prefpane>
 </prefwindow>

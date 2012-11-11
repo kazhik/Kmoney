@@ -89,12 +89,12 @@ KmDatabase.prototype.openDatabase = function () {
 };
 
 KmDatabase.prototype.openLastDb = function () {
-    // opening with last used DB if preferences set to do so
-    var bPrefVal = km_prefsBranch.getBoolPref("openWithLastDb");
-    if (!bPrefVal) return;
 
     var sPath = KmGlobals.mru.getLatest();
-    if (sPath == null) return;
+    if (sPath == null) {
+        km_debug("no lastdb");
+        return false;
+    }
 
     //Last used DB found, open this DB
     var newfile = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
@@ -102,12 +102,12 @@ KmDatabase.prototype.openLastDb = function () {
         newfile.initWithPath(sPath);
     } catch (e) {
         kmPrompt.alert(null, km_getLStr("extName"), 'Failed to init local file using ' + sPath);
-        return;
+        return false;
     }
     //if the last used file is not found, bail out
     if (!newfile.exists()) {
         kmPrompt.alert(null, km_getLStr("extName"), km_getLFStr("db.lastDbDoesNotExist", [sPath]));
-        return;
+        return false;
     }
 
     bPrefVal = km_prefsBranch.getBoolPref("promptForLastDb");
@@ -121,13 +121,14 @@ KmDatabase.prototype.openLastDb = function () {
             km_getLStr("db.promptLastDbOpen"),
             check);
 
-        if (!result) return;
+        if (!result) return false;
         //update the promptForLastDb preference
         bPrefVal = km_prefsBranch.setBoolPref("promptForLastDb", !check.value);
     }
     //assign the new file (nsIFile) to the current database
     this.openDatabaseFile(newfile);
-    
+
+    return true;    
 };
 KmDatabase.prototype.openDatabaseFile = function (dbFile) {
     if (this.closeDatabase(false)) {

@@ -7,6 +7,8 @@ pref("extensions.kmoney.autoBackup", "off");//on, off, prompt
 pref("extensions.kmoney.openWithLastDb", true);
 pref("extensions.kmoney.promptForLastDb", true);
 
+pref("extensions.kmoney.confirm.update", true);
+
 //position in target application (only Firefox) as a menuitem
 //As of now, 1 stands for show menuitem in Tools menu. 0 means hide it.
 //for other values do nothing

@@ -19,3 +19,6 @@
 
 <!ENTITY  pref-displayNumRecords.label	"Number of records to display">
 <!ENTITY  pref-displayNumRecords.ak		"N">
+
+<!ENTITY  confirmBeforeExecute		"Confirm before executing the following">
+<!ENTITY  pref-confirm.update.label	"Before updating/deleting a record">

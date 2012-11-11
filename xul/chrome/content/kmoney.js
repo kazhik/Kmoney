@@ -46,8 +46,11 @@ Kmoney.prototype.Startup = function () {
     
     this.addEventListeners();
 
-    this.mDb.openLastDb();
-    this.loadData();
+    if (km_prefsBranch.getBoolPref("openWithLastDb")) {
+        if (this.mDb.openLastDb()) {
+            this.loadData();
+        }
+    }
     km_debug("Kmoney.Startup end");
 };
 Kmoney.prototype.loadData = function() {
@@ -614,9 +617,11 @@ Kmoney.prototype.updateRecord = function () {
         km_alert(km_getLStr("error.title"), km_getLStr("error.amount.invalid"));
         return;
     }
-    var bConfirm = km_confirm(km_getLStr("confirm.title"), km_getLStr("confirm.updateRow"));
-    if (!bConfirm) {
-        return;
+    if (km_prefsBranch.getBoolPref("confirm.update")) {
+        var bOk = km_confirm(km_getLStr("confirm.title"), km_getLStr("confirm.updateRow"));
+        if (!bOk) {
+            return;
+        }
     }
 
     var params = {
@@ -641,9 +646,11 @@ Kmoney.prototype.deleteRecord = function () {
         km_alert(km_getLStr("error.title"), km_getLStr("error.delete.notSelected"));
         return;
     }
-    var bConfirm = km_confirm(km_getLStr("confirm.title"), km_getLStr("confirm.deleteRow"));
-    if (!bConfirm) {
-        return;
+    if (km_prefsBranch.getBoolPref("confirm.update")) {
+        var bOk = km_confirm(km_getLStr("confirm.title"), km_getLStr("confirm.deleteRow"));
+        if (!bOk) {
+            return;
+        }
     }
     var idList = tree.mTree.getSelectedRowValueList('id');
     tree.deleteRecord(idList);
