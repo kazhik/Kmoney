@@ -19,3 +19,23 @@ KmSource.prototype.load = function(loadCallback) {
                          "where A.import = 1 and A.enabled = 1");
     loadCallback(this.mDb.getRecords());
 };
+
+KmSource.prototype.insert = function(params, insertCallback) {
+    var sql = "insert into km_source ("
+      + "name, "
+      + "import, "
+      + "enabled, "
+      + "file_ext "
+      + ") values ( "
+      + ":name, "
+      + ":import, "
+      + ":enabled, "
+      + ":file_ext)";
+
+    km_log(sql);
+    var sqlStatement = this.mDb.createStatementWithParams(sql, params);
+    this.mDb.execTransaction([sqlStatement]);
+    
+    insertCallback(this.mDb.getLastInsertRowId());
+};
+

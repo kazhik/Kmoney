@@ -13,10 +13,13 @@ KmUserInfo.prototype.insert = function (name, insertCallback) {
             + "name "
             + ") values ( "
             + ":name) ";
+    var params = {
+        "name": name
+    };
     var sqlStatement = this.mDb.createStatementWithParams(sql, params);
     this.mDb.execTransaction([sqlStatement]);
     
-    insertCallback();
+    insertCallback(this.mDb.getLastInsertRowId());
 };
 
 KmUserInfo.prototype.update = function (id, name, updateCallback) {

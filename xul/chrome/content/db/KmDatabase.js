@@ -191,47 +191,120 @@ KmDatabase.prototype.createTimestampedBackup = function (nsiFileObj) {
 
 KmDatabase.prototype.initialize = function () {
     this.createTables();
-    this.setInitialRecords();
+    this.createInitialRecords();
     
 };
-KmDatabase.prototype.setInitialRecords = function() {
-  var sql;
-  var sqlArray = [];
-  // km_user
-  // TODO: i18n
-  var users = ['お父さん','お母さん'];
-  for (var i = 0; i < users.length; i++) {
-    sql = ["insert into km_user ("
-      + "name "
-      + ") values ( "
-      + "'" + users[i] + "') "];
-    sqlArray.push(sql);
-  }
-  this.mDb.executeTransaction(sqlArray);
-  sqlArray.splice(0);
-  
-  var items = [
-    ['食材・生活用品', 1],
-    ['外食', 1],
-    ['交通費', 1],
-    ['ATM', 1],
-    ['交際費', 1]
-  ];
-  for (var i = 0; i < items.length; i++) {
-    sql = ["insert into km_item ("
-      + "name, "
-      + "sum_include "
-      + ") values ( "
-      + "'" + items[i][0] + "',"
-      + items[i][1] + ")"];
-    sqlArray.push(sql);
-  }
-  this.mDb.executeTransaction(sqlArray);
-  sqlArray.splice(0);
-  
-  // km_bank_info
-  // km_creditcard_info
-  // km_emoney_info
+KmDatabase.prototype.createInitialRecords = function() {
+    function insertCallback(id) {
+        
+    }
+    
+    // km_user
+    var users = ['太郎', '花子'];
+    for (var i = 0; i < users.length; i++) {
+        this.userInfo.insert(users[i], insertCallback.bind(this));
+    }
+    
+    // km_item
+    var items = [
+        ['食材・生活用品', 1],
+        ['外食', 1],
+        ['交通費', 1],
+        ['ATM', 1],
+        ['交際費', 1]
+    ];
+    for (var i = 0; i < items.length; i++) {
+        this.itemInfo.insert(items[i][0], items[i][1], insertCallback.bind(this));
+    }
+    
+    // km_source
+    var sources = [
+        {"name": "Kmoney",
+         "import": 0,
+         "enabled": 1,
+         "file_ext": ""},
+        {"name": "銀行口座（汎用）",
+         "import": 1,
+         "enabled": 1,
+         "file_ext": "csv"},
+        {"name": "クレジットカード（汎用）",
+         "import": 1,
+         "enabled": 1,
+         "file_ext": "csv"},
+        {"name": "電子マネー（汎用）",
+         "import": 1,
+         "enabled": 1,
+         "file_ext": "csv"},
+        {"name": "かんたん家計簿",
+         "import": 1,
+         "enabled": 1,
+         "file_ext": "db"},
+        {"name": "みずほ銀行",
+         "import": 1,
+         "enabled": 1,
+         "file_ext": "ofx"},
+        {"name": "新生銀行",
+         "import": 1,
+         "enabled": 1,
+         "file_ext": "csv"},
+        {"name": "ビューカード",
+         "import": 1,
+         "enabled": 1,
+         "file_ext": "html"},
+        {"name": "セゾンカード",
+         "import": 1,
+         "enabled": 1,
+         "file_ext": "csv"},
+        {"name": "UCカード",
+         "import": 1,
+         "enabled": 1,
+         "file_ext": "csv"},
+        {"name": "Suica",
+         "import": 1,
+         "enabled": 1,
+         "file_ext": "html"}
+    ];
+    for (var i = 0; i < sources.length; i++) {
+        this.source.insert(sources[i], insertCallback.bind(this));
+    }
+    
+    // km_bank_info
+    var bankInfo = [
+        {"name": "みずほ銀行",
+         "userId": 1},
+        {"name": "新生銀行",
+         "userId": 2}
+    ];
+    for (var i = 0; i < bankInfo.length; i++) {
+        this.bankInfo.insert(bankInfo[i], insertCallback.bind(this));
+    }
+    
+    // km_creditcard_info
+    var cardInfo = [
+        {"name": "UCカード",
+         "userId": 1,
+         "bankId": 1},
+        {"name": "ビューカード",
+         "userId": 1,
+         "bankId": 1},
+        {"name": "セゾンカード",
+         "userId": 2,
+         "bankId": 2}
+    ];
+    for (var i = 0; i < cardInfo.length; i++) {
+        this.creditCardInfo.insert(cardInfo[i], insertCallback.bind(this));
+    }
+    
+    // km_emoney_info
+    var emoneyInfo = [
+        {"name": "Suica",
+         "userId": 1},
+        {"name": "Suica",
+         "userId": 2}
+    ];
+    for (var i = 0; i < emoneyInfo.length; i++) {
+        this.emoneyInfo.insert(emoneyInfo[i], insertCallback.bind(this));
+    }
   
 };
 

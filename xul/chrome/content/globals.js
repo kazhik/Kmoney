@@ -105,14 +105,16 @@ function km_setUnicodePref(prefName, prefValue) {
     km_prefsBranch.setComplexValue(prefName, Ci.nsISupportsString, sString);
 }
 
-var smStrings = Cc["@mozilla.org/intl/stringbundle;1"].getService(Ci.nsIStringBundleService).createBundle("chrome://kmoney/locale/strings.properties");
+var kmStrings = Cc["@mozilla.org/intl/stringbundle;1"].getService(Ci.nsIStringBundleService).
+    createBundle("chrome://kmoney/locale/strings.properties");
+
 //gets localized string
 function km_getLStr(sName) {
-    return smStrings.GetStringFromName(sName);
+    return kmStrings.GetStringFromName(sName);
 }
 //gets localized and formatted string
 function km_getLFStr(sName, params, len) {
-    return smStrings.formatStringFromName(sName, params, params.length);
+    return kmStrings.formatStringFromName(sName, params, params.length);
 }
 
 var kmPrompt = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
