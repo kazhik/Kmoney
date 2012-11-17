@@ -223,6 +223,10 @@ KmDatabase.prototype.createInitialRecords = function() {
          "import": 0,
          "enabled": 1,
          "file_ext": ""},
+        {"name": "現金（汎用）",
+         "import": 1,
+         "enabled": 1,
+         "file_ext": "csv"},
         {"name": "銀行口座（汎用）",
          "import": 1,
          "enabled": 1,
@@ -440,8 +444,12 @@ KmDatabase.prototype.undo = function() {
 
     this.mDb.selectQuery(sql);
     var records = this.mDb.getRecords();
-    km_log(records[0][0]);
-    this.mDb.executeTransaction([records[0][0]]);
+    var undoStmts = [];
+    for (var i = 0; i < records.length; i++) {
+        km_log(records[i][0]);
+        undoStmts.push(records[i][0]);
+    }
+    this.mDb.executeTransaction(undoStmts);
     
 };
 KmDatabase.prototype.createTransactionId = function() {

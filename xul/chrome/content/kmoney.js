@@ -466,6 +466,7 @@ Kmoney.prototype.onTabSelected = function (e) {
 
 Kmoney.prototype.getImportModule = function (importType) {
     var importerList = [
+        CashImport,
         BankImport,
         CreditCardImport,
         EMoneyImport,

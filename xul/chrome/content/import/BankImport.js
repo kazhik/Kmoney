@@ -28,7 +28,7 @@ BankImport.prototype.importDb = function (name, csvFile, userId, importCallback)
                                                           {"charset": "UTF-8"}
                                                           );
         
-            var rowArray = CSVToArray(strBuff, "\t");
+            var rowArray = CSVToArray(strBuff, ",");
         
             if (rowArray.length === 0) {
                 return;

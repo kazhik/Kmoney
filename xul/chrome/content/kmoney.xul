@@ -36,6 +36,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
     <script type="application/x-javascript" src="summary/BalanceView.js" />
 
     <script type="application/x-javascript" src="import/AbstractImport.js" />
+    <script type="application/x-javascript" src="import/CashImport.js" />
     <script type="application/x-javascript" src="import/BankImport.js" />
     <script type="application/x-javascript" src="import/CreditCardImport.js" />
     <script type="application/x-javascript" src="import/EMoneyImport.js" />
