@@ -55,14 +55,37 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
         <command id="kmc-import" />
         <command id="kmc-undo" disabled="true"/>
         <command id="kmc-delete" />
+        <command id="kmc-update-item" />
+        <command id="kmc-update-detail" />
+        <command id="kmc-update-user" />
+        <command id="kmc-update-bank" disabled="true" />
+        <command id="kmc-update-creditcard" disabled="true" />
+        <command id="kmc-update-emoney" disabled="true" />
         <command id="kmc-setmaster" />
         <command id="kmc-importconf" />
         <command id="kmc-setprefs" />
     </commandset>
     <popupset>
         <menupopup id="mp-editTableRow">
+            <menu id="km_update_selectedrow" label="&menu.updateSelected;"
+                  accesskey="&menu.updateSelected.ak;">
+                <menupopup>
+                    <menuitem label="&edit.item;" command="kmc-update-item"
+                              accesskey="&menu.updateSelectedItem.ak;" />
+                    <menuitem label="&edit.detail;" command="kmc-update-detail"
+                              accesskey="&menu.updateSelectedDetail.ak;" />
+                    <menuitem label="&edit.user;" command="kmc-update-user"
+                              accesskey="&menu.updateSelectedUser.ak;" />
+                    <menuitem label="&edit.bank;" command="kmc-update-bank"
+                              accesskey="&menu.updateSelectedBank.ak;"/>
+                    <menuitem label="&edit.creditcard;" command="kmc-update-creditcard"
+                              accesskey="&menu.updateSelectedCard.ak;"/>
+                    <menuitem label="&edit.emoney;" command="kmc-update-emoney"
+                              accesskey="&menu.updateSelectedEmoney.ak;" />
+                </menupopup>
+            </menu>
             <menuitem label="&menu.deleteSelected;"
-             command="kmc-delete" accesskey="&menu.deleteSelected.ak;" />
+                command="kmc-delete" accesskey="&menu.deleteSelected.ak;" />
         </menupopup>
     </popupset>
     <vbox id="km_main">
@@ -86,8 +109,25 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                     <menupopup>
 						<menuitem label="&menu.edit.undo;" accesskey="&menu.edit.undo.accesskey;"
                                   command="kmc-undo" />
-						<menuitem label="&menu.edit.delete;" accesskey="&menu.edit.delete.accesskey;"
-						command="kmc-delete" />
+                        <menu id="km_menu_update" label="&menu.updateSelected;"
+                              accesskey="&menu.updateSelected.ak;">
+                            <menupopup>
+                                <menuitem label="&edit.item;" command="kmc-update-item"
+                                          accesskey="&menu.updateSelectedItem.ak;" />
+                                <menuitem label="&edit.detail;" command="kmc-update-detail"
+                                          accesskey="&menu.updateSelectedDetail.ak;" />
+                                <menuitem label="&edit.user;" command="kmc-update-user"
+                                          accesskey="&menu.updateSelectedUser.ak;" />
+                                <menuitem label="&edit.bank;" command="kmc-update-bank"
+                                          accesskey="&menu.updateSelectedBank.ak;" />
+                                <menuitem label="&edit.creditcard;" command="kmc-update-creditcard"
+                                          accesskey="&menu.updateSelectedCard.ak;" />
+                                <menuitem label="&edit.emoney;" command="kmc-update-emoney"
+                                          accesskey="&menu.updateSelectedEmoney.ak;" />
+                            </menupopup>
+                        </menu>
+						<menuitem id="km_menu_delete" label="&menu.edit.delete;"
+                                  accesskey="&menu.edit.delete.accesskey;" command="kmc-delete" />
 					</menupopup>
                 </menu>
                 <menu id="km_menu_setting" label="&menu.setting;" accesskey="&menu.setting.accesskey;">
@@ -383,7 +423,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 				</hbox>
 				<hbox id="km_edit2" align="center">
 					<label control="km_edit_amount" value="&edit.amount;" />
-					<textbox id="km_edit_amount" size="7" />
+					<textbox id="km_edit_amount" type="number" size="7" />
 					<label control="km_edit_user" value="&edit.user;" />
 					<menulist id="km_edit_user">
 						<menupopup></menupopup>
@@ -404,12 +444,9 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 							<menupopup></menupopup>
 						</menulist>
 						<label control="km_edit_paymonthY" value="&edit.paymonth;" />
-						<menulist id="km_edit_paymonthY">
-							<menupopup></menupopup>
-						</menulist>
-						<menulist id="km_edit_paymonthM">
-							<menupopup></menupopup>
-						</menulist>
+						<textbox id="km_edit_paymonthY" size="1"/>
+                        <label value="/" />
+						<textbox id="km_edit_paymonthM" size="1"/>
 					</hbox>
 					<hbox id="emoneybox" align="center">
 						<label control="km_edit_emoney" value="&edit.emoney;" />

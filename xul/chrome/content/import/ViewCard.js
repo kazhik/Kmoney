@@ -5,7 +5,7 @@ function ViewCard(db) {
 }
 ViewCard.prototype = Object.create(AbstractImport.prototype);
 
-ViewCard.prototype.importDb = function (htmlFile, userId, importCallback) {
+ViewCard.prototype.importDb = function (name, htmlFile, userId, importCallback) {
     var cardId;
     function onLoadImportConf(sourceType) {
         function onFileOpen(inputStream, status) {
@@ -95,8 +95,8 @@ ViewCard.prototype.importDb = function (htmlFile, userId, importCallback) {
         }
         NetUtil.asyncFetch(htmlFile, onFileOpen.bind(this));
     }
-    cardId = this.mDb.creditCardInfo.getCardId(this.name, userId);
-    this.loadImportConf(this.name, onLoadImportConf.bind(this));
+    cardId = this.mDb.creditCardInfo.getCardId(name, userId);
+    this.loadImportConf(name, onLoadImportConf.bind(this));
 
 
 };

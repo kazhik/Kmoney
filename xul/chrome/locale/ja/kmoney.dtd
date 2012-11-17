@@ -3,6 +3,7 @@
 <!ENTITY dialog.import     "インポート">
 <!ENTITY dialog.importConf     "インポート設定">
 <!ENTITY dialog.merge     "マージ">
+<!ENTITY dialog.update     "選択行更新">
 
 <!-- menu -->
 <!ENTITY menu.file          "ファイル">
@@ -47,6 +48,14 @@
 <!ENTITY menu.help.helppage "Kmoneyヘルプ">
 <!ENTITY menu.help.helppage.ak "H">
 
+<!ENTITY menu.updateSelected "更新">
+<!ENTITY menu.updateSelected.ak "U">
+<!ENTITY menu.updateSelectedItem.ak "I">
+<!ENTITY menu.updateSelectedDetail.ak "D">
+<!ENTITY menu.updateSelectedUser.ak "U">
+<!ENTITY menu.updateSelectedBank.ak "B">
+<!ENTITY menu.updateSelectedEmoney.ak "E">
+<!ENTITY menu.updateSelectedCard.ak "C">
 <!ENTITY menu.deleteSelected "削除">
 <!ENTITY menu.deleteSelected.ak "D">
 

@@ -3,7 +3,7 @@ function KantanKakeibo(db) {
 }
 KantanKakeibo.prototype = Object.create(AbstractImport.prototype);
 
-KantanKakeibo.prototype.importDb = function (kantanDbFile, userId, importCallback) {
+KantanKakeibo.prototype.importDb = function (name, kantanDbFile, userId, importCallback) {
     function onLoadImportConf(sourceType) {
         function loadCallback(records) {
             function insertCallback() {
@@ -60,7 +60,7 @@ KantanKakeibo.prototype.importDb = function (kantanDbFile, userId, importCallbac
         kantanDb.load(kantanDbFile, loadCallback.bind(this));
         
     }
-    this.loadImportConf(this.name, onLoadImportConf.bind(this))
+    this.loadImportConf(name, onLoadImportConf.bind(this))
     
 };
 

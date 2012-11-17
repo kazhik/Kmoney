@@ -309,6 +309,10 @@ function km_setCurrentSettings() {
     km_setDataTreeStyleControls();
 }
 
+function toYYYYMMDD(yyyy, mm, dd, delimiter) {
+    return yyyy + delimiter + (mm[1] ? mm : "0" + mm[0]) + delimiter + (dd[1] ? dd : "0" + dd[0]); // padding
+}
+
 function convDateToYYYYMM(dt, delimiter) {
     var yyyy = dt.getFullYear().toString();
     var mm = (dt.getMonth() + 1).toString(); // getMonth() is zero-based
@@ -319,9 +323,8 @@ function convDateToYYYYMMDD(dt, delimiter) {
     var yyyy = dt.getFullYear().toString();
     var mm = (dt.getMonth() + 1).toString(); // getMonth() is zero-based
     var dd = dt.getDate().toString();
-    return yyyy + delimiter + (mm[1] ? mm : "0" + mm[0]) + delimiter + (dd[1] ? dd : "0" + dd[0]); // padding
+    return toYYYYMMDD(yyyy, mm, dd, delimiter);
 }
-
 function convertZen2han(str) {
     for (var i = 0; i < 10; i++) {
         str = str.replace(new RegExp(

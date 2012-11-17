@@ -66,8 +66,7 @@ ItemMaster.prototype.openMergeDialog = function() {
         }
     }
     window.openDialog("chrome://kmoney/content/master/MergeDialog.xul", "MergeDialog",
-        "chrome, resizable, centerscreen, modal, dialog",
-        this.mDb, mergeToList, retVals);
+        "chrome, resizable, centerscreen, modal, dialog", mergeToList, retVals);
     return retVals['itemid'];
 };
 ItemMaster.prototype.deleteRecord = function() {

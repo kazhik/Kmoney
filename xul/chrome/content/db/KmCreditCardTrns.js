@@ -190,6 +190,7 @@ KmCreditCardTrns.prototype.execInsert = function (newRecordArray, importFlag, in
     insertCallback(this.mDb.getLastInsertRowId("km_creditcard_trns"));
 };
 KmCreditCardTrns.prototype.update = function(idList, params, updateCallback) {
+    var oneColumn = (Object.keys(params).length === 1)? true: false;
     var keyList = [];
     for (var i = 0; i < idList.length; i++) {
         var key = "id_" + i;
@@ -200,17 +201,21 @@ KmCreditCardTrns.prototype.update = function(idList, params, updateCallback) {
     var sql;
     var sqlStatement;
     var sqlStmtArray = [];
-    if (idList.length > 1) {
-        sql = ["update km_creditcard_trns ",
-                   "set ",
-                   "transaction_date = :transactionDate, ",
-                   "item_id = :itemId, ",
-                   "detail = :detail, ",
-                   "user_id = :userId, ",
-                   "card_id = :cardId, ",
-                   "last_update_date = datetime('now', 'localtime'), ",
-                   "source = :source",
-                   "where id in (" + inClause + ")"].join(" ");
+    if (oneColumn) {
+        sql = "update km_creditcard_trns ";
+        sql += "set ";
+        if (params["itemId"] !== undefined) {
+            sql += "item_id = :itemId, ";
+        } else if (params["detail"] !== undefined) {
+            sql += "detail = :detail, ";
+        } else if (params["userId"] !== undefined) {
+            sql += "user_id = :userId, ";
+        } else if (params["cardId"] !== undefined) {
+            sql += "card_id = :cardId, ";
+        }
+        sql += "last_update_date = datetime('now', 'localtime') "
+        sql += "where id in (" + inClause + ")";
+
     } else {
         sql = ["update km_creditcard_trns ",
                    "set ",
@@ -232,9 +237,7 @@ KmCreditCardTrns.prototype.update = function(idList, params, updateCallback) {
         if (idList.length > 1) {
             sql = ["update km_creditcard_payment ",
                  "set ",
-                 "transaction_date = :transactionDate, ",
                  "detail = :detail, ",
-                 "pay_month = :payMonth, ",
                  "user_id = :userId, ",
                  "card_id = :cardId, ",
                  "last_update_date = datetime('now', 'localtime') ",

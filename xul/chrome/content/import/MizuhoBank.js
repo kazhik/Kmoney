@@ -6,7 +6,7 @@ function MizuhoBank(db) {
 
 MizuhoBank.prototype = Object.create(AbstractImport.prototype);
 
-MizuhoBank.prototype.importDb = function (inputFile, userId, importCallback) {
+MizuhoBank.prototype.importDb = function (name, inputFile, userId, importCallback) {
     var bankId;
     function onLoadImportConf(sourceType) {
         function onFileOpen(inputStream, status) {
@@ -97,7 +97,7 @@ MizuhoBank.prototype.importDb = function (inputFile, userId, importCallback) {
         }
         NetUtil.asyncFetch(inputFile, onFileOpen.bind(this));
     }
-    bankId = this.mDb.bankInfo.getBankId(this.name, userId);
-    this.loadImportConf(this.name, onLoadImportConf.bind(this))
+    bankId = this.mDb.bankInfo.getBankId(name, userId);
+    this.loadImportConf(name, onLoadImportConf.bind(this))
 
 };

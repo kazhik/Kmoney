@@ -6,7 +6,7 @@ function Suica(db) {
 Suica.prototype = Object.create(AbstractImport.prototype);
 
 
-Suica.prototype.importDb = function (suicaHtmlFile, userId, importCallback) {
+Suica.prototype.importDb = function (name, suicaHtmlFile, userId, importCallback) {
     var emoneyId;
     function onLoadImportConf(sourceType) {
         function onFileOpen(inputStream, status) {
@@ -116,7 +116,7 @@ Suica.prototype.importDb = function (suicaHtmlFile, userId, importCallback) {
         }
         NetUtil.asyncFetch(suicaHtmlFile, onFileOpen.bind(this));
     }
-    emoneyId = this.mDb.emoneyInfo.getMoneyId(this.name, userId);
-    this.loadImportConf(this.name, onLoadImportConf.bind(this))
+    emoneyId = this.mDb.emoneyInfo.getMoneyId(name, userId);
+    this.loadImportConf(name, onLoadImportConf.bind(this))
     
 };

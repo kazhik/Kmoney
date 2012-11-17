@@ -6,7 +6,7 @@ function ShinseiBank(db) {
 }
 ShinseiBank.prototype = Object.create(AbstractImport.prototype);
 
-ShinseiBank.prototype.importDb = function (csvFile, userId, importCallback) {
+ShinseiBank.prototype.importDb = function (name, csvFile, userId, importCallback) {
     var bankId;
     function onLoadImportConf(sourceType) {
         function onFileOpen(inputStream, status) {
@@ -76,7 +76,7 @@ ShinseiBank.prototype.importDb = function (csvFile, userId, importCallback) {
         }
         NetUtil.asyncFetch(csvFile, onFileOpen.bind(this));
     }
-    bankId = this.mDb.bankInfo.getBankId(this.name, userId);
-    this.loadImportConf(this.name, onLoadImportConf.bind(this))
+    bankId = this.mDb.bankInfo.getBankId(name, userId);
+    this.loadImportConf(name, onLoadImportConf.bind(this))
 
 };

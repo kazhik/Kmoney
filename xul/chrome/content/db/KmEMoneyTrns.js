@@ -154,6 +154,7 @@ KmEMoneyTrns.prototype.execInsert = function (newRecordArray, importFlag, insert
     insertCallback(this.mDb.getLastInsertRowId());
 };
 KmEMoneyTrns.prototype.update = function(idList, params, updateCallback) {
+    var oneColumn = (Object.keys(params).length === 1)? true: false;
     var keyList = [];
     for (var i = 0; i < idList.length; i++) {
         var key = "id_" + i;
@@ -162,18 +163,20 @@ KmEMoneyTrns.prototype.update = function(idList, params, updateCallback) {
     }
     var inClause = keyList.join(",");
     var sql;
-    if (idList.length > 1) {
-        sql = "update km_emoney_trns "
-                + "set "
-                + "transaction_date = :transactionDate, "
-                + "item_id = :itemId, "
-                + "detail = :detail, "
-                + "user_id = :userId, "
-                + "money_id = :moneyId, "
-                + "last_update_date = datetime('now', 'localtime'), "
-                + "internal = :internal, "
-                + "source = :source "
-                + "where id in (" + inClause + ") ";
+    if (oneColumn) {
+        sql = "update km_emoney_trns ";
+        sql += "set ";
+        if (params["itemId"] !== undefined) {
+            sql += "item_id = :itemId, ";
+        } else if (params["detail"] !== undefined) {
+            sql += "detail = :detail, ";
+        } else if (params["userId"] !== undefined) {
+            sql += "user_id = :userId, ";
+        } else if (params["moneyId"] !== undefined) {
+            sql += "money_id = :moneyId, ";
+        }
+        sql += "last_update_date = datetime('now', 'localtime') "
+        sql += "where id in (" + inClause + ")";
     } else {
         sql = "update km_emoney_trns "
                 + "set "

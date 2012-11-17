@@ -5,23 +5,22 @@ var mergeDialog;
 function MergeDialog() {
     this.listeners = [];
 
-    this.mDb = window.arguments[0];
-    this.retVals = window.arguments[2];
+    this.retVals = window.arguments[1];
 
     this.addEventListeners();  
 
-    this.populateItemList(window.arguments[1]);
+    this.populateItemList(window.arguments[0]);
 };
 
 function openMergeDialog() {
     mergeDialog = new MergeDialog();
 };
 
-ImportDialog.prototype.onAccept = function () {
+MergeDialog.prototype.onAccept = function () {
     this.removeEventListeners();
 };
 
-ImportDialog.prototype.onCancel = function () {
+MergeDialog.prototype.onCancel = function () {
     this.retVals['itemid'] = null;
 
     this.removeEventListeners();

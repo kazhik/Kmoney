@@ -6,7 +6,7 @@ function UCCard(db) {
 UCCard.prototype = Object.create(AbstractImport.prototype);
 
 
-UCCard.prototype.importDb = function (csvFile, userId, importCallback) {
+UCCard.prototype.importDb = function (name, csvFile, userId, importCallback) {
     var cardId;
     function onLoadImportConf(sourceType) {
         function onFileOpen(inputStream, status) {
@@ -84,7 +84,7 @@ UCCard.prototype.importDb = function (csvFile, userId, importCallback) {
         }
         NetUtil.asyncFetch(csvFile, onFileOpen.bind(this));
     }
-    cardId = this.mDb.creditCardInfo.getCardId(this.name, userId);
-    this.loadImportConf(this.name, onLoadImportConf.bind(this));
+    cardId = this.mDb.creditCardInfo.getCardId(name, userId);
+    this.loadImportConf(name, onLoadImportConf.bind(this));
 
 };

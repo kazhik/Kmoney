@@ -46,6 +46,9 @@ CreditCardTable.prototype.onSelect = function () {
         var payMonthSplitted = payMonth.split('-');
         $$('km_edit_paymonthY').value = payMonthSplitted[0];
         $$('km_edit_paymonthM').value = payMonthSplitted[1];
+    } else {
+        $$('km_edit_paymonthY').value = "";
+        $$('km_edit_paymonthM').value = "";
     }
 
     // 選択行の収支を計算してステータスバーに表示
@@ -61,24 +64,8 @@ CreditCardTable.prototype.loadCardList = function () {
 };
 CreditCardTable.prototype.initPayMonth = function () {
     var thisMonth = new Date();
-    var year = thisMonth.getFullYear();
-    $$('km_edit_paymonthY').removeAllItems();
-    $$('km_edit_paymonthY').appendItem("-", 0);
-    $$('km_edit_paymonthY').appendItem(year, year);
-    $$('km_edit_paymonthY').appendItem(year + 1, year + 1);
-    $$('km_edit_paymonthY').selectedIndex = 0;
-    
-    $$('km_edit_paymonthM').removeAllItems();
-    $$('km_edit_paymonthM').appendItem("-", 0);
-    for (var i = 0; i < 12; i++) {
-        var monthValue = i + 1;
-        if (monthValue < 10) {
-            monthValue = "0" + monthValue;
-        }
-        
-        $$('km_edit_paymonthM').appendItem(i + 1, monthValue);
-    }
-    $$('km_edit_paymonthM').selectedIndex = 0;
+    $$('km_edit_paymonthY').value = thisMonth.getFullYear();
+    $$('km_edit_paymonthM').value = thisMonth.getMonth();
     
 };
 
@@ -106,15 +93,17 @@ CreditCardTable.prototype.addRecord = function (params) {
     this.mDb.creditCardInsert([params], this.insertCallback.bind(this));
 };
 CreditCardTable.prototype.updateRecord = function (idList, params) {
-    params['boughtAmount'] = params['amount'];
-    params['cardId'] = $$('km_edit_creditcard').value;
-    params['internal'] = $$('km_edit_internal').value;
-    // 支払月が指定された場合は支払い情報も更新する
-    var payMonthY = $$('km_edit_paymonthY').value;
-    if (parseInt(payMonthY) !== 0) {
-        params['payMonth'] = payMonthY + "-" + $$('km_edit_paymonthM').value;
-        params['payAmount'] = params['boughtAmount']; // 分割払いは当面対応しない(Issue #10)
-        params['remainingBalance'] = 0;
+    if (Object.keys(params).length > 1) {
+        params['boughtAmount'] = params['amount'];
+        params['cardId'] = $$('km_edit_creditcard').value;
+        params['internal'] = $$('km_edit_internal').value;
+        // 支払月が指定された場合は支払い情報も更新する
+        var payMonthY = $$('km_edit_paymonthY').value;
+        if (parseInt(payMonthY) !== 0) {
+            params['payMonth'] = payMonthY + "-" + $$('km_edit_paymonthM').value;
+            params['payAmount'] = params['boughtAmount']; // 分割払いは当面対応しない(Issue #10)
+            params['remainingBalance'] = 0;
+        }
     }
     
     this.mDb.creditCardUpdate(idList, params, this.updateCallback.bind(this));

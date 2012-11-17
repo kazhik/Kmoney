@@ -5,7 +5,7 @@ function SaisonCard(db) {
 }
 SaisonCard.prototype = Object.create(AbstractImport.prototype);
 
-SaisonCard.prototype.importDb = function (csvFile, userId, importCallback) {
+SaisonCard.prototype.importDb = function (name, csvFile, userId, importCallback) {
     var cardId;
     function onLoadImportConf(sourceType) {
         function onFileOpen(inputStream, status) {
@@ -58,11 +58,14 @@ SaisonCard.prototype.importDb = function (csvFile, userId, importCallback) {
                     };
                     rec["transactionDate"] = rowArray[i][0].replace("/", "-", "g");
                     rec["boughtAmount"] = parseFloat(rowArray[i][5]);
-                    strBuff = convertZen2han(rowArray[i][6]);
-                    strBuff = strBuff.replace("，", "");
-                    strBuff = strBuff.replace("円", "");
-                    strBuff = strBuff.replace("割引対象優待後金額：", "");
-                    rec["payAmount"] = parseFloat(strBuff);
+                    strBuff = rowArray[i][6];
+                    if (strBuff !== undefined) {
+                        strBuff = convertZen2han(strBuff);
+                        strBuff = strBuff.replace("，", "");
+                        strBuff = strBuff.replace("円", "");
+                        strBuff = strBuff.replace("割引対象優待後金額：", "");
+                        rec["payAmount"] = parseFloat(strBuff);
+                    }
                     rec["detail"] = rowArray[i][1];
                     var itemInfo = this.getItemInfo(rowArray[i][1]);
                     if (itemInfo["itemId"] === undefined) {
@@ -96,7 +99,7 @@ SaisonCard.prototype.importDb = function (csvFile, userId, importCallback) {
         NetUtil.asyncFetch(csvFile, onFileOpen.bind(this));
     }
 
-    cardId = this.mDb.creditCardInfo.getCardId(this.name, userId);
-    this.loadImportConf(this.name, onLoadImportConf.bind(this));
+    cardId = this.mDb.creditCardInfo.getCardId(name, userId);
+    this.loadImportConf(name, onLoadImportConf.bind(this));
 
 };

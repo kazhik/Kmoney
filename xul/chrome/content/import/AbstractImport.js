@@ -1,6 +1,6 @@
-function AbstractImport(db, name) {
+function AbstractImport(db, type) {
     this.mDb = db;
-    this.name = name;
+    this.type = type;
     this.importItemArray = [];
 }
 

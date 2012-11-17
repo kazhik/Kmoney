@@ -496,7 +496,8 @@ KmDatabase.prototype.createTriggerOnUpdate = function(tableName, triggerName) {
                "update " + tableName,
                "set ",
                setList.join(","),
-               "');",
+               "where id='" + "||old.id",
+               ");",
                "end"].join(" ");
 
     km_log(sql);

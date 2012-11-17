@@ -29,6 +29,7 @@ ImportDialog.prototype.onCancel = function () {
     this.retVals['importtype'] = null;
     this.retVals['file'] = null;
     this.retVals['user'] = null;
+    this.retVals['name'] = null;
 
     this.removeEventListeners();
 };
@@ -46,6 +47,10 @@ ImportDialog.prototype.addEventListeners = function () {
     $$('km_select_user').addEventListener("command",
         this.listeners['km_select_user.command']);
     
+    this.listeners['km_select_source.command'] = this.onSelectSource.bind(this);
+    $$('km_select_source').addEventListener("command",
+        this.listeners['km_select_source.command']);
+
     this.listeners['km_dialog_import.dialogaccept'] = this.onAccept.bind(this);
     $$('km_dialog_import').addEventListener("dialogaccept",
         this.listeners['km_dialog_import.dialogaccept']);
@@ -66,6 +71,9 @@ ImportDialog.prototype.removeEventListeners = function () {
     $$('km_select_user').removeEventListener("command",
         this.listeners['km_select_user.command']);
     
+    $$('km_select_source').removeEventListener("command",
+        this.listeners['km_select_source.command']);
+
     $$('km_dialog_import').removeEventListener("dialogaccept",
         this.listeners['km_dialog_import.dialogaccept']);
 
@@ -91,8 +99,10 @@ ImportDialog.prototype.populateSourceList = function () {
             $$("km_select_source").appendItem(nameList[i][1], nameList[i][1]);
         }
         $$("km_select_source").selectedIndex = 0;
+        this.retVals['name'] = $$("km_select_source").value;
     } else {
         $$("km_select_source").hidden = true;
+        this.retVals['name'] = importType;
     }
 };
 ImportDialog.prototype.onSelectImportType = function () {
@@ -102,6 +112,9 @@ ImportDialog.prototype.onSelectImportType = function () {
 ImportDialog.prototype.onSelectUser = function () {
     this.retVals['user'] = $$("km_select_user").value;
     this.populateSourceList();    
+};
+ImportDialog.prototype.onSelectSource = function () {
+    this.retVals['name'] = $$("km_select_source").value;
 };
 ImportDialog.prototype.selectFile = function () {
     const nsIFilePicker = Ci.nsIFilePicker;

@@ -82,13 +82,15 @@ EMoneyTable.prototype.addRecord = function (params) {
 
 };
 EMoneyTable.prototype.updateRecord = function (idList, params) {
-    if ($$('km_edit_income').selected) {
-        params['income'] = params['amount'];
-    } else {
-        params['expense'] = params['amount'];
+    if (Object.keys(params).length > 1) {
+        if ($$('km_edit_income').selected) {
+            params['income'] = params['amount'];
+        } else {
+            params['expense'] = params['amount'];
+        }
+        params['moneyId'] = $$('km_edit_emoney').value;
+        params['internal'] = $$('km_edit_internal').value;
     }
-    params['moneyId'] = $$('km_edit_emoney').value;
-    params['internal'] = $$('km_edit_internal').value;
     
     this.mDb.emoneyUpdate(idList, params, this.updateCallback.bind(this));
 };

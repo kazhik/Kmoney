@@ -17,8 +17,6 @@ function Kmoney() {
     this.summary = null;
     this.balance = null;
     this.itemMap = {};
-    this.importTypeList = {};
-    this.importers = {};
     this.users = {};
     
 }
@@ -68,49 +66,11 @@ Kmoney.prototype.loadData = function() {
     this.balance.initialize(this.mDb);
     this.allView.initialize(this.mDb);
 
-    this.initImport();
-    
-    this.loadTable($$('km_tabbox').selectedTab.id);
+    var tabId = $$('km_tabbox').selectedTab.id;
+    this.changeUpdateMenuItem(tabId);
+    this.loadTable(tabId);
     km_debug("Kmoney.loadData end");
 };
-Kmoney.prototype.initImport = function () {
-    function loadCallback(records) {
-        for (var i = 0; i < records.length; i++) {
-            if (this.importers[records[i][1]] !== undefined) {
-                this.importTypeList[records[i][1]] = {
-                    "label": records[i][1],
-                    "ext": "*." + records[i][2]
-                }
-            }
-        }
-    }
-
-    var importer;
-    importer = new BankImport(this.mDb);
-    this.importers[importer["name"]] = importer;
-    importer = new CreditCardImport(this.mDb);
-    this.importers[importer["name"]] = importer;
-    importer = new EMoneyImport(this.mDb);
-    this.importers[importer["name"]] = importer;
-    importer = new ViewCard(this.mDb);
-    this.importers[importer["name"]] = importer;
-    importer = new SaisonCard(this.mDb);
-    this.importers[importer["name"]] = importer;
-    importer = new UCCard(this.mDb);
-    this.importers[importer["name"]] = importer;
-    importer = new ShinseiBank(this.mDb);
-    this.importers[importer["name"]] = importer;
-    importer = new MizuhoBank(this.mDb);
-    this.importers[importer["name"]] = importer;
-    importer = new Suica(this.mDb);
-    this.importers[importer["name"]] = importer;
-    importer = new KantanKakeibo(this.mDb);
-    this.importers[importer["name"]] = importer;
-    
-    
-    this.mDb.source.load(loadCallback.bind(this));
-};
-
 Kmoney.prototype.Shutdown = function () {
     km_debug("Kmoney.Shutdown start");
     this.summary.terminate();
@@ -221,6 +181,23 @@ Kmoney.prototype.addEventListeners = function () {
     this.listeners['kmc-importconf.command'] = this.openImportConf.bind(this);
     $$('kmc-importconf').addEventListener("command", this.listeners['kmc-importconf.command']);
 
+    this.listeners['kmc-update-item'] = this.updateSelectedRow.bind(this, 'item');
+    $$('kmc-update-item').addEventListener("command", this.listeners['kmc-update-item']);
+    
+    this.listeners['kmc-update-detail'] = this.updateSelectedRow.bind(this, 'detail');
+    $$('kmc-update-detail').addEventListener("command", this.listeners['kmc-update-detail']);
+
+    this.listeners['kmc-update-user'] = this.updateSelectedRow.bind(this, 'user');
+    $$('kmc-update-user').addEventListener("command", this.listeners['kmc-update-user']);
+
+    this.listeners['kmc-update-bank'] = this.updateSelectedRow.bind(this, 'bank');
+    $$('kmc-update-bank').addEventListener("command", this.listeners['kmc-update-bank']);
+
+    this.listeners['kmc-update-creditcard'] = this.updateSelectedRow.bind(this, 'creditcard');
+    $$('kmc-update-creditcard').addEventListener("command", this.listeners['kmc-update-creditcard']);
+
+    this.listeners['kmc-update-emoney'] = this.updateSelectedRow.bind(this, 'emoney');
+    $$('kmc-update-emoney').addEventListener("command", this.listeners['kmc-update-emoney']);
 };
 
 Kmoney.prototype.removeEventListeners = function () {
@@ -295,6 +272,18 @@ Kmoney.prototype.removeEventListeners = function () {
 
     $$('kmc-importconf').removeEventListener("command", this.listeners['kmc-importconf.command']);
 
+    $$('kmc-update-item').removeEventListener("command", this.listeners['kmc-update-item']);
+    
+    $$('kmc-update-detail').removeEventListener("command", this.listeners['kmc-update-detail']);
+
+    $$('kmc-update-user').removeEventListener("command", this.listeners['kmc-update-user']);
+
+    $$('kmc-update-bank').removeEventListener("command", this.listeners['kmc-update-bank']);
+
+    $$('kmc-update-creditcard').removeEventListener("command", this.listeners['kmc-update-creditcard']);
+
+    $$('kmc-update-emoney').removeEventListener("command", this.listeners['kmc-update-emoney']);
+    
 };
 Kmoney.prototype.openSetMaster = function () {
     if (!this.mDb.isConnected()) {
@@ -333,6 +322,24 @@ Kmoney.prototype.onCreditcardSelect = function () {
 };
 Kmoney.prototype.onEMoneySelect = function () {
     this.emoneyTree.onSelect();
+};
+Kmoney.prototype.changeUpdateMenuItem = function(tabId) {
+    $$('kmc-update-bank').setAttribute("disabled", true);
+    $$('kmc-update-creditcard').setAttribute("disabled", true);
+    $$('kmc-update-emoney').setAttribute("disabled", true);
+    $$('km_menu_update').setAttribute("disabled", false);
+    $$('kmc-delete').setAttribute("disabled", false);
+    if (tabId === 'km_tab_bank') {
+        $$('kmc-update-bank').setAttribute("disabled", false);
+    } else if (tabId === 'km_tab_creditcard') {
+        $$('kmc-update-creditcard').setAttribute("disabled", false);
+    } else if (tabId === 'km_tab_emoney') {
+        $$('kmc-update-emoney').setAttribute("disabled", false);
+    } else if (tabId === 'km_tab_cash') {
+    } else {
+        $$('km_menu_update').setAttribute("disabled", true);
+        $$('kmc-delete').setAttribute("disabled", true);
+    }
 };
 Kmoney.prototype.loadTable = function (tabId) {
     var panelType;
@@ -452,27 +459,68 @@ Kmoney.prototype.loadTable = function (tabId) {
 };
 Kmoney.prototype.onTabSelected = function (e) {
     $$('km_status_sum').label = "";
-    this.loadTable($$('km_tabbox').selectedTab.id);
+    var tabId = $$('km_tabbox').selectedTab.id
+    this.changeUpdateMenuItem(tabId);
+    this.loadTable(tabId);
+};
+
+Kmoney.prototype.getImportModule = function (importType) {
+    var importerList = [
+        BankImport,
+        CreditCardImport,
+        EMoneyImport,
+        ViewCard,
+        SaisonCard,
+        UCCard,
+        MizuhoBank,
+        ShinseiBank,
+        Suica,
+        KantanKakeibo
+    ];
+    var importer;
+    for (var i = 0; i < importerList.length; i++) {
+        importer = new (importerList[i])(this.mDb);
+        if (importer["type"] === importType) {
+            return importer;
+        }
+    }
+    return null;
 };
 Kmoney.prototype.importFile = function () {
-    function importCallback() {
-        
-    }
-    var retVals = { file: null, importtype: null, user: null };
+    var importTypeList = [];
     
-    window.openDialog("chrome://kmoney/content/import/ImportDialog.xul", "ImportDialog",
-        "chrome, resizable, centerscreen, modal, dialog",
-        this.mDb, this.importTypeList, this.users, retVals);
-    
-    if (retVals['importtype'] != null) {
-        var importer = this.importers[retVals["importtype"]];
-        if (importer === undefined) {
-            km_alert("Error", "Not implemented yet");
-            return false;
+    function loadCallback(records) {
+        function importCallback() {
+            this.query();
+            
         }
-        importer.importDb(retVals['file'], retVals["user"], importCallback.bind(this));
-    }
-    return true;
+        for (var i = 0; i < records.length; i++) {
+            importTypeList[records[i][1]] = {
+                "label": records[i][1],
+                "ext": "*." + records[i][2]
+            }
+        }
+        var retVals = { file: null, importtype: null, name: null, user: null };
+        
+        window.openDialog("chrome://kmoney/content/import/ImportDialog.xul", "ImportDialog",
+            "chrome, resizable, centerscreen, modal, dialog",
+            this.mDb, importTypeList, this.users, retVals);
+        
+        if (retVals['name'] === null) {
+            return;
+        }
+        var importer = this.getImportModule(retVals["importtype"]);
+        if (importer === null) {
+            km_debug("No import module");
+            return;
+        }
+        importer.importDb(retVals['name'], retVals['file'], retVals["user"],
+                          importCallback.bind(this));
+        }
+   
+    // インポート種別のリストを作る
+    this.mDb.source.load(loadCallback.bind(this));
+
 };
 Kmoney.prototype.newDatabase = function () {
     this.mDb.newDatabase();
@@ -570,6 +618,65 @@ Kmoney.prototype.reset = function () {
     $$('km_edit_detail').value = "";
     $$('km_edit_amount').value = "";
 };
+Kmoney.prototype.updateSelectedRow = function(type) {
+    var tree = this.getSelectedTree();
+    if (typeof tree.updateRecord != 'function') {
+        return;
+    }
+    var idList = tree.mTree.getSelectedRowValueList('id');
+    if (idList.length === 0) {
+        km_alert(km_getLStr("error.title"), km_getLStr("error.update.notSelected"));
+        return;
+    }
+    
+    var list = [];
+    var elem = null;
+    if (type === "item") {
+        elem = $$('km_edit_item');
+    } else if (type === "detail") {
+    } else if (type === "user") {
+        elem = $$('km_edit_user');
+    } else if (type === "bank") {
+        elem = $$('km_edit_bank');
+    } else if (type === "creditcard") {
+        elem = $$('km_edit_creditcard');
+    } else if (type === "emoney") {
+        elem = $$('km_edit_emoney');
+    }
+    if (elem !== null) {
+        var itemCount = elem.itemCount;
+        for (var i = 0; i < itemCount; i++) {
+            list.push(elem.getItemAtIndex(i));
+        }
+    }
+    var retVals = {"newValue": null};
+    window.openDialog("chrome://kmoney/content/transaction/UpdateDialog.xul", "UpdateDialog",
+        "chrome, resizable, centerscreen, modal, dialog", type, list, retVals);
+    if (retVals["newValue"] === null) {
+        return;
+    }
+    if (km_prefsBranch.getBoolPref("confirm.update")) {
+        var bOk = km_confirm(km_getLStr("confirm.title"), km_getLStr("confirm.updateRow"));
+        if (!bOk) {
+            return;
+        }
+    }
+    var params = {};
+    if (type === "item") {
+        params["itemId"] = retVals["newValue"];
+    } else if (type === "detail") {
+        params["detail"] = retVals["newValue"];
+    } else if (type === "user") {
+        params["userId"] = retVals["newValue"];
+    } else if (type === "bank") {
+        params["bankId"] = retVals["newValue"];
+    } else if (type === "creditcard") {
+        params["cardId"] = retVals["newValue"];
+    } else if (type === "emoney") {
+        params["moneyId"] = retVals["newValue"];
+    }
+    tree.updateRecord(idList, params);    
+};
 Kmoney.prototype.addRecord = function () {
     var tree = this.getSelectedTree();
     if (typeof tree.addRecord !== 'function') {
@@ -601,15 +708,14 @@ Kmoney.prototype.updateRecord = function () {
     if (typeof tree.updateRecord != 'function') {
         return;
     }
-    var selectedCnt = tree.mTree.getSelectedRowCount();
-    if (selectedCnt === 0) {
-        km_alert(km_getLStr("error.title"), km_getLStr("error.update.notSelected"));
-        return;
-    }
 
     var idList = tree.mTree.getSelectedRowValueList('id');
     if (idList.length === 0) {
-        km_alert(km_getLStr("no_selectedrow"));
+        km_alert(km_getLStr("error.title"), km_getLStr("error.update.notSelected"));
+        return;
+    } else if (idList.length > 1) {
+        km_alert(km_getLStr("error.title"), km_getLStr("error.update.multipleSelected"));
+        return;
     }
 
     var amount = $$('km_edit_amount').value;
@@ -731,9 +837,9 @@ Kmoney.prototype.onQueryConditionSelect = function(elementNo) {
         $$('km_list_query_operator' + elementNo).hidden = false;
         $$('km_list_query_operator' + elementNo).removeAllItems();
         $$('km_list_query_operator' + elementNo).appendItem(
-            km_getLStr("query_operator.equals"), "=");
-        $$('km_list_query_operator' + elementNo).appendItem(
             km_getLStr("query_operator.contains"), "like");
+        $$('km_list_query_operator' + elementNo).appendItem(
+            km_getLStr("query_operator.equals"), "=");
         $$('km_list_query_operator' + elementNo).selectedIndex = 0;
         
         $$('km_edit_query_text' + elementNo).value = "";
