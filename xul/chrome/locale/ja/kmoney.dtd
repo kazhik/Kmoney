@@ -29,8 +29,10 @@
 <!ENTITY menu.view          "表示">
 <!ENTITY menu.view.accesskey          "V">
 
-<!ENTITY menu.chart          "Chart">
-<!ENTITY menu.chart.accesskey          "C">
+<!ENTITY menu.data          "データ">
+<!ENTITY menu.data.accesskey          "D">
+<!ENTITY menu.data.duplicate          "重複行を表示">
+<!ENTITY menu.data.duplicate.accesskey          "P">
 
 <!ENTITY menu.setting          "設定">
 <!ENTITY menu.setting.accesskey          "S">

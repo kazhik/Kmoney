@@ -131,6 +131,13 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                                   accesskey="&menu.edit.delete.accesskey;" command="kmc-delete" />
 					</menupopup>
                 </menu>
+                <menu id="km_menu_data" label="&menu.data;" accesskey="&menu.data.accesskey;">
+                    <menupopup>
+                        <menuitem id="km_menu_data_duplicate" label="&menu.data.duplicate;"
+								accesskey="&menu.data.duplicate.accesskey;"
+								type="checkbox"/>
+					</menupopup>
+                </menu>
                 <menu id="km_menu_setting" label="&menu.setting;" accesskey="&menu.setting.accesskey;">
                     <menupopup>
                         <menuitem label="&menu.setting.master;"

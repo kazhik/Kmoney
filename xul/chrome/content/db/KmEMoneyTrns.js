@@ -103,6 +103,42 @@ KmEMoneyTrns.prototype.load = function(sortParams, queryParams, loadCallback) {
     
     loadCallback(this.mDb.getRecords(), this.mDb.getColumns());
 };
+
+KmEMoneyTrns.prototype.loadDuplicate = function(loadCallback) {
+    var sql = ["select ",
+               "A.transaction_date, ",
+               "A.item_id, ",
+               "B.name as item_name, ",
+               "A.detail, ",
+               "A.income, ",
+               "A.expense, ",
+               "A.money_id, ",
+               "D.name as money_name, ",
+               "A.user_id, ",
+               "C.name as user_name, ",
+               "A.source, ",
+               "A.internal, ",
+               "A.id ",
+               "from km_emoney_trns A ",
+               "left join km_item B ",
+               " on A.item_id = B.id ",
+               "inner join km_user C ",
+               " on A.user_id = C.id ",
+               "inner join km_emoney_info D ",
+               " on A.money_id = D.id "].join(" ");
+    sql += ["inner join",
+               "(select G.transaction_date, G.expense",
+               "from km_emoney_trns G",
+               "group by G.transaction_date, G.expense",
+               "having count(G.transaction_date) > 1) F",
+               "on A.transaction_date = F.transaction_date",
+               "and A.expense = F.expense"].join(" ");
+    sql += " order by A.transaction_date, A.expense";
+    km_debug(sql);
+    this.mDb.selectQuery(sql);
+    loadCallback(this.mDb.getRecords(), this.mDb.getColumns());
+};
+
 KmEMoneyTrns.prototype.import = function(newRecordArray, insertCallback) {
     this.execInsert(newRecordArray, true, insertCallback);
 };

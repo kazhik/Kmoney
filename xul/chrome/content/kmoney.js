@@ -125,6 +125,9 @@ Kmoney.prototype.addEventListeners = function () {
     this.listeners['kmc-undo'] = this.undo.bind(this);
     $$('kmc-undo').addEventListener("command", this.listeners['kmc-undo']);
 
+    this.listeners['km_menu_data_duplicate'] = this.query.bind(this);
+    $$('km_menu_data_duplicate').addEventListener("command", this.listeners['km_menu_data_duplicate']);
+    
     this.listeners['km_list_query_condition1.command'] = this.onQueryCondition1Select.bind(this, true);
     $$('km_list_query_condition1').addEventListener(
         "command", this.listeners['km_list_query_condition1.command']);
@@ -231,6 +234,8 @@ Kmoney.prototype.removeEventListeners = function () {
 
     $$('kmc-undo').removeEventListener("command", this.listeners['kmc-undo']);
 
+    $$('km_menu_data_duplicate').removeEventListener("command", this.listeners['km_menu_data_duplicate']);
+    
     $$('km_list_query_condition1').removeEventListener(
         "command", this.listeners['km_list_query_condition1.command']);
 
@@ -341,35 +346,37 @@ Kmoney.prototype.changeUpdateMenuItem = function(tabId) {
         $$('kmc-delete').setAttribute("disabled", true);
     }
 };
+
+
 Kmoney.prototype.loadTable = function (tabId) {
     var panelType;
-    var panelContent;
+    var panelContent = null;
     switch (tabId) {
     case 'km_tab_cash':
-        panelContent = this.cashTree;
         panelType = "table";
         hideElements(['bankbox', 'creditcardbox', 'emoneybox', 'km_summary_condition']);
         showElements(['km_edit1', 'km_edit2', 'km_edit_buttons', 'km_query1', 'km_query2',
                       'income_expense']);
+        $$('km_menu_data_duplicate').disabled = false;
         this.initQueryCondition('km_list_query_condition1');
         this.initQueryCondition('km_list_query_condition2');
         break;
     case 'km_tab_bank':
-        panelContent = this.bankTree;
         panelType = "table";
         hideElements(['creditcardbox', 'emoneybox', 'km_summary_condition']);
         showElements(['bankbox', 'km_edit1', 'km_edit2', 'income_expense',
                       'km_edit_buttons', 'km_query1', 'km_query2']);
+        $$('km_menu_data_duplicate').disabled = false;
         this.initQueryCondition('km_list_query_condition1');
         this.initQueryCondition('km_list_query_condition2');
         $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.bank"), "bank");
         $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.bank"), "bank");
         break;
     case 'km_tab_creditcard':
-        panelContent = this.creditcardTree;
         panelType = "table";
         hideElements(['bankbox', 'emoneybox', 'km_summary_condition', 'income_expense']);
         showElements(['creditcardbox', 'km_edit1', 'km_edit2', 'km_edit_buttons', 'km_query1', 'km_query2']);
+        $$('km_menu_data_duplicate').disabled = false;
         this.initQueryCondition('km_list_query_condition1');
         this.initQueryCondition('km_list_query_condition2');
         $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.creditcard"),
@@ -378,13 +385,13 @@ Kmoney.prototype.loadTable = function (tabId) {
                                                   "creditcard");
         break;
     case 'km_tab_emoney':
-        panelContent = this.emoneyTree;
         panelType = "table";
         $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.emoney"), "emoney");
         $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.emoney"), "emoney");
         hideElements(['bankbox', 'creditcardbox', 'km_summary_condition']);
         showElements(['emoneybox', 'km_edit1', 'km_edit2', 'km_edit_buttons',
                       'km_query1', 'km_query2', 'income_expense']);
+        $$('km_menu_data_duplicate').disabled = false;
         this.initQueryCondition('km_list_query_condition1');
         this.initQueryCondition('km_list_query_condition2');
         $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.creditcard"),
@@ -398,6 +405,7 @@ Kmoney.prototype.loadTable = function (tabId) {
         hideElements(['bankbox', 'creditcardbox', 'emoneybox', 'km_edit1', 'km_edit2',
                       'km_edit_buttons', 'km_summary_condition']);
         showElements(['km_query1', 'km_query2']);
+        $$('km_menu_data_duplicate').disabled = true;
         this.initQueryCondition('km_list_query_condition1');
         this.initQueryCondition('km_list_query_condition2');
         $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.bank"), "bank");
@@ -415,6 +423,7 @@ Kmoney.prototype.loadTable = function (tabId) {
         hideElements(['km_summary_bankbox', 'km_edit1', 'km_edit2',
                       'km_query1', 'km_query2', 'km_edit_buttons']);
         showElements(['km_summary_itembox', 'km_summary_condition']);
+        $$('km_menu_data_duplicate').disabled = true;
         break;
     case 'km_tab_balance':
         panelContent = this.balance;
@@ -422,6 +431,7 @@ Kmoney.prototype.loadTable = function (tabId) {
         hideElements(['km_summary_itembox', 'km_edit1', 'km_edit2',
                       'km_query1', 'km_query2', 'km_edit_buttons']);
         showElements(['km_summary_bankbox', 'km_summary_condition']);
+        $$('km_menu_data_duplicate').disabled = true;
         break;
     }
 
@@ -432,7 +442,11 @@ Kmoney.prototype.loadTable = function (tabId) {
         this.onQueryCondition1Select(false);
         this.onQueryCondition2Select(false);
 
-        panelContent.load();
+        if (panelContent === null) {
+            this.query();
+        } else {
+            panelContent.load();
+        }
     } else if (panelType === "graph") {
         // デフォルトは前月までの6ヶ月間
         var monthToDefault = new Date();
@@ -456,6 +470,22 @@ Kmoney.prototype.loadTable = function (tabId) {
         panelContent.drawGraph();
     }
 
+};
+
+Kmoney.prototype.query = function () {
+    var tree = this.getSelectedTree();
+    if (typeof tree.load != 'function') {
+        return;
+    }
+    if ($$('km_menu_data_duplicate').hasAttribute('checked')) {
+        $$('km_query1').hidden = true;
+        $$('km_query2').hidden = true;
+        tree.loadDuplicate();
+    } else {
+        $$('km_query1').hidden = false;
+        $$('km_query2').hidden = false;
+        tree.load();
+    }
 };
 Kmoney.prototype.onTabSelected = function (e) {
     $$('km_status_sum').label = "";
@@ -776,13 +806,7 @@ Kmoney.prototype.onUserSelect = function () {
         tree.onUserSelect();
     }
 };
-Kmoney.prototype.query = function () {
-    var tree = this.getSelectedTree();
-    if (typeof tree.load != 'function') {
-        return;
-    }
-    tree.load();
-};
+
 Kmoney.prototype.initQueryCondition = function (elementId) {
     $$(elementId).removeAllItems();
     $$(elementId).appendItem(km_getLStr("query_condition.none"), "none");

@@ -20,6 +20,9 @@ CashTable.prototype.load = function (sortParams) {
     km_debug("CashTable.load end");
 
 };
+CashTable.prototype.loadDuplicate = function() {
+    this.mDb.cashTrns.loadDuplicate(this.loadCallback.bind(this));
+};
 CashTable.prototype.onSelect = function () {
     $$('km_edit_transactionDate').value = this.mTree.getSelectedRowValue('transaction_date');
     $$('km_edit_item').value = this.mTree.getSelectedRowValue('item_id');

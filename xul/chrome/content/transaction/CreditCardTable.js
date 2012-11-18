@@ -33,6 +33,10 @@ CreditCardTable.prototype.load = function (sortParams) {
 
 
 };
+CreditCardTable.prototype.loadDuplicate = function() {
+    this.mDb.creditCardTrns.loadDuplicate(this.loadCallback.bind(this));
+};
+
 CreditCardTable.prototype.onSelect = function () {
     $$('km_edit_transactionDate').value = this.mTree.getSelectedRowValue('transaction_date');
     $$('km_edit_item').value = this.mTree.getSelectedRowValue('item_id');

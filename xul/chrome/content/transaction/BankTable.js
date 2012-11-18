@@ -28,6 +28,10 @@ BankTable.prototype.load = function (sortParams) {
 
     km_debug("BankTable.load end");
 };
+BankTable.prototype.loadDuplicate = function() {
+    this.mDb.bankTrns.loadDuplicate(this.loadCallback.bind(this));
+};
+
 BankTable.prototype.onSelect = function () {
     $$('km_edit_transactionDate').value = this.mTree.getSelectedRowValue('transaction_date');
     $$('km_edit_item').value = this.mTree.getSelectedRowValue('item_id');

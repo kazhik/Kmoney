@@ -25,12 +25,13 @@
 <!ENTITY menu.edit.undo.accesskey          "U">
 <!ENTITY menu.edit.delete          "Delete">
 <!ENTITY menu.edit.delete.accesskey          "D">
-
 <!ENTITY menu.view          "View">
 <!ENTITY menu.view.accesskey          "V">
 
-<!ENTITY menu.chart          "Chart">
-<!ENTITY menu.chart.accesskey          "C">
+<!ENTITY menu.data          "Data">
+<!ENTITY menu.data.accesskey          "D">
+<!ENTITY menu.data.duplicate          "Extract duplicate rows">
+<!ENTITY menu.data.duplicate.accesskey          "P">
 
 <!ENTITY menu.setting          "Setting">
 <!ENTITY menu.setting.accesskey          "S">
