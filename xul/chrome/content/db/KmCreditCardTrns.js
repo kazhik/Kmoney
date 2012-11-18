@@ -36,7 +36,7 @@ KmCreditCardTrns.prototype.load = function(sortParams, queryParams, loadCallback
             keyCol = "A.user_id";
             operator = "=";
         } else if (key === "creditcard") {
-            keyCol = "A.card_id";
+            keyCol = "D.name";
             operator = "=";
         }
         if (i === 0) {

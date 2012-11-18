@@ -66,6 +66,14 @@ KmBankInfo.prototype.getBankId = function (name, userId) {
     return 0;
 
 };
+KmBankInfo.prototype.getBankMap = function () {
+    var bankMap = {};
+    for (var i = 0; i < this.mBankList.length; i++) {
+        bankMap[this.mBankList[i][1]] = this.mBankList[i][0];
+    }
+    return bankMap;
+};
+
 KmBankInfo.prototype.getBankList = function (userId) {
     var bankList = [];
     for (var i = 0; i < this.mBankList.length; i++) {

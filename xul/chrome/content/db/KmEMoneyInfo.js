@@ -11,6 +11,13 @@ KmEMoneyInfo.prototype.getMoneyId = function (name, userId) {
     return 0;
 
 };
+KmEMoneyInfo.prototype.getMoneyMap = function () {
+    var moneyMap = {};
+    for (var i = 0; i < this.mMoneyList.length; i++) {
+        moneyMap[this.mMoneyList[i][1]] = this.mMoneyList[i][0];
+    }
+    return moneyMap;
+};
 KmEMoneyInfo.prototype.getMoneyList = function (userId) {
     var moneyList = [];
     for (var i = 0; i < this.mMoneyList.length; i++) {

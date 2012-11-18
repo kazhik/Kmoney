@@ -375,7 +375,8 @@ Kmoney.prototype.loadTable = function (tabId) {
     case 'km_tab_creditcard':
         panelType = "table";
         hideElements(['bankbox', 'emoneybox', 'km_summary_condition', 'income_expense']);
-        showElements(['creditcardbox', 'km_edit1', 'km_edit2', 'km_edit_buttons', 'km_query1', 'km_query2']);
+        showElements(['creditcardbox', 'km_edit1', 'km_edit2', 'km_edit_buttons', 'km_query1',
+                      'km_query2']);
         $$('km_menu_data_duplicate').disabled = false;
         this.initQueryCondition('km_list_query_condition1');
         this.initQueryCondition('km_list_query_condition2');
@@ -386,18 +387,14 @@ Kmoney.prototype.loadTable = function (tabId) {
         break;
     case 'km_tab_emoney':
         panelType = "table";
-        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.emoney"), "emoney");
-        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.emoney"), "emoney");
         hideElements(['bankbox', 'creditcardbox', 'km_summary_condition']);
         showElements(['emoneybox', 'km_edit1', 'km_edit2', 'km_edit_buttons',
                       'km_query1', 'km_query2', 'income_expense']);
         $$('km_menu_data_duplicate').disabled = false;
         this.initQueryCondition('km_list_query_condition1');
         this.initQueryCondition('km_list_query_condition2');
-        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.creditcard"),
-                                                  "creditcard");
-        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.creditcard"),
-                                                  "creditcard");
+        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.emoney"), "emoney");
+        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.emoney"), "emoney");
         break;
     case 'km_tab_all':
         panelContent = this.allView;
@@ -886,10 +883,10 @@ Kmoney.prototype.onQueryConditionSelect = function(elementNo) {
         $$('km_list_query_operator' + elementNo).hidden = true;
         
         $$('km_edit_query_list' + elementNo).removeAllItems();
-        for (var i = 0; i < this.bankTree.mBankList.length; i++) {
-            $$('km_edit_query_list' + elementNo).appendItem(this.bankTree.mBankList[i][1],
-                                                 this.bankTree.mBankList[i][0]);
-        }
+        var bankMap = this.mDb.bankInfo.getBankMap();
+        Object.keys(bankMap).forEach(function(key){
+            $$('km_edit_query_list' + elementNo).appendItem(key, key);
+        });
         $$('km_edit_query_list' + elementNo).selectedIndex = 0;
     } else if (key === "creditcard") {
         $$('km_edit_query_date' + elementNo).hidden = true;
@@ -898,10 +895,10 @@ Kmoney.prototype.onQueryConditionSelect = function(elementNo) {
         $$('km_list_query_operator' + elementNo).hidden = true;
         
         $$('km_edit_query_list' + elementNo).removeAllItems();
-        for (var i = 0; i < this.creditcardTree.mCardList.length; i++) {
-            $$('km_edit_query_list' + elementNo).appendItem(this.creditcardTree.mCardList[i][1],
-                                                 this.creditcardTree.mCardList[i][0]);
-        }
+        var cardMap = this.mDb.creditCardInfo.getCardMap();
+        Object.keys(cardMap).forEach(function(key){
+            $$('km_edit_query_list' + elementNo).appendItem(key, key);
+        });
         $$('km_edit_query_list' + elementNo).selectedIndex = 0;
     } else if (key === "emoney") {
         $$('km_edit_query_date' + elementNo).hidden = true;
@@ -910,10 +907,10 @@ Kmoney.prototype.onQueryConditionSelect = function(elementNo) {
         $$('km_list_query_operator' + elementNo).hidden = true;
         
         $$('km_edit_query_list' + elementNo).removeAllItems();
-        for (var i = 0; i < this.emoneyTree.mMoneyList.length; i++) {
-            $$('km_edit_query_list' + elementNo).appendItem(this.emoneyTree.mMoneyList[i][1],
-                                                 this.emoneyTree.mMoneyList[i][0]);
-        }
+        var emoneyMap = this.mDb.emoneyInfo.getMoneyMap();
+        Object.keys(emoneyMap).forEach(function(key){
+            $$('km_edit_query_list' + elementNo).appendItem(key, key);
+        });
         $$('km_edit_query_list' + elementNo).selectedIndex = 0;
     }
 };

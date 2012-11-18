@@ -36,7 +36,7 @@ KmEMoneyTrns.prototype.load = function(sortParams, queryParams, loadCallback) {
             keyCol = "A.user_id";
             operator = "=";
         } else if (key === "emoney") {
-            keyCol = "A.money_id";
+            keyCol = "D.name";
             operator = "=";
         }
         if (i === 0) {
@@ -229,7 +229,6 @@ KmEMoneyTrns.prototype.update = function(idList, params, updateCallback) {
                 + "where id in (" + inClause + ") ";
     }
     km_log(sql);
-    km_debug(JSON.stringify(params));
     var sqlStatement = this.mDb.createStatementWithParams(sql, params);
     this.mDb.execTransaction([sqlStatement]);
     

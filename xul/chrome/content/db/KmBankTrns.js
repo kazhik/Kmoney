@@ -37,7 +37,7 @@ KmBankTrns.prototype.load = function(sortParams, queryParams, loadCallback) {
             keyCol = "A.user_id";
             operator = "=";
         } else if (key === "bank") {
-            keyCol = "A.bank_id";
+            keyCol = "D.name";
             operator = "=";
         }
         if (i === 0) {

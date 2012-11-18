@@ -75,3 +75,10 @@ KmCreditCardInfo.prototype.getCardList = function (userId) {
     }
     return cardList;
 };
+KmCreditCardInfo.prototype.getCardMap = function () {
+    var cardMap = {};
+    for (var i = 0; i < this.mCardList.length; i++) {
+        cardMap[this.mCardList[i][1]] = this.mCardList[i][0];
+    }
+    return cardMap;
+};
