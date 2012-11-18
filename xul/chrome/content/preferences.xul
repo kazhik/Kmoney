@@ -71,4 +71,18 @@
                 preference="pref-confirm.update" checked="true"/>
     </groupbox>
   </prefpane>
+  <prefpane id="view-options" label="&paneView.title;">
+    <preferences>
+      <preference id="pref-view.creditcard" name="extensions.kmoney.view.creditcard" type="bool"/>
+      <preference id="pref-view.emoney" name="extensions.kmoney.view.emoney" type="bool"/>
+    </preferences>
+    <groupbox>
+    <caption label="&AvailableTab;"/>
+    <checkbox id="cb-pref-view.creditcard" label="&pref-view.creditcard.label;"
+                preference="pref-view.creditcard" checked="true"/>
+    <checkbox id="cb-pref-view.emoney" label="&pref-view.emoney.label;"
+                preference="pref-view.emoney" checked="true"/>
+    </groupbox>
+  </prefpane>
+
 </prefwindow>

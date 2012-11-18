@@ -2,6 +2,7 @@
 
 <!ENTITY  paneMain.title	"Main">
 <!ENTITY  panePrompts.title	"Prompts">
+<!ENTITY paneView.title	"View">
 
 <!ENTITY  whenKMStarts	"When Kmoney starts">
 <!ENTITY  pref-openWithLastDb.label	"Open the last used database">
@@ -22,3 +23,7 @@
 
 <!ENTITY  confirmBeforeExecute		"Confirm before executing the following">
 <!ENTITY  pref-confirm.update.label	"Before updating/deleting a record">
+
+<!ENTITY AvailableTab "Available Tabs">
+<!ENTITY pref-view.creditcard.label "Credit card">
+<!ENTITY pref-view.emoney.label "E-Money">

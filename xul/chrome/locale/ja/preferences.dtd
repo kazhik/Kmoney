@@ -1,7 +1,8 @@
 <!ENTITY prefwinTitle "Kmoney オプション">
 
 <!ENTITY paneMain.title "メイン">
-<!ENTITY  panePrompts.title	"プロンプト">
+<!ENTITY panePrompts.title	"プロンプト">
+<!ENTITY paneView.title	"表示">
 
 <!ENTITY whenKMStarts "Kmoney 開始時">
 <!ENTITY pref-openWithLastDb.label "最後に利用したデータベースを開く">
@@ -22,3 +23,8 @@
 
 <!ENTITY confirmBeforeExecute "以下を実行する前に確認">
 <!ENTITY pref-confirm.update.label "レコードの更新・削除">
+
+<!ENTITY AvailableTab "表示されるタブ">
+<!ENTITY pref-view.creditcard.label "クレジットカード">
+<!ENTITY pref-view.emoney.label "電子マネー">
+

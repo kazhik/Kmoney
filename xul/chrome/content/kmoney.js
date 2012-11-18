@@ -49,6 +49,13 @@ Kmoney.prototype.Startup = function () {
             this.loadData();
         }
     }
+    if (!km_prefsBranch.getBoolPref("view.creditcard")) {
+        $$('km_tab_creditcard').hidden = true;
+    }
+    if (!km_prefsBranch.getBoolPref("view.emoney")) {
+        $$('km_tab_emoney').hidden = true;
+    }
+    
     km_debug("Kmoney.Startup end");
 };
 Kmoney.prototype.loadData = function() {
