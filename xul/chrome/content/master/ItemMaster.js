@@ -100,7 +100,7 @@ ItemMaster.prototype.deleteRecord = function() {
 ItemMaster.prototype.onSelect = function() {
     $$('km_edit_name').value = this.mTree.getSelectedRowValue("master_item_name");
     $$('km_master_sum').checked =
-        (Number(this.mTree.getSelectedRowValue("master_item_sum")) === 1);
+        (Number(this.mTree.getSelectedRowValue("master_item_sum_value")) === 1);
  
 };
 

@@ -49,7 +49,10 @@
 								<treecol id="master_item_name" label="&column.itemname;" flex="1"
                                          persist="width"/>
 								<splitter class="tree-splitter" />  
-								<treecol id="master_item_sum" label="&column.sum_include;"
+								<treecol id="master_item_sum_value"
+                                         hidden="true" ignoreincolumnpicker="true" />
+								<splitter class="tree-splitter" />  
+								<treecol id="master_item_sum_label" label="&column.sum_include;"
 										 flex="1" persist="width" />
 							</treecols>
                             <treechildren />

@@ -10,8 +10,13 @@ KmItemInfo.prototype.loadItemList = function(loadCallback) {
 
 };
 KmItemInfo.prototype.loadMaster = function(loadCallback) {
-    this.mDb.selectQuery("select id, name, sum_include from km_item");
-    var records = this.mDb.getRecords();
+    var sql = ["select id, name, sum_include,",
+               "case",
+               "when sum_include = 0 then '" + km_getLStr("sum_include.false") + "'",
+               "when sum_include = 1 then '" + km_getLStr("sum_include.true") + "'",
+               "end",
+               "from km_item"].join(" ");
+    this.mDb.selectQuery(sql);
     loadCallback(this.mDb.getRecords(), this.mDb.getColumns());
 };
 
