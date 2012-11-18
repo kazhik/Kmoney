@@ -1,8 +1,11 @@
 function Transaction(treeId) {
     this.mDb = null;
     this.mTree = new TreeViewController(treeId);
+    this.mDup = false;
 }
-
+Transaction.prototype.setDuplicate = function (dup) {
+    this.mDup = dup;
+};
 Transaction.prototype.initialize = function (db) {
     this.mDb = db;
     this.mTree.init(this.load.bind(this));
@@ -40,12 +43,20 @@ Transaction.prototype.insertCallback = function (id) {
 };
     
 Transaction.prototype.updateCallback = function (id) {
-    this.load();
+    if (this.mDup) {
+        this.loadDuplicate();
+    } else {
+        this.load();
+    }
     this.mTree.ensureRowIsVisible('id', id);
     $$('kmc-undo').setAttribute("disabled", false);
 };
 Transaction.prototype.deleteCallback = function () {
-    this.load();
+    if (this.mDup) {
+        this.loadDuplicate();
+    } else {
+        this.load();
+    }
     this.mTree.ensurePreviousRowIsVisible();
     $$('kmc-undo').setAttribute("disabled", false);
 };

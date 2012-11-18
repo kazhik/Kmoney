@@ -495,10 +495,12 @@ Kmoney.prototype.query = function () {
     if ($$('km_menu_data_duplicate').hasAttribute('checked')) {
         $$('km_query1').hidden = true;
         $$('km_query2').hidden = true;
+        $$('km_button_add').disabled = true;
         tree.loadDuplicate();
     } else {
         $$('km_query1').hidden = false;
         $$('km_query2').hidden = false;
+        $$('km_button_add').disabled = false;
         tree.load();
     }
 };

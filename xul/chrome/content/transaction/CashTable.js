@@ -5,6 +5,7 @@ CashTable.prototype = Object.create(Transaction.prototype);
 
 CashTable.prototype.load = function (sortParams) {
     km_debug("CashTable.load start");
+    this.setDuplicate(false);
     if (sortParams === undefined) {
         sortParams = this.mTree.getCurrentSortParams();
     }
@@ -21,6 +22,7 @@ CashTable.prototype.load = function (sortParams) {
 
 };
 CashTable.prototype.loadDuplicate = function() {
+    this.setDuplicate(true);
     this.mDb.cashTrns.loadDuplicate(this.loadCallback.bind(this));
 };
 CashTable.prototype.onSelect = function () {

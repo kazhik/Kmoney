@@ -12,6 +12,7 @@ EMoneyTable.prototype.initialize = function (db) {
 
 EMoneyTable.prototype.load = function (sortParams) {
     km_debug("EMoneyTable.load start");
+    this.setDuplicate(false);
     if (sortParams === undefined) {
         sortParams = this.mTree.getCurrentSortParams();
     }
@@ -31,6 +32,7 @@ EMoneyTable.prototype.load = function (sortParams) {
 };
 
 EMoneyTable.prototype.loadDuplicate = function() {
+    this.setDuplicate(true);
     this.mDb.emoneyTrns.loadDuplicate(this.loadCallback.bind(this));
 };
 

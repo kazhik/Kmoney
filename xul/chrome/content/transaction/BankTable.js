@@ -12,6 +12,7 @@ BankTable.prototype.initialize = function (db) {
 
 BankTable.prototype.load = function (sortParams) {
     km_debug("BankTable.load start");
+    this.setDuplicate(false);
     if (sortParams === undefined) {
         sortParams = this.mTree.getCurrentSortParams();
     }
@@ -29,6 +30,7 @@ BankTable.prototype.load = function (sortParams) {
     km_debug("BankTable.load end");
 };
 BankTable.prototype.loadDuplicate = function() {
+    this.setDuplicate(true);
     this.mDb.bankTrns.loadDuplicate(this.loadCallback.bind(this));
 };
 

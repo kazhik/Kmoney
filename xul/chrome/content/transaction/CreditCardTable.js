@@ -14,6 +14,7 @@ CreditCardTable.prototype.initialize = function (db) {
 
 CreditCardTable.prototype.load = function (sortParams) {
     km_debug("CreditCardTable.load start");
+    this.setDuplicate(false);
     if (sortParams === undefined) {
         sortParams = this.mTree.getCurrentSortParams();
     }
@@ -34,6 +35,7 @@ CreditCardTable.prototype.load = function (sortParams) {
 
 };
 CreditCardTable.prototype.loadDuplicate = function() {
+    this.setDuplicate(true);
     this.mDb.creditCardTrns.loadDuplicate(this.loadCallback.bind(this));
 };
 
