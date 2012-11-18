@@ -18,7 +18,7 @@ function Kmoney() {
     this.balance = null;
     this.itemMap = {};
     this.users = {};
-    
+    this.currentUser = {};
 }
 
 function Startup() {
@@ -181,6 +181,9 @@ Kmoney.prototype.addEventListeners = function () {
     this.listeners['kmc-setprefs.command'] = this.openSetPrefs.bind(this);
     $$('kmc-setprefs').addEventListener("command", this.listeners['kmc-setprefs.command']);
 
+    this.listeners['kmc-setuser.command'] = this.openSetUser.bind(this);
+    $$('kmc-setuser').addEventListener("command", this.listeners['kmc-setuser.command']);
+    
     this.listeners['kmc-importconf.command'] = this.openImportConf.bind(this);
     $$('kmc-importconf').addEventListener("command", this.listeners['kmc-importconf.command']);
 
@@ -274,6 +277,8 @@ Kmoney.prototype.removeEventListeners = function () {
     $$('kmc-setmaster').removeEventListener("command", this.listeners['kmc-setmaster.command']);
 
     $$('kmc-setprefs').removeEventListener("command", this.listeners['kmc-setprefs.command']);
+    
+    $$('kmc-setuser').removeEventListener("command", this.listeners['kmc-setuser.command']);
 
     $$('kmc-importconf').removeEventListener("command", this.listeners['kmc-importconf.command']);
 
@@ -307,6 +312,12 @@ Kmoney.prototype.openImportConf = function () {
     window.openDialog("chrome://kmoney/content/import/ImportConf.xul", "ImportConf",
         "chrome, resizable, centerscreen, modal, dialog", this.mDb, this.itemMap);
 
+};
+Kmoney.prototype.openSetUser = function () {
+    window.openDialog("chrome://kmoney/content/SwitchUserDialog.xul", "SwitchUserDialog",
+        "chrome, resizable, centerscreen, modal, dialog", this.users, this.currentUser);
+
+    this.populateUserList();
 };
 Kmoney.prototype.openSetPrefs = function () {
     var features = "chrome,titlebar,toolbar,centerscreen,modal";
@@ -581,14 +592,18 @@ Kmoney.prototype.populateUserList = function () {
         $$('km_edit_user').removeAllItems();
         $$('km_summary_user').removeAllItems();
         $$('km_summary_user').appendItem(km_getLStr('query_condition.none'), 0);
+        var idx = 0;
         for (var i = 0; i < records.length; i++) {
             $$('km_edit_user').appendItem(records[i][1], records[i][0]);
             $$('km_summary_user').appendItem(records[i][1], records[i][0]);
-            this.users[records[i][0]] = records[i][1];
+            this.users[records[i][1]] = records[i][0];
+            if (records[i][0] == this.currentUser['user']) {
+                idx = i;
+            }
         }
     
-        $$('km_edit_user').selectedIndex = 0;
-        $$('km_summary_user').selectedIndex = 0;
+        $$('km_edit_user').selectedIndex = idx;
+        $$('km_summary_user').selectedIndex = idx;
         
     }
     this.mDb.userInfo.load(loadCallback.bind(this));
@@ -873,7 +888,7 @@ Kmoney.prototype.onQueryConditionSelect = function(elementNo) {
         
         $$('km_edit_query_list' + elementNo).removeAllItems();
         for (mapKey in this.users) {
-            $$('km_edit_query_list' + elementNo).appendItem(this.users[mapKey], mapKey);
+            $$('km_edit_query_list' + elementNo).appendItem(mapKey, this.users[mapKey]);
         }
         $$('km_edit_query_list' + elementNo).selectedIndex = 0;
     } else if (key === "bank") {

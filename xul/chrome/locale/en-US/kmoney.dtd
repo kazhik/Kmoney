@@ -4,6 +4,7 @@
 <!ENTITY dialog.importConf     "Import Conf">
 <!ENTITY dialog.merge     "Merge">
 <!ENTITY dialog.update     "Update Selected Row">
+<!ENTITY dialog.user     "Current User">
 
 <!-- menu -->
 <!ENTITY menu.file			"File">
@@ -41,6 +42,8 @@
 <!ENTITY menu.setting.import.accesskey          "I">
 <!ENTITY menu.setting.prefs          "Preferences">
 <!ENTITY menu.setting.prefs.accesskey          "N">
+<!ENTITY menu.setting.user          "Current User">
+<!ENTITY menu.setting.user.accesskey          "U">
 
 <!ENTITY menu.help          "Help">
 <!ENTITY menu.help.accesskey          "H">
@@ -117,6 +120,7 @@
 <!ENTITY edit.paymonth          "PayMonth">
 <!ENTITY edit.table          "Table">
 <!ENTITY edit.graph          "Graph">
+<!ENTITY edit.selectCurrentUser          "Please select current user">
 
 <!-- confirm dialog -->
 <!ENTITY confirm.button.accept  "Yes">
