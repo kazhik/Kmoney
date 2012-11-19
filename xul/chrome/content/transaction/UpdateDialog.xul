@@ -22,7 +22,7 @@
     
     <hbox id="textbox" align="center">
         <label id="update_text" control="km_update_textbox" />
-        <textbox id="km_update_textbox" size="20" />
+        <textbox id="km_update_textbox" size="10" />
     </hbox>
     
   </vbox>
