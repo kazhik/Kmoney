@@ -127,13 +127,14 @@ KmEMoneyTrns.prototype.loadDuplicate = function(loadCallback) {
                "inner join km_emoney_info D ",
                " on A.money_id = D.id "].join(" ");
     sql += ["inner join",
-               "(select G.transaction_date, G.expense",
+               "(select G.transaction_date, G.income, G.expense",
                "from km_emoney_trns G",
-               "group by G.transaction_date, G.expense",
+               "group by G.transaction_date, G.income, G.expense",
                "having count(G.transaction_date) > 1) F",
                "on A.transaction_date = F.transaction_date",
+               "and A.income = F.income",
                "and A.expense = F.expense"].join(" ");
-    sql += " order by A.transaction_date, A.expense";
+    sql += " order by A.transaction_date, A.income, A.expense";
     km_debug(sql);
     this.mDb.selectQuery(sql);
     loadCallback(this.mDb.getRecords(), this.mDb.getColumns());
