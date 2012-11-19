@@ -583,7 +583,6 @@ Kmoney.prototype.populateItemList = function () {
     function loadCallback(records) {
         $$('km_edit_item').removeAllItems();
         $$('km_summary_item').removeAllItems();
-        $$('km_summary_item').appendItem(km_getLStr("query_condition.none"), 0);
         for (var i = 0; i < records.length; i++) {
             $$('km_edit_item').appendItem(records[i][1], records[i][0]);
             $$('km_summary_item').appendItem(records[i][1], records[i][0]);
@@ -600,7 +599,6 @@ Kmoney.prototype.populateUserList = function () {
     function loadCallback(records) {
         $$('km_edit_user').removeAllItems();
         $$('km_summary_user').removeAllItems();
-        $$('km_summary_user').appendItem(km_getLStr('query_condition.none'), 0);
         var idx = 0;
         for (var i = 0; i < records.length; i++) {
             $$('km_edit_user').appendItem(records[i][1], records[i][0]);

@@ -145,7 +145,7 @@ ImportDialog.prototype.populateUserList = function () {
     $$('km_select_user').removeAllItems();
 
     for (var key in this.users) {
-        $$('km_select_user').appendItem(this.users[key], key);
+        $$('km_select_user').appendItem(key, this.users[key]);
     }
     
     $$('km_select_user').selectedIndex = 0;

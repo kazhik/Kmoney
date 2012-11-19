@@ -31,6 +31,7 @@ BalanceView.prototype.initialize = function (db) {
 BalanceView.prototype.loadBankList = function () {
     function onLoad(records) {
         this.mBankList = records;
+        this.populateBankList();
     }
     km_debug("BalanceView.loadBankList");
     this.mDb.bankInfo.load(onLoad.bind(this));
@@ -54,7 +55,7 @@ BalanceView.prototype.terminate = function () {
 BalanceView.prototype.onGraphItemChanged = function () {
     this.drawGraph();
 };
-BalanceView.prototype.onUserSelect = function () {
+BalanceView.prototype.populateBankList = function () {
     var userId = $$('km_summary_user').value;
 
     $$("km_summary_bank").removeAllItems();
@@ -64,6 +65,9 @@ BalanceView.prototype.onUserSelect = function () {
         }
     }
     $$("km_summary_bank").selectedIndex = 0;
+};
+BalanceView.prototype.onUserSelect = function () {
+    this.populateBankList();
 
     this.drawGraph();
 };
