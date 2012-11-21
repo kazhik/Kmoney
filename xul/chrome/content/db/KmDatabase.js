@@ -311,6 +311,16 @@ KmDatabase.prototype.createInitialRecords = function() {
     }
   
 };
+KmDatabase.prototype.loadMasterData = function() {
+    function loadCallback() {
+        
+    }
+    this.itemInfo.loadItemList(loadCallback.bind(this));
+    this.userInfo.load(loadCallback.bind(this));
+    this.bankInfo.load(loadCallback.bind(this));
+    this.creditCardInfo.load(loadCallback.bind(this));
+    this.emoneyInfo.load(loadCallback.bind(this));
+};
 
 KmDatabase.prototype.cashInsert = function(params, callback) {
     function insertCallback(id) {

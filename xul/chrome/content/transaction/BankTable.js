@@ -5,11 +5,6 @@ function BankTable() {
 
 BankTable.prototype = Object.create(Transaction.prototype);
 
-BankTable.prototype.initialize = function (db) {
-    Transaction.prototype.initialize.call(this, db);
-    this.loadBankList();
-};
-
 BankTable.prototype.load = function (sortParams) {
     km_debug("BankTable.load start");
     this.setDuplicate(false);
@@ -27,11 +22,13 @@ BankTable.prototype.load = function (sortParams) {
     }
     this.mDb.bankTrns.load(sortParams, queryParams, this.loadCallback.bind(this));
 
+    this.onUserSelect();
     km_debug("BankTable.load end");
 };
 BankTable.prototype.loadDuplicate = function() {
     this.setDuplicate(true);
     this.mDb.bankTrns.loadDuplicate(this.loadCallback.bind(this));
+    this.onUserSelect();
 };
 
 BankTable.prototype.onSelect = function () {
@@ -53,14 +50,7 @@ BankTable.prototype.onSelect = function () {
     // 選択行の収支を計算してステータスバーに表示
     this.showSumOfSelectedRows();
 }
-BankTable.prototype.loadBankList = function () {
-    function onLoad(records) {
-        this.onUserSelect();
-    }
-    km_debug("BankTable.loadBankList");
-    this.mDb.bankInfo.load(onLoad.bind(this));
 
-};
 BankTable.prototype.onUserSelect = function () {
     var bankList = this.mDb.bankInfo.getBankList($$('km_edit_user').value);
 

@@ -60,10 +60,8 @@ Kmoney.prototype.Startup = function () {
 };
 Kmoney.prototype.loadData = function() {
     km_debug("Kmoney.loadData start");
-    this.populateItemList();
-    this.populateUserList();
-    this.populateInternalList();
-    this.populateSummaryPeriodList();
+    
+    this.mDb.loadMasterData();
     
     this.cashTree.initialize(this.mDb);
     this.creditcardTree.initialize(this.mDb);
@@ -73,6 +71,10 @@ Kmoney.prototype.loadData = function() {
     this.balance.initialize(this.mDb);
     this.allView.initialize(this.mDb);
 
+    this.populateItemList();
+    this.populateUserList();
+    this.populateInternalList();
+    
     var tabId = $$('km_tabbox').selectedTab.id;
     this.changeUpdateMenuItem(tabId);
     this.loadTable(tabId);
@@ -439,6 +441,8 @@ Kmoney.prototype.loadTable = function (tabId) {
                       'km_query1', 'km_query2', 'km_edit_buttons']);
         showElements(['km_summary_itembox', 'km_summary_condition']);
         $$('km_menu_data_duplicate').disabled = true;
+        this.populateSummaryPeriodList();
+        this.populateSummaryUserList(tabId);
         break;
     case 'km_tab_balance':
         panelContent = this.balance;
@@ -447,6 +451,8 @@ Kmoney.prototype.loadTable = function (tabId) {
                       'km_query1', 'km_query2', 'km_edit_buttons']);
         showElements(['km_summary_bankbox', 'km_summary_condition']);
         $$('km_menu_data_duplicate').disabled = true;
+        this.populateSummaryPeriodList();
+        this.populateSummaryUserList(tabId);
         break;
     }
 
@@ -580,41 +586,48 @@ Kmoney.prototype.openDatabase = function () {
 };
 
 Kmoney.prototype.populateItemList = function () {
-    function loadCallback(records) {
-        $$('km_edit_item').removeAllItems();
-        $$('km_summary_item').removeAllItems();
-        for (var i = 0; i < records.length; i++) {
-            $$('km_edit_item').appendItem(records[i][1], records[i][0]);
-            $$('km_summary_item').appendItem(records[i][1], records[i][0]);
-            this.itemMap[records[i][1]] = records[i][0];
-        }
-        $$('km_edit_item').selectedIndex = 0;
-        $$('km_summary_item').selectedIndex = 0;
+    var itemList = this.mDb.itemInfo.mItemList;
+    $$('km_edit_item').removeAllItems();
+    $$('km_summary_item').removeAllItems();
+    for (var i = 0; i < itemList.length; i++) {
+        $$('km_edit_item').appendItem(itemList[i][1], itemList[i][0]);
+        $$('km_summary_item').appendItem(itemList[i][1], itemList[i][0]);
+        this.itemMap[itemList[i][1]] = itemList[i][0];
     }
-    this.mDb.itemInfo.loadItemList(loadCallback.bind(this));
+    $$('km_edit_item').selectedIndex = 0;
+    $$('km_summary_item').selectedIndex = 0;
 
+};
+Kmoney.prototype.populateSummaryUserList = function (tabId) {
+    $$('km_summary_user').removeAllItems();
+    if (tabId === "km_tab_summary") {
+        $$('km_summary_user').appendItem(km_getLStr('query_condition.none'), 0);
+    }
+    var userList = this.mDb.userInfo.mUserList;
+    var idx = 0;
+    for (var i = 0; i < userList.length; i++) {
+        $$('km_summary_user').appendItem(userList[i][1], userList[i][0]);
+        if (userList[i][0] == this.currentUser['user']) {
+            idx = i;
+        }
+    }
 
+    $$('km_summary_user').selectedIndex = idx;
 };
 Kmoney.prototype.populateUserList = function () {
-    function loadCallback(records) {
-        $$('km_edit_user').removeAllItems();
-        $$('km_summary_user').removeAllItems();
-        var idx = 0;
-        for (var i = 0; i < records.length; i++) {
-            $$('km_edit_user').appendItem(records[i][1], records[i][0]);
-            $$('km_summary_user').appendItem(records[i][1], records[i][0]);
-            this.users[records[i][1]] = records[i][0];
-            if (records[i][0] == this.currentUser['user']) {
-                idx = i;
-            }
+    var userList = this.mDb.userInfo.mUserList;
+    $$('km_edit_user').removeAllItems();
+    var idx = 0;
+    for (var i = 0; i < userList.length; i++) {
+        $$('km_edit_user').appendItem(userList[i][1], userList[i][0]);
+        this.users[userList[i][1]] = userList[i][0];
+        if (userList[i][0] == this.currentUser['user']) {
+            idx = i;
         }
-    
-        $$('km_edit_user').selectedIndex = idx;
-        $$('km_summary_user').selectedIndex = idx;
-        
     }
-    this.mDb.userInfo.load(loadCallback.bind(this));
+    $$('km_edit_user').selectedIndex = idx;
 };
+
 Kmoney.prototype.populateInternalList = function () {
     $$('km_edit_internal').removeAllItems();
     $$('km_edit_internal').appendItem(km_getLStr("internal.none"), 0);

@@ -3,13 +3,6 @@ function EMoneyTable() {
 }
 EMoneyTable.prototype = Object.create(Transaction.prototype);
 
-EMoneyTable.prototype.initialize = function (db) {
-    km_debug("EMoneyTable.initialize start");
-    Transaction.prototype.initialize.call(this, db);
-    this.loadEMoneyList();
-    km_debug("EMoneyTable.initialize end");
-};
-
 EMoneyTable.prototype.load = function (sortParams) {
     km_debug("EMoneyTable.load start");
     this.setDuplicate(false);
@@ -27,6 +20,7 @@ EMoneyTable.prototype.load = function (sortParams) {
     }
     
     this.mDb.emoneyTrns.load(sortParams, queryParams, this.loadCallback.bind(this));
+    this.onUserSelect();
 
     km_debug("EMoneyTable.load end");
 };
@@ -34,6 +28,7 @@ EMoneyTable.prototype.load = function (sortParams) {
 EMoneyTable.prototype.loadDuplicate = function() {
     this.setDuplicate(true);
     this.mDb.emoneyTrns.loadDuplicate(this.loadCallback.bind(this));
+    this.onUserSelect();
 };
 
 EMoneyTable.prototype.onSelect = function () {
@@ -54,13 +49,6 @@ EMoneyTable.prototype.onSelect = function () {
 
     // 選択行の収支を計算してステータスバーに表示
     this.showSumOfSelectedRows();
-
-};
-EMoneyTable.prototype.loadEMoneyList = function () {
-    function loadCallback(emoneyList) {
-        this.onUserSelect();
-    }
-    this.mDb.emoneyInfo.load(loadCallback.bind(this));
 
 };
 

@@ -4,14 +4,6 @@ function CreditCardTable() {
 
 CreditCardTable.prototype = Object.create(Transaction.prototype);
 
-CreditCardTable.prototype.initialize = function (db) {
-    km_debug("CreditCardTable.initialize start");
-    Transaction.prototype.initialize.call(this, db);
-    this.loadCardList();
-    this.initPayMonth();
-    km_debug("CreditCardTable.initialize end");
-};
-
 CreditCardTable.prototype.load = function (sortParams) {
     km_debug("CreditCardTable.load start");
     this.setDuplicate(false);
@@ -29,14 +21,17 @@ CreditCardTable.prototype.load = function (sortParams) {
     }
     
     this.mDb.creditCardTrns.load(sortParams, queryParams, this.loadCallback.bind(this));
+    this.onUserSelect();
+    this.initPayMonth();
 
     km_debug("CreditCardTable.load end");
-
 
 };
 CreditCardTable.prototype.loadDuplicate = function() {
     this.setDuplicate(true);
     this.mDb.creditCardTrns.loadDuplicate(this.loadCallback.bind(this));
+    this.onUserSelect();
+    this.initPayMonth();
 };
 
 CreditCardTable.prototype.onSelect = function () {
@@ -61,13 +56,7 @@ CreditCardTable.prototype.onSelect = function () {
     this.showSumOfSelectedRows();
 
 };
-CreditCardTable.prototype.loadCardList = function () {
-    km_debug("CreditCardTable.loadCardList start");
-    function loadCallback(cardList) {
-        this.onUserSelect();
-    }
-    this.mDb.creditCardInfo.load(loadCallback.bind(this));
-};
+
 CreditCardTable.prototype.initPayMonth = function () {
     var thisMonth = new Date();
     $$('km_edit_paymonthY').value = thisMonth.getFullYear();

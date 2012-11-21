@@ -59,7 +59,6 @@ SummaryView.prototype.onGraphItemChanged = function () {
 };
 SummaryView.prototype.loadTable = function () {
 };
-
 SummaryView.prototype.drawGraph = function () {
     function loadCallback(records) {
         km_debug("SummaryView.drawGraph loadCallback");
@@ -93,7 +92,6 @@ SummaryView.prototype.drawGraph = function () {
             },
             show_vertical_labels: false,
             labels: labelArray,
-            max_bar_size: 20,
             bar_labels: true
         });
     }
@@ -109,4 +107,5 @@ SummaryView.prototype.drawGraph = function () {
     };
     
     this.mDb.transactions.loadSumPerMonth(params, loadCallback.bind(this));
+    
 };

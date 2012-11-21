@@ -1,6 +1,5 @@
 function BalanceView() {
     this.mDb = null;
-    this.mBankList = null;
     this.mGraph = null;
     this.listeners = [];
 };
@@ -26,18 +25,7 @@ BalanceView.prototype.initialize = function (db) {
     $$('km_summary_monthtoM').addEventListener("command",
                                                  this.listeners['km_summary_monthtoM.command']);
 
-    this.loadBankList();
 };
-BalanceView.prototype.loadBankList = function () {
-    function onLoad(records) {
-        this.mBankList = records;
-        this.populateBankList();
-    }
-    km_debug("BalanceView.loadBankList");
-    this.mDb.bankInfo.load(onLoad.bind(this));
-
-};
-
 BalanceView.prototype.terminate = function () {
     $$('km_summary_bank').removeEventListener("command", this.listeners['km_summary_bank.command']);
 
@@ -55,22 +43,22 @@ BalanceView.prototype.terminate = function () {
 BalanceView.prototype.onGraphItemChanged = function () {
     this.drawGraph();
 };
+BalanceView.prototype.onUserSelect = function () {
+    this.drawGraph();
+};
 BalanceView.prototype.populateBankList = function () {
     var userId = $$('km_summary_user').value;
 
     $$("km_summary_bank").removeAllItems();
-    for(var i = 0; i < this.mBankList.length; i++) {
-        if(this.mBankList[i][2] == userId) {
-            $$("km_summary_bank").appendItem(this.mBankList[i][1], this.mBankList[i][0]);
+    var bankList = this.mDb.bankInfo.mBankList;
+    for(var i = 0; i < bankList.length; i++) {
+        if(bankList[i][2] == userId) {
+            $$("km_summary_bank").appendItem(bankList[i][1], bankList[i][0]);
         }
     }
     $$("km_summary_bank").selectedIndex = 0;
 };
-BalanceView.prototype.onUserSelect = function () {
-    this.populateBankList();
 
-    this.drawGraph();
-};
 BalanceView.prototype.drawGraph = function () {
     function loadCallback(records) {
         var labelArray = [];
@@ -93,14 +81,15 @@ BalanceView.prototype.drawGraph = function () {
         }
     
         KmGlobals.$empty($$('km_balance'));
-        this.mGraph = new Ico.LineGraph(
+        this.mGraph = new Ico.BarGraph(
         $$('km_balance'), {
             balance: valueArray
         }, {
-            markers: 'circle',
-            show_vertical_labels: true,
-            meanline: true,
-            grid: true,
+            colours: {
+                balance: '#8A2BE2'
+            },
+            show_vertical_labels: false,
+            bar_labels: true,
             labels: labelArray
         });
         
@@ -118,4 +107,5 @@ BalanceView.prototype.drawGraph = function () {
         "userId": strToInt($$('km_summary_user').value)
     };
     this.mDb.bankTrns.loadSumPerMonth(params, loadCallback.bind(this));
+    this.populateBankList();
 };
