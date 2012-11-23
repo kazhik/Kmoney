@@ -51,9 +51,9 @@ ImportConf.prototype.addEventListeners = function () {
     $$('km_import_select_type').addEventListener("command",
         this.listeners['km_import_select_type.command']);
     
-    this.listeners['km_tree_import_conf.command'] = this.onSelect.bind(this);
-    $$('km_tree_import_conf').addEventListener("command",
-        this.listeners['km_tree_import_conf.command']);
+    this.listeners['km_tree_import_conf.select'] = this.onSelect.bind(this);
+    $$('km_tree_import_conf').addEventListener("select",
+        this.listeners['km_tree_import_conf.select']);
     
 };
 ImportConf.prototype.removeEventListeners = function () {
@@ -72,8 +72,8 @@ ImportConf.prototype.removeEventListeners = function () {
     $$('km_import_select_type').removeEventListener("command",
         this.listeners['km_import_select_type.command']);
 
-    $$('km_tree_import_conf').removeEventListener("command",
-        this.listeners['km_tree_import_conf.command']);
+    $$('km_tree_import_conf').removeEventListener("select",
+        this.listeners['km_tree_import_conf.select']);
 };
 ImportConf.prototype.addRecord = function () {
     function insertCallback(id) {

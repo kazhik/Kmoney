@@ -10,15 +10,15 @@ CardMaster.prototype.initialize = function (db) {
 
     this.mTree.init(this, this.load.bind(this));
 
-    this.listeners['km_tree_master_creditcard.command'] = this.onSelect.bind(this);
-    $$('km_tree_master_creditcard').addEventListener("command",
-    this.listeners['km_tree_master_creditcard.command']);
+    this.listeners['km_tree_master_creditcard.select'] = this.onSelect.bind(this);
+    $$('km_tree_master_creditcard').addEventListener("select",
+    this.listeners['km_tree_master_creditcard.select']);
 
     this.load();
 };
 CardMaster.prototype.terminate = function () {
-    $$('km_tree_master_creditcard').removeEventListener("command",
-        this.listeners['km_tree_master_creditcard.command']);
+    $$('km_tree_master_creditcard').removeEventListener("select",
+        this.listeners['km_tree_master_creditcard.select']);
 };
 
 CardMaster.prototype.load = function () {

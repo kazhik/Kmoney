@@ -10,15 +10,15 @@ EMoneyMaster.prototype.initialize = function(db) {
     
     this.mTree.init(this, this.load.bind(this));
   
-    this.listeners['km_tree_master_emoney.command'] = this.onSelect.bind(this);
-    $$('km_tree_master_emoney').addEventListener("command",
-      this.listeners['km_tree_master_emoney.command']);
+    this.listeners['km_tree_master_emoney.select'] = this.onSelect.bind(this);
+    $$('km_tree_master_emoney').addEventListener("select",
+      this.listeners['km_tree_master_emoney.select']);
   
     this.load();
 };
 EMoneyMaster.prototype.terminate = function() {
-    $$('km_tree_master_emoney').removeEventListener("command",
-      this.listeners['km_tree_master_emoney.command']);
+    $$('km_tree_master_emoney').removeEventListener("select",
+      this.listeners['km_tree_master_emoney.select']);
 };
 EMoneyMaster.prototype.load = function() {
     function loadCallback(records, columns) {
