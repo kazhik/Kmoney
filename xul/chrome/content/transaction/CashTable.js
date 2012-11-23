@@ -1,7 +1,20 @@
 function CashTable() {
     Transaction.call(this, "km_tree_cash");
+    this.listeners = [];
 };
 CashTable.prototype = Object.create(Transaction.prototype);
+
+CashTable.prototype.initialize = function (db) {
+    Transaction.prototype.initialize.call(this, db);
+
+    this.listeners['km_tree_cash.select'] = this.onSelect.bind(this);
+    $$('km_tree_cash').addEventListener("select", this.listeners['km_tree_cash.select']);
+    
+};
+CashTable.prototype.terminate = function () {
+    $$('km_tree_cash').removeEventListener("select", this.listeners['km_tree_cash.select']);
+    
+};
 
 CashTable.prototype.load = function (sortParams) {
     km_debug("CashTable.load start");

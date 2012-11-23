@@ -84,6 +84,8 @@ Kmoney.prototype.loadData = function() {
 Kmoney.prototype.Shutdown = function () {
     km_debug("Kmoney.Shutdown start");
     this.summary.terminate();
+    this.balance.terminate();
+    this.allView.terminate();
     this.removeEventListeners();
     this.mDb.closeDatabase(false);
     km_debug("Kmoney.Shutdown end");
@@ -113,21 +115,6 @@ Kmoney.prototype.addEventListeners = function () {
 
     this.listeners['km_button_reset.command'] = this.reset.bind(this);
     $$('km_button_reset').addEventListener("command", this.listeners['km_button_reset.command']);
-
-    this.listeners['km_tree_all.select'] = this.onAllViewSelect.bind(this);
-    $$('km_tree_all').addEventListener("select", this.listeners['km_tree_all.select']);
-
-    this.listeners['km_tree_cash.select'] = this.onCashSelect.bind(this);
-    $$('km_tree_cash').addEventListener("select", this.listeners['km_tree_cash.select']);
-
-    this.listeners['km_tree_creditcard.select'] = this.onCreditcardSelect.bind(this);
-    $$('km_tree_creditcard').addEventListener("select", this.listeners['km_tree_creditcard.select']);
-
-    this.listeners['km_tree_emoney.select'] = this.onEMoneySelect.bind(this);
-    $$('km_tree_emoney').addEventListener("select", this.listeners['km_tree_emoney.select']);
-
-    this.listeners['km_tree_bank.select'] = this.onBankSelect.bind(this);
-    $$('km_tree_bank').addEventListener("select", this.listeners['km_tree_bank.select']);
 
     this.listeners['kmc-delete'] = this.deleteRecord.bind(this);
     $$('kmc-delete').addEventListener("command", this.listeners['kmc-delete']);
@@ -235,14 +222,6 @@ Kmoney.prototype.removeEventListeners = function () {
 
     $$('km_tree_all').removeEventListener("select", this.listeners['km_tree_all.select']);
 
-    $$('km_tree_cash').removeEventListener("select", this.listeners['km_tree_cash.select']);
-
-    $$('km_tree_creditcard').removeEventListener("select", this.listeners['km_tree_creditcard.select']);
-
-    $$('km_tree_emoney').removeEventListener("select", this.listeners['km_tree_emoney.select']);
-
-    $$('km_tree_bank').removeEventListener("select", this.listeners['km_tree_bank.select']);
-
     $$('kmc-delete').removeEventListener("command", this.listeners['kmc-delete']);
 
     $$('kmc-undo').removeEventListener("command", this.listeners['kmc-undo']);
@@ -334,21 +313,6 @@ Kmoney.prototype.openSetPrefs = function () {
     openDialog(KmGlobals.chromes.preferences, 'preferences', features);
 };
 
-Kmoney.prototype.onAllViewSelect = function () {
-    this.allView.onSelect();
-};
-Kmoney.prototype.onCashSelect = function () {
-    this.cashTree.onSelect();
-};
-Kmoney.prototype.onBankSelect = function () {
-    this.bankTree.onSelect();
-};
-Kmoney.prototype.onCreditcardSelect = function () {
-    this.creditcardTree.onSelect();
-};
-Kmoney.prototype.onEMoneySelect = function () {
-    this.emoneyTree.onSelect();
-};
 Kmoney.prototype.changeUpdateMenuItem = function(tabId) {
     $$('kmc-update-bank').setAttribute("disabled", true);
     $$('kmc-update-creditcard').setAttribute("disabled", true);

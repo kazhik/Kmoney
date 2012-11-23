@@ -1,8 +1,22 @@
 function CreditCardTable() {
     Transaction.call(this, "km_tree_creditcard");
+    this.listeners = [];
 }
 
 CreditCardTable.prototype = Object.create(Transaction.prototype);
+
+CreditCardTable.prototype.initialize = function (db) {
+    Transaction.prototype.initialize.call(this, db);
+
+    this.listeners['km_tree_creditcard.select'] = this.onSelect.bind(this);
+    $$('km_tree_creditcard').addEventListener("select", this.listeners['km_tree_creditcard.select']);
+    
+};
+CreditCardTable.prototype.terminate = function () {
+    $$('km_tree_creditcard').removeEventListener("select", this.listeners['km_tree_creditcard.select']);
+    
+};
+
 
 CreditCardTable.prototype.load = function (sortParams) {
     km_debug("CreditCardTable.load start");

@@ -1,9 +1,22 @@
 
 function BankTable() {
     Transaction.call(this, "km_tree_bank");
+    this.listeners = [];
 }
 
 BankTable.prototype = Object.create(Transaction.prototype);
+
+BankTable.prototype.initialize = function (db) {
+    Transaction.prototype.initialize.call(this, db);
+
+    this.listeners['km_tree_bank.select'] = this.onSelect.bind(this);
+    $$('km_tree_bank').addEventListener("select", this.listeners['km_tree_bank.select']);
+    
+};
+BankTable.prototype.terminate = function () {
+    $$('km_tree_bank').removeEventListener("select", this.listeners['km_tree_bank.select']);
+    
+};
 
 BankTable.prototype.load = function (sortParams) {
     km_debug("BankTable.load start");

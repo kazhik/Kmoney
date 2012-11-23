@@ -1,7 +1,18 @@
 function EMoneyTable() {
     Transaction.call(this, "km_tree_emoney");
+    this.listeners = [];
 }
 EMoneyTable.prototype = Object.create(Transaction.prototype);
+
+EMoneyTable.prototype.initialize = function (db) {
+    Transaction.prototype.initialize.call(this, db);
+
+    this.listeners['km_tree_emoney.select'] = this.onSelect.bind(this);
+    $$('km_tree_emoney').addEventListener("select", this.listeners['km_tree_emoney.select']);
+};
+EMoneyTable.prototype.terminate = function () {
+    $$('km_tree_emoney').removeEventListener("select", this.listeners['km_tree_emoney.select']);
+};
 
 EMoneyTable.prototype.load = function (sortParams) {
     km_debug("EMoneyTable.load start");
