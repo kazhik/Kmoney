@@ -9,22 +9,22 @@ SummaryView.prototype.initialize = function (db) {
     this.mDb = db;
     this.mTree.init(this.load.bind(this));
 
-    this.listeners['km_summary_item.command'] = this.onGraphItemChanged.bind(this);
+    this.listeners['km_summary_item.command'] = this.onConditionChanged.bind(this);
     $$('km_summary_item').addEventListener("command", this.listeners['km_summary_item.command']);
 
-    this.listeners['km_summary_user.command'] = this.onGraphItemChanged.bind(this);
+    this.listeners['km_summary_user.command'] = this.onConditionChanged.bind(this);
     $$('km_summary_user').addEventListener("command", this.listeners['km_summary_user.command']);
 
-    this.listeners['km_summary_monthfromY.command'] = this.onGraphItemChanged.bind(this);
+    this.listeners['km_summary_monthfromY.command'] = this.onConditionChanged.bind(this);
     $$('km_summary_monthfromY').addEventListener("command",
                                                  this.listeners['km_summary_monthfromY.command']);
-    this.listeners['km_summary_monthfromM.command'] = this.onGraphItemChanged.bind(this);
+    this.listeners['km_summary_monthfromM.command'] = this.onConditionChanged.bind(this);
     $$('km_summary_monthfromM').addEventListener("command",
                                                  this.listeners['km_summary_monthfromM.command']);
-    this.listeners['km_summary_monthtoY.command'] = this.onGraphItemChanged.bind(this);
+    this.listeners['km_summary_monthtoY.command'] = this.onConditionChanged.bind(this);
     $$('km_summary_monthtoY').addEventListener("command",
                                                  this.listeners['km_summary_monthtoY.command']);
-    this.listeners['km_summary_monthtoM.command'] = this.onGraphItemChanged.bind(this);
+    this.listeners['km_summary_monthtoM.command'] = this.onConditionChanged.bind(this);
     $$('km_summary_monthtoM').addEventListener("command",
                                                  this.listeners['km_summary_monthtoM.command']);
     this.listeners['km_summary_viewmode.command'] = this.onViewModeChanged.bind(this);
@@ -51,9 +51,23 @@ SummaryView.prototype.terminate = function () {
                                                   this.listeners['km_summary_viewmode.command']);
 };
 SummaryView.prototype.onViewModeChanged = function () {
+    this.changeSummaryItemList();
     this.load();
 };
-SummaryView.prototype.onGraphItemChanged = function () {
+SummaryView.prototype.changeSummaryItemList = function () {
+    if ($$('km_summary_table').selected) {
+        if ($$('km_summary_item').getItemAtIndex(0).value != 0) {
+            $$('km_summary_item').insertItemAt(0, km_getLStr('query_condition.none'), 0);
+        }
+    } else {
+        if ($$('km_summary_item').getItemAtIndex(0).value == 0) {
+            $$('km_summary_item').removeItemAt(0);
+        }
+    }
+    $$('km_summary_item').selectedIndex = 0;
+}
+
+SummaryView.prototype.onConditionChanged = function () {
     this.load();
 };
 SummaryView.prototype.load = function() {
@@ -120,6 +134,8 @@ SummaryView.prototype.drawGraph = function () {
     $$('km_summary').hidden = false;
     $$('km_tree_summary').hidden = true;
     $$('km_summary_condition_period').hidden = false;
+    
+    
     var monthfromY = $$('km_summary_monthfromY').value;
     var monthfromM = $$('km_summary_monthfromM').value;
     var monthtoY = $$('km_summary_monthtoY').value;

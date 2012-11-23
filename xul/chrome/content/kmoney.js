@@ -408,6 +408,7 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_menu_data_duplicate').disabled = true;
         this.populateSummaryPeriodList();
         this.populateSummaryUserList(tabId);
+        this.summary.changeSummaryItemList();
         this.summary.load();
         break;
     case 'km_tab_balance':
