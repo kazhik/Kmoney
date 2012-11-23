@@ -45,6 +45,7 @@ BalanceView.prototype.onGraphItemChanged = function () {
 };
 BalanceView.prototype.onUserSelect = function () {
     this.drawGraph();
+    this.populateBankList();
 };
 BalanceView.prototype.populateBankList = function () {
     var userId = $$('km_summary_user').value;
@@ -58,7 +59,13 @@ BalanceView.prototype.populateBankList = function () {
     }
     $$("km_summary_bank").selectedIndex = 0;
 };
-
+BalanceView.prototype.load = function() {
+    this.drawGraph();
+    this.populateBankList();
+}
+BalanceView.prototype.loadTable = function () {
+    alert("Not implemented yet");
+};
 BalanceView.prototype.drawGraph = function () {
     function loadCallback(records) {
         var labelArray = [];
@@ -107,5 +114,4 @@ BalanceView.prototype.drawGraph = function () {
         "userId": strToInt($$('km_summary_user').value)
     };
     this.mDb.bankTrns.loadSumPerMonth(params, loadCallback.bind(this));
-    this.populateBankList();
 };

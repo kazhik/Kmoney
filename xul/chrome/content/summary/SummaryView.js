@@ -1,10 +1,13 @@
 function SummaryView() {
     this.mDb = null;
+    this.mTree = new TreeViewController("km_tree_summary");
     this.mGraph = null;
     this.listeners = [];
 };
+
 SummaryView.prototype.initialize = function (db) {
     this.mDb = db;
+    this.mTree.init(this.load.bind(this));
 
     this.listeners['km_summary_item.command'] = this.onGraphItemChanged.bind(this);
     $$('km_summary_item').addEventListener("command", this.listeners['km_summary_item.command']);
@@ -48,33 +51,52 @@ SummaryView.prototype.terminate = function () {
                                                   this.listeners['km_summary_viewmode.command']);
 };
 SummaryView.prototype.onViewModeChanged = function () {
-    if ($$('km_summary_table').selected) {
-        km_debug("SummaryView: table");
-    } else {
-        km_debug("SummaryView: graph");
-    }
+    this.load();
 };
 SummaryView.prototype.onGraphItemChanged = function () {
-    this.drawGraph();
+    this.load();
 };
+SummaryView.prototype.load = function() {
+    if ($$('km_summary_table').selected) {
+        this.loadTable();
+    } else {
+        this.drawGraph();
+    }
+    
+}
 SummaryView.prototype.loadTable = function () {
+    function loadCallback(records, columns) {
+        this.mTree.populateTableData(records, columns);
+        this.mTree.showTable(true);
+    }
+    $$('km_summary').hidden = true;
+    $$('km_tree_summary').hidden = false;
+    $$('km_summary_condition_period').hidden = true;
+
+    var params = {
+        "itemId": strToInt($$('km_summary_item').value),
+        "userId": strToInt($$('km_summary_user').value)
+    };
+    
+    this.mDb.transactions.loadAllSumPerMonth(params, loadCallback.bind(this));
+
 };
 SummaryView.prototype.drawGraph = function () {
     function loadCallback(records) {
-        km_debug("SummaryView.drawGraph loadCallback");
+        var monthFrom = new Date(parseInt(monthfromY), parseInt(monthfromM, 10) - 1, 1);
+        var monthTo = new Date(parseInt(monthtoY), parseInt(monthtoM, 10) - 1, 1);
         
         var labelArray = [];
         var valueArray = [];
     
-        var labelDate = new Date(parseInt(monthfromY), parseInt(monthfromM, 10) - 1, 1);
-        var endDate = new Date(parseInt(monthtoY), parseInt(monthtoM, 10) - 1, 1);
+        var labelDate = monthFrom;
         var idx = 0;
-        while (labelDate <= endDate) {
+        while (labelDate <= monthTo) {
             var dateStr = convDateToYYYYMM(labelDate, "/");
             labelArray.push(dateStr);
     
             if (records[idx] != undefined && records[idx][0] === dateStr) {
-                valueArray.push(records[idx][1]);
+                valueArray.push(records[idx][3]);
                 idx++;
             } else {
                 valueArray.push(0);
@@ -95,6 +117,9 @@ SummaryView.prototype.drawGraph = function () {
             bar_labels: true
         });
     }
+    $$('km_summary').hidden = false;
+    $$('km_tree_summary').hidden = true;
+    $$('km_summary_condition_period').hidden = false;
     var monthfromY = $$('km_summary_monthfromY').value;
     var monthfromM = $$('km_summary_monthfromM').value;
     var monthtoY = $$('km_summary_monthtoY').value;

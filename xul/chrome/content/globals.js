@@ -349,6 +349,15 @@ function calcFloat(floatVal) {
     return parseFloat(floatVal.toFixed(12));
 }
 
+// http://stackoverflow.com/questions/1267283/how-can-i-create-a-zerofilled-value-using-javascript
+function zeroFill( number, width ) {
+    width -= number.toString().length;
+    if ( width > 0 ) {
+        return new Array( width + (/\./.test( number ) ? 2 : 1) ).join( '0' ) + number;
+    }
+    return number + ""; // always return a string
+}
+
 // http://stackoverflow.com/questions/1293147/javascript-code-to-parse-csv-data
 // This will parse a delimited string into an array of
 // arrays. The default delimiter is the comma, but this

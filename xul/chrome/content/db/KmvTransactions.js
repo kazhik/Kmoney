@@ -120,26 +120,53 @@ KmvTransactions.prototype.load = function(sortParams, queryParams, loadCallback)
 KmvTransactions.prototype.loadSumPerMonth = function(params, loadCallback) {
     var sql = ["select",
                         "strftime('%Y/%m', A.transaction_date) as transaction_month,",
+                        "A.item_id as item_id,",
+                        "A.item_name as item_name,",
                         "sum(A.expense - A.income) as sumpermonth",
                         "from kmv_transactions A",
                         "where transaction_month >= :periodFrom",
-                        "and transaction_month <= :periodTo"].join(" ");
-    // ユーザが指定された場合、家計内フラグが「家族」のデータも集計に含める
-    if (params["userId"] !== 0 && params["itemId"] !== 0) {
-        sql += " and A.user_id = :userId and A.internal <> 1 and A.item_id = :itemId ";
-    } else if (params["userId"] !== 0 && params["itemId"] === 0) {
-        sql += " and A.user_id = :userId and A.internal <> 1 ";
-        sql += " and A.sum_include = 1 ";
-    } else if (params["userId"] === 0 && params["itemId"] !== 0) {
-        sql += " and A.item_id = :itemId and A.internal = 0 ";
+                        "and transaction_month <= :periodTo",
+                        "and A.item_id = :itemId"].join(" ");
+    // ユーザが指定された場合、家計内フラグが「自己」のデータは集計に含めない
+    if (params["userId"] !== 0) {
+        sql += " and A.user_id = :userId and A.internal <> 1";
     } else {
         sql += " and A.internal = 0 ";
-        sql += " and A.sum_include = 1 ";
     }
-    sql += " group by transaction_month ";
+    sql += " group by transaction_month, item_id ";
 
     km_debug(sql);
-    km_debug(JSON.stringify(params));
     this.mDb.selectWithParams(sql, params);
     loadCallback(this.mDb.getRecords());
+};
+
+KmvTransactions.prototype.loadAllSumPerMonth = function(params, loadCallback) {
+    var sql = ["select",
+                        "strftime('%Y/%m', A.transaction_date) as transaction_month,",
+                        "A.item_id as item_id,",
+                        "A.item_name as item_name,",
+                        "sum(A.expense - A.income) as sumpermonth",
+                        "from kmv_transactions A"].join(" ");
+    
+    // ユーザが指定された場合、家計内フラグが「自己」のデータは集計に含めない
+    if (params["userId"] !== 0) {
+        if (params["itemId"] !== 0) {
+            sql += " where A.user_id = :userId and A.internal <> 1 and A.item_id = :itemId ";
+        // 費目が指定されない場合、集計対象の費目だけを集計する
+        } else {
+            sql += " where A.user_id = :userId and A.internal <> 1 ";
+            sql += " and A.sum_include = 1 ";
+        }
+    } else {
+        if (params["itemId"] !== 0) {
+            sql += " where A.item_id = :itemId and A.internal = 0 ";
+        } else {
+            sql += " where A.internal = 0 and A.sum_include = 1 ";
+        }
+    }
+    sql += " group by transaction_month, item_id ";
+
+    km_debug(sql);
+    this.mDb.selectWithParams(sql, params);
+    loadCallback(this.mDb.getRecords(), this.mDb.getColumns());
 };

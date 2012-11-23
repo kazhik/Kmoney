@@ -183,20 +183,22 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                     <radio id="km_summary_table" label="&edit.table;" selected="true" />
                     <radio id="km_summary_graph" label="&edit.graph;" />
                 </radiogroup>
-                <label control="km_summary_monthfromY" value="&edit.period;" />
-                <menulist id="km_summary_monthfromY">
-                    <menupopup></menupopup>
-                </menulist>
-                <menulist id="km_summary_monthfromM">
-                    <menupopup></menupopup>
-                </menulist>
-                <label value="-" />
-                <menulist id="km_summary_monthtoY">
-                    <menupopup></menupopup>
-                </menulist>
-                <menulist id="km_summary_monthtoM">
-                    <menupopup></menupopup>
-                </menulist>
+                <hbox id="km_summary_condition_period" align="center">
+                    <label control="km_summary_monthfromY" value="&edit.period;" />
+                    <menulist id="km_summary_monthfromY">
+                        <menupopup></menupopup>
+                    </menulist>
+                    <menulist id="km_summary_monthfromM">
+                        <menupopup></menupopup>
+                    </menulist>
+                    <label value="-" />
+                    <menulist id="km_summary_monthtoY">
+                        <menupopup></menupopup>
+                    </menulist>
+                    <menulist id="km_summary_monthtoM">
+                        <menupopup></menupopup>
+                    </menulist>
+                </hbox>
                 <hbox id="km_summary_itembox" align="center">
                     <label control="km_summary_item" value="&edit.item;" />
                     <menulist id="km_summary_item">
@@ -251,8 +253,20 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
             </hbox>
             <tabpanels>
                 <tabpanel flex="1">
-                    <vbox id="km_summary" flex="1">
-                    </vbox>
+                    <vbox id="km_summary" flex="1" />
+                    <tree id="km_tree_summary" style="min-height:30em" flex="1" seltype="multiple"
+                    enableColumnDrag="false">
+                        <treecols id="km_cols_summary">
+                            <treecol id="transaction_month" label="&column.month;" flex="1" persist="width" />
+                            <splitter class="tree-splitter" />  
+                            <treecol id="item_id" hidden="true" ignoreincolumnpicker="true" />
+                            <splitter class="tree-splitter" />  
+                            <treecol id="item_name" label="&column.item;" flex="1" persist="width" />
+                            <splitter class="tree-splitter" />  
+                            <treecol id="sum" label="&column.sum;" flex="1" persist="width" />
+                        </treecols>
+                        <treechildren />
+                    </tree>
                 </tabpanel>
                 <tabpanel flex="1">
                     <vbox id="km_balance" flex="1">

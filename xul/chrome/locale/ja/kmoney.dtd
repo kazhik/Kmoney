@@ -101,6 +101,8 @@
 <!ENTITY column.sourcetype          "入力元">
 <!ENTITY column.paymonth          "支払月">
 <!ENTITY column.sum_include          "集計対象">
+<!ENTITY column.month          "月">
+<!ENTITY column.sum          "小計">
 
 <!-- edit -->
 <!ENTITY edit.date          "日付">
