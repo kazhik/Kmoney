@@ -90,7 +90,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 command="kmc-delete" accesskey="&menu.deleteSelected.ak;" />
         </menupopup>
     </popupset>
-    <vbox id="km_main">
+    <vbox id="km_main" flex="1">
         <toolbox>
             <menubar id="km_menubar">
                 <menu id="km_menu_file" label="&menu.file;" accesskey="&menu.file.accesskey;">
@@ -168,7 +168,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 </menu>
             </menubar>
         </toolbox>
-        <tabbox id="km_tabbox" handleCtrlPageUpDown="true">
+        <tabbox id="km_tabbox" handleCtrlPageUpDown="true" flex="1">
             <tabs id="km_tabs">
                 <tab id="km_tab_summary" label="&tab.summary;" persist="selected" />
                 <tab id="km_tab_balance" label="&tab.balance;" persist="selected" />
@@ -251,7 +251,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                     </menulist>
                 </hbox>
             </hbox>
-            <tabpanels>
+            <tabpanels flex="1">
                 <tabpanel flex="1">
                     <vbox id="km_summary" flex="1" />
                     <tree id="km_tree_summary" style="min-height:30em" flex="1" seltype="multiple"
@@ -269,8 +269,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                     </tree>
                 </tabpanel>
                 <tabpanel flex="1">
-                    <vbox id="km_balance" flex="1">
-                    </vbox>
+                    <vbox id="km_balance" style="max-height:30em" flex="1"/>
                 </tabpanel>
                 <tabpanel flex="1">
                     <vbox flex="1">
@@ -492,9 +491,9 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 							label="&button.reset;" />
 				</hbox>
         </vbox>
+        <statusbar id="km_statusbar">
+            <spacer flex="1"/>
+            <statusbarpanel id="km_status_sum"/>
+        </statusbar>
     </vbox>
-    <statusbar id="km_statusbar">
-        <spacer flex="1"/>
-        <statusbarpanel id="km_status_sum"/>
-    </statusbar>
 </window>
