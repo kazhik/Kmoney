@@ -18,6 +18,9 @@ function KmDatabase() {
     
     this.userInfo = new KmUserInfo(this.mDb);
     this.itemInfo = new KmItemInfo(this.mDb);
+    
+    this.asset = new KmAsset(this.mDb);
+    
     this.source = new KmSource(this.mDb);
     this.import = new KmImport(this.mDb);
     this.importHistory = new KmImportHistory(this.mDb);
@@ -321,6 +324,37 @@ KmDatabase.prototype.loadMasterData = function() {
     this.creditCardInfo.load(loadCallback.bind(this));
     this.emoneyInfo.load(loadCallback.bind(this));
 };
+
+KmDatabase.prototype.assetInsert = function(params, callback) {
+    function insertCallback(id) {
+        this.dropTrigger("km_asset_insert");
+        callback(id);
+    }
+    this.createTriggerOnInsert("km_asset", "km_asset_insert");
+    this.createTransactionId();
+    this.asset.insert(params, insertCallback.bind(this));
+};
+
+KmDatabase.prototype.assetUpdate = function(id, params, callback) {
+    function updateCallback(id) {
+        this.dropTrigger("km_asset_update");
+        callback(id);
+    }
+    this.createTriggerOnUpdate("km_asset", "km_asset_update");
+    this.createTransactionId();
+    this.asset.update(id, params, updateCallback.bind(this));
+};
+KmDatabase.prototype.assetDelete = function(id, callback) {
+    function deleteCallback() {
+        this.dropTrigger("km_asset_delete");
+        callback();
+    }
+    
+    this.createTriggerOnDelete("km_asset", "km_asset_delete");
+    this.createTransactionId();
+    this.asset.delete(id, deleteCallback.bind(this));
+};
+
 
 KmDatabase.prototype.cashInsert = function(params, callback) {
     function insertCallback(id) {
@@ -655,6 +689,17 @@ KmDatabase.prototype.createTables = function() {
         '"period_from" DATETIME,' +
         '"period_to" DATETIME,' +
         '"import_date" DATETIME)',
+    'CREATE TABLE "km_asset" (' +
+        '"id" INTEGER PRIMARY KEY ,' +
+        '"name" TEXT,' +
+        '"amount" REAL,' +
+        '"user_id" INTEGER,' +
+        '"asset_type" INTEGER)',
+    'CREATE TABLE "km_asset_history" (' +
+        '"id" INTEGER PRIMARY KEY  NOT NULL ,' +
+        '"asset_id" INTEGER,' +
+        '"transaction_type" INTEGER,' +
+        '"transaction_id" INTEGER)',
     'CREATE TABLE "km_sys_transaction" (' +
         '"id" INTEGER PRIMARY KEY  NOT NULL , "execution_date" DATETIME)',
     'CREATE TABLE "km_sys_undo" (' +

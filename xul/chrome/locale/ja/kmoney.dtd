@@ -26,6 +26,8 @@
 <!ENTITY menu.edit.undo.accesskey          "U">
 <!ENTITY menu.edit.delete          "削除">
 <!ENTITY menu.edit.delete.accesskey          "D">
+<!ENTITY menu.edit.asset          "資産として入力">
+<!ENTITY menu.edit.asset.accesskey          "A">
 
 <!ENTITY menu.view          "表示">
 <!ENTITY menu.view.accesskey          "V">
@@ -72,6 +74,7 @@
 <!ENTITY tab.bank          "銀行口座明細">
 <!ENTITY tab.creditcard      "クレジットカード明細">
 <!ENTITY tab.emoney          "電子マネー明細">
+<!ENTITY tab.asset          "資産">
 
 <!ENTITY tab.user          "ユーザー">
 <!ENTITY tab.item          "費目">
@@ -89,12 +92,10 @@
 <!ENTITY column.expense          "支出">
 <!ENTITY column.item          "費目">
 <!ENTITY column.detail          "詳細">
-<!ENTITY column.user          "名前">
 <!ENTITY column.bankname          "銀行名">
 <!ENTITY column.cardname          "カード名">
 <!ENTITY column.emoneyname          "電子マネー名">
-<!ENTITY column.userid          "ユーザID">
-<!ENTITY column.username          "ユーザ名">
+<!ENTITY column.username          "ユーザ">
 <!ENTITY column.itemname          "費目名">
 <!ENTITY column.internal          "家計内">
 <!ENTITY column.type          "種別">
@@ -103,6 +104,9 @@
 <!ENTITY column.sum_include          "集計対象">
 <!ENTITY column.month          "月">
 <!ENTITY column.sum          "小計">
+<!ENTITY column.assetname          "資産名">
+<!ENTITY column.assettype          "種別">
+<!ENTITY column.amount          "金額">
 
 <!-- edit -->
 <!ENTITY edit.date          "日付">
@@ -111,7 +115,7 @@
 <!ENTITY edit.item          "費目">
 <!ENTITY edit.detail          "詳細">
 <!ENTITY edit.amount          "金額">
-<!ENTITY edit.user          "名前">
+<!ENTITY edit.user          "ユーザ">
 <!ENTITY edit.internal          "家計内">
 <!ENTITY edit.bank          "銀行">
 <!ENTITY edit.creditcard          "クレジットカード">
@@ -123,6 +127,8 @@
 <!ENTITY edit.paymonth          "支払月">
 <!ENTITY edit.table          "表">
 <!ENTITY edit.graph          "グラフ">
+<!ENTITY edit.asset          "資産名">
+<!ENTITY edit.assettype          "種別">
 <!ENTITY edit.selectCurrentUser          "現在のユーザを選択してください">
 
 <!-- confirm dialog -->
@@ -155,6 +161,8 @@
 <!ENTITY menuitem.query.none          "-">
 <!ENTITY menuitem.query.and          "AND">
 <!ENTITY menuitem.query.or          "OR">
+<!ENTITY menuitem.personal          "個人">
+<!ENTITY menuitem.family          "家計">
 
 <!ENTITY first "最初">
 <!ENTITY previous "前">

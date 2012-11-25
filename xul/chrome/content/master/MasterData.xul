@@ -14,8 +14,8 @@
     <script type="application/x-javascript" src="BankMaster.js" />
     <script type="application/x-javascript" src="EMoneyMaster.js" />
     <script type="application/x-javascript" src="MasterData.js" />
-   <vbox>
-        <tabbox id="km_master_tabbox" handleCtrlPageUpDown="true">
+   <vbox flex="1">
+        <tabbox id="km_master_tabbox" handleCtrlPageUpDown="true" flex="1">
             <tabs id="km_tabs">
                 <tab id="km_tab_master_user" label="&tab.user_master;" persist="selected" />
                 <tab id="km_tab_master_item" label="&tab.item_master;" persist="selected" />
@@ -23,10 +23,10 @@
                 <tab id="km_tab_master_creditcard" label="&tab.creditcard_master;" persist="selected" />
                 <tab id="km_tab_master_emoney" label="&tab.emoney_master;" persist="selected" />
             </tabs>
-            <tabpanels>
+            <tabpanels flex="1">
                 <tabpanel flex="1">
                     <vbox id="km_master_user" flex="1">
-                        <tree id="km_tree_master_user" style="min-height:30em" flex="1" seltype="single"
+                        <tree id="km_tree_master_user" flex="1" seltype="single"
 							enableColumnDrag="false">
                             <treecols id="km_cols_master_user">
 								<treecol id="master_user_id"
@@ -41,7 +41,7 @@
                 </tabpanel>
                 <tabpanel flex="1">
                     <vbox id="km_master_item" flex="1">
-                        <tree id="km_tree_master_item" style="min-height:30em" flex="1" seltype="single"
+                        <tree id="km_tree_master_item" flex="1" seltype="single"
 							enableColumnDrag="false">
                             <treecols id="km_cols_master_item">
 								<treecol id="master_item_id" hidden="true" ignoreincolumnpicker="true" />
@@ -61,7 +61,7 @@
                 </tabpanel>
                 <tabpanel flex="1">
                     <vbox flex="1">
-                        <tree id="km_tree_master_bank" style="min-height:30em" flex="1" seltype="single"
+                        <tree id="km_tree_master_bank" flex="1" seltype="single"
 							enableColumnDrag="false">
                             <treecols id="km_cols_master_bank">
 								<treecol id="master_bank_id" hidden="true" ignoreincolumnpicker="true" />
@@ -81,7 +81,7 @@
                 </tabpanel>
                 <tabpanel flex="1">
                     <vbox flex="1">
-                        <tree id="km_tree_master_creditcard" style="min-height:30em" flex="1" seltype="single"
+                        <tree id="km_tree_master_creditcard" flex="1" seltype="single"
 							enableColumnDrag="false">
                             <treecols id="km_cols_master_creditcard">
 								<treecol id="master_creditcard_id" hidden="true"
@@ -108,7 +108,7 @@
                 </tabpanel>
                 <tabpanel flex="1">
                     <vbox flex="1">
-                        <tree id="km_tree_master_emoney" style="min-height:30em" flex="1" seltype="single"
+                        <tree id="km_tree_master_emoney" flex="1" seltype="single"
                         enableColumnDrag="false">
                             <treecols id="km_cols_master_emoney">
 								<treecol id="master_emoney_id" hidden="true"

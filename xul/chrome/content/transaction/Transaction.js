@@ -36,6 +36,7 @@ Transaction.prototype.loadCallback = function (records, columns) {
     this.mTree.showTable(true);
 };
 
+
 Transaction.prototype.insertCallback = function (id) {
     this.load();
     this.mTree.ensureRowIsVisible('id', id);

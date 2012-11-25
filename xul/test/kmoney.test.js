@@ -1,42 +1,5 @@
-var description = 'Kmoneyテスト';
+utils.include('./kmoney.common.js');
 
-var win = null;
-var doc = null;
-var app = null;
-
-function setUp() {
-}
-
-function tearDown() {
-
-}
-
-function startUp()
-{
-    var loaded = { value : false };
-    function onLoad() {
-        loaded.value = true;
-    }
-    
-    win = window.open("chrome://kmoney/content/", "kmoney", "chrome");
-    assert.isTrue(win !== null);
-    win.addEventListener('load', onLoad, false);
-    utils.wait(loaded);
-    
-    doc = win.document;
-    assert.isTrue(doc !== null);
-    
-    app = win.kmoney;
-    assert.isTrue(app !== null);
-}
-
-function shutDown()
-{
-//    win.close();
-}
-
-
-testKmoney.description = 'Kmoneyテスト';
 testKmoney.priority = 'normal';
 function testKmoney() {
 //    var elem = doc.getElementById("km_menu_file");
@@ -50,3 +13,4 @@ function testKmoney() {
 
 //    alert(JSON.stringify(win.kmoney.mDb.bankInfo.mBankList));
 }
+

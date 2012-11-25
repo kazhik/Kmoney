@@ -26,6 +26,9 @@
 <!ENTITY menu.edit.undo.accesskey          "U">
 <!ENTITY menu.edit.delete          "Delete">
 <!ENTITY menu.edit.delete.accesskey          "D">
+<!ENTITY menu.edit.asset          "Enter as Asset">
+<!ENTITY menu.edit.asset.accesskey          "A">
+
 <!ENTITY menu.view          "View">
 <!ENTITY menu.view.accesskey          "V">
 
@@ -71,6 +74,7 @@
 <!ENTITY tab.creditcard          "CreditCard">
 <!ENTITY tab.emoney          "E-Money">
 <!ENTITY tab.all          "All">
+<!ENTITY tab.asset          "Asset">
 
 <!ENTITY tab.user          "User">
 <!ENTITY tab.item          "Item">
@@ -88,7 +92,6 @@
 <!ENTITY column.expense          "Expense">
 <!ENTITY column.item          "Item">
 <!ENTITY column.detail          "Detail">
-<!ENTITY column.user          "Name">
 <!ENTITY column.bankname          "BankName">
 <!ENTITY column.cardname          "CardName">
 <!ENTITY column.emoneyname          "EMoneyName">
@@ -102,6 +105,9 @@
 <!ENTITY column.sum_include          "IncludeInSum">
 <!ENTITY column.month          "Month">
 <!ENTITY column.sum          "Sum">
+<!ENTITY column.assetname          "AssetName">
+<!ENTITY column.assettype          "AssetType">
+<!ENTITY column.amount          "Amount">
 
 <!-- edit -->
 <!ENTITY edit.date          "Date">
@@ -110,7 +116,7 @@
 <!ENTITY edit.item          "Item">
 <!ENTITY edit.detail          "Detail">
 <!ENTITY edit.amount          "Amount">
-<!ENTITY edit.user          "Name">
+<!ENTITY edit.user          "User">
 <!ENTITY edit.internal          "Type">
 <!ENTITY edit.bank          "Bank">
 <!ENTITY edit.creditcard          "CreditCard">
@@ -120,8 +126,10 @@
 <!ENTITY edit.importfrom          "Source">
 <!ENTITY edit.default          "Default">
 <!ENTITY edit.paymonth          "PayMonth">
-<!ENTITY edit.table          "Table">
+<!ENTITY edit.table          "Table">Type
 <!ENTITY edit.graph          "Graph">
+<!ENTITY edit.asset          "AssetName">
+<!ENTITY edit.assettype          "Type">
 <!ENTITY edit.selectCurrentUser          "Please select current user">
 
 <!-- confirm dialog -->
@@ -154,6 +162,8 @@
 <!ENTITY menuitem.query.none          "-">
 <!ENTITY menuitem.query.and          "AND">
 <!ENTITY menuitem.query.or          "OR">
+<!ENTITY menuitem.personal          "Personal">
+<!ENTITY menuitem.family          "Family">
 
 <!ENTITY first "First">
 <!ENTITY previous "Previous">

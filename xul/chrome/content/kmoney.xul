@@ -23,6 +23,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
     <script type="application/x-javascript" src="db/KmItemInfo.js" />
     <script type="application/x-javascript" src="db/KmSource.js" />
     <script type="application/x-javascript" src="db/KmUserInfo.js" />
+    <script type="application/x-javascript" src="db/KmAsset.js" />
     <script type="application/x-javascript" src="db/KmvTransactions.js" />
     <script type="application/x-javascript" src="db/KantanKakeiboDb.js" />
 
@@ -32,6 +33,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
     <script type="application/x-javascript" src="transaction/BankTable.js" />
     <script type="application/x-javascript" src="transaction/CreditCardTable.js" />
     <script type="application/x-javascript" src="transaction/EMoneyTable.js" />
+    <script type="application/x-javascript" src="transaction/Asset.js" />
     <script type="application/x-javascript" src="summary/SummaryView.js" />
     <script type="application/x-javascript" src="summary/BalanceView.js" />
 
@@ -56,6 +58,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
         <command id="kmc-import" />
         <command id="kmc-undo" disabled="true"/>
         <command id="kmc-delete" />
+        <command id="kmc-asset" />
         <command id="kmc-update-item" />
         <command id="kmc-update-detail" />
         <command id="kmc-update-user" />
@@ -88,6 +91,8 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
             </menu>
             <menuitem label="&menu.deleteSelected;"
                 command="kmc-delete" accesskey="&menu.deleteSelected.ak;" />
+            <menuitem label="&menu.edit.asset;"
+                command="kmc-asset" accesskey="&menu.edit.asset.accesskey;" />
         </menupopup>
     </popupset>
     <vbox id="km_main" flex="1">
@@ -130,6 +135,8 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                         </menu>
 						<menuitem id="km_menu_delete" label="&menu.edit.delete;"
                                   accesskey="&menu.edit.delete.accesskey;" command="kmc-delete" />
+                        <menuitem id="km_menu_asset" label="&menu.edit.asset;"
+                            command="kmc-asset" accesskey="&menu.edit.asset.accesskey;" />
 					</menupopup>
                 </menu>
                 <menu id="km_menu_data" label="&menu.data;" accesskey="&menu.data.accesskey;">
@@ -172,6 +179,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
             <tabs id="km_tabs">
                 <tab id="km_tab_summary" label="&tab.summary;" persist="selected" />
                 <tab id="km_tab_balance" label="&tab.balance;" persist="selected" />
+                <tab id="km_tab_asset" label="&tab.asset;" persist="selected" />
                 <tab id="km_tab_all" label="&tab.all;" persist="selected" />
                 <tab id="km_tab_cash" label="&tab.cash;" persist="selected" />
                 <tab id="km_tab_bank" label="&tab.bank;" persist="selected" />
@@ -272,6 +280,25 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                     <vbox id="km_balance" style="max-height:30em" flex="1"/>
                 </tabpanel>
                 <tabpanel flex="1">
+                        <tree id="km_tree_asset" style="min-height:30em" flex="1" seltype="single"
+                              enableColumnDrag="false">
+                            <treecols id="km_cols_asset">
+								<treecol id="id" hidden="true" ignoreincolumnpicker="true" />
+								<treecol id="assetname" label="&column.assetname;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="amount" label="&column.amount;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="user_id" hidden="true" ignoreincolumnpicker="true" />
+								<treecol id="user_name" label="&column.username;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="asset_type" hidden="true" ignoreincolumnpicker="true" />
+								<splitter class="tree-splitter" />  
+								<treecol id="asset_type_name" label="&column.assettype;" flex="1" persist="width" />
+							</treecols>
+                            <treechildren />
+                        </tree>
+                </tabpanel>
+                <tabpanel flex="1">
                     <vbox flex="1">
                         <tree id="km_tree_all" style="min-height:30em" flex="1" seltype="multiple"
                         enableColumnDrag="false">
@@ -286,7 +313,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<splitter class="tree-splitter" />  
 								<treecol id="expense" label="&column.expense;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
-								<treecol id="user_name" label="&column.user;" flex="1" persist="width" />
+								<treecol id="user_name" label="&column.username;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
 								<treecol id="type" label="&column.type;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
@@ -315,7 +342,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<splitter class="tree-splitter" />  
 								<treecol id="user_id" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" />  
-								<treecol id="user_name" label="&column.user;" flex="1" persist="width" />
+								<treecol id="user_name" label="&column.username;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
 								<treecol id="internal" hidden="true" ignoreincolumnpicker="true" />
 								<treecol id="id" hidden="true" ignoreincolumnpicker="true" />
@@ -348,7 +375,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<splitter class="tree-splitter" />  
 								<treecol id="user_id" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" />  
-								<treecol id="user_name" label="&column.user;" flex="1" persist="width" />
+								<treecol id="user_name" label="&column.username;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
 								<treecol id="source" label="&column.sourcetype;" flex="1" hidden="true" persist="width" />
 								<splitter class="tree-splitter" />  
@@ -381,7 +408,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<splitter class="tree-splitter" />  
 								<treecol id="user_id" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" />  
-								<treecol id="user_name" label="&column.user;" flex="1" persist="width" />
+								<treecol id="user_name" label="&column.username;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
 								<treecol id="pay_month" label="&column.paymonth;" flex="1" persist="width" />
 								<treecol id="id" hidden="true" ignoreincolumnpicker="true" />
@@ -415,7 +442,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<splitter class="tree-splitter" />  
 								<treecol id="user_id" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" />  
-								<treecol id="user_name" label="&column.user;" flex="1" persist="width" />
+								<treecol id="user_name" label="&column.username;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
 								<treecol id="source" label="&column.sourcetype;" flex="1" hidden="true" persist="width" />
 								<splitter class="tree-splitter" />  
@@ -430,6 +457,25 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
             </tabpanels>
         </tabbox>
         <vbox>
+            <hbox id="km_edit_asset" align="center">
+    			<label control="km_edit_assetName" value="&edit.asset;" />
+                <textbox id="km_edit_assetName" readonly="true" size="10" />
+    			<label control="km_read_amount" value="&edit.amount;" />
+				<textbox id="km_read_amount" readonly="true" size="7" />
+    			<label control="km_read_user" value="&edit.user;" />
+				<textbox id="km_read_user" readonly="true" size="7" />
+                <label control="km_edit_assetType" value="&edit.assettype;" />
+                <menulist id="km_edit_assetType">
+                    <menupopup>
+                        <menuitem label="&menuitem.personal;" value="1" />
+                        <menuitem label="&menuitem.family;" value="2" />
+                    </menupopup>
+                </menulist>
+				<textbox id="km_read_userId" hidden="true" />
+                <textbox id="km_read_transactionType" hidden="true" />
+                <textbox id="km_read_transactionId" hidden="true" />
+                
+            </hbox>
 				<hbox id="km_edit1" align="center">
 					<label control="km_edit_transactionDate" value="&edit.date;" />
 					<datepicker id="km_edit_transactionDate" type="popup" />
