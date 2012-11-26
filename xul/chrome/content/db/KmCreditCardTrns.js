@@ -2,18 +2,6 @@ function KmCreditCardTrns(db) {
     this.mDb = db;
 }
 KmCreditCardTrns.prototype.load = function(sortParams, queryParams, loadCallback) {
-    var orderBy = "";
-    if (sortParams !== undefined) {
-        for (var i = 0; i < sortParams.length; i++) {
-            orderBy += sortParams[i]['column'];
-            if (sortParams[i]['order'] != undefined) {
-                orderBy += " " + sortParams[i]['order'];
-            }
-        }
-    } else {
-        orderBy += "A.transaction_date asc";
-    }
-    
     var where = "";
     var operator = "";
     var keyCol;
@@ -87,7 +75,18 @@ KmCreditCardTrns.prototype.load = function(sortParams, queryParams, loadCallback
     if (where.length > 0) {
         sql += where;
     }
-    sql += " order by " + orderBy;
+
+    var orderBy = "";
+    if (sortParams !== undefined) {
+        for (var i = 0; i < sortParams.length; i++) {
+            if (sortParams[i]['order'] !== undefined && sortParams[i]['order'] !== "") {
+                orderBy += sortParams[i]['column'] + " " + sortParams[i]['order'] + " ";
+            }
+        }
+    }
+    if (orderBy !== "") {
+        sql += " order by " + orderBy;
+    }
     
     km_debug(sql);
     
