@@ -349,7 +349,8 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<splitter class="tree-splitter" />  
 								<treecol id="source" label="&column.sourcetype;" flex="1" hidden="true" persist="width" />
 								<splitter class="tree-splitter" />  
-								<treecol id="internal_name" label="&column.internal;" flex="1" persist="width" />
+								<treecol id="internal_name" label="&column.internal;" flex="1"
+                                         hidden="true" persist="width" />
 								<splitter class="tree-splitter" />  
 								<treecol id="internal" hidden="true" ignoreincolumnpicker="true" />
 								<treecol id="id" hidden="true" ignoreincolumnpicker="true" />
@@ -385,7 +386,8 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<splitter class="tree-splitter" />  
 								<treecol id="source" label="&column.sourcetype;" flex="1" hidden="true" persist="width" />
 								<splitter class="tree-splitter" />  
-								<treecol id="internal_name" label="&column.internal;" flex="1" persist="width" />
+								<treecol id="internal_name" label="&column.internal;" flex="1"
+                                         hidden="true" persist="width" />
 								<splitter class="tree-splitter" />  
 								<treecol id="internal" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" />  
@@ -422,7 +424,8 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<splitter class="tree-splitter" />  
 								<treecol id="source" label="&column.sourcetype;" flex="1" hidden="true" persist="width" />
 								<splitter class="tree-splitter" />  
-								<treecol id="internal_name" label="&column.internal;" flex="1" persist="width" />
+								<treecol id="internal_name" label="&column.internal;" flex="1"
+                                         hidden="true" persist="width" />
 								<splitter class="tree-splitter" />  
 								<treecol id="internal" hidden="true" ignoreincolumnpicker="true" />
 								<treecol id="id" hidden="true" ignoreincolumnpicker="true" />
@@ -459,7 +462,8 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<splitter class="tree-splitter" />  
 								<treecol id="source" label="&column.sourcetype;" flex="1" hidden="true" persist="width" />
 								<splitter class="tree-splitter" />  
-								<treecol id="internal_name" label="&column.internal;" flex="1" persist="width" />
+								<treecol id="internal_name" label="&column.internal;" flex="1"
+                                         hidden="true" persist="width" />
 								<splitter class="tree-splitter" />  
 								<treecol id="internal" hidden="true" ignoreincolumnpicker="true" />
 								<treecol id="id" hidden="true" ignoreincolumnpicker="true" />
