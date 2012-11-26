@@ -41,6 +41,9 @@ EMoneyTable.prototype.loadDuplicate = function() {
     this.mDb.emoneyTrns.loadDuplicate(this.loadCallback.bind(this));
     this.onUserSelect();
 };
+EMoneyTable.prototype.openEdit = function (id) {
+    this.mTree.ensureRowIsVisible('id', id);
+};
 
 EMoneyTable.prototype.onSelect = function () {
     $$('km_edit_transactionDate').value = this.mTree.getSelectedRowValue('transaction_date');

@@ -47,7 +47,9 @@ CreditCardTable.prototype.loadDuplicate = function() {
     this.onUserSelect();
     this.initPayMonth();
 };
-
+CreditCardTable.prototype.openEdit = function (id) {
+    this.mTree.ensureRowIsVisible('id', id);
+};
 CreditCardTable.prototype.onSelect = function () {
     $$('km_edit_transactionDate').value = this.mTree.getSelectedRowValue('transaction_date');
     $$('km_edit_item').value = this.mTree.getSelectedRowValue('item_id');

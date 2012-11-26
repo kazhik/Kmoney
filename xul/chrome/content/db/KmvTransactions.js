@@ -87,6 +87,7 @@ KmvTransactions.prototype.load = function(sortParams, queryParams, loadCallback)
                " when A.type = 'creditcard' then '" + km_getLStr("transaction_type.creditcard") + "'",
                " when A.type = 'emoney' then '" + km_getLStr("transaction_type.emoney") + "'",
                " end as type, ",
+               "A.type,",
                "A.id ",
                "from kmv_transactions A "].join(" ");
     if (where.length > 0) {

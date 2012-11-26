@@ -10,25 +10,23 @@ AllView.prototype.initialize = function (db) {
     this.listeners['km_tree_all.select'] = this.onSelect.bind(this);
     $$('km_tree_all').addEventListener("select", this.listeners['km_tree_all.select']);
 
-    this.listeners['km_tree_all.dblclick'] = this.openEditTab.bind(this);
-    $$('km_tree_all').addEventListener("dblclick", this.listeners['km_tree_all.dblclick']);
-    
 };
 
 AllView.prototype.terminate = function () {
     $$('km_tree_all').removeEventListener("select", this.listeners['km_tree_all.select']);
 
-    $$('km_tree_all').remoteEventListener("dblclick", this.listeners['km_tree_all.dblclick']);
 };
+
+AllView.prototype.getTransactionInfo = function(callback) {
+    var id = this.mTree.getSelectedRowValue('id');
+    var trnsType = this.mTree.getSelectedRowValue('type_id');
+    
+    callback(trnsType, id);
+}
 
 AllView.prototype.onSelect = function () {
     // 選択行の収支を計算してステータスバーに表示
     this.showSumOfSelectedRows();
-
-};
-
-AllView.prototype.openEditTab = function () {
-    // TODO: 選択行のタブへ移動
 
 };
 

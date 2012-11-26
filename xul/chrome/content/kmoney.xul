@@ -317,6 +317,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<splitter class="tree-splitter" />  
 								<treecol id="type" label="&column.type;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
+								<treecol id="type_id" hidden="true" ignoreincolumnpicker="true" />
 								<treecol id="id" hidden="true" ignoreincolumnpicker="true" />
 							</treecols>
                             <treechildren />

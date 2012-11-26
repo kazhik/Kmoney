@@ -214,6 +214,9 @@ Kmoney.prototype.addEventListeners = function () {
     this.listeners['kmc-asset'] = this.openAssetTab.bind(this);
     $$('kmc-asset').addEventListener("command", this.listeners['kmc-asset']);
 
+    this.listeners['km_tree_all.dblclick'] = this.openEditTab.bind(this);
+    $$('km_tree_all').addEventListener("dblclick", this.listeners['km_tree_all.dblclick']);
+    
 };
 Kmoney.prototype.removeEventListeners = function () {
     $$('kmc-openDb').removeEventListener("command", this.listeners['kmc-openDb.command']);
@@ -301,6 +304,7 @@ Kmoney.prototype.removeEventListeners = function () {
 
     $$('kmc-asset').removeEventListener("command", this.listeners['kmc-asset']);
 
+    $$('km_tree_all').remoteEventListener("dblclick", this.listeners['km_tree_all.dblclick']);
 };
 Kmoney.prototype.openSetMaster = function () {
     if (!this.mDb.isConnected()) {
@@ -329,6 +333,27 @@ Kmoney.prototype.openSetUser = function () {
 Kmoney.prototype.openSetPrefs = function () {
     var features = "chrome,titlebar,toolbar,centerscreen,modal";
     openDialog(KmGlobals.chromes.preferences, 'preferences', features);
+};
+
+Kmoney.prototype.openEditTab = function () {
+    function getCallback(trnsType, id) {
+        if (trnsType === "realmoney") {
+            $$('km_tabbox').selectedTab = $$('km_tab_cash');
+            this.cashTree.openEdit(id);
+        } else if (trnsType === "bank") {
+            $$('km_tabbox').selectedTab = $$('km_tab_bank');
+            this.bankTree.openEdit(id);
+        } else if (trnsType === "creditcard") {
+            $$('km_tabbox').selectedTab = $$('km_tab_creditcard');
+            this.creditcardTree.openEdit(id);
+        } else if (trnsType === "emoney") {
+            $$('km_tabbox').selectedTab = $$('km_tab_emoney');
+            this.emoneyTree.openEdit(id);
+        }
+        
+    }
+    this.allView.getTransactionInfo(getCallback.bind(this));
+    
 };
 Kmoney.prototype.openAssetTab = function() {
     var currentTab;
