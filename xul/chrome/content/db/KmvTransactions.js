@@ -141,7 +141,7 @@ KmvTransactions.prototype.loadSumPerMonth = function(params, loadCallback) {
     loadCallback(this.mDb.getRecords());
 };
 
-KmvTransactions.prototype.loadAllSumPerMonth = function(params, loadCallback) {
+KmvTransactions.prototype.loadAllSumPerMonth = function(sortParams, queryParams, loadCallback) {
     var sql = ["select",
                         "strftime('%Y/%m', A.transaction_date) as transaction_month,",
                         "A.item_id as item_id,",
@@ -150,8 +150,8 @@ KmvTransactions.prototype.loadAllSumPerMonth = function(params, loadCallback) {
                         "from kmv_transactions A"].join(" ");
     
     // ユーザが指定された場合、家計内フラグが「自己」のデータは集計に含めない
-    if (params["userId"] !== 0) {
-        if (params["itemId"] !== 0) {
+    if (queryParams["userId"] !== 0) {
+        if (queryParams["itemId"] !== 0) {
             sql += " where A.user_id = :userId and A.internal <> 1 and A.item_id = :itemId ";
         // 費目が指定されない場合、集計対象の費目だけを集計する
         } else {
@@ -159,7 +159,7 @@ KmvTransactions.prototype.loadAllSumPerMonth = function(params, loadCallback) {
             sql += " and A.sum_include = 1 ";
         }
     } else {
-        if (params["itemId"] !== 0) {
+        if (queryParams["itemId"] !== 0) {
             sql += " where A.item_id = :itemId and A.internal = 0 ";
         } else {
             sql += " where A.internal = 0 and A.sum_include = 1 ";
@@ -167,7 +167,19 @@ KmvTransactions.prototype.loadAllSumPerMonth = function(params, loadCallback) {
     }
     sql += " group by transaction_month, item_id ";
 
+    sql += " order by ";
+    if (sortParams !== undefined) {
+        for (var i = 0; i < sortParams.length; i++) {
+            sql += sortParams[i]['column'];
+            if (sortParams[i]['order'] != undefined) {
+                sql += " " + sortParams[i]['order'];
+            }
+        }
+    } else {
+        sql += "transaction_month asc";
+    }    
+    
     km_debug(sql);
-    this.mDb.selectWithParams(sql, params);
+    this.mDb.selectWithParams(sql, queryParams);
     loadCallback(this.mDb.getRecords(), this.mDb.getColumns());
 };

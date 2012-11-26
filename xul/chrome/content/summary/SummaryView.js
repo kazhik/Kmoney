@@ -7,7 +7,7 @@ function SummaryView() {
 
 SummaryView.prototype.initialize = function (db) {
     this.mDb = db;
-    this.mTree.init(this.load.bind(this));
+    this.mTree.init(this.loadTable.bind(this));
 
     this.listeners['km_summary_item.command'] = this.onConditionChanged.bind(this);
     $$('km_summary_item').addEventListener("command", this.listeners['km_summary_item.command']);
@@ -78,7 +78,7 @@ SummaryView.prototype.load = function() {
     }
     
 }
-SummaryView.prototype.loadTable = function () {
+SummaryView.prototype.loadTable = function (sortParams) {
     function loadCallback(records, columns) {
         this.mTree.populateTableData(records, columns);
         this.mTree.showTable(true);
@@ -87,12 +87,15 @@ SummaryView.prototype.loadTable = function () {
     $$('km_tree_summary').hidden = false;
     $$('km_summary_condition_period').hidden = true;
 
-    var params = {
+    if (sortParams === undefined) {
+        sortParams = this.mTree.getCurrentSortParams();
+    }
+    var queryParams = {
         "itemId": strToInt($$('km_summary_item').value),
         "userId": strToInt($$('km_summary_user').value)
     };
     
-    this.mDb.transactions.loadAllSumPerMonth(params, loadCallback.bind(this));
+    this.mDb.transactions.loadAllSumPerMonth(sortParams, queryParams, loadCallback.bind(this));
 
 };
 SummaryView.prototype.drawGraph = function () {
