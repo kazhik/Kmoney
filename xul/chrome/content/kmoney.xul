@@ -318,6 +318,8 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<treecol id="type" label="&column.type;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
 								<treecol id="type_id" hidden="true" ignoreincolumnpicker="true" />
+								<treecol id="source" label="&column.sourcetype;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
 								<treecol id="id" hidden="true" ignoreincolumnpicker="true" />
 							</treecols>
                             <treechildren />
@@ -345,9 +347,12 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<splitter class="tree-splitter" />  
 								<treecol id="user_name" label="&column.username;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
+								<treecol id="source" label="&column.sourcetype;" flex="1" hidden="true" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="internal_name" label="&column.internal;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
 								<treecol id="internal" hidden="true" ignoreincolumnpicker="true" />
 								<treecol id="id" hidden="true" ignoreincolumnpicker="true" />
-								<splitter class="tree-splitter" />  
 							</treecols>
                             <treechildren context="mp-editTableRow" />
                         </tree>
@@ -380,7 +385,9 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<splitter class="tree-splitter" />  
 								<treecol id="source" label="&column.sourcetype;" flex="1" hidden="true" persist="width" />
 								<splitter class="tree-splitter" />  
-								<treecol id="internal" label="&column.internal;" flex="1" hidden="true" persist="width" />
+								<treecol id="internal_name" label="&column.internal;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="internal" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" />  
 								<treecol id="id" hidden="true" ignoreincolumnpicker="true" />
 							</treecols>
@@ -412,8 +419,13 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<treecol id="user_name" label="&column.username;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
 								<treecol id="pay_month" label="&column.paymonth;" flex="1" persist="width" />
-								<treecol id="id" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" />  
+								<treecol id="source" label="&column.sourcetype;" flex="1" hidden="true" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="internal_name" label="&column.internal;" flex="1" persist="width" />
+								<splitter class="tree-splitter" />  
+								<treecol id="internal" hidden="true" ignoreincolumnpicker="true" />
+								<treecol id="id" hidden="true" ignoreincolumnpicker="true" />
 								
 							</treecols>
                             <treechildren context="mp-editTableRow" />
@@ -447,8 +459,9 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 								<splitter class="tree-splitter" />  
 								<treecol id="source" label="&column.sourcetype;" flex="1" hidden="true" persist="width" />
 								<splitter class="tree-splitter" />  
-								<treecol id="internal" label="&column.internal;" flex="1" hidden="true" persist="width" />
+								<treecol id="internal_name" label="&column.internal;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
+								<treecol id="internal" hidden="true" ignoreincolumnpicker="true" />
 								<treecol id="id" hidden="true" ignoreincolumnpicker="true" />
 							</treecols>
                             <treechildren context="mp-editTableRow" />

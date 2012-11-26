@@ -65,7 +65,12 @@ KmEMoneyTrns.prototype.load = function(sortParams, queryParams, loadCallback) {
                "D.name as money_name, ",
                "A.user_id, ",
                "C.name as user_name, ",
-               "A.source, ",
+               "E.name, ",
+               "case",
+               "when A.internal = 0 then '" + km_getLStr("internal.none") + "'",
+               "when A.internal = 1 then '" + km_getLStr("internal.self") + "'",
+               "when A.internal = 2 then '" + km_getLStr("internal.family") + "'",
+               "end as type, ",
                "A.internal, ",
                "A.id ",
                "from km_emoney_trns A ",
@@ -74,7 +79,10 @@ KmEMoneyTrns.prototype.load = function(sortParams, queryParams, loadCallback) {
                "inner join km_user C ",
                " on A.user_id = C.id ",
                "inner join km_emoney_info D ",
-               " on A.money_id = D.id "].join(" ");
+               " on A.money_id = D.id ",
+               "inner join km_source E",
+               " on A.source = E.id"
+               ].join(" ");
     if (where.length > 0) {
         sql += where;
     }

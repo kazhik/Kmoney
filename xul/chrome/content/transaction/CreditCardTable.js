@@ -67,6 +67,7 @@ CreditCardTable.prototype.onSelect = function () {
         $$('km_edit_paymonthY').value = "";
         $$('km_edit_paymonthM').value = "";
     }
+    $$('km_edit_internal').value = this.mTree.getSelectedRowValue('internal');
 
     // 選択行の収支を計算してステータスバーに表示
     this.showSumOfSelectedRows();

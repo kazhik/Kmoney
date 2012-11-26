@@ -62,13 +62,21 @@ KmCashTrns.prototype.load = function(sortParams, queryParams, loadCallback) {
         "A.expense, ",
         "A.user_id, ",
         "C.name as user_name, ",
+        "D.name, ",
+        "case",
+        "when A.internal = 0 then '" + km_getLStr("internal.none") + "'",
+        "when A.internal = 1 then '" + km_getLStr("internal.self") + "'",
+        "when A.internal = 2 then '" + km_getLStr("internal.family") + "'",
+        "end as type, ",
         "A.internal, ",
         "A.id ",
         "from km_realmoney_trns A ",
         "left join km_item B ",
         " on A.item_id = B.id ",
         "inner join km_user C ",
-        " on A.user_id = C.id "
+        " on A.user_id = C.id ",
+        "inner join km_source D",
+        " on A.source = D.id"
         ].join(" ");
     if (where.length > 0) {
         sql += where;
