@@ -68,6 +68,20 @@ BalanceView.prototype.loadTable = function () {
 };
 BalanceView.prototype.drawGraph = function () {
     function loadCallback(records) {
+        function execDraw() {
+            this.mGraph = new Ico.BarGraph(
+            $$('km_balance'), {
+                balance: valueArray
+            }, {
+                colours: {
+                    balance: '#8A2BE2'
+                },
+                show_vertical_labels: false,
+                bar_labels: true,
+                labels: labelArray
+            });
+            
+        }
         var labelArray = [];
         var valueArray = [];
     
@@ -88,17 +102,9 @@ BalanceView.prototype.drawGraph = function () {
         }
     
         KmGlobals.$empty($$('km_balance'));
-        this.mGraph = new Ico.BarGraph(
-        $$('km_balance'), {
-            balance: valueArray
-        }, {
-            colours: {
-                balance: '#8A2BE2'
-            },
-            show_vertical_labels: false,
-            bar_labels: true,
-            labels: labelArray
-        });
+        
+        // 起動時にグラフを表示しようとすると横幅が正しく表示されない。Issue #32
+        setTimeout(execDraw.bind(this), 0);
         
     }
 
