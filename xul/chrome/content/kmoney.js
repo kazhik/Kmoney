@@ -20,6 +20,8 @@ function Kmoney() {
     this.itemMap = {};
     this.users = {};
     this.currentUser = {};
+
+    this.maFileExt = null;
 }
 
 function Startup() {
@@ -47,18 +49,19 @@ Kmoney.prototype.Startup = function () {
     
     this.addEventListeners();
 
-    if (km_prefsBranch.getBoolPref("openWithLastDb")) {
-        if (this.mDb.openLastDb()) {
-            this.loadData();
-        }
-    }
     if (!km_prefsBranch.getBoolPref("view.creditcard")) {
         $$('km_tab_creditcard').hidden = true;
     }
     if (!km_prefsBranch.getBoolPref("view.emoney")) {
         $$('km_tab_emoney').hidden = true;
     }
+    this.maFileExt = km_prefsBranch.getCharPref("sqliteFileExtensions").split(",");
     
+    if (km_prefsBranch.getBoolPref("openWithLastDb")) {
+        if (this.mDb.openLastDb()) {
+            this.loadData();
+        }
+    }
     km_debug("Kmoney.Startup end");
 };
 Kmoney.prototype.loadData = function() {
@@ -90,7 +93,7 @@ Kmoney.prototype.Shutdown = function () {
     this.balance.terminate();
     this.allView.terminate();
     this.removeEventListeners();
-    this.mDb.closeDatabase(false);
+    this.mDb.closeDatabase();
     km_debug("Kmoney.Shutdown end");
 };
 
@@ -591,19 +594,41 @@ Kmoney.prototype.importFile = function () {
         }
         importer.importDb(retVals['name'], retVals['file'], retVals["user"],
                           importCallback.bind(this));
-        }
+    }
    
     // インポート種別のリストを作る
     this.mDb.source.load(loadCallback.bind(this));
 
 };
 Kmoney.prototype.newDatabase = function () {
-    this.mDb.newDatabase();
-    this.loadData();
+    const nsIFilePicker = Ci.nsIFilePicker;
+    var fp = Cc["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
+    fp.init(window, km_getLStr("newdatabase.title"), nsIFilePicker.modeSave);
+    fp.defaultString = km_getLStr("extName") + "." + this.maFileExt[0];
+
+    var rv = fp.show();
+    if (rv == nsIFilePicker.returnOK || rv == nsIFilePicker.returnReplace) {
+        this.mDb.newDatabase(fp.file);
+        this.loadData();
+    }
 };
 Kmoney.prototype.openDatabase = function () {
-    this.mDb.openDatabase();
-    this.loadData();
+    const nsIFilePicker = Ci.nsIFilePicker;
+    var fp = Cc["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
+    fp.init(window, km_getLStr("db.select"), nsIFilePicker.modeOpen);
+    
+    var sExt = "";
+    for (var iCnt = 0; iCnt < this.maFileExt.length; iCnt++) {
+        sExt += "*." + this.maFileExt[iCnt] + ";";
+    }
+    fp.appendFilter(km_getLStr("db.dbFiles") + " (" + sExt + ")", sExt);
+    fp.appendFilters(nsIFilePicker.filterAll);
+
+    var rv = fp.show();
+    if (rv == nsIFilePicker.returnOK || rv == nsIFilePicker.returnReplace) {
+        this.mDb.openDatabase(fp.file);
+        this.loadData();
+    }
 };
 
 Kmoney.prototype.populateItemList = function () {

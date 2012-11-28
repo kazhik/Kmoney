@@ -3,7 +3,6 @@ Components.utils.import("chrome://kmoney/content/db/sqlite.js");
 function KmDatabase() {
     km_debug("KmDatabase start");
     this.mDb = new SQLiteHandler();
-    this.maFileExt = km_prefsBranch.getCharPref("sqliteFileExtensions").split(",");
     
     this.cashTrns = new KmCashTrns(this.mDb);
     
@@ -30,69 +29,37 @@ KmDatabase.prototype.isConnected = function () {
     return this.mDb.isConnected();
 };
 
-KmDatabase.prototype.newDatabase = function () {
-    const nsIFilePicker = Ci.nsIFilePicker;
-    var fp = Cc["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
-    fp.init(window, km_getLStr("newdatabase.title"), nsIFilePicker.modeSave);
-    fp.defaultString = km_getLStr("extName") + "." + this.maFileExt[0];
+// 新しいデータベースファイルを作成
+KmDatabase.prototype.newDatabase = function (dbFile) {
+    this.openDatabaseFile(dbFile, true);
+    this.initialize();
+    return true;
+};
 
-    var rv = fp.show();
-    if (rv == nsIFilePicker.returnOK || rv == nsIFilePicker.returnReplace) {
-        try {
-            this.mDb.openDatabase(fp.file, true);
-        } catch (e) {
-            Components.utils.reportError('in function newDatabase - ' + e);
-            km_message("Connect to '" + fp.file.path + "' failed: " + e, 0x3);
-            return false;
+// 既存のデータベースファイルを開く
+KmDatabase.prototype.openDatabase = function (dbFile) {
+    this.openDatabaseFile(dbFile, false);
+    return true;
+};
+
+KmDatabase.prototype.openDatabaseFile = function (dbFile, isNew) {
+    try {
+        this.closeDatabase();
+        //create backup before opening
+        if (isNew === false) {
+            this.createTimestampedBackup(dbFile);
         }
+        this.mDb.openDatabase(dbFile, true);
         KmGlobals.mru.add(this.mDb.getFile().path);
-
-        this.initialize();
+    } catch (e) {
+        Components.utils.reportError('in function openDatabaseFile - ' + e);
+        km_message("Connect to '" + dbFile.path + "' failed: " + e, 0x3);
+        return false;
     }
     return true;
-};
-KmDatabase.prototype.closeDatabase = function (bAlert) {
-    //nothing to close if no database is already open
-    if (!this.mDb.isConnected()) {
-        if (bAlert) alert(km_getLStr("db.noOpenDb"));
-        return true;
-    }
-
-    //if another file is already open, confirm before closing
-    var answer = true;
-    if (bAlert) answer = kmPrompt.confirm(null, km_getLStr("extName"), km_getLStr("db.confirmClose"));
-
-    if (!answer) return false;
-
-
-    //make the current database as null and
-    //call setDatabase to do appropriate things
-    this.mDb.closeConnection();
-    return true;
-};
-
-KmDatabase.prototype.openDatabase = function () {
-    const nsIFilePicker = Ci.nsIFilePicker;
-    var fp = Cc["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
-    fp.init(window, km_getLStr("db.select"), nsIFilePicker.modeOpen);
-    
-    var sExt = "";
-    for (var iCnt = 0; iCnt < this.maFileExt.length; iCnt++) {
-        sExt += "*." + this.maFileExt[iCnt] + ";";
-    }
-    fp.appendFilter(km_getLStr("db.dbFiles") + " (" + sExt + ")", sExt);
-    fp.appendFilters(nsIFilePicker.filterAll);
-
-    var rv = fp.show();
-    if (rv == nsIFilePicker.returnOK || rv == nsIFilePicker.returnReplace) {
-        this.openDatabaseFile(fp.file);
-    }
-    return true;
-
 };
 
 KmDatabase.prototype.openLastDb = function () {
-
     var sPath = KmGlobals.mru.getLatest();
     if (sPath == null) {
         km_debug("no lastdb");
@@ -129,25 +96,21 @@ KmDatabase.prototype.openLastDb = function () {
         bPrefVal = km_prefsBranch.setBoolPref("promptForLastDb", !check.value);
     }
     //assign the new file (nsIFile) to the current database
-    this.openDatabaseFile(newfile);
+    this.openDatabaseFile(newfile, false);
 
     return true;    
 };
-KmDatabase.prototype.openDatabaseFile = function (dbFile) {
-    if (this.closeDatabase(false)) {
-        try {
-            //create backup before opening
-            this.createTimestampedBackup(dbFile);
-            this.mDb.openDatabase(dbFile, true);
-        } catch (e) {
-            Components.utils.reportError('in function openDatabaseFile - ' + e);
-            km_message("Connect to '" + dbFile.path + "' failed: " + e, 0x3);
-            return false;
-        }
-        KmGlobals.mru.add(this.mDb.getFile().path);
+
+KmDatabase.prototype.closeDatabase = function () {
+    //nothing to close if no database is already open
+    if (!this.mDb.isConnected()) {
         return true;
     }
-    return false;
+
+    //make the current database as null and
+    //call setDatabase to do appropriate things
+    this.mDb.closeConnection();
+    return true;
 };
 
 KmDatabase.prototype.createTimestampedBackup = function (nsiFileObj) {
@@ -197,6 +160,191 @@ KmDatabase.prototype.initialize = function () {
     this.createInitialRecords();
     
 };
+KmDatabase.prototype.createTables = function() {
+  var sql = [
+    'CREATE TABLE "km_bank_info" (' +
+        '"id" INTEGER PRIMARY KEY,' +
+        '"name" TEXT,"user_id" INTEGER)',
+    'CREATE TABLE "km_bank_trns" (' +
+      '"id" INTEGER PRIMARY KEY,' +
+      '"transaction_date" DATETIME,' +
+      '"income" REAL,' +
+      '"expense" REAL,' +
+      '"detail" TEXT,' +
+      '"bank_id" INTEGER,' +
+      '"internal" INTEGER DEFAULT (0) ,' +
+      '"last_update_date" DATETIME,' +
+      '"item_id" INTEGER,' +
+      '"user_id" INTEGER,' +
+      '"source" INTEGER)',
+    'CREATE TABLE "km_creditcard_info" (' +
+      '"id" INTEGER PRIMARY KEY,' +
+      '"name" TEXT,' +
+      '"bank_id" INTEGER,' +
+      '"user_id" INTEGER)',
+    'CREATE TABLE "km_creditcard_payment" (' +
+      '"id" INTEGER PRIMARY KEY,' +
+      '"transaction_id" INTEGER,' +
+      '"pay_month" DATETIME,' +
+      '"pay_amount" REAL,' +
+      '"remaining_balance" REAL,' +
+      '"detail" TEXT,' +
+      '"card_id" INTEGER,' +
+      '"user_id" INTEGER,' +
+      '"transaction_date" DATETIME,' +
+      '"last_update_date" DATETIME,' +
+      '"bought_amount" REAL)',
+    'CREATE TABLE "km_creditcard_trns" (' +
+      '"id" INTEGER PRIMARY KEY,' +
+      '"transaction_date" DATETIME,' +
+      '"detail" TEXT,' +
+      '"expense" REAL,' +
+      '"card_id" INTEGER,' +
+      '"last_update_date" DATETIME,' +
+      '"item_id" INTEGER,' +
+      '"user_id" INTEGER,' +
+      '"internal" BOOL,' +
+      '"source" INTEGER)',
+    'CREATE TABLE "km_emoney_info" (' +
+      '"id" INTEGER PRIMARY KEY,' +
+      '"name" TEXT,' +
+      '"user_id" INTEGER)',
+    'CREATE TABLE "km_emoney_trns" (' +
+      '"id" INTEGER PRIMARY KEY,' +
+      '"transaction_date" DATETIME,' +
+      '"expense" REAL,' +
+      '"detail" TEXT,' +
+      '"money_id" INTEGER,' +
+      '"last_update_date" DATETIME,' +
+      '"item_id" INTEGER,' +
+      '"user_id" INTEGER,' +
+      '"source" INTEGER,' +
+      '"internal" BOOL,' +
+      '"income" REAL)',
+    'CREATE TABLE "km_realmoney_trns" (' +
+      '"id" INTEGER PRIMARY KEY,' +
+      '"transaction_date" DATETIME NOT NULL ,' +
+      '"income" REAL,' +
+      '"expense" REAL,' +
+      '"item_id" INTEGER,' +
+      '"detail" TEXT,' +
+      '"user_id" INTEGER,' +
+      '"internal" BOOL,' +
+      '"last_update_date" DATETIME,' +
+      '"source" INTEGER)',
+    'CREATE TABLE "km_item" (' +
+        '"id" INTEGER PRIMARY KEY NOT NULL,' +
+        '"name" TEXT, ' +
+        '"sum_include" BOOL)',
+    'CREATE TABLE "km_source" (' +
+        '"id" INTEGER PRIMARY KEY NOT NULL,' +
+        '"name" TEXT, ' +
+        '"import" BOOL, ' +
+        '"enabled" BOOL, ' +
+        '"file_ext" TEXT)',
+    'CREATE TABLE "km_user" (' +
+        '"id" INTEGER PRIMARY KEY  NOT NULL ,' +
+        '"name" TEXT)',
+    'CREATE TABLE "km_import" (' +
+        '"id" INTEGER PRIMARY KEY ,' +
+        '"source_type" INTEGER,' +
+        '"detail" TEXT,' +
+        '"item_id" INTEGER,' +
+        '"default_id" BOOL,' +
+        '"permission" BOOL,' +
+        '"internal" INTEGER)',
+    'CREATE TABLE "km_import_history" (' +
+        '"id" INTEGER PRIMARY KEY  NOT NULL ,' +
+        '"source_type" INTEGER,' +
+        '"source_url" TEXT,' +
+        '"period_from" DATETIME,' +
+        '"period_to" DATETIME,' +
+        '"import_date" DATETIME)',
+    'CREATE TABLE "km_asset" (' +
+        '"id" INTEGER PRIMARY KEY ,' +
+        '"name" TEXT,' +
+        '"amount" REAL,' +
+        '"user_id" INTEGER,' +
+        '"asset_type" INTEGER)',
+    'CREATE TABLE "km_asset_history" (' +
+        '"id" INTEGER PRIMARY KEY  NOT NULL ,' +
+        '"asset_id" INTEGER,' +
+        '"transaction_type" INTEGER,' +
+        '"transaction_id" INTEGER)',
+    'CREATE TABLE "km_sys_transaction" (' +
+        '"id" INTEGER PRIMARY KEY  NOT NULL , "execution_date" DATETIME)',
+    'CREATE TABLE "km_sys_undo" (' +
+        '"id" INTEGER PRIMARY KEY  NOT NULL ,"undo_sql" TEXT,"db_transaction_id" INTEGER)',
+    'CREATE VIEW "kmv_transactions" AS   select ' +
+    '   A.transaction_date, ' +
+    '   A.item_id, ' +
+    '   B.name as item_name, ' +
+    '   B.sum_include as sum_include, ' +
+    '   A.detail, ' +
+    '   A.income, ' +
+    '   A.expense, ' +
+    '   A.user_id, ' +
+    '   C.name as user_name, ' +
+    '   A.internal, ' +
+    '   A.type, ' +
+    '   A.id ' +
+    'from ( ' +
+    'select ' +
+    '   transaction_date, ' +
+    '   item_id, ' +
+    '   detail, ' +
+    '   income, ' +
+    '   expense, ' +
+    '   user_id, ' +
+    '   internal, ' +
+    '   "emoney" as type, ' +
+    '   id ' +
+    'from km_emoney_trns ' +
+    'union ' +
+    'select ' +
+    '   transaction_date, ' +
+    '   item_id, ' +
+    '   detail, ' +
+    '   0 as income, ' +
+    '   expense, ' +
+    '   user_id, ' +
+    '   internal, ' +
+    '   "creditcard" as type, ' +
+    '   id ' +
+    'from km_creditcard_trns ' +
+    'union ' +
+    'select ' +
+    '   transaction_date, ' +
+    '   item_id, ' +
+    '   detail, ' +
+    '   income, ' +
+    '   expense, ' +
+    '   user_id, ' +
+    '   internal, ' +
+    '   "realmoney" as type, ' +
+    '   id ' +
+    'from km_realmoney_trns ' +
+    'union ' +
+    'select ' +
+    '   transaction_date, ' +
+    '   item_id, ' +
+    '   detail, ' +
+    '   income, ' +
+    '   expense, ' +
+    '   user_id, ' +
+    '   internal, ' +
+    '   "bank" as type, ' +
+    '   id ' +
+    'from km_bank_trns ' +
+    ') A ' +
+    'inner join km_item B ' +
+    'on A.item_id = B.id ' +
+    'inner join km_user C ' +
+    'on A.user_id = C.id '
+  ];
+  this.mDb.executeTransaction(sql);
+};
+    
 KmDatabase.prototype.createInitialRecords = function() {
     function insertCallback(id) {
         
@@ -589,191 +737,6 @@ KmDatabase.prototype.createTriggerOnDelete = function(tableName, triggerName) {
     this.mDb.executeTransaction([sql]);
 };
 
-KmDatabase.prototype.createTables = function() {
-  var sql = [
-    'CREATE TABLE "km_bank_info" (' +
-        '"id" INTEGER PRIMARY KEY,' +
-        '"name" TEXT,"user_id" INTEGER)',
-    'CREATE TABLE "km_bank_trns" (' +
-      '"id" INTEGER PRIMARY KEY,' +
-      '"transaction_date" DATETIME,' +
-      '"income" REAL,' +
-      '"expense" REAL,' +
-      '"detail" TEXT,' +
-      '"bank_id" INTEGER,' +
-      '"internal" INTEGER DEFAULT (0) ,' +
-      '"last_update_date" DATETIME,' +
-      '"item_id" INTEGER,' +
-      '"user_id" INTEGER,' +
-      '"source" INTEGER)',
-    'CREATE TABLE "km_creditcard_info" (' +
-      '"id" INTEGER PRIMARY KEY,' +
-      '"name" TEXT,' +
-      '"bank_id" INTEGER,' +
-      '"user_id" INTEGER)',
-    'CREATE TABLE "km_creditcard_payment" (' +
-      '"id" INTEGER PRIMARY KEY,' +
-      '"transaction_id" INTEGER,' +
-      '"pay_month" DATETIME,' +
-      '"pay_amount" REAL,' +
-      '"remaining_balance" REAL,' +
-      '"detail" TEXT,' +
-      '"card_id" INTEGER,' +
-      '"user_id" INTEGER,' +
-      '"transaction_date" DATETIME,' +
-      '"last_update_date" DATETIME,' +
-      '"bought_amount" REAL)',
-    'CREATE TABLE "km_creditcard_trns" (' +
-      '"id" INTEGER PRIMARY KEY,' +
-      '"transaction_date" DATETIME,' +
-      '"detail" TEXT,' +
-      '"expense" REAL,' +
-      '"card_id" INTEGER,' +
-      '"last_update_date" DATETIME,' +
-      '"item_id" INTEGER,' +
-      '"user_id" INTEGER,' +
-      '"internal" BOOL,' +
-      '"source" INTEGER)',
-    'CREATE TABLE "km_emoney_info" (' +
-      '"id" INTEGER PRIMARY KEY,' +
-      '"name" TEXT,' +
-      '"user_id" INTEGER)',
-    'CREATE TABLE "km_emoney_trns" (' +
-      '"id" INTEGER PRIMARY KEY,' +
-      '"transaction_date" DATETIME,' +
-      '"expense" REAL,' +
-      '"detail" TEXT,' +
-      '"money_id" INTEGER,' +
-      '"last_update_date" DATETIME,' +
-      '"item_id" INTEGER,' +
-      '"user_id" INTEGER,' +
-      '"source" INTEGER,' +
-      '"internal" BOOL,' +
-      '"income" REAL)',
-    'CREATE TABLE "km_realmoney_trns" (' +
-      '"id" INTEGER PRIMARY KEY,' +
-      '"transaction_date" DATETIME NOT NULL ,' +
-      '"income" REAL,' +
-      '"expense" REAL,' +
-      '"item_id" INTEGER,' +
-      '"detail" TEXT,' +
-      '"user_id" INTEGER,' +
-      '"internal" BOOL,' +
-      '"last_update_date" DATETIME,' +
-      '"source" INTEGER)',
-    'CREATE TABLE "km_item" (' +
-        '"id" INTEGER PRIMARY KEY NOT NULL,' +
-        '"name" TEXT, ' +
-        '"sum_include" BOOL)',
-    'CREATE TABLE "km_source" (' +
-        '"id" INTEGER PRIMARY KEY NOT NULL,' +
-        '"name" TEXT, ' +
-        '"import" BOOL, ' +
-        '"enabled" BOOL, ' +
-        '"file_ext" TEXT)',
-    'CREATE TABLE "km_user" (' +
-        '"id" INTEGER PRIMARY KEY  NOT NULL ,' +
-        '"name" TEXT)',
-    'CREATE TABLE "km_import" (' +
-        '"id" INTEGER PRIMARY KEY ,' +
-        '"source_type" INTEGER,' +
-        '"detail" TEXT,' +
-        '"item_id" INTEGER,' +
-        '"default_id" BOOL,' +
-        '"permission" BOOL,' +
-        '"internal" INTEGER)',
-    'CREATE TABLE "km_import_history" (' +
-        '"id" INTEGER PRIMARY KEY  NOT NULL ,' +
-        '"source_type" INTEGER,' +
-        '"source_url" TEXT,' +
-        '"period_from" DATETIME,' +
-        '"period_to" DATETIME,' +
-        '"import_date" DATETIME)',
-    'CREATE TABLE "km_asset" (' +
-        '"id" INTEGER PRIMARY KEY ,' +
-        '"name" TEXT,' +
-        '"amount" REAL,' +
-        '"user_id" INTEGER,' +
-        '"asset_type" INTEGER)',
-    'CREATE TABLE "km_asset_history" (' +
-        '"id" INTEGER PRIMARY KEY  NOT NULL ,' +
-        '"asset_id" INTEGER,' +
-        '"transaction_type" INTEGER,' +
-        '"transaction_id" INTEGER)',
-    'CREATE TABLE "km_sys_transaction" (' +
-        '"id" INTEGER PRIMARY KEY  NOT NULL , "execution_date" DATETIME)',
-    'CREATE TABLE "km_sys_undo" (' +
-        '"id" INTEGER PRIMARY KEY  NOT NULL ,"undo_sql" TEXT,"db_transaction_id" INTEGER)',
-    'CREATE VIEW "kmv_transactions" AS   select ' +
-    '   A.transaction_date, ' +
-    '   A.item_id, ' +
-    '   B.name as item_name, ' +
-    '   B.sum_include as sum_include, ' +
-    '   A.detail, ' +
-    '   A.income, ' +
-    '   A.expense, ' +
-    '   A.user_id, ' +
-    '   C.name as user_name, ' +
-    '   A.internal, ' +
-    '   A.type, ' +
-    '   A.id ' +
-    'from ( ' +
-    'select ' +
-    '   transaction_date, ' +
-    '   item_id, ' +
-    '   detail, ' +
-    '   income, ' +
-    '   expense, ' +
-    '   user_id, ' +
-    '   internal, ' +
-    '   "emoney" as type, ' +
-    '   id ' +
-    'from km_emoney_trns ' +
-    'union ' +
-    'select ' +
-    '   transaction_date, ' +
-    '   item_id, ' +
-    '   detail, ' +
-    '   0 as income, ' +
-    '   expense, ' +
-    '   user_id, ' +
-    '   internal, ' +
-    '   "creditcard" as type, ' +
-    '   id ' +
-    'from km_creditcard_trns ' +
-    'union ' +
-    'select ' +
-    '   transaction_date, ' +
-    '   item_id, ' +
-    '   detail, ' +
-    '   income, ' +
-    '   expense, ' +
-    '   user_id, ' +
-    '   internal, ' +
-    '   "realmoney" as type, ' +
-    '   id ' +
-    'from km_realmoney_trns ' +
-    'union ' +
-    'select ' +
-    '   transaction_date, ' +
-    '   item_id, ' +
-    '   detail, ' +
-    '   income, ' +
-    '   expense, ' +
-    '   user_id, ' +
-    '   internal, ' +
-    '   "bank" as type, ' +
-    '   id ' +
-    'from km_bank_trns ' +
-    ') A ' +
-    'inner join km_item B ' +
-    'on A.item_id = B.id ' +
-    'inner join km_user C ' +
-    'on A.user_id = C.id '
-  ];
-  this.mDb.executeTransaction(sql);
-};
-    
 //this object handles MRU using one preference 'jsonMruData'
 KmGlobals.mru = {
     mbInit: false,
