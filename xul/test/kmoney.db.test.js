@@ -1,15 +1,11 @@
 utils.include('./kmoney.common.js');
 
+initDbfile('newdb');
+
 testKmDatabase.priority = 'normal';
 function testKmDatabase() {
-    var dbfile = utils.makeFileWithPath('../../db/testdb.sqlite');
-    
-    if (dbfile.exists()) {
-        dbfile.remove(false);
-    }
-    
-    win.kmoney.mDb.newDatabase(dbfile);
-    assert.equal(true, win.kmoney.mDb.isConnected());
+    app.mDb.newDatabase(dbfile);
+    assert.equal(true, app.mDb.isConnected());
 
     dbconn.close();
     dbconn = utils.openDatabase(dbfile);
@@ -19,8 +15,8 @@ function testKmDatabase() {
     var bankInfoCount = statement.getInt64(0);    
     closeStatement(statement);
     assert.equal(2, bankInfoCount);
-    
-    win.kmoney.mDb.closeDatabase();    
-    assert.equal(false, win.kmoney.mDb.isConnected());
-}
 
+    app.mDb.closeDatabase();    
+    assert.equal(false, app.mDb.isConnected());
+    
+}

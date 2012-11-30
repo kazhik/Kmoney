@@ -1,5 +1,7 @@
 utils.include('./kmoney.common.js');
 
+initDbfile('existingdb');
+
 function testKmAssetInsert() {
     function insertCallback() {
         var sql = ["select id, name, amount, user_id, asset_type",
@@ -14,8 +16,6 @@ function testKmAssetInsert() {
         assert.equal(2, statement.getInt64(idx++));
         closeStatement(statement);
         
-        execUpdate("delete from km_asset where id = " + asset_id);
-        
         idx = 0;
         sql = ["select id, asset_id, transaction_type, transaction_id",
                "from km_asset_history",
@@ -27,8 +27,23 @@ function testKmAssetInsert() {
         assert.equal(544, statement.getInt64(idx++));
         closeStatement(statement);
 
-        execUpdate("delete from km_asset_history where id = " + history_id);
-
+        // km_sys_undoに挿入されたレコードを確認
+        sql = ["select undo_sql from km_sys_undo A",
+               "inner join km_sys_transaction B",
+               "on B.id = A.db_transaction_id",
+               "and B.id = (select max(id) from km_sys_transaction)"
+               ].join(" ");
+        
+        statement = execSelect(sql);
+        var undo_sql = statement.row.undo_sql;
+        assert.equal("delete from km_asset where id = " + asset_id,
+                     undo_sql);
+        statement = getNext(statement);
+        undo_sql = statement.row.undo_sql;
+        assert.equal("delete from km_asset_history where id = " + history_id,
+                     undo_sql);
+        
+        closeStatement(statement);
     }
 
     var params = {
@@ -39,7 +54,7 @@ function testKmAssetInsert() {
         "transactionType": 3,
         "transactionId": 544
     };
-    win.kmoney.mDb.asset.insert(params, insertCallback);
+    app.mDb.assetInsert(params, insertCallback);
 }
 
 function testKmAssetUpdate() {
@@ -57,7 +72,7 @@ function testKmAssetUpdate() {
             assert.equal(22, statement.getInt64(idx++));
             closeStatement(statement);
             
-            execUpdate("delete from km_asset where id = " + asset_id);
+//            execUpdate("delete from km_asset where id = " + asset_id);
             
             idx = 0;
             sql = ["select id, asset_id, transaction_type, transaction_id",
@@ -70,7 +85,7 @@ function testKmAssetUpdate() {
             assert.equal(5444, statement.getInt64(idx++));
             closeStatement(statement);
     
-            execUpdate("delete from km_asset_history where id = " + history_id);
+//            execUpdate("delete from km_asset_history where id = " + history_id);
         }
         var sql = ["select id",
                    "from km_asset",
@@ -87,7 +102,7 @@ function testKmAssetUpdate() {
             "transactionType": 43,
             "transactionId": 5444
         };
-        win.kmoney.mDb.asset.update(asset_id, params, updateCallback);
+        app.mDb.assetUpdate(asset_id, params, updateCallback);
         
         
     }
@@ -99,7 +114,7 @@ function testKmAssetUpdate() {
         "transactionType": 3,
         "transactionId": 544
     };
-    win.kmoney.mDb.asset.insert(params, insertCallback);
+    app.mDb.assetInsert(params, insertCallback);
     
 }
 
@@ -117,7 +132,7 @@ function testKmAssetDelete() {
         var asset_id = statement.getInt64(0);
         closeStatement(statement);
         
-        win.kmoney.mDb.asset.delete(asset_id, deleteCallback);
+        app.mDb.assetDelete(asset_id, deleteCallback);
         
         
     }
@@ -129,6 +144,6 @@ function testKmAssetDelete() {
         "transactionType": 3,
         "transactionId": 544
     };
-    win.kmoney.mDb.asset.insert(params, insertCallback);
+    app.mDb.assetInsert(params, insertCallback);
     
 }

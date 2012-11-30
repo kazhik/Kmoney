@@ -3,6 +3,19 @@ var doc = null;
 var app = null;
 var dbconn = null;
 
+var dbfile;
+
+function initDbfile(mode) {
+    if (mode === 'existingdb') {
+        dbfile = utils.normalizeToFile('../../db/testdb.sqlite');
+    } else if (mode === 'newdb') {
+        dbfile = utils.normalizeToFile('../../db/testnewdb.sqlite');
+        if (dbfile.exists()) {
+            dbfile.remove(false);
+        }
+    }
+}
+
 function setUp() {
 }
 
@@ -21,29 +34,46 @@ function startUp()
     assert.isTrue(win !== null);
     win.addEventListener('load', onLoad, false);
     utils.wait(loaded);
-    
+   
     doc = win.document;
     assert.isTrue(doc !== null);
     
     app = win.kmoney;
     assert.isTrue(app !== null);
-
-    dbconn = utils.openDatabase('../../db/Kmoney.sqlite');
-
+    
+    openTestDb();
+    
 }
 
 function shutDown()
 {
-    dbconn.close();
-//    win.close();
+    if (dbconn !== null) {
+        dbconn.close();
+    }
+    win.close();
 }
 
+function openTestDb() {
+    dbconn = utils.openDatabase(dbfile);
+    app.mDb.openDatabase(dbfile);
+    
+    utils.log(app.mDb.isConnected());
+}
+
+// 一件だけ取得
 function execSelect(sql) {
+//    utils.log(sql);
     var statement = dbconn.createStatement(sql);
     statement.executeStep();
 
     return statement;    
 }
+// 次の一件を取得
+function getNext(statement) {
+    statement.executeStep();
+    return statement;
+}
+
 function execUpdate(sql) {
     var statement = dbconn.createStatement(sql);
     statement.executeStep();

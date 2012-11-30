@@ -476,9 +476,11 @@ KmDatabase.prototype.loadMasterData = function() {
 KmDatabase.prototype.assetInsert = function(params, callback) {
     function insertCallback(id) {
         this.dropTrigger("km_asset_insert");
+        this.dropTrigger("km_asset_history_insert");
         callback(id);
     }
     this.createTriggerOnInsert("km_asset", "km_asset_insert");
+    this.createTriggerOnInsert("km_asset_history", "km_asset_history_insert");
     this.createTransactionId();
     this.asset.insert(params, insertCallback.bind(this));
 };
@@ -486,19 +488,23 @@ KmDatabase.prototype.assetInsert = function(params, callback) {
 KmDatabase.prototype.assetUpdate = function(id, params, callback) {
     function updateCallback(id) {
         this.dropTrigger("km_asset_update");
+        this.dropTrigger("km_asset_history_update");
         callback(id);
     }
     this.createTriggerOnUpdate("km_asset", "km_asset_update");
+    this.createTriggerOnUpdate("km_asset_history", "km_asset_history_update");
     this.createTransactionId();
     this.asset.update(id, params, updateCallback.bind(this));
 };
 KmDatabase.prototype.assetDelete = function(id, callback) {
     function deleteCallback() {
         this.dropTrigger("km_asset_delete");
+        this.dropTrigger("km_asset_history_delete");
         callback();
     }
     
     this.createTriggerOnDelete("km_asset", "km_asset_delete");
+    this.createTriggerOnDelete("km_asset_history", "km_asset_history_delete");
     this.createTransactionId();
     this.asset.delete(id, deleteCallback.bind(this));
 };
@@ -601,31 +607,37 @@ KmDatabase.prototype.emoneyDelete = function(idList, callback) {
 KmDatabase.prototype.creditCardInsert = function(params, callback) {
     function insertCallback(id) {
         this.dropTrigger("km_creditcard_trns_insert");
+        this.dropTrigger("km_creditcard_payment_insert");
         callback(id);
     }
     this.createTriggerOnInsert("km_creditcard_trns", "km_creditcard_trns_insert");
+    this.createTriggerOnInsert("km_creditcard_payment", "km_creditcard_payment_insert");
     this.createTransactionId();
     this.creditCardTrns.insert(params, insertCallback.bind(this));
     
 };
-KmDatabase.prototype.creditCardUpdate = function(id, params, callback) {
+KmDatabase.prototype.creditCardUpdate = function(idList, params, callback) {
     function updateCallback(id) {
         this.dropTrigger("km_creditcard_trns_update");
+        this.dropTrigger("km_creditcard_payment_update");
         callback(id);
     }
     
     this.createTriggerOnUpdate("km_creditcard_trns", "km_creditcard_trns_update");
+    this.createTriggerOnUpdate("km_creditcard_payment", "km_creditcard_payment_update");
     this.createTransactionId();
-    this.creditCardTrns.update(id, params, updateCallback.bind(this));
+    this.creditCardTrns.update(idList, params, updateCallback.bind(this));
 };
 
 KmDatabase.prototype.creditCardDelete = function(idList, callback) {
     function deleteCallback() {
         this.dropTrigger("km_creditcard_trns_delete");
+        this.dropTrigger("km_creditcard_payment_delete");
         callback();
     }
     
     this.createTriggerOnDelete("km_creditcard_trns", "km_creditcard_trns_delete");
+    this.createTriggerOnDelete("km_creditcard_payment", "km_creditcard_payment_delete");
     this.createTransactionId();
     this.creditCardTrns.delete(idList, deleteCallback.bind(this));
 };
@@ -664,9 +676,8 @@ KmDatabase.prototype.createTriggerOnInsert = function(tableName, triggerName) {
                "(db_transaction_id, undo_sql)",
                "values (",
                "(select max(id) from km_sys_transaction),",
-               "'",
-               "delete from " + tableName,
-               "where id='" + "||new.id",
+               "'delete from " + tableName,
+               "where id = '" + "||new.id",
                ");",
                "end"].join(" ");
     km_log(sql);
@@ -692,11 +703,10 @@ KmDatabase.prototype.createTriggerOnUpdate = function(tableName, triggerName) {
                "(db_transaction_id, undo_sql)",
                "values (",
                "(select max(id) from km_sys_transaction),",
-               "'",
-               "update " + tableName,
-               "set ",
+               "'update " + tableName,
+               "set",
                setList.join(","),
-               "where id='" + "||old.id",
+               "where id = '" + "||old.id",
                ");",
                "end"].join(" ");
 
@@ -725,12 +735,11 @@ KmDatabase.prototype.createTriggerOnDelete = function(tableName, triggerName) {
                "(db_transaction_id, undo_sql)",
                "values (",
                "(select max(id) from km_sys_transaction),",
-               "'",
-               "insert into " + tableName,
+               "'insert into " + tableName,
                "(" + colList.join(",") + ")",
                "values",
-               "(" + valList.join(",") + ")",
-               "');",
+               "(" + valList.join(",") + ")'",
+               ");",
                "end"].join(" ");
 
     km_log(sql);
