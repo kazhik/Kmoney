@@ -233,78 +233,131 @@ KmCreditCardTrns.prototype.execInsert = function (newRecordArray, importFlag, in
     insertCallback(this.mDb.getLastInsertRowId("km_creditcard_trns"));
 };
 KmCreditCardTrns.prototype.update = function(idList, params, updateCallback) {
-    var oneColumn = (Object.keys(params).length === 1)? true: false;
+    if (Object.keys(params).length === 1) {
+        this.updateOneColumn(idList, params, updateCallback);
+    } else {
+        // idListは必ず1件になる
+        params["id"] = idList[0];
+        this.updateMultiColumn(params, updateCallback);
+    }
+};
+
+KmCreditCardTrns.prototype.updateOneColumn = function(idList, params, updateCallback) {
     var keyList = [];
     for (var i = 0; i < idList.length; i++) {
         var key = "id_" + i;
         keyList.push(":" + key);
         params[key] = idList[i];
     }
-    var inClause = keyList.join(",");
+    var idArray = keyList.join(",");
     var sql;
     var sqlStatement;
     var sqlStmtArray = [];
-    if (oneColumn) {
-        sql = "update km_creditcard_trns ";
-        sql += "set ";
-        if (params["itemId"] !== undefined) {
-            sql += "item_id = :itemId, ";
-        } else if (params["detail"] !== undefined) {
-            sql += "detail = :detail, ";
-        } else if (params["userId"] !== undefined) {
-            sql += "user_id = :userId, ";
-        } else if (params["cardId"] !== undefined) {
-            sql += "card_id = :cardId, ";
-        }
-        sql += "last_update_date = datetime('now', 'localtime') "
-        sql += "where id in (" + inClause + ")";
-
-    } else {
-        sql = ["update km_creditcard_trns ",
-                   "set ",
-                   "transaction_date = :transactionDate, ",
-                   "expense = :boughtAmount, ",
-                   "item_id = :itemId, ",
-                   "detail = :detail, ",
-                   "user_id = :userId, ",
-                   "card_id = :cardId, ",
-                   "last_update_date = datetime('now', 'localtime'), ",
-                   "source = :source",
-                   "where id in (" + inClause + ")"].join(" ");
+    sql = "update km_creditcard_trns ";
+    sql += "set ";
+    if (params["itemId"] !== undefined) {
+        sql += "item_id = :itemId, ";
+    } else if (params["detail"] !== undefined) {
+        sql += "detail = :detail, ";
+    } else if (params["userId"] !== undefined) {
+        sql += "user_id = :userId, ";
+    } else if (params["cardId"] !== undefined) {
+        sql += "card_id = :cardId, ";
     }
+    sql += "last_update_date = datetime('now', 'localtime') "
+    sql += "where id in (" + idArray + ")";
+    km_log(sql);
+    sqlStatement = this.mDb.createStatementWithParams(sql, params);
+    sqlStmtArray.push(sqlStatement);
+    
+    sql = "update km_creditcard_payment ";
+    sql += "set ";
+    if (params["detail"] !== undefined) {
+        sql += "detail = :detail, ";
+    } else if (params["userId"] !== undefined) {
+        sql += "user_id = :userId, ";
+    } else if (params["cardId"] !== undefined) {
+        sql += "card_id = :cardId, ";
+    }
+    sql += "last_update_date = datetime('now', 'localtime') "
+    sql += "where transaction_id in (" + idArray + ")";
+    km_log(sql);
+    sqlStatement = this.mDb.createStatementWithParams(sql, params);
+    sqlStmtArray.push(sqlStatement);
+    this.mDb.execTransaction(sqlStmtArray);
+    updateCallback(idList[0]);
+};
+
+KmCreditCardTrns.prototype.updateMultiColumn = function(params, updateCallback) {
+    var sql;
+    var sqlStatement;
+    var sqlStmtArray = [];
+    sql = ["update km_creditcard_trns ",
+               "set ",
+               "transaction_date = :transactionDate, ",
+               "expense = :boughtAmount, ",
+               "item_id = :itemId, ",
+               "detail = :detail, ",
+               "user_id = :userId, ",
+               "card_id = :cardId, ",
+               "last_update_date = datetime('now', 'localtime'), ",
+               "source = :source",
+               "where id = :id"].join(" ");
     km_log(sql);
     sqlStatement = this.mDb.createStatementWithParams(sql, params);
     sqlStmtArray.push(sqlStatement);
     
     if (params['payMonth'] !== undefined) {
-        if (idList.length > 1) {
-            sql = ["update km_creditcard_payment ",
-                 "set ",
-                 "detail = :detail, ",
-                 "user_id = :userId, ",
-                 "card_id = :cardId, ",
-                 "last_update_date = datetime('now', 'localtime') ",
-                 "where transaction_id in (" + inClause +")"].join(" ");
-        } else {
-            sql = ["update km_creditcard_payment ",
-                 "set ",
-                 "transaction_date = :transactionDate, ",
-                 "detail = :detail, ",
-                 "bought_amount = :boughtAmount, ",
-                 "pay_amount = :payAmount, ",
-                 "pay_month = :payMonth, ",
-                 "user_id = :userId, ",
-                 "card_id = :cardId, ",
-                 "last_update_date = datetime('now', 'localtime') ",
-                 "where transaction_id in (" + inClause + ")"].join(" ");
-        }
+        // 支払月が更新時に追加された場合
+        // transaction_idが同一のレコードがkm_creditcard_paymentになければinsert
+        sql = ["insert into km_creditcard_payment (",
+                      "transaction_date, ",
+                      "bought_amount, ",
+                      "pay_amount, ",
+                      "pay_month, ",
+                      "remaining_balance, ",
+                      "detail, ",
+                      "user_id, ",
+                      "card_id, ",
+                      "transaction_id, ",
+                      "last_update_date " + ") ",
+                      "select ",
+                      ":transactionDate, ",
+                      ":boughtAmount, ",
+                      ":payAmount, ",
+                      ":payMonth, ",
+                      ":remainingBalance, ",
+                      ":detail, ",
+                      ":userId, ",
+                      ":cardId, ",
+                      ":id, ",
+                      "datetime('now', 'localtime') ",
+                      "where not exists (",
+                      "select 1 from km_creditcard_payment",
+                      "where transaction_id = :id)"
+                      ].join(" ");        
+        km_log(sql);
+        sqlStatement = this.mDb.createStatementWithParams(sql, params);
+        sqlStmtArray.push(sqlStatement);
+        sql = ["update km_creditcard_payment ",
+             "set ",
+             "transaction_date = :transactionDate, ",
+             "detail = :detail, ",
+             "bought_amount = :boughtAmount, ",
+             "pay_amount = :payAmount, ",
+             "pay_month = :payMonth, ",
+             "user_id = :userId, ",
+             "card_id = :cardId, ",
+             "last_update_date = datetime('now', 'localtime') ",
+             "where transaction_id = :id"].join(" ");
         km_log(sql);
         sqlStatement = this.mDb.createStatementWithParams(sql, params);
         sqlStmtArray.push(sqlStatement);
     }
     this.mDb.execTransaction(sqlStmtArray);
-    updateCallback(idList[0]);
+    updateCallback(params["id"]);
 };
+
 KmCreditCardTrns.prototype.delete = function(idList, deleteCallback) {
     var params = {};
     var keyList = [];

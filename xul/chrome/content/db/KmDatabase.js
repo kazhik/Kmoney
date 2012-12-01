@@ -619,11 +619,13 @@ KmDatabase.prototype.creditCardInsert = function(params, callback) {
 KmDatabase.prototype.creditCardUpdate = function(idList, params, callback) {
     function updateCallback(id) {
         this.dropTrigger("km_creditcard_trns_update");
+        this.dropTrigger("km_creditcard_payment_insert");
         this.dropTrigger("km_creditcard_payment_update");
         callback(id);
     }
     
     this.createTriggerOnUpdate("km_creditcard_trns", "km_creditcard_trns_update");
+    this.createTriggerOnInsert("km_creditcard_payment", "km_creditcard_payment_insert");
     this.createTriggerOnUpdate("km_creditcard_payment", "km_creditcard_payment_update");
     this.createTransactionId();
     this.creditCardTrns.update(idList, params, updateCallback.bind(this));

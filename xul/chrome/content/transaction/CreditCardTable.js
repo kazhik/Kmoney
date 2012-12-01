@@ -97,7 +97,7 @@ CreditCardTable.prototype.addRecord = function (params) {
 
     // 支払月が指定された場合は支払い情報も更新する
     var payMonthY = $$('km_edit_paymonthY').value;
-    if (parseInt(payMonthY) !== 0) {
+    if (isNumber(payMonthY)) {
         params['payMonth'] = payMonthY + "-" + $$('km_edit_paymonthM').value;
         params['payAmount'] = params['boughtAmount']; // 分割払いは当面対応しない
         params['remainingBalance'] = 0;
@@ -111,7 +111,7 @@ CreditCardTable.prototype.updateRecord = function (idList, params) {
         params['internal'] = $$('km_edit_internal').value;
         // 支払月が指定された場合は支払い情報も更新する
         var payMonthY = $$('km_edit_paymonthY').value;
-        if (parseInt(payMonthY) !== 0) {
+        if (isNumber(payMonthY)) {
             params['payMonth'] = payMonthY + "-" + $$('km_edit_paymonthM').value;
             params['payAmount'] = params['boughtAmount']; // 分割払いは当面対応しない(Issue #10)
             params['remainingBalance'] = 0;
