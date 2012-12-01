@@ -57,6 +57,8 @@ Kmoney.prototype.Startup = function () {
     }
     this.maFileExt = km_prefsBranch.getCharPref("sqliteFileExtensions").split(",");
     
+    this.changeUIElements($$('km_tabbox').selectedTab.id);
+
     if (km_prefsBranch.getBoolPref("openWithLastDb")) {
         if (this.mDb.openLastDb()) {
             this.loadData();
@@ -83,7 +85,6 @@ Kmoney.prototype.loadData = function() {
     this.populateInternalList();
     
     var tabId = $$('km_tabbox').selectedTab.id;
-    this.changeUpdateMenuItem(tabId);
     this.loadTable(tabId);
     km_debug("Kmoney.loadData end");
 };
@@ -387,7 +388,7 @@ Kmoney.prototype.openAssetTab = function() {
     $$('km_tabbox').selectedTab = $$('km_tab_asset');
 };
 
-Kmoney.prototype.changeUpdateMenuItem = function(tabId) {
+Kmoney.prototype.changeUIElements = function(tabId) {
     $$('kmc-update-bank').setAttribute("disabled", true);
     $$('kmc-update-creditcard').setAttribute("disabled", true);
     $$('kmc-update-emoney').setAttribute("disabled", true);
@@ -395,51 +396,23 @@ Kmoney.prototype.changeUpdateMenuItem = function(tabId) {
     $$('kmc-delete').setAttribute("disabled", false);
     $$('kmc-asset').setAttribute("disabled", true);
     if (tabId === 'km_tab_bank') {
-        $$('kmc-update-bank').setAttribute("disabled", false);
-        $$('kmc-asset').setAttribute("disabled", false);
-    } else if (tabId === 'km_tab_creditcard') {
-        $$('kmc-update-creditcard').setAttribute("disabled", false);
-    } else if (tabId === 'km_tab_emoney') {
-        $$('kmc-update-emoney').setAttribute("disabled", false);
-    } else if (tabId === 'km_tab_cash') {
-        $$('kmc-asset').setAttribute("disabled", false);
-    } else {
-        $$('km_menu_update').setAttribute("disabled", true);
-        $$('kmc-delete').setAttribute("disabled", true);
-    }
-};
-
-
-Kmoney.prototype.loadTable = function (tabId) {
-    switch (tabId) {
-    case 'km_tab_cash':
-        hideElements(['bankbox', 'creditcardbox', 'emoneybox', 'km_summary_condition',
-                      'km_edit_asset']);
-        showElements(['km_edit1', 'km_edit2', 'km_edit_buttons', 'km_query1', 'km_query2',
-                      'income_expense']);
-        $$('km_menu_data_duplicate').disabled = false;
-        this.populateQueryCondition('km_list_query_condition1');
-        this.populateQueryCondition('km_list_query_condition2');
-        this.setDefaultQueryCondition();
-        this.query();
-        break;
-    case 'km_tab_bank':
         hideElements(['creditcardbox', 'emoneybox', 'km_summary_condition', 'km_edit_asset']);
         showElements(['bankbox', 'km_edit1', 'km_edit2', 'income_expense',
                       'km_edit_buttons', 'km_query1', 'km_query2']);
         $$('km_menu_data_duplicate').disabled = false;
+        $$('kmc-update-bank').setAttribute("disabled", false);
+        $$('kmc-asset').setAttribute("disabled", false);
         this.populateQueryCondition('km_list_query_condition1');
         this.populateQueryCondition('km_list_query_condition2');
         $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.bank"), "bank");
         $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.bank"), "bank");
         this.setDefaultQueryCondition();
-        this.query();
-        break;
-    case 'km_tab_creditcard':
+    } else if (tabId === 'km_tab_creditcard') {
         hideElements(['bankbox', 'emoneybox', 'km_summary_condition', 'income_expense',
                       'km_edit_asset']);
         showElements(['creditcardbox', 'km_edit1', 'km_edit2', 'km_edit_buttons', 'km_query1',
                       'km_query2']);
+        $$('kmc-update-creditcard').setAttribute("disabled", false);
         $$('km_menu_data_duplicate').disabled = false;
         this.populateQueryCondition('km_list_query_condition1');
         this.populateQueryCondition('km_list_query_condition2');
@@ -448,21 +421,28 @@ Kmoney.prototype.loadTable = function (tabId) {
         $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.creditcard"),
                                                   "creditcard");
         this.setDefaultQueryCondition();
-        this.query();
-        break;
-    case 'km_tab_emoney':
+    } else if (tabId === 'km_tab_emoney') {
         hideElements(['bankbox', 'creditcardbox', 'km_summary_condition', 'km_edit_asset']);
         showElements(['emoneybox', 'km_edit1', 'km_edit2', 'km_edit_buttons',
                       'km_query1', 'km_query2', 'income_expense']);
         $$('km_menu_data_duplicate').disabled = false;
+        $$('kmc-update-emoney').setAttribute("disabled", false);
         this.populateQueryCondition('km_list_query_condition1');
         this.populateQueryCondition('km_list_query_condition2');
         $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.emoney"), "emoney");
         $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.emoney"), "emoney");
         this.setDefaultQueryCondition();
-        this.query();
-        break;
-    case 'km_tab_all':
+    } else if (tabId === 'km_tab_cash') {
+        hideElements(['bankbox', 'creditcardbox', 'emoneybox', 'km_summary_condition',
+                      'km_edit_asset']);
+        showElements(['km_edit1', 'km_edit2', 'km_edit_buttons', 'km_query1', 'km_query2',
+                      'income_expense']);
+        $$('km_menu_data_duplicate').disabled = false;
+        $$('kmc-asset').setAttribute("disabled", false);
+        this.populateQueryCondition('km_list_query_condition1');
+        this.populateQueryCondition('km_list_query_condition2');
+        this.setDefaultQueryCondition();
+    } else if (tabId === 'km_tab_all') {
         hideElements(['bankbox', 'creditcardbox', 'emoneybox', 'km_edit1', 'km_edit2',
                       'km_edit_asset', 'km_edit_buttons', 'km_summary_condition']);
         showElements(['km_query1', 'km_query2']);
@@ -478,33 +458,53 @@ Kmoney.prototype.loadTable = function (tabId) {
                                                   "creditcard");
         $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.emoney"), "emoney");
         this.setDefaultQueryCondition();
-        this.allView.load();
-        break;
-    case 'km_tab_summary':
+    } else if (tabId === 'km_tab_summary') {
         hideElements(['km_summary_bankbox', 'km_edit1', 'km_edit2', 'km_edit_asset',
                       'km_query1', 'km_query2', 'km_edit_buttons']);
         showElements(['km_summary_itembox', 'km_summary_condition', 'km_summary_viewmode']);
         $$('km_menu_data_duplicate').disabled = true;
+    } else if (tabId === 'km_tab_balance') {
+        hideElements(['km_summary_itembox', 'km_edit1', 'km_edit2', 'km_edit_asset',
+                      'km_query1', 'km_query2', 'km_edit_buttons',
+                      'km_summary_viewmode']);
+        showElements(['km_summary_bankbox', 'km_summary_condition_period', 'km_summary_condition']);
+        $$('km_menu_data_duplicate').disabled = true;
+    } else if (tabId === 'km_tab_asset') {
+        hideElements(['bankbox', 'creditcardbox', 'emoneybox', 'km_edit1', 'km_edit2',
+                      'km_summary_condition', 'km_query1', 'km_query2']);
+        showElements(['km_edit_buttons', 'km_edit_asset']);
+        $$('km_menu_data_duplicate').disabled = true;
+    } else {
+        $$('km_menu_update').setAttribute("disabled", true);
+        $$('kmc-delete').setAttribute("disabled", true);
+    }
+
+};
+
+
+Kmoney.prototype.loadTable = function (tabId) {
+    switch (tabId) {
+    case 'km_tab_cash':
+    case 'km_tab_bank':
+    case 'km_tab_creditcard':
+    case 'km_tab_emoney':
+        this.query();
+        break;
+    case 'km_tab_all':
+        this.allView.load();
+        break;
+    case 'km_tab_summary':
         this.populateSummaryPeriodList();
         this.populateSummaryUserList(tabId);
         this.summary.changeSummaryItemList();
         this.summary.load();
         break;
     case 'km_tab_balance':
-        hideElements(['km_summary_itembox', 'km_edit1', 'km_edit2', 'km_edit_asset',
-                      'km_query1', 'km_query2', 'km_edit_buttons',
-                      'km_summary_viewmode']);
-        showElements(['km_summary_bankbox', 'km_summary_condition_period', 'km_summary_condition']);
-        $$('km_menu_data_duplicate').disabled = true;
         this.populateSummaryPeriodList();
         this.populateSummaryUserList(tabId);
         this.balance.load();
         break;
     case 'km_tab_asset':
-        hideElements(['bankbox', 'creditcardbox', 'emoneybox', 'km_edit1', 'km_edit2',
-                      'km_summary_condition', 'km_query1', 'km_query2']);
-        showElements(['km_edit_buttons', 'km_edit_asset']);
-        $$('km_menu_data_duplicate').disabled = true;
         this.asset.load();
         break;
     }
@@ -537,7 +537,7 @@ Kmoney.prototype.query = function () {
 Kmoney.prototype.onTabSelected = function (e) {
     $$('km_status_sum').label = "";
     var tabId = $$('km_tabbox').selectedTab.id
-    this.changeUpdateMenuItem(tabId);
+    this.changeUIElements(tabId);
     this.loadTable(tabId);
 };
 
