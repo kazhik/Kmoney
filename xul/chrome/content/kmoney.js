@@ -395,6 +395,7 @@ Kmoney.prototype.changeUIElements = function(tabId) {
     $$('km_menu_update').setAttribute("disabled", false);
     $$('kmc-delete').setAttribute("disabled", false);
     $$('kmc-asset').setAttribute("disabled", true);
+
     if (tabId === 'km_tab_bank') {
         hideElements(['creditcardbox', 'emoneybox', 'km_summary_condition', 'km_edit_asset']);
         showElements(['bankbox', 'km_edit1', 'km_edit2', 'income_expense',
@@ -402,11 +403,8 @@ Kmoney.prototype.changeUIElements = function(tabId) {
         $$('km_menu_data_duplicate').disabled = false;
         $$('kmc-update-bank').setAttribute("disabled", false);
         $$('kmc-asset').setAttribute("disabled", false);
-        this.populateQueryCondition('km_list_query_condition1');
-        this.populateQueryCondition('km_list_query_condition2');
-        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.bank"), "bank");
-        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.bank"), "bank");
-        this.setDefaultQueryCondition();
+        
+        this.initQueryCondition(tabId);
     } else if (tabId === 'km_tab_creditcard') {
         hideElements(['bankbox', 'emoneybox', 'km_summary_condition', 'income_expense',
                       'km_edit_asset']);
@@ -414,24 +412,14 @@ Kmoney.prototype.changeUIElements = function(tabId) {
                       'km_query2']);
         $$('kmc-update-creditcard').setAttribute("disabled", false);
         $$('km_menu_data_duplicate').disabled = false;
-        this.populateQueryCondition('km_list_query_condition1');
-        this.populateQueryCondition('km_list_query_condition2');
-        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.creditcard"),
-                                                  "creditcard");
-        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.creditcard"),
-                                                  "creditcard");
-        this.setDefaultQueryCondition();
+        this.initQueryCondition(tabId);
     } else if (tabId === 'km_tab_emoney') {
         hideElements(['bankbox', 'creditcardbox', 'km_summary_condition', 'km_edit_asset']);
         showElements(['emoneybox', 'km_edit1', 'km_edit2', 'km_edit_buttons',
                       'km_query1', 'km_query2', 'income_expense']);
         $$('km_menu_data_duplicate').disabled = false;
         $$('kmc-update-emoney').setAttribute("disabled", false);
-        this.populateQueryCondition('km_list_query_condition1');
-        this.populateQueryCondition('km_list_query_condition2');
-        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.emoney"), "emoney");
-        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.emoney"), "emoney");
-        this.setDefaultQueryCondition();
+        this.initQueryCondition(tabId);
     } else if (tabId === 'km_tab_cash') {
         hideElements(['bankbox', 'creditcardbox', 'emoneybox', 'km_summary_condition',
                       'km_edit_asset']);
@@ -439,25 +427,13 @@ Kmoney.prototype.changeUIElements = function(tabId) {
                       'income_expense']);
         $$('km_menu_data_duplicate').disabled = false;
         $$('kmc-asset').setAttribute("disabled", false);
-        this.populateQueryCondition('km_list_query_condition1');
-        this.populateQueryCondition('km_list_query_condition2');
-        this.setDefaultQueryCondition();
+        this.initQueryCondition(tabId);
     } else if (tabId === 'km_tab_all') {
         hideElements(['bankbox', 'creditcardbox', 'emoneybox', 'km_edit1', 'km_edit2',
                       'km_edit_asset', 'km_edit_buttons', 'km_summary_condition']);
         showElements(['km_query1', 'km_query2']);
         $$('km_menu_data_duplicate').disabled = true;
-        this.populateQueryCondition('km_list_query_condition1');
-        this.populateQueryCondition('km_list_query_condition2');
-        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.bank"), "bank");
-        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.creditcard"),
-                                                  "creditcard");
-        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.emoney"), "emoney");
-        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.bank"), "bank");
-        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.creditcard"),
-                                                  "creditcard");
-        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.emoney"), "emoney");
-        this.setDefaultQueryCondition();
+        this.initQueryCondition(tabId);
     } else if (tabId === 'km_tab_summary') {
         hideElements(['km_summary_bankbox', 'km_edit1', 'km_edit2', 'km_edit_asset',
                       'km_query1', 'km_query2', 'km_edit_buttons']);
@@ -510,10 +486,19 @@ Kmoney.prototype.loadTable = function (tabId) {
     }
 
 };
-Kmoney.prototype.setDefaultQueryCondition = function () {
-    $$('km_list_query_condition1').selectedIndex = 1;
-    $$('km_list_query_andor').selectedIndex = 0;
-    $$('km_list_query_condition2').selectedIndex = 0;
+Kmoney.prototype.setDefaultQueryCondition = function (qcond1, qcondAndor, qcond2) {
+    if (qcond1 === -1) {
+        qcond1 = 1;
+    }
+    if (qcondAndor === -1) {
+        qcondAndor = 0;
+    }
+    if (qcond2 === -1) {
+        qcond2 = 0;
+    }
+    $$('km_list_query_condition1').selectedIndex = qcond1;
+    $$('km_list_query_andor').selectedIndex = qcondAndor;
+    $$('km_list_query_condition2').selectedIndex = qcond2;
     this.onQueryCondition1Select(false);
     this.onQueryCondition2Select(false);
 };
@@ -917,6 +902,64 @@ Kmoney.prototype.onUserSelect = function () {
     var tree = this.getSelectedTree();
     if (typeof tree.onUserSelect === 'function') {
         tree.onUserSelect();
+    }
+};
+
+Kmoney.prototype.initQueryCondition = function (tabId) {
+    var qcond1 = $$('km_list_query_condition1').selectedIndex;
+    var qcondChanged1 = false;
+    this.populateQueryCondition('km_list_query_condition1');
+    if (qcond1 === -1 || qcond1 > $$('km_list_query_condition1').itemCount - 1) {
+        $$('km_list_query_condition1').selectedIndex = 1;
+        qcondChanged1 = true;
+    } else {
+        $$('km_list_query_condition1').selectedIndex = qcond1;
+    }
+
+    var qcondAndOr = $$('km_list_query_andor').selectedIndex;
+    if (qcondAndOr === -1) {
+        $$('km_list_query_andor').selectedIndex = 0;
+    }
+    var qcond2 = $$('km_list_query_condition2').selectedIndex;
+    var qcondChanged2 = false;
+    this.populateQueryCondition('km_list_query_condition2');
+    if (qcond2 === -1 || qcond2 > $$('km_list_query_condition2').itemCount - 1) {
+        $$('km_list_query_condition2').selectedIndex = 0;
+        qcondChanged2 = true;
+    } else {
+        $$('km_list_query_condition2').selectedIndex = qcond2;
+    }
+    
+    if (tabId === 'km_tab_bank') {
+        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.bank"), "bank");
+        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.bank"), "bank");
+    } else if (tabId === 'km_tab_creditcard') {
+        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.creditcard"),
+                                                  "creditcard");
+        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.creditcard"),
+                                                  "creditcard");
+    } else if (tabId === 'km_tab_emoney') {
+        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.emoney"),
+                                                  "emoney");
+        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.emoney"),
+                                                  "emoney");
+    } else if (tabId === 'km_tab_all') {
+        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.bank"), "bank");
+        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.bank"), "bank");
+        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.creditcard"),
+                                                  "creditcard");
+        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.creditcard"),
+                                                  "creditcard");
+        $$('km_list_query_condition1').appendItem(km_getLStr("query_condition.emoney"),
+                                                  "emoney");
+        $$('km_list_query_condition2').appendItem(km_getLStr("query_condition.emoney"),
+                                                  "emoney");
+    }
+    if (qcondChanged1) {
+        this.onQueryCondition1Select(false);
+    }
+    if (qcondChanged2) {
+        this.onQueryCondition2Select(false);
     }
 };
 

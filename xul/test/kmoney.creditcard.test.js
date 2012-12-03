@@ -237,3 +237,53 @@ function testCreditCardUpdate() {
     app.mDb.creditCardInsert([params], insertCallback);
     
 }
+
+function testCreditCardDelete() {
+    function insertCallback(id) {
+        function deleteCallback() {
+            var sql = ["select id from km_creditcard_trns",
+                       "order by id desc limit 1"].join(" ");
+            var statement = execSelect(sql);
+            assert.notEqual(id, statement.row.id);
+            closeStatement(statement);
+            
+            // km_sys_undoに挿入されたレコードを確認
+            sql = ["select undo_sql from km_sys_undo A",
+                   "inner join km_sys_transaction B",
+                   "on B.id = A.db_transaction_id",
+                   "and B.id = (select max(id) from km_sys_transaction)"
+                   ].join(" ");
+            
+            statement = execSelect(sql);
+            var undo_sql = statement.row.undo_sql;
+            assert.contains("insert into km_creditcard_trns", undo_sql);
+            
+            statement = getNext(statement);
+            undo_sql = statement.row.undo_sql;
+            assert.contains("insert into km_creditcard_payment", undo_sql);
+            
+        }
+        var sql = ["select id from km_creditcard_trns",
+                   "order by id desc limit 1"].join(" ");
+        var statement = execSelect(sql);
+        assert.equal(id, statement.row.id);
+        closeStatement(statement);
+        app.mDb.creditCardDelete([id], deleteCallback);
+    }
+    var params = {
+        "transactionDate": '2012-12-31',
+        "itemId": 1,
+        "detail": 'testdata',
+        "boughtAmount": 3980,
+        "userId": 3,
+        "source": 4,
+        "cardId": 5,
+        "internal": 6,
+        "payAmount": 3955,
+        "payMonth": "2013-01",
+        "remainingBalance": 0
+    };
+    app.mDb.creditCardInsert([params], insertCallback);
+    
+}
+
