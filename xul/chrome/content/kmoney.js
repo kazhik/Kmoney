@@ -209,12 +209,6 @@ Kmoney.prototype.addEventListeners = function () {
     this.listeners['kmc-update-emoney'] = this.updateSelectedRow.bind(this, 'emoney');
     $$('kmc-update-emoney').addEventListener("command", this.listeners['kmc-update-emoney']);
 
-    this.listeners['km_tree_cash.dblclick'] = this.openAssetTab.bind(this);
-    $$('km_tree_cash').addEventListener("dblclick", this.listeners['km_tree_cash.dblclick']);
-
-    this.listeners['km_tree_bank.dblclick'] = this.openAssetTab.bind(this);
-    $$('km_tree_bank').addEventListener("dblclick", this.listeners['km_tree_bank.dblclick']);
-
     this.listeners['kmc-asset'] = this.openAssetTab.bind(this);
     $$('kmc-asset').addEventListener("command", this.listeners['kmc-asset']);
 
@@ -302,10 +296,6 @@ Kmoney.prototype.removeEventListeners = function () {
 
     $$('kmc-update-emoney').removeEventListener("command", this.listeners['kmc-update-emoney']);
     
-    $$('km_tree_cash').removeEventListener("dblclick", this.listeners['km_tree_cash.dblclick']);
-
-    $$('km_tree_bank').removeEventListener("dblclick", this.listeners['km_tree_bank.dblclick']);
-
     $$('kmc-asset').removeEventListener("command", this.listeners['kmc-asset']);
 
     $$('km_tree_all').remoteEventListener("dblclick", this.listeners['km_tree_all.dblclick']);
