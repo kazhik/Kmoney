@@ -16,8 +16,7 @@ var KmGlobals = {
 
     //these are the preferences which are being observed and which need to be initially read.
     observedPrefs: ["sqliteFileExtensions", "jsonMruData",
-                "posInTargetApp" /* this one for firefox only*/ ,
-                "handleADS" /* this one for Windows only*/ ],
+                "posInTargetApp" /* this one for firefox only*/],
 
     tempNamePrefix: "__temp__",
     sbPanelDisplay: null,

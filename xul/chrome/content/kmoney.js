@@ -49,6 +49,11 @@ Kmoney.prototype.Startup = function () {
     
     this.addEventListeners();
 
+    //To set our variables, etc. we fool observe into believing that the following preferences have changed.
+    for(var i = 0; i < KmGlobals.observedPrefs.length; i++) {
+        this.observe("", "nsPref:changed", KmGlobals.observedPrefs[i]);
+    }
+    
     if (!km_prefsBranch.getBoolPref("view.creditcard")) {
         $$('km_tab_creditcard').hidden = true;
     }
@@ -66,6 +71,26 @@ Kmoney.prototype.Startup = function () {
     }
     km_debug("Kmoney.Startup end");
 };
+
+Kmoney.prototype.observe = function (subject, topic, data) {
+    if (topic != "nsPref:changed") return;
+
+    switch (data) {
+        case "jsonMruData":
+            KmGlobals.mru.getList();
+            break;
+        case "sqliteFileExtensions":
+            var sExt = km_prefsBranch.getCharPref("sqliteFileExtensions");
+            this.maFileExt = sExt.split(",");
+            for (var iC = 0; iC < this.maFileExt.length; iC++) {
+                this.maFileExt[iC] = this.maFileExt[iC].trim();
+            }
+            break;
+        default:
+            break;
+    }
+};
+
 Kmoney.prototype.loadData = function() {
     km_debug("Kmoney.loadData start");
     
