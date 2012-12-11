@@ -10,13 +10,10 @@
     window.addEventListener("unload", net.kazhik.kmoney.shutdown, false);
   ]]>
   </script>
-  <stringbundleset id="stringbundleset">
-    <stringbundle id="kmoney-strings" src="chrome://kmoney/locale/overlay.properties"/>
-  </stringbundleset>
   <menupopup id="menu_ToolsPopup">
     <menuitem oncommand="net.kazhik.kmoney.open()"
       label="Kmoney" id="menuitem-kmoney"
-      insertafter="devToolsSeparator" class="menuitem-iconic"
+      class="menuitem-iconic"
       accesskey="K"/>
   </menupopup>
   
