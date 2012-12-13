@@ -12,9 +12,6 @@ SummaryView.prototype.initialize = function (db) {
     this.listeners['km_summary_item.command'] = this.onConditionChanged.bind(this);
     $$('km_summary_item').addEventListener("command", this.listeners['km_summary_item.command']);
 
-    this.listeners['km_summary_user.command'] = this.onConditionChanged.bind(this);
-    $$('km_summary_user').addEventListener("command", this.listeners['km_summary_user.command']);
-
     this.listeners['km_summary_monthfromY.command'] = this.onConditionChanged.bind(this);
     $$('km_summary_monthfromY').addEventListener("command",
                                                  this.listeners['km_summary_monthfromY.command']);
@@ -35,9 +32,6 @@ SummaryView.prototype.initialize = function (db) {
 SummaryView.prototype.terminate = function () {
     $$('km_summary_item').removeEventListener("command",
                                               this.listeners['km_summary_item.command']);
-
-    $$('km_summary_user').removeEventListener("command",
-                                              this.listeners['km_summary_user.command']);
 
     $$('km_summary_monthfromY').removeEventListener("command",
                                                  this.listeners['km_summary_monthfromY.command']);

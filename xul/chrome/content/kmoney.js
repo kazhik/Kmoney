@@ -240,6 +240,9 @@ Kmoney.prototype.addEventListeners = function () {
     this.listeners['km_tree_all.dblclick'] = this.openEditTab.bind(this);
     $$('km_tree_all').addEventListener("dblclick", this.listeners['km_tree_all.dblclick']);
     
+    this.listeners['km_summary_user.command'] = this.onSummaryUserSelect.bind(this);
+    $$('km_summary_user').addEventListener("command", this.listeners['km_summary_user.command']);
+
 };
 Kmoney.prototype.removeEventListeners = function () {
     $$('kmc-openDb').removeEventListener("command", this.listeners['kmc-openDb.command']);
@@ -324,6 +327,9 @@ Kmoney.prototype.removeEventListeners = function () {
     $$('kmc-asset').removeEventListener("command", this.listeners['kmc-asset']);
 
     $$('km_tree_all').remoteEventListener("dblclick", this.listeners['km_tree_all.dblclick']);
+
+    $$('km_summary_user').remoteEventListener("command",
+                                              this.listeners['km_summary_user.command']);
 };
 Kmoney.prototype.openSetMaster = function () {
     if (!this.mDb.isConnected()) {
@@ -347,7 +353,23 @@ Kmoney.prototype.openSetUser = function () {
     window.openDialog("chrome://kmoney/content/SwitchUserDialog.xul", "SwitchUserDialog",
         "chrome, resizable, centerscreen, modal, dialog", this.users, this.currentUser);
 
-    this.populateUserList();
+    for (var i = 0; $$('km_summary_user').itemCount; i++) {
+        var item = $$('km_summary_user').getItemAtIndex(i);
+        if (item.value == this.currentUser['user']) {
+            $$('km_summary_user').selectedIndex = i;
+            break;
+        }
+    }
+    this.onSummaryUserSelect();
+    
+    for (var i = 0; $$('km_edit_user').itemCount; i++) {
+        var item = $$('km_edit_user').getItemAtIndex(i);
+        if (item.value == this.currentUser['user']) {
+            $$('km_edit_user').selectedIndex = i;
+            break;
+        }
+    }
+    this.onUserSelect();
 };
 Kmoney.prototype.openSetPrefs = function () {
     var features = "chrome,titlebar,toolbar,centerscreen,modal";
@@ -914,9 +936,29 @@ Kmoney.prototype.undo = function() {
 };
 
 Kmoney.prototype.onUserSelect = function () {
-    var tree = this.getSelectedTree();
-    if (typeof tree.onUserSelect === 'function') {
-        tree.onUserSelect();
+    switch ($$('km_tabbox').selectedTab.id) {
+    case 'km_tab_cash':
+        this.cashTree.onUserSelect();
+        break;
+    case 'km_tab_bank':
+        this.bankTree.onUserSelect();
+        break;
+    case 'km_tab_creditcard':
+        this.creditcardTree.onUserSelect();
+        break;
+    case 'km_tab_emoney':
+        this.emoneyTree.onUserSelect();
+        break;
+    }
+};
+Kmoney.prototype.onSummaryUserSelect = function () {
+    var tabId = $$('km_tabbox').selectedTab.id;
+    if (tabId === 'km_tab_summary') {
+        this.summary.onConditionChanged();
+        
+    } else if (tabId === 'km_tab_balance') {
+        this.balance.onUserSelect();
+        
     }
 };
 

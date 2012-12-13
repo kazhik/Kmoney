@@ -9,9 +9,6 @@ BalanceView.prototype.initialize = function (db) {
     this.listeners['km_summary_bank.command'] = this.onGraphItemChanged.bind(this);
     $$('km_summary_bank').addEventListener("command", this.listeners['km_summary_bank.command']);
 
-    this.listeners['km_summary_user.command'] = this.onUserSelect.bind(this);
-    $$('km_summary_user').addEventListener("command", this.listeners['km_summary_user.command']);
-
     this.listeners['km_summary_monthfromY.command'] = this.onGraphItemChanged.bind(this);
     $$('km_summary_monthfromY').addEventListener("command",
                                                  this.listeners['km_summary_monthfromY.command']);
@@ -44,8 +41,8 @@ BalanceView.prototype.onGraphItemChanged = function () {
     this.drawGraph();
 };
 BalanceView.prototype.onUserSelect = function () {
-    this.drawGraph();
     this.populateBankList();
+    this.drawGraph();
 };
 BalanceView.prototype.populateBankList = function () {
     var userId = $$('km_summary_user').value;
@@ -60,8 +57,8 @@ BalanceView.prototype.populateBankList = function () {
     $$("km_summary_bank").selectedIndex = 0;
 };
 BalanceView.prototype.load = function() {
-    this.drawGraph();
     this.populateBankList();
+    this.drawGraph();
 }
 BalanceView.prototype.loadTable = function () {
     alert("Not implemented yet");
