@@ -13,7 +13,7 @@ var KmAppInfo = {
   extCreator: "kazhik",
 
   webpages: {
-    github: "http://kazhik.github.com/Kmoney/"
+    github: "http://kazhik.github.com/Kmoney/usermanual.html"
   },
   
   setVersion: function() {

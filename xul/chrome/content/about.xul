@@ -18,7 +18,7 @@
 
   <groupbox align="center" orient="horizontal">
     <vbox>
-      <label value="Kmoney" class="text-link" href="https://github.com/kazhik/Kmoney"
+      <label value="Kmoney" class="text-link" href="https://kazhik.github.com/Kmoney"
             style="font-weight: bold; font-size: x-large;"/>
       <text value="&version; "/>
       <text id="about-version"/>
