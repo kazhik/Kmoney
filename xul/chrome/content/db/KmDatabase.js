@@ -67,7 +67,7 @@ KmDatabase.prototype.openLastDb = function () {
     }
 
     //Last used DB found, open this DB
-    var newfile = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
+    var newfile = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
     try {
         newfile.initWithPath(sPath);
     } catch (e) {

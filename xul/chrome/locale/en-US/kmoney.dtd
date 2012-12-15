@@ -95,7 +95,6 @@
 <!ENTITY column.bankname          "BankName">
 <!ENTITY column.cardname          "CardName">
 <!ENTITY column.emoneyname          "EMoneyName">
-<!ENTITY column.userid          "UserId">
 <!ENTITY column.username          "UserName">
 <!ENTITY column.itemname          "ItemName">
 <!ENTITY column.internal          "Internal">
