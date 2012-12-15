@@ -12,20 +12,9 @@ SummaryView.prototype.initialize = function (db) {
     this.listeners['km_summary_item.command'] = this.onConditionChanged.bind(this);
     $$('km_summary_item').addEventListener("command", this.listeners['km_summary_item.command']);
 
-    this.listeners['km_summary_monthfromY.command'] = this.onConditionChanged.bind(this);
-    $$('km_summary_monthfromY').addEventListener("command",
-                                                 this.listeners['km_summary_monthfromY.command']);
-    this.listeners['km_summary_monthfromM.command'] = this.onConditionChanged.bind(this);
-    $$('km_summary_monthfromM').addEventListener("command",
-                                                 this.listeners['km_summary_monthfromM.command']);
-    this.listeners['km_summary_monthtoY.command'] = this.onConditionChanged.bind(this);
-    $$('km_summary_monthtoY').addEventListener("command",
-                                                 this.listeners['km_summary_monthtoY.command']);
-    this.listeners['km_summary_monthtoM.command'] = this.onConditionChanged.bind(this);
-    $$('km_summary_monthtoM').addEventListener("command",
-                                                 this.listeners['km_summary_monthtoM.command']);
     this.listeners['km_summary_viewmode.command'] = this.onViewModeChanged.bind(this);
-    $$('km_summary_viewmode').addEventListener("command", this.listeners['km_summary_viewmode.command']);
+    $$('km_summary_viewmode').addEventListener("command",
+                                               this.listeners['km_summary_viewmode.command']);
 
                                                  
 };
@@ -33,14 +22,6 @@ SummaryView.prototype.terminate = function () {
     $$('km_summary_item').removeEventListener("command",
                                               this.listeners['km_summary_item.command']);
 
-    $$('km_summary_monthfromY').removeEventListener("command",
-                                                 this.listeners['km_summary_monthfromY.command']);
-    $$('km_summary_monthfromM').removeEventListener("command",
-                                                 this.listeners['km_summary_monthfromM.command']);
-    $$('km_summary_monthtoY').removeEventListener("command",
-                                                 this.listeners['km_summary_monthtoY.command']);
-    $$('km_summary_monthtoM').removeEventListener("command",
-                                                 this.listeners['km_summary_monthtoM.command']);
     $$('km_summary_viewmode').removeEventListener("command",
                                                   this.listeners['km_summary_viewmode.command']);
 };

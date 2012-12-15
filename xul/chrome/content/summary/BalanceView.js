@@ -9,33 +9,11 @@ BalanceView.prototype.initialize = function (db) {
     this.listeners['km_summary_bank.command'] = this.onGraphItemChanged.bind(this);
     $$('km_summary_bank').addEventListener("command", this.listeners['km_summary_bank.command']);
 
-    this.listeners['km_summary_monthfromY.command'] = this.onGraphItemChanged.bind(this);
-    $$('km_summary_monthfromY').addEventListener("command",
-                                                 this.listeners['km_summary_monthfromY.command']);
-    this.listeners['km_summary_monthfromM.command'] = this.onGraphItemChanged.bind(this);
-    $$('km_summary_monthfromM').addEventListener("command",
-                                                 this.listeners['km_summary_monthfromM.command']);
-    this.listeners['km_summary_monthtoY.command'] = this.onGraphItemChanged.bind(this);
-    $$('km_summary_monthtoY').addEventListener("command",
-                                                 this.listeners['km_summary_monthtoY.command']);
-    this.listeners['km_summary_monthtoM.command'] = this.onGraphItemChanged.bind(this);
-    $$('km_summary_monthtoM').addEventListener("command",
-                                                 this.listeners['km_summary_monthtoM.command']);
-
 };
 BalanceView.prototype.terminate = function () {
-    $$('km_summary_bank').removeEventListener("command", this.listeners['km_summary_bank.command']);
+    $$('km_summary_bank').removeEventListener("command",
+                                              this.listeners['km_summary_bank.command']);
 
-    $$('km_summary_user').removeEventListener("command", this.listeners['km_summary_user.command']);
-
-    $$('km_summary_monthfromY').removeEventListener("command",
-                                                 this.listeners['km_summary_monthfromY.command']);
-    $$('km_summary_monthfromM').removeEventListener("command",
-                                                 this.listeners['km_summary_monthfromM.command']);
-    $$('km_summary_monthtoY').removeEventListener("command",
-                                                 this.listeners['km_summary_monthtoY.command']);
-    $$('km_summary_monthtoM').removeEventListener("command",
-                                                 this.listeners['km_summary_monthtoM.command']);
 };
 BalanceView.prototype.onGraphItemChanged = function () {
     this.drawGraph();

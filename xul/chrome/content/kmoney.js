@@ -243,6 +243,19 @@ Kmoney.prototype.addEventListeners = function () {
     this.listeners['km_summary_user.command'] = this.onSummaryUserSelect.bind(this);
     $$('km_summary_user').addEventListener("command", this.listeners['km_summary_user.command']);
 
+    this.listeners['km_summary_monthfromY.command'] = this.onSummaryPeriodChanged.bind(this);
+    $$('km_summary_monthfromY').addEventListener("command",
+                                                 this.listeners['km_summary_monthfromY.command']);
+    this.listeners['km_summary_monthfromM.command'] = this.onSummaryPeriodChanged.bind(this);
+    $$('km_summary_monthfromM').addEventListener("command",
+                                                 this.listeners['km_summary_monthfromM.command']);
+    this.listeners['km_summary_monthtoY.command'] = this.onSummaryPeriodChanged.bind(this);
+    $$('km_summary_monthtoY').addEventListener("command",
+                                                 this.listeners['km_summary_monthtoY.command']);
+    this.listeners['km_summary_monthtoM.command'] = this.onSummaryPeriodChanged.bind(this);
+    $$('km_summary_monthtoM').addEventListener("command",
+                                                 this.listeners['km_summary_monthtoM.command']);
+
 };
 Kmoney.prototype.removeEventListeners = function () {
     $$('kmc-openDb').removeEventListener("command", this.listeners['kmc-openDb.command']);
@@ -330,6 +343,14 @@ Kmoney.prototype.removeEventListeners = function () {
 
     $$('km_summary_user').remoteEventListener("command",
                                               this.listeners['km_summary_user.command']);
+    $$('km_summary_monthfromY').removeEventListener("command",
+                                                 this.listeners['km_summary_monthfromY.command']);
+    $$('km_summary_monthfromM').removeEventListener("command",
+                                                 this.listeners['km_summary_monthfromM.command']);
+    $$('km_summary_monthtoY').removeEventListener("command",
+                                                 this.listeners['km_summary_monthtoY.command']);
+    $$('km_summary_monthtoM').removeEventListener("command",
+                                                 this.listeners['km_summary_monthtoM.command']);
 };
 Kmoney.prototype.openSetMaster = function () {
     if (!this.mDb.isConnected()) {
@@ -961,6 +982,17 @@ Kmoney.prototype.onSummaryUserSelect = function () {
         
     }
 };
+Kmoney.prototype.onSummaryPeriodChanged = function() {
+    var tabId = $$('km_tabbox').selectedTab.id;
+    if (tabId === 'km_tab_summary') {
+        this.summary.onConditionChanged();
+        
+    } else if (tabId === 'km_tab_balance') {
+        this.balance.onGraphItemChanged();
+        
+    }
+    
+}
 
 Kmoney.prototype.initQueryCondition = function (tabId) {
     var qcond1 = $$('km_list_query_condition1').selectedIndex;
