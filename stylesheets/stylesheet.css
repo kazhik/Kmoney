@@ -59,6 +59,9 @@ body {
 a {
   color: #2879d0;
 }
+a#root {
+  color: white;
+}
 a:hover {
   color: #2268b2;
 }
