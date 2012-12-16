@@ -56,7 +56,7 @@ ItemMaster.prototype.updateRecord = function() {
     
 };
 
-ItemMaster.prototype.openMergeDialog = function() {
+ItemMaster.prototype.openMergeDialog = function(itemId) {
     var retVals = { itemid: null };
     
     var mergeToList = [];
@@ -71,28 +71,26 @@ ItemMaster.prototype.openMergeDialog = function() {
 };
 ItemMaster.prototype.deleteRecord = function() {
     function checkTrnsCallback(count) {
-        function checkImportCallback(count) {
-            function deleteCallback() {
+        function deleteCallback() {
+            function deleteImportCallback() {
                 this.load();
-                
             }
-            var newItemId = null;
-            // トランザクションデータが存在する場合はマージ先を指定させる
-            if (count > 0) {
-                newItemId = this.openMergeDialog();
-            }
-            this.mDb.itemInfo.delete(itemId, newItemId, deleteCallback.bind(this));
+            // インポート設定も削除
+            this.mDb.import.deleteItem(itemId, deleteImportCallback.bind(this));
         }
-        if (count === 0) {
-            this.mDb.import.checkItem(itemId, checkImportCallback.bind(this));
+        
+        var newItemId = null;
+        // トランザクションデータが存在する場合はマージ先を指定させる
+        if (count > 0) {
+            newItemId = this.openMergeDialog(itemId);
         }
-        checkImportCallback(1);
+        this.mDb.itemInfo.delete(itemId, newItemId, deleteCallback.bind(this));
     }                   
     var itemId = this.mTree.getSelectedRowValue('master_item_id');
     if (itemId === "") {
         return;
     }
-    // 削除する費目のトランザクションデータ、インポート設定が存在するかどうかチェック
+    // 削除する費目のトランザクションデータが存在するかどうかチェック
     this.mDb.transactions.checkItem(itemId, checkTrnsCallback.bind(this));
 
 };

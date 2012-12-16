@@ -52,6 +52,7 @@ BalanceView.prototype.drawGraph = function () {
                     balance: '#8A2BE2'
                 },
                 show_vertical_labels: false,
+                max_bar_size: 100,
                 bar_labels: true,
                 labels: labelArray
             });

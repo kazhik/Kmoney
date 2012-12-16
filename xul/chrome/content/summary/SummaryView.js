@@ -104,6 +104,7 @@ SummaryView.prototype.drawGraph = function () {
                 expense: '#990000'
             },
             show_vertical_labels: false,
+            max_bar_size: 100,
             labels: labelArray,
             bar_labels: true
         });
