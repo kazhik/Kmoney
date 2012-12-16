@@ -530,7 +530,6 @@ Kmoney.prototype.loadTable = function (tabId) {
     case 'km_tab_summary':
         this.populateSummaryPeriodList();
         this.populateSummaryUserList(tabId);
-        this.summary.changeSummaryItemList();
         this.summary.load();
         break;
     case 'km_tab_balance':
@@ -678,6 +677,7 @@ Kmoney.prototype.populateItemList = function () {
     var itemList = this.mDb.itemInfo.mItemList;
     $$('km_edit_item').removeAllItems();
     $$('km_summary_item').removeAllItems();
+    $$('km_summary_item').appendItem(km_getLStr('query_condition.none'), 0);
     for (var i = 0; i < itemList.length; i++) {
         $$('km_edit_item').appendItem(itemList[i][1], itemList[i][0]);
         $$('km_summary_item').appendItem(itemList[i][1], itemList[i][0]);

@@ -26,7 +26,6 @@ SummaryView.prototype.terminate = function () {
                                                   this.listeners['km_summary_viewmode.command']);
 };
 SummaryView.prototype.onViewModeChanged = function () {
-    this.changeSummaryItemList();
     this.load();
 };
 SummaryView.prototype.changeSummaryItemList = function () {

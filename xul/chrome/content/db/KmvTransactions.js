@@ -126,15 +126,27 @@ KmvTransactions.prototype.loadSumPerMonth = function(params, loadCallback) {
                         "sum(A.expense - A.income) as sumpermonth",
                         "from kmv_transactions A",
                         "where transaction_month >= :periodFrom",
-                        "and transaction_month <= :periodTo",
-                        "and A.item_id = :itemId"].join(" ");
+                        "and transaction_month <= :periodTo"].join(" ");
     // ユーザが指定された場合、家計内フラグが「自己」のデータは集計に含めない
     if (params["userId"] !== 0) {
-        sql += " and A.user_id = :userId and A.internal <> 1";
+        if (params["itemId"] !== 0) {
+            sql += " and A.user_id = :userId and A.internal <> 1 and A.item_id = :itemId ";
+        // 費目が指定されない場合、集計対象の費目だけを集計する
+        } else {
+            sql += " and A.user_id = :userId and A.internal <> 1 ";
+            sql += " and A.sum_include = 1 ";
+        }
     } else {
-        sql += " and A.internal = 0 ";
+        if (params["itemId"] !== 0) {
+            sql += " and A.item_id = :itemId and A.internal = 0 ";
+        } else {
+            sql += " and A.internal = 0 and A.sum_include = 1 ";
+        }
     }
-    sql += " group by transaction_month, item_id ";
+    sql += " group by transaction_month ";
+    if (params["itemId"] !== 0) {
+        sql += ", item_id ";
+    }
 
     km_debug(sql);
     this.mDb.selectWithParams(sql, params);
