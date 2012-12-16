@@ -65,6 +65,7 @@ KmEMoneyInfo.prototype.update = function(id, params, updateCallback) {
       + "user_id = :userId "
       + "where id = :id";
 
+    params["id"] = id;
     km_log(sql);
     var sqlStatement = this.mDb.createStatementWithParams(sql, params);
     this.mDb.execTransaction([sqlStatement]);

@@ -53,7 +53,7 @@ UserMaster.prototype.updateRecord = function () {
 };
 
 UserMaster.prototype.deleteRecord = function () {
-    function updateCallback() {
+    function deleteCallback() {
         this.load();
     }
     var id = this.mTree.getSelectedRowValue("master_user_id");
