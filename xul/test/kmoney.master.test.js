@@ -40,7 +40,7 @@ function emoneyMasterTest(dialog) {
     action.clickOn($('km_button_master_update', dialog));
     rowCnt = emoneyTree.treeView.rowCount;
     emoneyTree.treeView.selection.select(rowCnt - 1);
-//    assert.equal("emoney2", emoneyTree.getSelectedRowValue('master_emoney_name'));
+    assert.equal("emoney2", emoneyTree.getSelectedRowValue('master_emoney_name'));
     assert.equal("1", emoneyTree.getSelectedRowValue('master_emoney_userid'));
 
     // 削除
