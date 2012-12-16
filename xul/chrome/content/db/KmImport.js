@@ -64,3 +64,17 @@ KmImport.prototype.delete = function(id, deleteCallback) {
     this.mDb.execTransaction([sqlStatement]);
     deleteCallback();
 };
+KmImport.prototype.checkItem = function(itemId, checkCallback) {
+    var sql = "select count(*) from km_import where item_id = :item_id";
+             
+    var stmt = this.mDb.createStatement(sql);
+    if (stmt === null) {
+        checkCallback(0);
+        return;
+    }
+    stmt.params["item_id"] = itemId;
+    this.mDb.execSelect(stmt);
+    var records = this.mDb.getRecords();
+    checkCallback(parseInt(records[0][0]));
+    
+};
