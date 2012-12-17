@@ -1,25 +1,25 @@
-function CreditCardTable() {
+function CreditCardTransaction() {
     Transaction.call(this, "km_tree_creditcard");
     this.listeners = [];
 }
 
-CreditCardTable.prototype = Object.create(Transaction.prototype);
+CreditCardTransaction.prototype = Object.create(Transaction.prototype);
 
-CreditCardTable.prototype.initialize = function (db) {
+CreditCardTransaction.prototype.initialize = function (db) {
     Transaction.prototype.initialize.call(this, db);
 
     this.listeners['km_tree_creditcard.select'] = this.onSelect.bind(this);
     $$('km_tree_creditcard').addEventListener("select", this.listeners['km_tree_creditcard.select']);
     
 };
-CreditCardTable.prototype.terminate = function () {
+CreditCardTransaction.prototype.terminate = function () {
     $$('km_tree_creditcard').removeEventListener("select", this.listeners['km_tree_creditcard.select']);
     
 };
 
 
-CreditCardTable.prototype.load = function (sortParams) {
-    km_debug("CreditCardTable.load start");
+CreditCardTransaction.prototype.load = function (sortParams) {
+    km_debug("CreditCardTransaction.load start");
     this.setDuplicate(false);
     if (sortParams === undefined) {
         sortParams = this.mTree.getCurrentSortParams();
@@ -36,21 +36,21 @@ CreditCardTable.prototype.load = function (sortParams) {
     
     this.mDb.creditCardTrns.load(sortParams, queryParams, this.loadCallback.bind(this));
     this.onUserSelect();
-    this.initPayMonth();
+//    this.initPayMonth();
 
-    km_debug("CreditCardTable.load end");
+    km_debug("CreditCardTransaction.load end");
 
 };
-CreditCardTable.prototype.loadDuplicate = function() {
+CreditCardTransaction.prototype.loadDuplicate = function() {
     this.setDuplicate(true);
     this.mDb.creditCardTrns.loadDuplicate(this.loadCallback.bind(this));
     this.onUserSelect();
-    this.initPayMonth();
+//    this.initPayMonth();
 };
-CreditCardTable.prototype.openEdit = function (id) {
+CreditCardTransaction.prototype.openEdit = function (id) {
     this.mTree.ensureRowIsVisible('id', id);
 };
-CreditCardTable.prototype.onSelect = function () {
+CreditCardTransaction.prototype.onSelect = function () {
     $$('km_edit_transactionDate').value = this.mTree.getSelectedRowValue('transaction_date');
     $$('km_edit_item').value = this.mTree.getSelectedRowValue('item_id');
     $$('km_edit_detail').value = this.mTree.getSelectedRowValue('detail');
@@ -74,14 +74,14 @@ CreditCardTable.prototype.onSelect = function () {
 
 };
 
-CreditCardTable.prototype.initPayMonth = function () {
+CreditCardTransaction.prototype.initPayMonth = function () {
     var thisMonth = new Date();
     $$('km_edit_paymonthY').value = thisMonth.getFullYear();
     $$('km_edit_paymonthM').value = thisMonth.getMonth();
     
 };
 
-CreditCardTable.prototype.onUserSelect = function () {
+CreditCardTransaction.prototype.onUserSelect = function () {
     var cardList = this.mDb.creditCardInfo.getCardList($$('km_edit_user').value);
     
     $$("km_edit_creditcard").removeAllItems();
@@ -90,7 +90,7 @@ CreditCardTable.prototype.onUserSelect = function () {
     }
     $$("km_edit_creditcard").selectedIndex = 0;
 };
-CreditCardTable.prototype.addRecord = function (params) {
+CreditCardTransaction.prototype.addRecord = function (params) {
     params['boughtAmount'] = params['amount'];
     params['cardId'] = $$('km_edit_creditcard').value;
     params['internal'] = 0;
@@ -104,7 +104,7 @@ CreditCardTable.prototype.addRecord = function (params) {
     }
     this.mDb.creditCardInsert([params], this.insertCallback.bind(this));
 };
-CreditCardTable.prototype.updateRecord = function (idList, params) {
+CreditCardTransaction.prototype.updateRecord = function (idList, params) {
     if (Object.keys(params).length > 1) {
         params['boughtAmount'] = params['amount'];
         params['cardId'] = $$('km_edit_creditcard').value;
@@ -121,7 +121,7 @@ CreditCardTable.prototype.updateRecord = function (idList, params) {
     this.mDb.creditCardUpdate(idList, params, this.updateCallback.bind(this));
 
 };
-CreditCardTable.prototype.deleteRecord = function (idList) {
+CreditCardTransaction.prototype.deleteRecord = function (idList) {
     this.mDb.creditCardDelete(idList, this.deleteCallback.bind(this));
 
 };

@@ -8,10 +8,10 @@ var kmoney;
    
 function Kmoney() {
     this.mDb = null;
-    this.cashTree = null;
-    this.creditcardTree = null;
-    this.bankTree = null;
-    this.emoneyTree = null;
+    this.cashTrns = null;
+    this.creditcardTrns = null;
+    this.bankTrns = null;
+    this.emoneyTrns = null;
     this.allView = null;
     this.listeners = [];
     this.summary = null;
@@ -36,13 +36,13 @@ function Shutdown() {
 
 Kmoney.prototype.Startup = function () {
     km_debug("Kmoney.Startup start");
-    this.cashTree = new CashTable();
-    this.creditcardTree = new CreditCardTable();
-    this.emoneyTree = new EMoneyTable();
-    this.bankTree = new BankTable();
+    this.cashTrns = new CashTransaction();
+    this.creditcardTrns = new CreditCardTransaction();
+    this.emoneyTrns = new EMoneyTransaction();
+    this.bankTrns = new BankTransaction();
     this.summary = new SummaryView();
     this.balance = new BalanceView();
-    this.allView = new AllView();
+    this.allView = new AllTransaction();
     this.asset = new Asset();
     
     this.mDb = new KmDatabase();
@@ -96,10 +96,10 @@ Kmoney.prototype.loadData = function() {
     
     this.mDb.loadMasterData();
     
-    this.cashTree.initialize(this.mDb);
-    this.creditcardTree.initialize(this.mDb);
-    this.emoneyTree.initialize(this.mDb);
-    this.bankTree.initialize(this.mDb);
+    this.cashTrns.initialize(this.mDb);
+    this.creditcardTrns.initialize(this.mDb);
+    this.emoneyTrns.initialize(this.mDb);
+    this.bankTrns.initialize(this.mDb);
     this.summary.initialize(this.mDb);
     this.balance.initialize(this.mDb);
     this.allView.initialize(this.mDb);
@@ -401,16 +401,16 @@ Kmoney.prototype.openEditTab = function () {
     function getCallback(trnsType, id) {
         if (trnsType === "realmoney") {
             $$('km_tabbox').selectedTab = $$('km_tab_cash');
-            this.cashTree.openEdit(id);
+            this.cashTrns.openEdit(id);
         } else if (trnsType === "bank") {
             $$('km_tabbox').selectedTab = $$('km_tab_bank');
-            this.bankTree.openEdit(id);
+            this.bankTrns.openEdit(id);
         } else if (trnsType === "creditcard") {
             $$('km_tabbox').selectedTab = $$('km_tab_creditcard');
-            this.creditcardTree.openEdit(id);
+            this.creditcardTrns.openEdit(id);
         } else if (trnsType === "emoney") {
             $$('km_tabbox').selectedTab = $$('km_tab_emoney');
-            this.emoneyTree.openEdit(id);
+            this.emoneyTrns.openEdit(id);
         }
         
     }
@@ -421,10 +421,10 @@ Kmoney.prototype.openAssetTab = function() {
     var currentTab;
     var tabId = $$('km_tabbox').selectedTab.id;
     if (tabId === 'km_tab_cash') {
-        currentTab = this.cashTree;
+        currentTab = this.cashTrns;
         $$('km_read_transactionType').value = 1;
     } else if (tabId === 'km_tab_bank') {
-        currentTab = this.bankTree;
+        currentTab = this.bankTrns;
         $$('km_read_transactionType').value = 2;
     } else {
         return;
@@ -560,7 +560,7 @@ Kmoney.prototype.setDefaultQueryCondition = function (qcond1, qcondAndor, qcond2
     this.onQueryCondition2Select(false);
 };
 Kmoney.prototype.query = function () {
-    var tree = this.getSelectedTree();
+    var tree = this.getCurrentTabObj();
     if (typeof tree.load != 'function') {
         return;
     }
@@ -780,7 +780,7 @@ Kmoney.prototype.reset = function () {
     $$('km_edit_amount').value = "";
 };
 Kmoney.prototype.updateSelectedRow = function(type) {
-    var tree = this.getSelectedTree();
+    var tree = this.getCurrentTabObj();
     if (typeof tree.updateRecord != 'function') {
         return;
     }
@@ -843,16 +843,16 @@ Kmoney.prototype.getTransactionTab = function () {
     var tab = null;
     switch ($$('km_tabbox').selectedTab.id) {
     case 'km_tab_cash':
-        tab = this.cashTree;
+        tab = this.cashTrns;
         break;
     case 'km_tab_bank':
-        tab = this.bankTree;
+        tab = this.bankTrns;
         break;
     case 'km_tab_creditcard':
-        tab = this.creditcardTree;
+        tab = this.creditcardTrns;
         break;
     case 'km_tab_emoney':
-        tab = this.emoneyTree;
+        tab = this.emoneyTrns;
         break;
     }
     return tab;
@@ -959,16 +959,16 @@ Kmoney.prototype.undo = function() {
 Kmoney.prototype.onUserSelect = function () {
     switch ($$('km_tabbox').selectedTab.id) {
     case 'km_tab_cash':
-        this.cashTree.onUserSelect();
+        this.cashTrns.onUserSelect();
         break;
     case 'km_tab_bank':
-        this.bankTree.onUserSelect();
+        this.bankTrns.onUserSelect();
         break;
     case 'km_tab_creditcard':
-        this.creditcardTree.onUserSelect();
+        this.creditcardTrns.onUserSelect();
         break;
     case 'km_tab_emoney':
-        this.emoneyTree.onUserSelect();
+        this.emoneyTrns.onUserSelect();
         break;
     }
 };
@@ -1187,20 +1187,20 @@ Kmoney.prototype.onQueryCondition2Select = function(execQuery) {
 Kmoney.prototype.onQueryConditionChanged = function() {
     this.query();
 };
-Kmoney.prototype.getSelectedTree = function () {
+Kmoney.prototype.getCurrentTabObj = function () {
     var tab = null;
     switch ($$('km_tabbox').selectedTab.id) {
     case 'km_tab_cash':
-        tab = this.cashTree;
+        tab = this.cashTrns;
         break;
     case 'km_tab_bank':
-        tab = this.bankTree;
+        tab = this.bankTrns;
         break;
     case 'km_tab_creditcard':
-        tab = this.creditcardTree;
+        tab = this.creditcardTrns;
         break;
     case 'km_tab_emoney':
-        tab = this.emoneyTree;
+        tab = this.emoneyTrns;
         break;
     case 'km_tab_summary':
         tab = this.summary;

@@ -1,21 +1,21 @@
-function EMoneyTable() {
+function EMoneyTransaction() {
     Transaction.call(this, "km_tree_emoney");
     this.listeners = [];
 }
-EMoneyTable.prototype = Object.create(Transaction.prototype);
+EMoneyTransaction.prototype = Object.create(Transaction.prototype);
 
-EMoneyTable.prototype.initialize = function (db) {
+EMoneyTransaction.prototype.initialize = function (db) {
     Transaction.prototype.initialize.call(this, db);
 
     this.listeners['km_tree_emoney.select'] = this.onSelect.bind(this);
     $$('km_tree_emoney').addEventListener("select", this.listeners['km_tree_emoney.select']);
 };
-EMoneyTable.prototype.terminate = function () {
+EMoneyTransaction.prototype.terminate = function () {
     $$('km_tree_emoney').removeEventListener("select", this.listeners['km_tree_emoney.select']);
 };
 
-EMoneyTable.prototype.load = function (sortParams) {
-    km_debug("EMoneyTable.load start");
+EMoneyTransaction.prototype.load = function (sortParams) {
+    km_debug("EMoneyTransaction.load start");
     this.setDuplicate(false);
     if (sortParams === undefined) {
         sortParams = this.mTree.getCurrentSortParams();
@@ -33,19 +33,19 @@ EMoneyTable.prototype.load = function (sortParams) {
     this.mDb.emoneyTrns.load(sortParams, queryParams, this.loadCallback.bind(this));
     this.onUserSelect();
 
-    km_debug("EMoneyTable.load end");
+    km_debug("EMoneyTransaction.load end");
 };
 
-EMoneyTable.prototype.loadDuplicate = function() {
+EMoneyTransaction.prototype.loadDuplicate = function() {
     this.setDuplicate(true);
     this.mDb.emoneyTrns.loadDuplicate(this.loadCallback.bind(this));
     this.onUserSelect();
 };
-EMoneyTable.prototype.openEdit = function (id) {
+EMoneyTransaction.prototype.openEdit = function (id) {
     this.mTree.ensureRowIsVisible('id', id);
 };
 
-EMoneyTable.prototype.onSelect = function () {
+EMoneyTransaction.prototype.onSelect = function () {
     $$('km_edit_transactionDate').value = this.mTree.getSelectedRowValue('transaction_date');
     $$('km_edit_item').value = this.mTree.getSelectedRowValue('item_id');
     $$('km_edit_detail').value = this.mTree.getSelectedRowValue('detail');
@@ -66,7 +66,7 @@ EMoneyTable.prototype.onSelect = function () {
 
 };
 
-EMoneyTable.prototype.onUserSelect = function () {
+EMoneyTransaction.prototype.onUserSelect = function () {
     var moneyList = this.mDb.emoneyInfo.getMoneyList($$('km_edit_user').value);
 
     $$("km_edit_emoney").removeAllItems();
@@ -78,7 +78,7 @@ EMoneyTable.prototype.onUserSelect = function () {
 };
 
 
-EMoneyTable.prototype.addRecord = function (params) {
+EMoneyTransaction.prototype.addRecord = function (params) {
     if ($$('km_edit_income').selected) {
         params['income'] = params['amount'];
     } else {
@@ -90,7 +90,7 @@ EMoneyTable.prototype.addRecord = function (params) {
     this.mDb.emoneyInsert([params], this.insertCallback.bind(this));
 
 };
-EMoneyTable.prototype.updateRecord = function (idList, params) {
+EMoneyTransaction.prototype.updateRecord = function (idList, params) {
     if (Object.keys(params).length > 1) {
         if ($$('km_edit_income').selected) {
             params['income'] = params['amount'];
@@ -104,7 +104,7 @@ EMoneyTable.prototype.updateRecord = function (idList, params) {
     this.mDb.emoneyUpdate(idList, params, this.updateCallback.bind(this));
 };
 
-EMoneyTable.prototype.deleteRecord = function (idList) {
+EMoneyTransaction.prototype.deleteRecord = function (idList) {
     this.mDb.emoneyDelete(idList, this.deleteCallback.bind(this));
 
 

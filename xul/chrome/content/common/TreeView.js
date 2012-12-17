@@ -233,6 +233,11 @@ TreeViewController.prototype = {
 
         return valueArray;
     },
+    getLastRowValue: function(columnName) {
+        var rowCnt = this.treeView.rowCount;
+        var col = this.treeTable.columns.getNamedColumn(columnName);
+        return this.treeTable.view.getCellText(rowCnt - 1, col);
+    },
     getSelectedRowValue: function (columnName) {
         if (this.treeTable.currentIndex === -1) {
             return "";

@@ -1,25 +1,25 @@
 
-function BankTable() {
+function BankTransaction() {
     Transaction.call(this, "km_tree_bank");
     this.listeners = [];
 }
 
-BankTable.prototype = Object.create(Transaction.prototype);
+BankTransaction.prototype = Object.create(Transaction.prototype);
 
-BankTable.prototype.initialize = function (db) {
+BankTransaction.prototype.initialize = function (db) {
     Transaction.prototype.initialize.call(this, db);
 
     this.listeners['km_tree_bank.select'] = this.onSelect.bind(this);
     $$('km_tree_bank').addEventListener("select", this.listeners['km_tree_bank.select']);
     
 };
-BankTable.prototype.terminate = function () {
+BankTransaction.prototype.terminate = function () {
     $$('km_tree_bank').removeEventListener("select", this.listeners['km_tree_bank.select']);
     
 };
 
-BankTable.prototype.load = function (sortParams) {
-    km_debug("BankTable.load start");
+BankTransaction.prototype.load = function (sortParams) {
+    km_debug("BankTransaction.load start");
     this.setDuplicate(false);
     if (sortParams === undefined) {
         sortParams = this.mTree.getCurrentSortParams();
@@ -36,17 +36,17 @@ BankTable.prototype.load = function (sortParams) {
     this.mDb.bankTrns.load(sortParams, queryParams, this.loadCallback.bind(this));
 
     this.onUserSelect();
-    km_debug("BankTable.load end");
+    km_debug("BankTransaction.load end");
 };
-BankTable.prototype.loadDuplicate = function() {
+BankTransaction.prototype.loadDuplicate = function() {
     this.setDuplicate(true);
     this.mDb.bankTrns.loadDuplicate(this.loadCallback.bind(this));
     this.onUserSelect();
 };
-BankTable.prototype.openEdit = function (id) {
+BankTransaction.prototype.openEdit = function (id) {
     this.mTree.ensureRowIsVisible('id', id);
 };
-BankTable.prototype.onSelect = function () {
+BankTransaction.prototype.onSelect = function () {
     $$('km_edit_transactionDate').value = this.mTree.getSelectedRowValue('transaction_date');
     $$('km_edit_item').value = this.mTree.getSelectedRowValue('item_id');
     $$('km_edit_detail').value = this.mTree.getSelectedRowValue('detail');
@@ -66,7 +66,7 @@ BankTable.prototype.onSelect = function () {
     this.showSumOfSelectedRows();
 }
 
-BankTable.prototype.onUserSelect = function () {
+BankTransaction.prototype.onUserSelect = function () {
     var bankList = this.mDb.bankInfo.getBankList($$('km_edit_user').value);
 
     $$("km_edit_bank").removeAllItems();
@@ -77,7 +77,7 @@ BankTable.prototype.onUserSelect = function () {
 
 };
 
-BankTable.prototype.addRecord = function (params) {
+BankTransaction.prototype.addRecord = function (params) {
     if ($$('km_edit_income').selected) {
         params['income'] = params['amount'];
     } else {
@@ -89,7 +89,7 @@ BankTable.prototype.addRecord = function (params) {
     this.mDb.bankInsert([params], this.insertCallback.bind(this));    
     
 };
-BankTable.prototype.updateRecord = function (idList, params) {
+BankTransaction.prototype.updateRecord = function (idList, params) {
     if (Object.keys(params).length > 1) {
         if ($$('km_edit_income').selected) {
             params['income'] = params['amount'];
@@ -104,6 +104,6 @@ BankTable.prototype.updateRecord = function (idList, params) {
 
 };
 
-BankTable.prototype.deleteRecord = function (idList) {
+BankTransaction.prototype.deleteRecord = function (idList) {
     this.mDb.bankDelete(idList, this.deleteCallback.bind(this));
 };

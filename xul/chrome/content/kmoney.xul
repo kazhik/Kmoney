@@ -28,11 +28,11 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
     <script type="application/x-javascript" src="db/KantanKakeiboDb.js" />
 
     <script type="application/x-javascript" src="transaction/Transaction.js" />
-    <script type="application/x-javascript" src="transaction/AllView.js" />
-    <script type="application/x-javascript" src="transaction/CashTable.js" />
-    <script type="application/x-javascript" src="transaction/BankTable.js" />
-    <script type="application/x-javascript" src="transaction/CreditCardTable.js" />
-    <script type="application/x-javascript" src="transaction/EMoneyTable.js" />
+    <script type="application/x-javascript" src="transaction/AllTransaction.js" />
+    <script type="application/x-javascript" src="transaction/CashTransaction.js" />
+    <script type="application/x-javascript" src="transaction/BankTransaction.js" />
+    <script type="application/x-javascript" src="transaction/CreditCardTransaction.js" />
+    <script type="application/x-javascript" src="transaction/EMoneyTransaction.js" />
     <script type="application/x-javascript" src="transaction/Asset.js" />
     <script type="application/x-javascript" src="summary/SummaryView.js" />
     <script type="application/x-javascript" src="summary/BalanceView.js" />
@@ -512,7 +512,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 				</hbox>
 				<hbox id="km_edit2" align="center">
 					<label control="km_edit_amount" value="&edit.amount;" />
-					<textbox id="km_edit_amount" type="number" size="7" />
+					<textbox id="km_edit_amount" size="7" style="text-align: right" />
 					<label control="km_edit_user" value="&edit.user;" />
 					<menulist id="km_edit_user">
 						<menupopup></menupopup>
