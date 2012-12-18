@@ -1,5 +1,5 @@
 <!ENTITY window.title     "Kmoney">
-<!ENTITY dialog.masterData     "マスターデータ">
+<!ENTITY dialog.masterData     "基本データ">
 <!ENTITY dialog.import     "インポート">
 <!ENTITY dialog.importConf     "インポート設定">
 <!ENTITY dialog.merge     "マージ">
@@ -39,7 +39,7 @@
 
 <!ENTITY menu.setting          "設定">
 <!ENTITY menu.setting.accesskey          "S">
-<!ENTITY menu.setting.master          "マスターデータ">
+<!ENTITY menu.setting.master          "基本データ">
 <!ENTITY menu.setting.master.accesskey          "M">
 <!ENTITY menu.setting.import          "インポート設定">
 <!ENTITY menu.setting.import.accesskey          "I">

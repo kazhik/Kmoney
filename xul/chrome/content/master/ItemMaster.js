@@ -83,6 +83,9 @@ ItemMaster.prototype.deleteRecord = function() {
         // トランザクションデータが存在する場合はマージ先を指定させる
         if (count > 0) {
             newItemId = this.openMergeDialog(itemId);
+            if (newItemId === null) {
+                return;
+            }
         }
         this.mDb.itemInfo.delete(itemId, newItemId, deleteCallback.bind(this));
     }                   
