@@ -6,13 +6,13 @@ function BalanceView() {
 BalanceView.prototype.initialize = function (db) {
     this.mDb = db;
 
-    this.listeners['km_summary_bank.command'] = this.onGraphItemChanged.bind(this);
-    $$('km_summary_bank').addEventListener("command", this.listeners['km_summary_bank.command']);
+    this.listeners['km_list_summary_bank.command'] = this.onGraphItemChanged.bind(this);
+    $$('km_list_summary_bank').addEventListener("command", this.listeners['km_list_summary_bank.command']);
 
 };
 BalanceView.prototype.terminate = function () {
-    $$('km_summary_bank').removeEventListener("command",
-                                              this.listeners['km_summary_bank.command']);
+    $$('km_list_summary_bank').removeEventListener("command",
+                                              this.listeners['km_list_summary_bank.command']);
 
 };
 BalanceView.prototype.onGraphItemChanged = function () {
@@ -23,16 +23,16 @@ BalanceView.prototype.onUserSelect = function () {
     this.drawGraph();
 };
 BalanceView.prototype.populateBankList = function () {
-    var userId = $$('km_summary_user').value;
+    var userId = $$('km_list_summary_user').value;
 
-    $$("km_summary_bank").removeAllItems();
+    $$("km_list_summary_bank").removeAllItems();
     var bankList = this.mDb.bankInfo.mBankList;
     for(var i = 0; i < bankList.length; i++) {
         if(bankList[i][2] == userId) {
-            $$("km_summary_bank").appendItem(bankList[i][1], bankList[i][0]);
+            $$("km_list_summary_bank").appendItem(bankList[i][1], bankList[i][0]);
         }
     }
-    $$("km_summary_bank").selectedIndex = 0;
+    $$("km_list_summary_bank").selectedIndex = 0;
 };
 BalanceView.prototype.load = function() {
     this.populateBankList();
@@ -45,7 +45,7 @@ BalanceView.prototype.drawGraph = function () {
     function loadCallback(records) {
         function execDraw() {
             this.mGraph = new Ico.BarGraph(
-            $$('km_balance'), {
+            $$('km_box_balance_panel'), {
                 balance: valueArray
             }, {
                 colours: {
@@ -77,23 +77,23 @@ BalanceView.prototype.drawGraph = function () {
             labelDate.setMonth(labelDate.getMonth() + 1);
         }
     
-        KmGlobals.$empty($$('km_balance'));
+        KmGlobals.$empty($$('km_box_balance_panel'));
         
         // 起動時にグラフを表示しようとすると横幅が正しく表示されない。Issue #32
         setTimeout(execDraw.bind(this), 0);
         
     }
 
-    var monthfromY = $$('km_summary_monthfromY').value;
-    var monthfromM = $$('km_summary_monthfromM').value;
-    var monthtoY = $$('km_summary_monthtoY').value;
-    var monthtoM = $$('km_summary_monthtoM').value;
+    var monthfromY = $$('km_list_summary_monthfromY').value;
+    var monthfromM = $$('km_list_summary_monthfromM').value;
+    var monthtoY = $$('km_list_summary_monthtoY').value;
+    var monthtoM = $$('km_list_summary_monthtoM').value;
 
     var params = {
         "periodFrom": monthfromY + "/" + monthfromM,
         "periodTo": monthtoY + "/" + monthtoM,
-        "bankId": strToInt($$('km_summary_bank').value),
-        "userId": strToInt($$('km_summary_user').value)
+        "bankId": strToInt($$('km_list_summary_bank').value),
+        "userId": strToInt($$('km_list_summary_user').value)
     };
     this.mDb.bankTrns.loadSumPerMonth(params, loadCallback.bind(this));
 };

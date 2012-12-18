@@ -38,7 +38,7 @@ UserMaster.prototype.addRecord = function () {
     function insertCallback() {
         this.load();
     }
-    var name = $$('km_edit_name').value;
+    var name = $$('km_textbox_name').value;
     this.mDb.userInfo.insert(name, insertCallback.bind(this));
 
 }
@@ -48,7 +48,7 @@ UserMaster.prototype.updateRecord = function () {
         this.mTree.ensureRowIsVisible("master_user_id", id);
     }
     var id = this.mTree.getSelectedRowValue("master_user_id");
-    var name = $$('km_edit_name').value;
+    var name = $$('km_textbox_name').value;
     this.mDb.userInfo.update(id, name, updateCallback.bind(this));
 };
 
@@ -64,6 +64,6 @@ UserMaster.prototype.deleteRecord = function () {
 };
 
 UserMaster.prototype.onSelect = function () {
-    $$('km_edit_name').value = this.mTree.getSelectedRowValue("master_user_name");
+    $$('km_textbox_name').value = this.mTree.getSelectedRowValue("master_user_name");
 
 };

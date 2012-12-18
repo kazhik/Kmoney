@@ -29,7 +29,7 @@ BankTransaction.prototype.load = function (sortParams) {
     for (var i = 1; i <= 2; i++) {
         var param = this.getCommonQueryParam(i);
         if (param['key'] === "bank") {
-            param['value'] = $$('km_edit_query_list' + i).value;
+            param['value'] = $$('km_list_qcond_value' + i).value;
         }
         queryParams.push(param);
     }
@@ -47,57 +47,57 @@ BankTransaction.prototype.openEdit = function (id) {
     this.mTree.ensureRowIsVisible('id', id);
 };
 BankTransaction.prototype.onSelect = function () {
-    $$('km_edit_transactionDate').value = this.mTree.getSelectedRowValue('transaction_date');
-    $$('km_edit_item').value = this.mTree.getSelectedRowValue('item_id');
-    $$('km_edit_detail').value = this.mTree.getSelectedRowValue('detail');
+    $$('km_date_transdate').value = this.mTree.getSelectedRowValue('transaction_date');
+    $$('km_list_item').value = this.mTree.getSelectedRowValue('item_id');
+    $$('km_textbox_detail').value = this.mTree.getSelectedRowValue('detail');
     var amount = this.mTree.getSelectedRowValue('income');
     if(Number(amount) == 0) {
         amount = this.mTree.getSelectedRowValue('expense');
-        $$('income_expense').selectedItem = $$('km_edit_expense');
+        $$('km_radgroup_income-expense').selectedItem = $$('km_radio_expense');
     } else {
-        $$('income_expense').selectedItem = $$('km_edit_income');
+        $$('km_radgroup_income-expense').selectedItem = $$('km_radio_income');
     }
-    $$('km_edit_amount').value = amount;
-    $$('km_edit_bank').value = this.mTree.getSelectedRowValue('bank_id');
-    $$('km_edit_user').value = this.mTree.getSelectedRowValue('user_id');
-    $$('km_edit_internal').value = this.mTree.getSelectedRowValue('internal');
+    $$('km_textbox_amount').value = amount;
+    $$('km_list_bank').value = this.mTree.getSelectedRowValue('bank_id');
+    $$('km_list_user').value = this.mTree.getSelectedRowValue('user_id');
+    $$('km_list_internal').value = this.mTree.getSelectedRowValue('internal');
 
     // 選択行の収支を計算してステータスバーに表示
     this.showSumOfSelectedRows();
 }
 
 BankTransaction.prototype.onUserSelect = function () {
-    var bankList = this.mDb.bankInfo.getBankList($$('km_edit_user').value);
+    var bankList = this.mDb.bankInfo.getBankList($$('km_list_user').value);
 
-    $$("km_edit_bank").removeAllItems();
+    $$("km_list_bank").removeAllItems();
     for(var i = 0; i < bankList.length; i++) {
-        $$("km_edit_bank").appendItem(bankList[i][1], bankList[i][0]);
+        $$("km_list_bank").appendItem(bankList[i][1], bankList[i][0]);
     }
-    $$("km_edit_bank").selectedIndex = 0;
+    $$("km_list_bank").selectedIndex = 0;
 
 };
 
 BankTransaction.prototype.addRecord = function (params) {
-    if ($$('km_edit_income').selected) {
+    if ($$('km_radio_income').selected) {
         params['income'] = params['amount'];
     } else {
         params['expense'] = params['amount'];
     }
-    params['bankId'] = $$('km_edit_bank').value;
-    params['internal'] = $$('km_edit_internal').value;
+    params['bankId'] = $$('km_list_bank').value;
+    params['internal'] = $$('km_list_internal').value;
 
     this.mDb.bankInsert([params], this.insertCallback.bind(this));    
     
 };
 BankTransaction.prototype.updateRecord = function (idList, params) {
     if (Object.keys(params).length > 1) {
-        if ($$('km_edit_income').selected) {
+        if ($$('km_radio_income').selected) {
             params['income'] = params['amount'];
         } else {
             params['expense'] = params['amount'];
         }
-        params['bankId'] = $$('km_edit_bank').value;
-        params['internal'] = $$('km_edit_internal').value;
+        params['bankId'] = $$('km_list_bank').value;
+        params['internal'] = $$('km_list_internal').value;
     }
     
     this.mDb.bankUpdate(idList, params, this.updateCallback.bind(this));

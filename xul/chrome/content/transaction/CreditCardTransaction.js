@@ -29,7 +29,7 @@ CreditCardTransaction.prototype.load = function (sortParams) {
     for (var i = 1; i <= 2; i++) {
         var param = this.getCommonQueryParam(i);
         if (param['key'] === "creditcard") {
-            param['value'] = $$('km_edit_query_list' + i).value;
+            param['value'] = $$('km_list_qcond_value' + i).value;
         }
         queryParams.push(param);
     }
@@ -51,23 +51,23 @@ CreditCardTransaction.prototype.openEdit = function (id) {
     this.mTree.ensureRowIsVisible('id', id);
 };
 CreditCardTransaction.prototype.onSelect = function () {
-    $$('km_edit_transactionDate').value = this.mTree.getSelectedRowValue('transaction_date');
-    $$('km_edit_item').value = this.mTree.getSelectedRowValue('item_id');
-    $$('km_edit_detail').value = this.mTree.getSelectedRowValue('detail');
-    $$('km_edit_amount').value = this.mTree.getSelectedRowValue('expense');
-    $$('income_expense').selectedItem = $$('km_edit_expense');
-    $$('km_edit_user').value = this.mTree.getSelectedRowValue('user_id');
-    $$('km_edit_creditcard').value = this.mTree.getSelectedRowValue('card_id');
+    $$('km_date_transdate').value = this.mTree.getSelectedRowValue('transaction_date');
+    $$('km_list_item').value = this.mTree.getSelectedRowValue('item_id');
+    $$('km_textbox_detail').value = this.mTree.getSelectedRowValue('detail');
+    $$('km_textbox_amount').value = this.mTree.getSelectedRowValue('expense');
+    $$('km_radgroup_income-expense').selectedItem = $$('km_radio_expense');
+    $$('km_list_user').value = this.mTree.getSelectedRowValue('user_id');
+    $$('km_list_creditcard').value = this.mTree.getSelectedRowValue('card_id');
     var payMonth = this.mTree.getSelectedRowValue('pay_month');
     if (payMonth !== null && payMonth.length > 0) {
         var payMonthSplitted = payMonth.split('-');
-        $$('km_edit_paymonthY').value = payMonthSplitted[0];
-        $$('km_edit_paymonthM').value = payMonthSplitted[1];
+        $$('km_textbox_paymonthY').value = payMonthSplitted[0];
+        $$('km_textbox_paymonthM').value = payMonthSplitted[1];
     } else {
-        $$('km_edit_paymonthY').value = "";
-        $$('km_edit_paymonthM').value = "";
+        $$('km_textbox_paymonthY').value = "";
+        $$('km_textbox_paymonthM').value = "";
     }
-    $$('km_edit_internal').value = this.mTree.getSelectedRowValue('internal');
+    $$('km_list_internal').value = this.mTree.getSelectedRowValue('internal');
 
     // 選択行の収支を計算してステータスバーに表示
     this.showSumOfSelectedRows();
@@ -76,29 +76,29 @@ CreditCardTransaction.prototype.onSelect = function () {
 
 CreditCardTransaction.prototype.initPayMonth = function () {
     var thisMonth = new Date();
-    $$('km_edit_paymonthY').value = thisMonth.getFullYear();
-    $$('km_edit_paymonthM').value = thisMonth.getMonth();
+    $$('km_textbox_paymonthY').value = thisMonth.getFullYear();
+    $$('km_textbox_paymonthM').value = thisMonth.getMonth();
     
 };
 
 CreditCardTransaction.prototype.onUserSelect = function () {
-    var cardList = this.mDb.creditCardInfo.getCardList($$('km_edit_user').value);
+    var cardList = this.mDb.creditCardInfo.getCardList($$('km_list_user').value);
     
-    $$("km_edit_creditcard").removeAllItems();
+    $$("km_list_creditcard").removeAllItems();
     for (var i = 0; i < cardList.length; i++) {
-        $$("km_edit_creditcard").appendItem(cardList[i][1], cardList[i][0]);
+        $$("km_list_creditcard").appendItem(cardList[i][1], cardList[i][0]);
     }
-    $$("km_edit_creditcard").selectedIndex = 0;
+    $$("km_list_creditcard").selectedIndex = 0;
 };
 CreditCardTransaction.prototype.addRecord = function (params) {
     params['boughtAmount'] = params['amount'];
-    params['cardId'] = $$('km_edit_creditcard').value;
+    params['cardId'] = $$('km_list_creditcard').value;
     params['internal'] = 0;
 
     // 支払月が指定された場合は支払い情報も更新する
-    var payMonthY = $$('km_edit_paymonthY').value;
+    var payMonthY = $$('km_textbox_paymonthY').value;
     if (isNumber(payMonthY)) {
-        params['payMonth'] = payMonthY + "-" + $$('km_edit_paymonthM').value;
+        params['payMonth'] = payMonthY + "-" + $$('km_textbox_paymonthM').value;
         params['payAmount'] = params['boughtAmount']; // 分割払いは当面対応しない
         params['remainingBalance'] = 0;
     }
@@ -107,12 +107,12 @@ CreditCardTransaction.prototype.addRecord = function (params) {
 CreditCardTransaction.prototype.updateRecord = function (idList, params) {
     if (Object.keys(params).length > 1) {
         params['boughtAmount'] = params['amount'];
-        params['cardId'] = $$('km_edit_creditcard').value;
-        params['internal'] = $$('km_edit_internal').value;
+        params['cardId'] = $$('km_list_creditcard').value;
+        params['internal'] = $$('km_list_internal').value;
         // 支払月が指定された場合は支払い情報も更新する
-        var payMonthY = $$('km_edit_paymonthY').value;
+        var payMonthY = $$('km_textbox_paymonthY').value;
         if (isNumber(payMonthY)) {
-            params['payMonth'] = payMonthY + "-" + $$('km_edit_paymonthM').value;
+            params['payMonth'] = payMonthY + "-" + $$('km_textbox_paymonthM').value;
             params['payAmount'] = params['boughtAmount']; // 分割払いは当面対応しない(Issue #10)
             params['remainingBalance'] = 0;
         }

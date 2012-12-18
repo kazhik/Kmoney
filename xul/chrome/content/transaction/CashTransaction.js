@@ -44,42 +44,42 @@ CashTransaction.prototype.openEdit = function (id) {
 };
 
 CashTransaction.prototype.onSelect = function () {
-    $$('km_edit_transactionDate').value = this.mTree.getSelectedRowValue('transaction_date');
-    $$('km_edit_item').value = this.mTree.getSelectedRowValue('item_id');
-    $$('km_edit_detail').value = this.mTree.getSelectedRowValue('detail');
+    $$('km_date_transdate').value = this.mTree.getSelectedRowValue('transaction_date');
+    $$('km_list_item').value = this.mTree.getSelectedRowValue('item_id');
+    $$('km_textbox_detail').value = this.mTree.getSelectedRowValue('detail');
     var amount = this.mTree.getSelectedRowValue('income');
     if (Number(amount) === 0) {
         amount = this.mTree.getSelectedRowValue('expense');
-        $$('income_expense').selectedItem = $$('km_edit_expense');
+        $$('km_radgroup_income-expense').selectedItem = $$('km_radio_expense');
     } else {
-        $$('income_expense').selectedItem = $$('km_edit_income');
+        $$('km_radgroup_income-expense').selectedItem = $$('km_radio_income');
     }
-    $$('km_edit_amount').value = amount;
-    $$('km_edit_user').value = this.mTree.getSelectedRowValue('user_id');
-    $$('km_edit_internal').value = this.mTree.getSelectedRowValue('internal');
+    $$('km_textbox_amount').value = amount;
+    $$('km_list_user').value = this.mTree.getSelectedRowValue('user_id');
+    $$('km_list_internal').value = this.mTree.getSelectedRowValue('internal');
 
     // 選択行の収支を計算してステータスバーに表示
     this.showSumOfSelectedRows();
 
 };
 CashTransaction.prototype.addRecord = function (params) {
-    if ($$('km_edit_income').selected) {
+    if ($$('km_radio_income').selected) {
         params['income'] = params['amount'];
     } else {
         params['expense'] = params['amount'];
     }
-    params['internal'] = $$('km_edit_internal').value;
+    params['internal'] = $$('km_list_internal').value;
 
     this.mDb.cashInsert([params], this.insertCallback.bind(this));    
 };
 CashTransaction.prototype.updateRecord = function (idList, params) {
     if (Object.keys(params).length > 1) {
-        if ($$('km_edit_income').selected) {
+        if ($$('km_radio_income').selected) {
             params['income'] = params['amount'];
         } else {
             params['expense'] = params['amount'];
         }
-        params['internal'] = $$('km_edit_internal').value;
+        params['internal'] = $$('km_list_internal').value;
     }
 
     this.mDb.cashUpdate(idList, params, this.updateCallback.bind(this));

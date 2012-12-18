@@ -29,24 +29,24 @@ Asset.prototype.onSelect = function () {
 };
 Asset.prototype.addRecord = function () {
     var params = {
-        "name": $$('km_edit_assetName').value,
+        "name": $$('km_textbox_assetname').value,
         "amount": $$('km_read_amount').value,
-        "userId": $$('km_read_userId').value,
-        "assetType": $$('km_edit_assetType').value,
-        "transactionType": $$('km_read_transactionType').value,
-        "transactionId": $$('km_read_transactionId').value
+        "userId": $$('km_read_userid').value,
+        "assetType": $$('km_list_assettype').value,
+        "transactionType": $$('km_read_transactiontype').value,
+        "transactionId": $$('km_read_transactionid').value
     };
     
     this.mDb.assetInsert(params, this.insertCallback.bind(this));    
 };
 Asset.prototype.updateRecord = function () {
     var params = {
-        "name": $$('km_edit_assetName').value,
+        "name": $$('km_textbox_assetname').value,
         "amount": $$('km_read_amount').value,
-        "userId": $$('km_read_userId').value,
-        "assetType": $$('km_edit_assetType').value,
-        "transactionType": $$('km_read_transactionType').value,
-        "transactionId": $$('km_read_transactionId').value
+        "userId": $$('km_read_userid').value,
+        "assetType": $$('km_list_assettype').value,
+        "transactionType": $$('km_read_transactiontype').value,
+        "transactionId": $$('km_read_transactionid').value
     };
 
     var id = this.mTree.getSelectedRowValue('id');

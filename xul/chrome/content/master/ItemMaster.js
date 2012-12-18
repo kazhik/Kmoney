@@ -37,7 +37,7 @@ ItemMaster.prototype.addRecord = function() {
         this.mTree.ensureRowIsVisible('master_item_id', id);
     }
     
-    var name = $$('km_edit_name').value;
+    var name = $$('km_textbox_name').value;
     var sumInclude = ($$('km_master_sum').checked)? 1: 0;
     this.mDb.itemInfo.insert(name, sumInclude, insertCallback.bind(this));
 };
@@ -47,7 +47,7 @@ ItemMaster.prototype.updateRecord = function() {
         this.load();
         this.mTree.ensureRowIsVisible('master_item_id', id);
     }
-    var name = $$('km_edit_name').value;
+    var name = $$('km_textbox_name').value;
     var sumInclude = ($$('km_master_sum').checked)? 1: 0;
    
     var id = this.mTree.getSelectedRowValue('master_item_id');
@@ -99,7 +99,7 @@ ItemMaster.prototype.deleteRecord = function() {
 };
 
 ItemMaster.prototype.onSelect = function() {
-    $$('km_edit_name').value = this.mTree.getSelectedRowValue("master_item_name");
+    $$('km_textbox_name').value = this.mTree.getSelectedRowValue("master_item_name");
     $$('km_master_sum').checked =
         (Number(this.mTree.getSelectedRowValue("master_item_sum_value")) === 1);
  

@@ -18,8 +18,8 @@ function creditcardTransactionTest() {
     $('km_tabbox', win).selectedTab = $('km_tab_creditcard', win);
 
     // 追加    
-    $('km_edit_detail', win).value = "creditcard1";
-    $('km_edit_amount', win).value = "40001";
+    $('km_textbox_detail', win).value = "creditcard1";
+    $('km_textbox_amount', win).value = "40001";
     action.clickOn($('km_button_add', win));
     var rowCnt = tree.treeView.rowCount;
     tree.treeView.selection.select(rowCnt - 1);
@@ -27,13 +27,13 @@ function creditcardTransactionTest() {
     assert.equal("40001", tree.getSelectedRowValue('expense'));
     
     // 更新
-    $('km_edit_item', win).selectedIndex = 1;
-    $('km_edit_detail', win).value = "detail2";
-    $('km_edit_amount', win).value = "3200";
-    $('km_edit_user', win).selectedIndex = 0;
-    $('km_edit_creditcard', win).selectedIndex = 1;
-    $('km_edit_paymonthY', win).value = "2012";
-    $('km_edit_paymonthM', win).value = "12";
+    $('km_list_item', win).selectedIndex = 1;
+    $('km_textbox_detail', win).value = "detail2";
+    $('km_textbox_amount', win).value = "3200";
+    $('km_list_user', win).selectedIndex = 0;
+    $('km_list_creditcard', win).selectedIndex = 1;
+    $('km_textbox_paymonthY', win).value = "2012";
+    $('km_textbox_paymonthM', win).value = "12";
     
     action.readyToConfirm(true);
     action.clickOn($('km_button_update', win));
@@ -59,9 +59,9 @@ function emoneyTransactionTest() {
     $('km_tabbox', win).selectedTab = $('km_tab_emoney', win);
 
     // 追加    
-    $('income_expense', win).selectedItem = $('km_edit_expense', win);
-    $('km_edit_detail', win).value = "emoney1";
-    $('km_edit_amount', win).value = "877.87";
+    $('km_radgroup_income-expense', win).selectedItem = $('km_radio_expense', win);
+    $('km_textbox_detail', win).value = "emoney1";
+    $('km_textbox_amount', win).value = "877.87";
     action.clickOn($('km_button_add', win));
     var rowCnt = tree.treeView.rowCount;
     tree.treeView.selection.select(rowCnt - 1);
@@ -69,12 +69,12 @@ function emoneyTransactionTest() {
     assert.equal("877.87", tree.getSelectedRowValue('expense'));
     
     // 更新
-    $('income_expense', win).selectedItem = $('km_edit_income', win);
-    $('km_edit_item', win).selectedIndex = 1;
-    $('km_edit_detail', win).value = "detail2";
-    $('km_edit_amount', win).value = "3200";
-    $('km_edit_user', win).selectedIndex = 1;
-    $('km_edit_internal', win).selectedIndex = 2;
+    $('km_radgroup_income-expense', win).selectedItem = $('km_radio_income', win);
+    $('km_list_item', win).selectedIndex = 1;
+    $('km_textbox_detail', win).value = "detail2";
+    $('km_textbox_amount', win).value = "3200";
+    $('km_list_user', win).selectedIndex = 1;
+    $('km_list_internal', win).selectedIndex = 2;
     action.readyToConfirm(true);
     action.clickOn($('km_button_update', win));
     rowCnt = tree.treeView.rowCount;
@@ -99,9 +99,9 @@ function bankTransactionTest() {
     $('km_tabbox', win).selectedTab = $('km_tab_bank', win);
 
     // 追加    
-    $('income_expense', win).selectedItem = $('km_edit_expense', win);
-    $('km_edit_detail', win).value = "bank1";
-    $('km_edit_amount', win).value = "877.87";
+    $('km_radgroup_income-expense', win).selectedItem = $('km_radio_expense', win);
+    $('km_textbox_detail', win).value = "bank1";
+    $('km_textbox_amount', win).value = "877.87";
     action.clickOn($('km_button_add', win));
     var rowCnt = tree.treeView.rowCount;
     tree.treeView.selection.select(rowCnt - 1);
@@ -109,12 +109,12 @@ function bankTransactionTest() {
     assert.equal("877.87", tree.getSelectedRowValue('expense'));
     
     // 更新
-    $('income_expense', win).selectedItem = $('km_edit_income', win);
-    $('km_edit_item', win).selectedIndex = 1;
-    $('km_edit_detail', win).value = "detail2";
-    $('km_edit_amount', win).value = "3200";
-    $('km_edit_user', win).selectedIndex = 1;
-    $('km_edit_internal', win).selectedIndex = 2;
+    $('km_radgroup_income-expense', win).selectedItem = $('km_radio_income', win);
+    $('km_list_item', win).selectedIndex = 1;
+    $('km_textbox_detail', win).value = "detail2";
+    $('km_textbox_amount', win).value = "3200";
+    $('km_list_user', win).selectedIndex = 1;
+    $('km_list_internal', win).selectedIndex = 2;
     action.readyToConfirm(true);
     action.clickOn($('km_button_update', win));
     rowCnt = tree.treeView.rowCount;
@@ -138,9 +138,9 @@ function cashTransactionTest() {
     $('km_tabbox', win).selectedTab = $('km_tab_cash', win);
 
     // 追加    
-    $('income_expense', win).selectedItem = $('km_edit_expense', win);
-    $('km_edit_detail', win).value = "detail1";
-    $('km_edit_amount', win).value = "1300";
+    $('km_radgroup_income-expense', win).selectedItem = $('km_radio_expense', win);
+    $('km_textbox_detail', win).value = "detail1";
+    $('km_textbox_amount', win).value = "1300";
     action.clickOn($('km_button_add', win));
     var rowCnt = tree.treeView.rowCount;
     tree.treeView.selection.select(rowCnt - 1);
@@ -148,12 +148,12 @@ function cashTransactionTest() {
     assert.equal("1300", tree.getSelectedRowValue('expense'));
     
     // 更新
-    $('income_expense', win).selectedItem = $('km_edit_income', win);
-    $('km_edit_item', win).selectedIndex = 1;
-    $('km_edit_detail', win).value = "detail2";
-    $('km_edit_amount', win).value = "3200";
-    $('km_edit_user', win).selectedIndex = 1;
-    $('km_edit_internal', win).selectedIndex = 2;
+    $('km_radgroup_income-expense', win).selectedItem = $('km_radio_income', win);
+    $('km_list_item', win).selectedIndex = 1;
+    $('km_textbox_detail', win).value = "detail2";
+    $('km_textbox_amount', win).value = "3200";
+    $('km_list_user', win).selectedIndex = 1;
+    $('km_list_internal', win).selectedIndex = 2;
     action.readyToConfirm(true);
     action.clickOn($('km_button_update', win));
     rowCnt = tree.treeView.rowCount;

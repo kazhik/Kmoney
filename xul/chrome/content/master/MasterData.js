@@ -139,25 +139,25 @@ MasterData.prototype.removeEventListeners = function () {
 
 MasterData.prototype.loadUserList = function () {
     function loadCallback(records) {
-        $$('km_edit_user').removeAllItems();
+        $$('km_list_user').removeAllItems();
     
         for (var i = 0; i < records.length; i++) {
-            $$('km_edit_user').appendItem(records[i][1], records[i][0]);
+            $$('km_list_user').appendItem(records[i][1], records[i][0]);
         }
     
-        $$('km_edit_user').selectedIndex = 0;
+        $$('km_list_user').selectedIndex = 0;
     }
     this.mDb.userInfo.load(loadCallback.bind(this));
 
 };
 MasterData.prototype.loadCardList = function () {
     function loadCallback(records) {
-        $$("km_edit_creditcard").removeAllItems();
+        $$("km_list_creditcard").removeAllItems();
     
         for (var i = 0; i < records.length; i++) {
-            $$("km_edit_creditcard").appendItem(records[i][1], records[i][0]);
+            $$("km_list_creditcard").appendItem(records[i][1], records[i][0]);
         }
-        $$("km_edit_creditcard").selectedIndex = 0;
+        $$("km_list_creditcard").selectedIndex = 0;
         
     }
     this.mDb.creditCardInfo.load(loadCallback.bind(this));
@@ -166,24 +166,24 @@ MasterData.prototype.loadCardList = function () {
 
 MasterData.prototype.loadEMoneyList = function () {
     function loadCallback(records) {
-        $$("km_edit_emoney").removeAllItems();
+        $$("km_list_emoney").removeAllItems();
     
         for (var i = 0; i < records.length; i++) {
-            $$("km_edit_emoney").appendItem(records[i][1], records[i][0]);
+            $$("km_list_emoney").appendItem(records[i][1], records[i][0]);
         }
-        $$("km_edit_emoney").selectedIndex = 0;
+        $$("km_list_emoney").selectedIndex = 0;
     }
     this.mDb.emoneyInfo.load(loadCallback.bind(this));
 
 };
 MasterData.prototype.loadBankList = function () {
     function loadCallback(records) {
-        $$("km_edit_bank").removeAllItems();
+        $$("km_list_bank").removeAllItems();
     
         for (var i = 0; i < records.length; i++) {
-            $$("km_edit_bank").appendItem(records[i][1], records[i][0]);
+            $$("km_list_bank").appendItem(records[i][1], records[i][0]);
         }
-        $$("km_edit_bank").selectedIndex = 0;
+        $$("km_list_bank").selectedIndex = 0;
     }
     this.mDb.bankInfo.load(loadCallback.bind(this));
 
@@ -191,45 +191,42 @@ MasterData.prototype.loadBankList = function () {
 MasterData.prototype.onTabSelected = function (e) {
     switch ($$('km_master_tabbox').selectedTab.id) {
     case 'km_tab_master_user':
-        $$('km_edit_label_name').value = km_getLStr("master.username")
-        $$('itembox').hidden = true;
-        $$('userbox').hidden = true;
-        $$('creditcardbox').hidden = true;
-        $$('bankbox').hidden = true;
+        $$('km_label_name').value = km_getLStr("master.username")
+        $$('km_box_item').hidden = true;
+        $$('km_box_user').hidden = true;
+        $$('km_box_creditcard').hidden = true;
+        $$('km_box_bank').hidden = true;
         break;
     case 'km_tab_master_item':
-        $$('km_edit_label_name').value = km_getLStr("master.itemname")
-        $$('itembox').hidden = false;
-        $$('userbox').hidden = true;
-        $$('creditcardbox').hidden = true;
-        $$('bankbox').hidden = true;
+        $$('km_label_name').value = km_getLStr("master.itemname")
+        $$('km_box_item').hidden = false;
+        $$('km_box_user').hidden = true;
+        $$('km_box_creditcard').hidden = true;
+        $$('km_box_bank').hidden = true;
         break;
     case 'km_tab_master_bank':
-        $$('km_edit_label_name').value = km_getLStr("master.bankname")
-        $$('itembox').hidden = true;
-        $$('userbox').hidden = false;
-        $$('km_edit_label_user').value = km_getLStr("master.username")
-        $$('creditcardbox').hidden = true;
-        $$('bankbox').hidden = true;
+        $$('km_label_name').value = km_getLStr("master.bankname")
+        $$('km_box_item').hidden = true;
+        $$('km_box_user').hidden = false;
+        $$('km_box_creditcard').hidden = true;
+        $$('km_box_bank').hidden = true;
         this.loadUserList();
         break;
     case 'km_tab_master_creditcard':
-        $$('km_edit_label_name').value = km_getLStr("master.cardname")
-        $$('itembox').hidden = true;
-        $$('userbox').hidden = false;
-        $$('km_edit_label_user').value = km_getLStr("master.username")
-        $$('creditcardbox').hidden = true;
-        $$('bankbox').hidden = false;
+        $$('km_label_name').value = km_getLStr("master.cardname")
+        $$('km_box_item').hidden = true;
+        $$('km_box_user').hidden = false;
+        $$('km_box_creditcard').hidden = true;
+        $$('km_box_bank').hidden = false;
         this.loadUserList();
         this.loadBankList();
         break;
     case 'km_tab_master_emoney':
-        $$('km_edit_label_name').value = km_getLStr("master.emoneyname")
-        $$('itembox').hidden = true;
-        $$('userbox').hidden = false;
-        $$('km_edit_label_user').value = km_getLStr("master.username")
-        $$('creditcardbox').hidden = true;
-        $$('bankbox').hidden = true;
+        $$('km_label_name').value = km_getLStr("master.emoneyname")
+        $$('km_box_item').hidden = true;
+        $$('km_box_user').hidden = false;
+        $$('km_box_creditcard').hidden = true;
+        $$('km_box_bank').hidden = true;
         this.loadUserList();
         break;
     }

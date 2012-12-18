@@ -35,8 +35,8 @@ BankMaster.prototype.addRecord = function() {
         this.load();
     }
     var params = {
-        "name": $$('km_edit_name').value,
-        "userId": $$('km_edit_user').value
+        "name": $$('km_textbox_name').value,
+        "userId": $$('km_list_user').value
     };
     
     this.mDb.bankInfo.insert(params, onCompleted.bind(this));
@@ -48,8 +48,8 @@ BankMaster.prototype.updateRecord = function() {
     }
     var id = this.mTree.getSelectedRowValue("master_bank_id");
     var params = {
-        "name": $$('km_edit_name').value,
-        "userId": $$('km_edit_user').value
+        "name": $$('km_textbox_name').value,
+        "userId": $$('km_list_user').value
     };
     
     this.mDb.bankInfo.update(id, params, onCompleted.bind(this));
@@ -65,8 +65,8 @@ BankMaster.prototype.deleteRecord = function() {
 };
 
 BankMaster.prototype.onSelect = function() {
-    $$('km_edit_name').value = this.mTree.getSelectedRowValue("master_bank_name");
-    $$('km_edit_user').value = this.mTree.getSelectedRowValue("master_bank_userid");
+    $$('km_textbox_name').value = this.mTree.getSelectedRowValue("master_bank_name");
+    $$('km_list_user').value = this.mTree.getSelectedRowValue("master_bank_userid");
  
 };
 

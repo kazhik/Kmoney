@@ -36,9 +36,9 @@ CardMaster.prototype.addRecord = function () {
         this.mTree.ensureRowIsVisible('master_creditcard_id', id);
     }
     var params = {
-        "name": $$('km_edit_name').value,
-        "userId": $$('km_edit_user').value,
-        "bankId": $$('km_edit_bank').value
+        "name": $$('km_textbox_name').value,
+        "userId": $$('km_list_user').value,
+        "bankId": $$('km_list_bank').value
     };
     
     this.mDb.creditCardInfo.insert(params, onCompleted.bind(this));
@@ -50,9 +50,9 @@ CardMaster.prototype.updateRecord = function () {
         this.mTree.ensureRowIsVisible('master_creditcard_id', id);
     }
     var params = {
-        "name": $$('km_edit_name').value,
-        "userId": $$('km_edit_user').value,
-        "bankId": $$('km_edit_bank').value
+        "name": $$('km_textbox_name').value,
+        "userId": $$('km_list_user').value,
+        "bankId": $$('km_list_bank').value
     };
     var id = this.mTree.getSelectedRowValue('master_creditcard_id');
     this.mDb.creditCardInfo.update(id, params, onCompleted.bind(this));
@@ -72,7 +72,7 @@ CardMaster.prototype.deleteRecord = function () {
 };
 
 CardMaster.prototype.onSelect = function () {
-    $$('km_edit_name').value = this.mTree.getSelectedRowValue('master_creditcard_name');
-    $$('km_edit_user').value = this.mTree.getSelectedRowValue('master_creditcard_userid');
-    $$('km_edit_bank').value = this.mTree.getSelectedRowValue('master_creditcard_bankid');
+    $$('km_textbox_name').value = this.mTree.getSelectedRowValue('master_creditcard_name');
+    $$('km_list_user').value = this.mTree.getSelectedRowValue('master_creditcard_userid');
+    $$('km_list_bank').value = this.mTree.getSelectedRowValue('master_creditcard_bankid');
 };

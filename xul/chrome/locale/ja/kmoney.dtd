@@ -116,6 +116,7 @@
 <!ENTITY edit.detail          "詳細">
 <!ENTITY edit.amount          "金額">
 <!ENTITY edit.user          "ユーザ">
+<!ENTITY edit.username          "ユーザ名">
 <!ENTITY edit.internal          "家計内">
 <!ENTITY edit.bank          "銀行">
 <!ENTITY edit.creditcard          "クレジットカード">

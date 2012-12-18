@@ -16,13 +16,13 @@ Transaction.prototype.getCommonQueryParam = function (i) {
         "operator": $$('km_list_query_operator' + i).value
     };
     if (param['key'] === "date") {
-        param['value'] = $$('km_edit_query_date' + i).value;
+        param['value'] = $$('km_date_qcond_value' + i).value;
     } else if (param['key'] === "item") {
-        param['value'] = $$('km_edit_query_list' + i).value;
+        param['value'] = $$('km_list_qcond_value' + i).value;
     } else if (param['key'] === "detail") {
-        param['value'] = $$('km_edit_query_text' + i).value;
+        param['value'] = $$('km_textbox_qcond_value' + i).value;
     } else if (param['key'] === "user") {
-        param['value'] = $$('km_edit_query_list' + i).value;
+        param['value'] = $$('km_list_qcond_value' + i).value;
     }
     if (i != 1) {
         param['andor'] = $$('km_list_query_andor').value;

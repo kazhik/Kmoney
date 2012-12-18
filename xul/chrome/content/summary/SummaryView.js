@@ -9,43 +9,43 @@ SummaryView.prototype.initialize = function (db) {
     this.mDb = db;
     this.mTree.init(this.loadTable.bind(this));
 
-    this.listeners['km_summary_item.command'] = this.onConditionChanged.bind(this);
-    $$('km_summary_item').addEventListener("command", this.listeners['km_summary_item.command']);
+    this.listeners['km_list_summary_item.command'] = this.onConditionChanged.bind(this);
+    $$('km_list_summary_item').addEventListener("command", this.listeners['km_list_summary_item.command']);
 
-    this.listeners['km_summary_viewmode.command'] = this.onViewModeChanged.bind(this);
-    $$('km_summary_viewmode').addEventListener("command",
-                                               this.listeners['km_summary_viewmode.command']);
+    this.listeners['km_radgroup_viewmode.command'] = this.onViewModeChanged.bind(this);
+    $$('km_radgroup_viewmode').addEventListener("command",
+                                               this.listeners['km_radgroup_viewmode.command']);
 
                                                  
 };
 SummaryView.prototype.terminate = function () {
-    $$('km_summary_item').removeEventListener("command",
-                                              this.listeners['km_summary_item.command']);
+    $$('km_list_summary_item').removeEventListener("command",
+                                              this.listeners['km_list_summary_item.command']);
 
-    $$('km_summary_viewmode').removeEventListener("command",
-                                                  this.listeners['km_summary_viewmode.command']);
+    $$('km_radgroup_viewmode').removeEventListener("command",
+                                                  this.listeners['km_radgroup_viewmode.command']);
 };
 SummaryView.prototype.onViewModeChanged = function () {
     this.load();
 };
 SummaryView.prototype.changeSummaryItemList = function () {
-    if ($$('km_summary_table').selected) {
-        if ($$('km_summary_item').getItemAtIndex(0).value != 0) {
-            $$('km_summary_item').insertItemAt(0, km_getLStr('query_condition.none'), 0);
+    if ($$('km_radio_table').selected) {
+        if ($$('km_list_summary_item').getItemAtIndex(0).value != 0) {
+            $$('km_list_summary_item').insertItemAt(0, km_getLStr('query_condition.none'), 0);
         }
     } else {
-        if ($$('km_summary_item').getItemAtIndex(0).value == 0) {
-            $$('km_summary_item').removeItemAt(0);
+        if ($$('km_list_summary_item').getItemAtIndex(0).value == 0) {
+            $$('km_list_summary_item').removeItemAt(0);
         }
     }
-    $$('km_summary_item').selectedIndex = 0;
+    $$('km_list_summary_item').selectedIndex = 0;
 }
 
 SummaryView.prototype.onConditionChanged = function () {
     this.load();
 };
 SummaryView.prototype.load = function() {
-    if ($$('km_summary_table').selected) {
+    if ($$('km_radio_table').selected) {
         this.loadTable();
     } else {
         this.drawGraph();
@@ -57,16 +57,16 @@ SummaryView.prototype.loadTable = function (sortParams) {
         this.mTree.populateTableData(records, columns);
         this.mTree.showTable(true);
     }
-    $$('km_summary').hidden = true;
+    $$('km_box_summary_panel').hidden = true;
     $$('km_tree_summary').hidden = false;
-    $$('km_summary_condition_period').hidden = true;
+    $$('km_box_summary_condition_period').hidden = true;
 
     if (sortParams === undefined) {
         sortParams = this.mTree.getCurrentSortParams();
     }
     var queryParams = {
-        "itemId": strToInt($$('km_summary_item').value),
-        "userId": strToInt($$('km_summary_user').value)
+        "itemId": strToInt($$('km_list_summary_item').value),
+        "userId": strToInt($$('km_list_summary_user').value)
     };
     
     this.mDb.transactions.loadAllSumPerMonth(sortParams, queryParams, loadCallback.bind(this));
@@ -95,9 +95,9 @@ SummaryView.prototype.drawGraph = function () {
             labelDate.setMonth(labelDate.getMonth() + 1);
         }
     
-        KmGlobals.$empty($$('km_summary'));
+        KmGlobals.$empty($$('km_box_summary_panel'));
         this.mGraph = new Ico.BarGraph(
-        $$('km_summary'), {
+        $$('km_box_summary_panel'), {
             expense: valueArray
         }, {
             colours: {
@@ -109,20 +109,20 @@ SummaryView.prototype.drawGraph = function () {
             bar_labels: true
         });
     }
-    $$('km_summary').hidden = false;
+    $$('km_box_summary_panel').hidden = false;
     $$('km_tree_summary').hidden = true;
-    $$('km_summary_condition_period').hidden = false;
+    $$('km_box_summary_condition_period').hidden = false;
     
     
-    var monthfromY = $$('km_summary_monthfromY').value;
-    var monthfromM = $$('km_summary_monthfromM').value;
-    var monthtoY = $$('km_summary_monthtoY').value;
-    var monthtoM = $$('km_summary_monthtoM').value;
+    var monthfromY = $$('km_list_summary_monthfromY').value;
+    var monthfromM = $$('km_list_summary_monthfromM').value;
+    var monthtoY = $$('km_list_summary_monthtoY').value;
+    var monthtoM = $$('km_list_summary_monthtoM').value;
     var params = {
         "periodFrom": monthfromY + "/" + monthfromM,
         "periodTo": monthtoY + "/" + monthtoM,
-        "itemId": strToInt($$('km_summary_item').value),
-        "userId": strToInt($$('km_summary_user').value)
+        "itemId": strToInt($$('km_list_summary_item').value),
+        "userId": strToInt($$('km_list_summary_user').value)
     };
     
     this.mDb.transactions.loadSumPerMonth(params, loadCallback.bind(this));

@@ -186,55 +186,55 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                 <tab id="km_tab_creditcard" label="&tab.creditcard;" persist="selected" />
                 <tab id="km_tab_emoney" label="&tab.emoney;" persist="selected" />
             </tabs>
-            <hbox id="km_summary_condition" align="center" hidden="true">
-                <radiogroup id="km_summary_viewmode" orient="horizontal">
-                    <radio id="km_summary_table" label="&edit.table;" selected="true" />
-                    <radio id="km_summary_graph" label="&edit.graph;" />
+            <hbox id="km_box_summary_qcond" align="center" hidden="true">
+                <radiogroup id="km_radgroup_viewmode" orient="horizontal">
+                    <radio id="km_radio_table" label="&edit.table;" selected="true" />
+                    <radio id="km_radio_graph" label="&edit.graph;" />
                 </radiogroup>
-                <hbox id="km_summary_condition_period" align="center">
-                    <label control="km_summary_monthfromY" value="&edit.period;" />
-                    <menulist id="km_summary_monthfromY">
+                <hbox id="km_box_summary_condition_period" align="center">
+                    <label control="km_list_summary_monthfromY" value="&edit.period;" />
+                    <menulist id="km_list_summary_monthfromY">
                         <menupopup></menupopup>
                     </menulist>
-                    <menulist id="km_summary_monthfromM">
+                    <menulist id="km_list_summary_monthfromM">
                         <menupopup></menupopup>
                     </menulist>
                     <label value="-" />
-                    <menulist id="km_summary_monthtoY">
+                    <menulist id="km_list_summary_monthtoY">
                         <menupopup></menupopup>
                     </menulist>
-                    <menulist id="km_summary_monthtoM">
-                        <menupopup></menupopup>
-                    </menulist>
-                </hbox>
-                <hbox id="km_summary_itembox" align="center">
-                    <label control="km_summary_item" value="&edit.item;" />
-                    <menulist id="km_summary_item">
+                    <menulist id="km_list_summary_monthtoM">
                         <menupopup></menupopup>
                     </menulist>
                 </hbox>
-                <label control="km_summary_user" value="&edit.user;" />
-                <menulist id="km_summary_user">
+                <hbox id="km_box_summary_item" align="center">
+                    <label control="km_list_summary_item" value="&edit.item;" />
+                    <menulist id="km_list_summary_item">
+                        <menupopup></menupopup>
+                    </menulist>
+                </hbox>
+                <label control="km_list_summary_user" value="&edit.user;" />
+                <menulist id="km_list_summary_user">
                     <menupopup></menupopup>
                 </menulist>
-                <hbox id="km_summary_bankbox" align="center">
-                    <label control="km_summary_bank" value="&edit.bank;" />
-                    <menulist id="km_summary_bank">
+                <hbox id="km_box_summary_bank" align="center">
+                    <label control="km_list_summary_bank" value="&edit.bank;" />
+                    <menulist id="km_list_summary_bank">
                         <menupopup></menupopup>
                     </menulist>
                 </hbox>
             </hbox>
             <hbox>
-                <hbox id="km_query1">
+                <hbox id="km_box_qcond1">
                     <menulist id="km_list_query_condition1">
                         <menupopup></menupopup>
                     </menulist>
                     <menulist id="km_list_query_operator1">
                         <menupopup></menupopup>
                     </menulist>
-                    <datepicker id="km_edit_query_date1" type="popup" hidden="true" />
-                    <textbox id="km_edit_query_text1" size="10" hidden="true" />
-                    <menulist id="km_edit_query_list1" hidden="true" >
+                    <datepicker id="km_date_qcond_value1" type="popup" hidden="true" />
+                    <textbox id="km_textbox_qcond_value1" size="10" hidden="true" />
+                    <menulist id="km_list_qcond_value1" hidden="true" >
                         <menupopup></menupopup>
                     </menulist>
                     
@@ -245,23 +245,23 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                         </menupopup>
                     </menulist>
                 </hbox>
-                <hbox id="km_query2">
+                <hbox id="km_box_qcond2">
                     <menulist id="km_list_query_condition2">
                         <menupopup></menupopup>
                     </menulist>
                     <menulist id="km_list_query_operator2">
                         <menupopup></menupopup>
                     </menulist>
-                    <datepicker id="km_edit_query_date2" type="popup" hidden="true" />
-                    <textbox id="km_edit_query_text2" size="10" hidden="true" />
-                    <menulist id="km_edit_query_list2" hidden="true" >
+                    <datepicker id="km_date_qcond_value2" type="popup" hidden="true" />
+                    <textbox id="km_textbox_qcond_value2" size="10" hidden="true" />
+                    <menulist id="km_list_qcond_value2" hidden="true" >
                         <menupopup></menupopup>
                     </menulist>
                 </hbox>
             </hbox>
             <tabpanels flex="1">
                 <tabpanel flex="1">
-                    <vbox id="km_summary" flex="1" />
+                    <vbox id="km_box_summary_panel" flex="1" />
                     <tree id="km_tree_summary" style="min-height:30em" flex="1" seltype="multiple"
                     enableColumnDrag="false">
                         <treecols id="km_cols_summary">
@@ -277,7 +277,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                     </tree>
                 </tabpanel>
                 <tabpanel flex="1">
-                    <vbox id="km_balance" style="max-height:30em" flex="1"/>
+                    <vbox id="km_box_balance_panel" style="max-height:30em" flex="1"/>
                 </tabpanel>
                 <tabpanel flex="1">
                         <tree id="km_tree_asset" style="min-height:30em" flex="1" seltype="single"
@@ -475,76 +475,76 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
             </tabpanels>
         </tabbox>
         <vbox>
-            <hbox id="km_edit_asset" align="center">
-    			<label control="km_edit_assetName" value="&edit.asset;" />
-                <textbox id="km_edit_assetName" readonly="true" size="10" />
+            <hbox id="km_box_asset" align="center">
+    			<label control="km_textbox_assetname" value="&edit.asset;" />
+                <textbox id="km_textbox_assetname" readonly="true" size="10" />
     			<label control="km_read_amount" value="&edit.amount;" />
 				<textbox id="km_read_amount" readonly="true" size="7" />
     			<label control="km_read_user" value="&edit.user;" />
 				<textbox id="km_read_user" readonly="true" size="7" />
-                <label control="km_edit_assetType" value="&edit.assettype;" />
-                <menulist id="km_edit_assetType">
+                <label control="km_list_assettype" value="&edit.assettype;" />
+                <menulist id="km_list_assettype">
                     <menupopup>
                         <menuitem label="&menuitem.personal;" value="1" />
                         <menuitem label="&menuitem.family;" value="2" />
                     </menupopup>
                 </menulist>
-				<textbox id="km_read_userId" hidden="true" />
-                <textbox id="km_read_transactionType" hidden="true" />
-                <textbox id="km_read_transactionId" hidden="true" />
+				<textbox id="km_read_userid" hidden="true" />
+                <textbox id="km_read_transactiontype" hidden="true" />
+                <textbox id="km_read_transactionid" hidden="true" />
                 
             </hbox>
-				<hbox id="km_edit1" align="center">
-					<label control="km_edit_transactionDate" value="&edit.date;" />
-					<datepicker id="km_edit_transactionDate" type="popup" />
-					<groupbox id="km_income_expense_group">
-						<radiogroup id="income_expense" orient="horizontal">
-							<radio id="km_edit_income" label="&edit.income;" />
-							<radio id="km_edit_expense" label="&edit.expense;" selected="true" />
+				<hbox id="km_box_edit1" align="center">
+					<label control="km_date_transdate" value="&edit.date;" />
+					<datepicker id="km_date_transdate" type="popup" />
+					<groupbox>
+						<radiogroup id="km_radgroup_income-expense" orient="horizontal">
+							<radio id="km_radio_income" label="&edit.income;" />
+							<radio id="km_radio_expense" label="&edit.expense;" selected="true" />
 						</radiogroup>
 					</groupbox>
-					<label control="km_edit_item" value="&edit.item;" />
-					<menulist id="km_edit_item">
+					<label control="km_list_item" value="&edit.item;" />
+					<menulist id="km_list_item">
 						<menupopup></menupopup>
 					</menulist>
-					<label control="km_edit_detail" value="&edit.detail;" />
-					<textbox id="km_edit_detail" size="20" />
+					<label control="km_textbox_detail" value="&edit.detail;" />
+					<textbox id="km_textbox_detail" size="20" />
 				</hbox>
-				<hbox id="km_edit2" align="center">
-					<label control="km_edit_amount" value="&edit.amount;" />
-					<textbox id="km_edit_amount" size="7" style="text-align: right" />
-					<label control="km_edit_user" value="&edit.user;" />
-					<menulist id="km_edit_user">
+				<hbox id="km_box_edit2" align="center">
+					<label control="km_textbox_amount" value="&edit.amount;" />
+					<textbox id="km_textbox_amount" size="7" style="text-align: right" />
+					<label control="km_list_user" value="&edit.user;" />
+					<menulist id="km_list_user">
 						<menupopup></menupopup>
 					</menulist>
-					<label control="km_edit_internal" value="&edit.internal;" />
-					<menulist id="km_edit_internal">
+					<label control="km_list_internal" value="&edit.internal;" />
+					<menulist id="km_list_internal">
 						<menupopup></menupopup>
 					</menulist>
-					<hbox id="bankbox" align="center">
-						<label control="km_edit_bank" value="&edit.bank;" />
-						<menulist id="km_edit_bank">
+					<hbox id="km_box_bank" align="center">
+						<label control="km_list_bank" value="&edit.bank;" />
+						<menulist id="km_list_bank">
 							<menupopup></menupopup>
 						</menulist>
 					</hbox>
-					<hbox id="creditcardbox" align="center">
-						<label control="km_edit_creditcard" value="&edit.creditcard;" />
-						<menulist id="km_edit_creditcard">
+					<hbox id="km_box_creditcard" align="center">
+						<label control="km_list_creditcard" value="&edit.creditcard;" />
+						<menulist id="km_list_creditcard">
 							<menupopup></menupopup>
 						</menulist>
-						<label control="km_edit_paymonthY" value="&edit.paymonth;" />
-						<textbox id="km_edit_paymonthY" size="1"/>
+						<label control="km_textbox_paymonthY" value="&edit.paymonth;" />
+						<textbox id="km_textbox_paymonthY" size="1"/>
                         <label value="/" />
-						<textbox id="km_edit_paymonthM" size="1"/>
+						<textbox id="km_textbox_paymonthM" size="1"/>
 					</hbox>
-					<hbox id="emoneybox" align="center">
-						<label control="km_edit_emoney" value="&edit.emoney;" />
-						<menulist id="km_edit_emoney">
+					<hbox id="km_box_emoney" align="center">
+						<label control="km_list_emoney" value="&edit.emoney;" />
+						<menulist id="km_list_emoney">
 							<menupopup></menupopup>
 						</menulist>
 					</hbox>
 				</hbox>
-				<hbox id="km_edit_buttons" align="right">
+				<hbox id="km_box_edit_buttons" align="right">
 					<button id="km_button_add" accesskey="&button.add.accesskey;"
 							label="&button.add;" />
 					<button id="km_button_update" accesskey="&button.update.accesskey;"

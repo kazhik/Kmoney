@@ -25,7 +25,7 @@ EMoneyTransaction.prototype.load = function (sortParams) {
     for (var i = 1; i <= 2; i++) {
         var param = this.getCommonQueryParam(i);
         if (param['key'] === "emoney") {
-            param['value'] = $$('km_edit_query_list' + i).value;
+            param['value'] = $$('km_list_qcond_value' + i).value;
         }
         queryParams.push(param);
     }
@@ -46,20 +46,20 @@ EMoneyTransaction.prototype.openEdit = function (id) {
 };
 
 EMoneyTransaction.prototype.onSelect = function () {
-    $$('km_edit_transactionDate').value = this.mTree.getSelectedRowValue('transaction_date');
-    $$('km_edit_item').value = this.mTree.getSelectedRowValue('item_id');
-    $$('km_edit_detail').value = this.mTree.getSelectedRowValue('detail');
+    $$('km_date_transdate').value = this.mTree.getSelectedRowValue('transaction_date');
+    $$('km_list_item').value = this.mTree.getSelectedRowValue('item_id');
+    $$('km_textbox_detail').value = this.mTree.getSelectedRowValue('detail');
     var amount = this.mTree.getSelectedRowValue('income');
     if (Number(amount) == 0) {
         amount = this.mTree.getSelectedRowValue('expense');
-        $$('income_expense').selectedItem = $$('km_edit_expense');
+        $$('km_radgroup_income-expense').selectedItem = $$('km_radio_expense');
     } else {
-        $$('income_expense').selectedItem = $$('km_edit_income');
+        $$('km_radgroup_income-expense').selectedItem = $$('km_radio_income');
     }
-    $$('km_edit_amount').value = amount;
-    $$('km_edit_emoney').value = this.mTree.getSelectedRowValue('money_id');
-    $$('km_edit_user').value = this.mTree.getSelectedRowValue('user_id');
-    $$('km_edit_internal').value = this.mTree.getSelectedRowValue('internal');
+    $$('km_textbox_amount').value = amount;
+    $$('km_list_emoney').value = this.mTree.getSelectedRowValue('money_id');
+    $$('km_list_user').value = this.mTree.getSelectedRowValue('user_id');
+    $$('km_list_internal').value = this.mTree.getSelectedRowValue('internal');
 
     // 選択行の収支を計算してステータスバーに表示
     this.showSumOfSelectedRows();
@@ -67,38 +67,38 @@ EMoneyTransaction.prototype.onSelect = function () {
 };
 
 EMoneyTransaction.prototype.onUserSelect = function () {
-    var moneyList = this.mDb.emoneyInfo.getMoneyList($$('km_edit_user').value);
+    var moneyList = this.mDb.emoneyInfo.getMoneyList($$('km_list_user').value);
 
-    $$("km_edit_emoney").removeAllItems();
+    $$("km_list_emoney").removeAllItems();
     for (var i = 0; i < moneyList.length; i++) {
-        $$("km_edit_emoney").appendItem(moneyList[i][1], moneyList[i][0]);
+        $$("km_list_emoney").appendItem(moneyList[i][1], moneyList[i][0]);
     }
-    $$("km_edit_emoney").selectedIndex = 0;
+    $$("km_list_emoney").selectedIndex = 0;
 
 };
 
 
 EMoneyTransaction.prototype.addRecord = function (params) {
-    if ($$('km_edit_income').selected) {
+    if ($$('km_radio_income').selected) {
         params['income'] = params['amount'];
     } else {
         params['expense'] = params['amount'];
     }
-    params['moneyId'] = $$('km_edit_emoney').value;
-    params['internal'] = $$('km_edit_internal').value;
+    params['moneyId'] = $$('km_list_emoney').value;
+    params['internal'] = $$('km_list_internal').value;
 
     this.mDb.emoneyInsert([params], this.insertCallback.bind(this));
 
 };
 EMoneyTransaction.prototype.updateRecord = function (idList, params) {
     if (Object.keys(params).length > 1) {
-        if ($$('km_edit_income').selected) {
+        if ($$('km_radio_income').selected) {
             params['income'] = params['amount'];
         } else {
             params['expense'] = params['amount'];
         }
-        params['moneyId'] = $$('km_edit_emoney').value;
-        params['internal'] = $$('km_edit_internal').value;
+        params['moneyId'] = $$('km_list_emoney').value;
+        params['internal'] = $$('km_list_internal').value;
     }
     
     this.mDb.emoneyUpdate(idList, params, this.updateCallback.bind(this));

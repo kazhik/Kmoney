@@ -14,21 +14,21 @@
 
   <vbox>
     <hbox align="center">
-        <label control="km_select_user" value="&edit.user;" />
-        <menulist id="km_select_user">
+        <label control="km_list_user" value="&edit.user;" />
+        <menulist id="km_list_user">
             <menupopup></menupopup>
         </menulist>
-        <label control="km_select_importtype" value="&select.importtype;" />
-        <menulist id="km_select_importtype">
+        <label control="km_list_importtype" value="&select.importtype;" />
+        <menulist id="km_list_importtype">
             <menupopup></menupopup>
         </menulist>
-        <menulist id="km_select_source" hidden="true">
+        <menulist id="km_list_source" hidden="true">
             <menupopup></menupopup>
         </menulist>
     </hbox>
     <hbox align="center">
-        <label control="km_edit_importfrom" value="&edit.importfrom;" />
-        <textbox id="km_edit_importfrom" size="24" />
+        <label control="km_textbox_importfrom" value="&edit.importfrom;" />
+        <textbox id="km_textbox_importfrom" size="24" />
         <button id="km_button_importfrom" accesskey="&button.selectfile.accesskey;"
                 label="&button.selectfile;" />
     </hbox>

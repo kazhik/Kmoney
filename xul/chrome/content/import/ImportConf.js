@@ -31,25 +31,25 @@ ImportConf.prototype.close = function () {
 };
 
 ImportConf.prototype.addEventListeners = function () {
-    this.listeners['import_conf_add.command'] = this.addRecord.bind(this);
-    $$('import_conf_add').addEventListener("command",
-        this.listeners['import_conf_add.command']);
+    this.listeners['km_button_importconf_add.command'] = this.addRecord.bind(this);
+    $$('km_button_importconf_add').addEventListener("command",
+        this.listeners['km_button_importconf_add.command']);
 
-    this.listeners['import_conf_update.command'] = this.updateRecord.bind(this);
-    $$('import_conf_update').addEventListener("command",
-        this.listeners['import_conf_update.command']);
+    this.listeners['km_button_importconf_update.command'] = this.updateRecord.bind(this);
+    $$('km_button_importconf_update').addEventListener("command",
+        this.listeners['km_button_importconf_update.command']);
 
-    this.listeners['import_conf_delete.command'] = this.deleteRecord.bind(this);
-    $$('import_conf_delete').addEventListener("command",
-        this.listeners['import_conf_delete.command']);
+    this.listeners['km_button_importconf_delete.command'] = this.deleteRecord.bind(this);
+    $$('km_button_importconf_delete').addEventListener("command",
+        this.listeners['km_button_importconf_delete.command']);
         
-    this.listeners['import_conf_close.command'] = this.close.bind(this);
-    $$('import_conf_close').addEventListener("command",
-        this.listeners['import_conf_close.command']);
+    this.listeners['km_button_importconf_close.command'] = this.close.bind(this);
+    $$('km_button_importconf_close').addEventListener("command",
+        this.listeners['km_button_importconf_close.command']);
 
-    this.listeners['km_import_select_type.command'] = this.onSelectType.bind(this);
-    $$('km_import_select_type').addEventListener("command",
-        this.listeners['km_import_select_type.command']);
+    this.listeners['km_list_importconf_type.command'] = this.onSelectType.bind(this);
+    $$('km_list_importconf_type').addEventListener("command",
+        this.listeners['km_list_importconf_type.command']);
     
     this.listeners['km_tree_import_conf.select'] = this.onSelect.bind(this);
     $$('km_tree_import_conf').addEventListener("select",
@@ -57,20 +57,20 @@ ImportConf.prototype.addEventListeners = function () {
     
 };
 ImportConf.prototype.removeEventListeners = function () {
-    $$('import_conf_add').removeEventListener("command",
-        this.listeners['import_conf_add.command']);
+    $$('km_button_importconf_add').removeEventListener("command",
+        this.listeners['km_button_importconf_add.command']);
 
-    $$('import_conf_update').removeEventListener("command",
-        this.listeners['import_conf_update.command']);
+    $$('km_button_importconf_update').removeEventListener("command",
+        this.listeners['km_button_importconf_update.command']);
 
-    $$('import_conf_delete').removeEventListener("command",
-        this.listeners['import_conf_delete.command']);
+    $$('km_button_importconf_delete').removeEventListener("command",
+        this.listeners['km_button_importconf_delete.command']);
         
-    $$('import_conf_close').removeEventListener("command",
-        this.listeners['import_conf_close.command']);
+    $$('km_button_importconf_close').removeEventListener("command",
+        this.listeners['km_button_importconf_close.command']);
 
-    $$('km_import_select_type').removeEventListener("command",
-        this.listeners['km_import_select_type.command']);
+    $$('km_list_importconf_type').removeEventListener("command",
+        this.listeners['km_list_importconf_type.command']);
 
     $$('km_tree_import_conf').removeEventListener("select",
         this.listeners['km_tree_import_conf.select']);
@@ -80,11 +80,11 @@ ImportConf.prototype.addRecord = function () {
         this.onSelectType();
     }
     var params = {
-        "sourceType": $$("km_import_select_type").value,
-        "detail": $$("conf_edit_detail").value,
-        "itemId": $$('conf_edit_item').value,
-        "defaultId": ($$('conf_edit_default').checked)? 1: 0,
-        "internal": $$("conf_edit_internal").value
+        "sourceType": $$("km_list_importconf_type").value,
+        "detail": $$("km_textbox_importconf_detail").value,
+        "itemId": $$('km_list_importconf_item').value,
+        "defaultId": ($$('km_checkbox_importconf_default').checked)? 1: 0,
+        "internal": $$("km_list_importconf_internal").value
     };
     
     this.mDb.import.insert(params, insertCallback.bind(this));
@@ -101,10 +101,10 @@ ImportConf.prototype.updateRecord = function () {
     }
     
     var params = {
-        "detail": $$("conf_edit_detail").value,
-        "itemId": $$('conf_edit_item').value,
-        "defaultId": ($$('conf_edit_default').checked)? 1: 0,
-        "internal": $$("conf_edit_internal").value
+        "detail": $$("km_textbox_importconf_detail").value,
+        "itemId": $$('km_list_importconf_item').value,
+        "defaultId": ($$('km_checkbox_importconf_default').checked)? 1: 0,
+        "internal": $$("km_list_importconf_internal").value
     };
     var id = this.mTree.getSelectedRowValue("import_conf_id");
     
@@ -146,22 +146,22 @@ ImportConf.prototype.deleteRecord = function () {
 };
 
 ImportConf.prototype.onSelect = function () {
-    $$("conf_edit_detail").value =
+    $$("km_textbox_importconf_detail").value =
         this.mTree.getSelectedRowValue("import_conf_detail");
-    $$('conf_edit_item').value =
+    $$('km_list_importconf_item').value =
         this.mTree.getSelectedRowValue("import_conf_itemid");
-    $$('conf_edit_default').checked =
+    $$('km_checkbox_importconf_default').checked =
         (Number(this.mTree.getSelectedRowValue("import_conf_default")) === 1);
-    $$("conf_edit_internal").value =
+    $$("km_list_importconf_internal").value =
         this.mTree.getSelectedRowValue("import_conf_internal");
         
 };
 
 ImportConf.prototype.initImportTypeList = function () {
     function loadCallback(records) {
-        $$('km_import_select_type').removeAllItems();
+        $$('km_list_importconf_type').removeAllItems();
         for (var i = 0; i < records.length; i++) {
-            $$('km_import_select_type').appendItem(records[i][1], records[i][0]);
+            $$('km_list_importconf_type').appendItem(records[i][1], records[i][0]);
         }
     }
     this.mDb.source.load(loadCallback.bind(this));
@@ -171,7 +171,7 @@ ImportConf.prototype.onSelectType = function () {
         this.mTree.populateTableData(records, columns);
         this.mTree.showTable(true);
     }
-    var type = $$("km_import_select_type").value;
+    var type = $$("km_list_importconf_type").value;
     
     if (parseInt(type) === 0) {
         return;
@@ -180,16 +180,16 @@ ImportConf.prototype.onSelectType = function () {
   
 };
 ImportConf.prototype.initItemList = function (itemMap) {
-    $$('conf_edit_item').removeAllItems();
+    $$('km_list_importconf_item').removeAllItems();
     for (var key in itemMap) {
-        $$('conf_edit_item').appendItem(key, itemMap[key]);
+        $$('km_list_importconf_item').appendItem(key, itemMap[key]);
     }
-    $$('conf_edit_item').selectedIndex = 0;
+    $$('km_list_importconf_item').selectedIndex = 0;
 };
 ImportConf.prototype.populateInternalList = function () {
-    $$('conf_edit_internal').removeAllItems();
-    $$('conf_edit_internal').appendItem(km_getLStr("internal.none"), 0);
-    $$('conf_edit_internal').appendItem(km_getLStr("internal.self"), 1);
-    $$('conf_edit_internal').appendItem(km_getLStr("internal.family"), 2);
-    $$('conf_edit_internal').selectedIndex = 0;
+    $$('km_list_importconf_internal').removeAllItems();
+    $$('km_list_importconf_internal').appendItem(km_getLStr("internal.none"), 0);
+    $$('km_list_importconf_internal').appendItem(km_getLStr("internal.self"), 1);
+    $$('km_list_importconf_internal').appendItem(km_getLStr("internal.family"), 2);
+    $$('km_list_importconf_internal').selectedIndex = 0;
 };

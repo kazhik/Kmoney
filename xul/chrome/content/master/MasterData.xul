@@ -131,27 +131,27 @@
         </tabbox>
 		<vbox>
 			<hbox align="center">
-				<label id="km_edit_label_name" control="km_edit_name" value="&edit.name;" />
-				<textbox id="km_edit_name" size="7" />
-				<hbox id="userbox" align="center">
-					<label id="km_edit_label_user" control="km_edit_user" value="&edit.user;" />
-					<menulist id="km_edit_user">
+				<label id="km_label_name" control="km_textbox_name" value="&edit.name;" />
+				<textbox id="km_textbox_name" size="7" />
+				<hbox id="km_box_user" align="center">
+					<label control="km_list_user" value="&edit.username;" />
+					<menulist id="km_list_user">
 						<menupopup></menupopup>
 					</menulist>
 				</hbox>
-				<hbox id="bankbox" align="center">
-					<label control="km_edit_bank" value="&edit.bank;" />
-					<menulist id="km_edit_bank">
+				<hbox id="km_box_bank" align="center">
+					<label control="km_list_bank" value="&edit.bank;" />
+					<menulist id="km_list_bank">
 						<menupopup></menupopup>
 					</menulist>
 				</hbox>
-				<hbox id="creditcardbox" align="center">
-					<label control="km_edit_creditcard" value="&edit.creditcard;" />
-					<menulist id="km_edit_creditcard">
+				<hbox id="km_box_creditcard" align="center">
+					<label control="km_list_creditcard" value="&edit.creditcard;" />
+					<menulist id="km_list_creditcard">
 						<menupopup></menupopup>
 					</menulist>
 				</hbox>
-                <hbox id="itembox" align="center">
+                <hbox id="km_box_item" align="center">
     				<checkbox id="km_master_sum" label="&column.sum_include;" />
                 </hbox>
 			</hbox>

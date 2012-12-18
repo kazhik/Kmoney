@@ -15,7 +15,7 @@
 
    <vbox>
         <hbox align="center">
-            <menulist id="km_import_select_type" label="&menulist.selecttype;">
+            <menulist id="km_list_importconf_type" label="&menulist.selecttype;">
                 <menupopup></menupopup>
             </menulist>
         </hbox>
@@ -43,26 +43,26 @@
         </vbox>
 		<vbox>
 			<hbox align="center">
-				<label control="conf_edit_detail" value="&edit.detail;" />
-				<textbox id="conf_edit_detail" size="10" />
-    			<label control="conf_edit_item" value="&edit.item;" />
-                <menulist id="conf_edit_item">
+				<label control="km_textbox_importconf_detail" value="&edit.detail;" />
+				<textbox id="km_textbox_importconf_detail" size="10" />
+    			<label control="km_list_importconf_item" value="&edit.item;" />
+                <menulist id="km_list_importconf_item">
                     <menupopup></menupopup>
                 </menulist>
-    			<label control="conf_edit_internal" value="&edit.internal;" />
-                <menulist id="conf_edit_internal">
+    			<label control="km_list_importconf_internal" value="&edit.internal;" />
+                <menulist id="km_list_importconf_internal">
                     <menupopup></menupopup>
                 </menulist>
-				<checkbox id="conf_edit_default" label="&edit.default;" />
+				<checkbox id="km_checkbox_importconf_default" label="&edit.default;" />
 			</hbox>
 			<hbox align="right">
-				<button id="import_conf_add" accesskey="&button.add.accesskey;"
+				<button id="km_button_importconf_add" accesskey="&button.add.accesskey;"
 						label="&button.add;" />
-				<button id="import_conf_update" accesskey="&button.update.accesskey;"
+				<button id="km_button_importconf_update" accesskey="&button.update.accesskey;"
 						label="&button.update;" />
-				<button id="import_conf_delete" accesskey="&button.delete.accesskey;"
+				<button id="km_button_importconf_delete" accesskey="&button.delete.accesskey;"
 						label="&button.delete;" />
-				<button id="import_conf_close" accesskey="&button.close.accesskey;"
+				<button id="km_button_importconf_close" accesskey="&button.close.accesskey;"
 						label="&button.close;" />
 			</hbox>
 		</vbox>

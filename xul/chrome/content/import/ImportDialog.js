@@ -39,17 +39,17 @@ ImportDialog.prototype.addEventListeners = function () {
     $$('km_button_importfrom').addEventListener("command",
         this.listeners['km_button_importfrom.command']);
 
-    this.listeners['km_select_importtype.command'] = this.onSelectImportType.bind(this);
-    $$('km_select_importtype').addEventListener("command",
-        this.listeners['km_select_importtype.command']);
+    this.listeners['km_list_importtype.command'] = this.onSelectImportType.bind(this);
+    $$('km_list_importtype').addEventListener("command",
+        this.listeners['km_list_importtype.command']);
     
-    this.listeners['km_select_user.command'] = this.onSelectUser.bind(this);
-    $$('km_select_user').addEventListener("command",
-        this.listeners['km_select_user.command']);
+    this.listeners['km_list_user.command'] = this.onSelectUser.bind(this);
+    $$('km_list_user').addEventListener("command",
+        this.listeners['km_list_user.command']);
     
-    this.listeners['km_select_source.command'] = this.onSelectSource.bind(this);
-    $$('km_select_source').addEventListener("command",
-        this.listeners['km_select_source.command']);
+    this.listeners['km_list_source.command'] = this.onSelectSource.bind(this);
+    $$('km_list_source').addEventListener("command",
+        this.listeners['km_list_source.command']);
 
     this.listeners['km_dialog_import.dialogaccept'] = this.onAccept.bind(this);
     $$('km_dialog_import').addEventListener("dialogaccept",
@@ -65,14 +65,14 @@ ImportDialog.prototype.removeEventListeners = function () {
     $$('km_button_importfrom').removeEventListener("command",
         this.listeners['km_button_importfrom.command']);
 
-    $$('km_select_importtype').removeEventListener("command",
-        this.listeners['km_select_importtype.command']);
+    $$('km_list_importtype').removeEventListener("command",
+        this.listeners['km_list_importtype.command']);
     
-    $$('km_select_user').removeEventListener("command",
-        this.listeners['km_select_user.command']);
+    $$('km_list_user').removeEventListener("command",
+        this.listeners['km_list_user.command']);
     
-    $$('km_select_source').removeEventListener("command",
-        this.listeners['km_select_source.command']);
+    $$('km_list_source').removeEventListener("command",
+        this.listeners['km_list_source.command']);
 
     $$('km_dialog_import').removeEventListener("dialogaccept",
         this.listeners['km_dialog_import.dialogaccept']);
@@ -81,7 +81,7 @@ ImportDialog.prototype.removeEventListeners = function () {
         this.listeners['km_dialog_import.dialogcancel']);
 };
 ImportDialog.prototype.populateSourceList = function () {
-    var importType = $$("km_select_importtype").value;
+    var importType = $$("km_list_importtype").value;
 
     var nameList = [];
     if (importType === km_getLStr("import.bank")) {
@@ -92,29 +92,29 @@ ImportDialog.prototype.populateSourceList = function () {
         nameList = this.mDb.creditCardInfo.getCardList(this.retVals['user']);
     }
     if (nameList.length > 0) {
-        $$("km_select_source").hidden = false;
+        $$("km_list_source").hidden = false;
         
-        $$("km_select_source").removeAllItems();
+        $$("km_list_source").removeAllItems();
         for (var i = 0; i < nameList.length; i++) {
-            $$("km_select_source").appendItem(nameList[i][1], nameList[i][1]);
+            $$("km_list_source").appendItem(nameList[i][1], nameList[i][1]);
         }
-        $$("km_select_source").selectedIndex = 0;
-        this.retVals['name'] = $$("km_select_source").value;
+        $$("km_list_source").selectedIndex = 0;
+        this.retVals['name'] = $$("km_list_source").value;
     } else {
-        $$("km_select_source").hidden = true;
+        $$("km_list_source").hidden = true;
         this.retVals['name'] = importType;
     }
 };
 ImportDialog.prototype.onSelectImportType = function () {
-    this.retVals['importtype'] = $$("km_select_importtype").value;
+    this.retVals['importtype'] = $$("km_list_importtype").value;
     this.populateSourceList();    
 };
 ImportDialog.prototype.onSelectUser = function () {
-    this.retVals['user'] = $$("km_select_user").value;
+    this.retVals['user'] = $$("km_list_user").value;
     this.populateSourceList();    
 };
 ImportDialog.prototype.onSelectSource = function () {
-    this.retVals['name'] = $$("km_select_source").value;
+    this.retVals['name'] = $$("km_list_source").value;
 };
 ImportDialog.prototype.selectFile = function () {
     const nsIFilePicker = Ci.nsIFilePicker;
@@ -128,26 +128,26 @@ ImportDialog.prototype.selectFile = function () {
     var rv = fp.show();
     if (rv == nsIFilePicker.returnOK || rv == nsIFilePicker.returnReplace) {
         this.retVals['file'] = fp.file;
-        $$('km_edit_importfrom').value = fp.file.path;
+        $$('km_textbox_importfrom').value = fp.file.path;
     }
 };
 
 ImportDialog.prototype.populateImportTypeList = function () {
-    $$("km_select_importtype").removeAllItems();
+    $$("km_list_importtype").removeAllItems();
 
     for (var key in this.importTypeList) {
-        $$("km_select_importtype").appendItem(this.importTypeList[key]['label'], key);
+        $$("km_list_importtype").appendItem(this.importTypeList[key]['label'], key);
     }
-    $$('km_select_importtype').selectedIndex = 0;
+    $$('km_list_importtype').selectedIndex = 0;
     this.onSelectImportType();
 };
 ImportDialog.prototype.populateUserList = function () {
-    $$('km_select_user').removeAllItems();
+    $$('km_list_user').removeAllItems();
 
     for (var key in this.users) {
-        $$('km_select_user').appendItem(key, this.users[key]);
+        $$('km_list_user').appendItem(key, this.users[key]);
     }
     
-    $$('km_select_user').selectedIndex = 0;
+    $$('km_list_user').selectedIndex = 0;
     this.onSelectUser();
 };
