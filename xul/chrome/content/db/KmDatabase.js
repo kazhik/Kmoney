@@ -271,6 +271,9 @@ KmDatabase.prototype.createTables = function() {
         '"asset_id" INTEGER,' +
         '"transaction_type" INTEGER,' +
         '"transaction_id" INTEGER)',
+    'CREATE TABLE "km_label_info" (' +
+        '"id" INTEGER PRIMARY KEY  NOT NULL ,' +
+        '"name" TEXT) ',
     'CREATE TABLE "km_sys_transaction" (' +
         '"id" INTEGER PRIMARY KEY  NOT NULL , "execution_date" DATETIME)',
     'CREATE TABLE "km_sys_undo" (' +
@@ -344,6 +347,18 @@ KmDatabase.prototype.createTables = function() {
   ];
   this.mDb.executeTransaction(sql);
 };
+
+KmDatabase.prototype.createNewTables = function() {
+  var sql = [
+    'CREATE TABLE "km_label_info" (' +
+        '"id" INTEGER PRIMARY KEY  NOT NULL ,' +
+        '"name" TEXT) ' +
+        'IF NOT EXISTS km_label_info',
+  ];
+  this.mDb.executeTransaction(sql);
+};
+    
+
     
 KmDatabase.prototype.createInitialRecords = function() {
     function insertCallback(id) {

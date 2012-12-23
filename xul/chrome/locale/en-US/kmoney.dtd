@@ -5,6 +5,7 @@
 <!ENTITY dialog.merge     "Merge">
 <!ENTITY dialog.update     "Update Selected Row">
 <!ENTITY dialog.user     "Current User">
+<!ENTITY dialog.label     "Label">
 
 <!-- menu -->
 <!ENTITY menu.file			"File">
@@ -130,6 +131,7 @@
 <!ENTITY edit.asset          "AssetName">
 <!ENTITY edit.assettype          "Type">
 <!ENTITY edit.selectCurrentUser          "Please select current user">
+<!ENTITY edit.label          "Label">
 
 <!-- confirm dialog -->
 <!ENTITY confirm.button.accept  "Yes">

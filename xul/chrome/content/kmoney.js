@@ -47,6 +47,8 @@ Kmoney.prototype.Startup = function () {
     
     this.mDb = new KmDatabase();
     
+    this.mDb.createNewTables();
+    
     this.addEventListeners();
 
     //To set our variables, etc. we fool observe into believing that the following preferences have changed.
