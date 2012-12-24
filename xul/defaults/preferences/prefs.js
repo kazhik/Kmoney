@@ -17,7 +17,9 @@ pref("extensions.kmoney.posInTargetApp", 1);
 //default extension for sqlite db files
 pref("extensions.kmoney.sqliteFileExtensions", "sqlite");
 
+pref("extensions.kmoney.view.creditcard", true);
+pref("extensions.kmoney.view.emoney", true);
+
 //stores JSON object for MRU
 pref("extensions.kmoney.jsonMruData", '{"meta":{"version":"1"},"size":10,"list":[]}');
 
-pref("toolkit.defaultChromeURI", "chrome://kmoney/content/kmoney.xul");

@@ -6,6 +6,7 @@
 <!ENTITY dialog.update     "選択行更新">
 <!ENTITY dialog.user     "現在のユーザ">
 <!ENTITY dialog.label     "ラベル">
+<!ENTITY dialog.selectdb     "データベースの選択">
 
 <!-- menu -->
 <!ENTITY menu.file          "ファイル">
@@ -133,6 +134,9 @@
 <!ENTITY edit.assettype          "種別">
 <!ENTITY edit.selectCurrentUser          "現在のユーザを選択してください">
 <!ENTITY edit.label          "ラベル">
+
+<!ENTITY label.newdb          "新しいデータベースを作成する">
+<!ENTITY label.opendb          "既存のデータベースを開く">
 
 <!-- confirm dialog -->
 <!ENTITY confirm.button.accept  "はい">

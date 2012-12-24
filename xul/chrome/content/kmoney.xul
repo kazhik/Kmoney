@@ -9,7 +9,6 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 	
     <script type="application/x-javascript" src="globals.js" />
     
-    <script type="application/x-javascript" src="db/sqlite.js" />
     <script type="application/x-javascript" src="db/KmDatabase.js" />
     <script type="application/x-javascript" src="db/KmCashTrns.js" />
     <script type="application/x-javascript" src="db/KmBankInfo.js" />

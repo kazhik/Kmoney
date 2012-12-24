@@ -3,7 +3,7 @@ Components.utils.import("chrome://kmoney/content/db/sqlite.js");
 function KmDatabase() {
     km_debug("KmDatabase start");
     this.mDb = new SQLiteHandler();
-    
+
     this.cashTrns = new KmCashTrns(this.mDb);
     
     this.bankInfo = new KmBankInfo(this.mDb);

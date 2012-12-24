@@ -6,6 +6,7 @@
 <!ENTITY dialog.update     "Update Selected Row">
 <!ENTITY dialog.user     "Current User">
 <!ENTITY dialog.label     "Label">
+<!ENTITY dialog.selectdb     "Select Database">
 
 <!-- menu -->
 <!ENTITY menu.file			"File">
@@ -132,6 +133,9 @@
 <!ENTITY edit.assettype          "Type">
 <!ENTITY edit.selectCurrentUser          "Please select current user">
 <!ENTITY edit.label          "Label">
+
+<!ENTITY label.newdb          "Create new database">
+<!ENTITY label.opendb          "Open existing database">
 
 <!-- confirm dialog -->
 <!ENTITY confirm.button.accept  "Yes">

@@ -47,8 +47,6 @@ Kmoney.prototype.Startup = function () {
     
     this.mDb = new KmDatabase();
     
-    this.mDb.createNewTables();
-    
     this.addEventListeners();
 
     //To set our variables, etc. we fool observe into believing that the following preferences have changed.
@@ -70,6 +68,8 @@ Kmoney.prototype.Startup = function () {
         if (this.mDb.openLastDb()) {
             this.loadData();
         }
+    } else {
+        this.openSelectDb();
     }
     km_debug("Kmoney.Startup end");
 };
@@ -353,6 +353,19 @@ Kmoney.prototype.removeEventListeners = function () {
                                                  this.listeners['km_list_summary_monthtoY.command']);
     $$('km_list_summary_monthtoM').removeEventListener("command",
                                                  this.listeners['km_list_summary_monthtoM.command']);
+};
+Kmoney.prototype.openSelectDb = function () {
+    var retVal = {"db": null};
+    window.openDialog("chrome://kmoney/content/SelectDbDialog.xul", "SelectDbDialog",
+        "chrome, resizable, centerscreen, modal, dialog", retVal);
+
+    if (retVal["db"] == "newdb") {
+        this.newDatabase();
+    } else if (retVal["db"] == "opendb") {
+        this.openDatabase();
+    }
+    
+    
 };
 Kmoney.prototype.openSetMaster = function () {
     if (!this.mDb.isConnected()) {

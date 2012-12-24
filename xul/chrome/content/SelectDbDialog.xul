@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://kmoney/locale/kmoney.dtd">
+ 
+<dialog id="km_dialog_selectdb" title="&window.title; - &dialog.selectdb;"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  buttons="accept,cancel"
+  onload="openSelectDbDialog()"
+  width="300"
+  flex="1">
+
+  <script type="application/x-javascript" src="globals.js"/>  
+  <script type="application/x-javascript" src="SelectDbDialog.js"/>  
+
+  <vbox>
+    <vbox align="center">
+        <radiogroup id="km_radgroup_db" orient="vertical">
+            <radio label="&label.newdb;" value="newdb" selected="true" />
+            <radio label="&label.opendb;" value="opendb" />
+        </radiogroup>
+    </vbox>
+    
+  </vbox>
+</dialog>
