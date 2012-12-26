@@ -3,7 +3,7 @@ var doc = null;
 var app = null;
 var dbconn = null;
 
-var dbfile;
+var dbfile = null;
 
 function initDbfile(mode) {
     if (mode === 'existingdb') {
@@ -62,7 +62,6 @@ function openTestDb() {
 
 // 一件だけ取得
 function execSelect(sql) {
-//    utils.log(sql);
     var statement = dbconn.createStatement(sql);
     statement.executeStep();
 

@@ -133,7 +133,7 @@ ImportConf.prototype.deleteRecord = function () {
 
     // 削除不可
     var permission = this.mTree.getSelectedRowValue("import_conf_permission");
-    if (parseInt(permission) !== 0) {
+    if (parseInt(permission) === 0) {
         km_alert(km_getLStr("error.title"), km_getLStr("error.update.cannotDelete"));
     }
     
