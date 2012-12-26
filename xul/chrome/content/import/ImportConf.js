@@ -79,11 +79,19 @@ ImportConf.prototype.addRecord = function () {
     function insertCallback(id) {
         this.onSelectType();
     }
+    // 既定値の設定は一つだけ
+    var defaultId = ($$('km_checkbox_importconf_default').checked)? 1: 0;
+    var sourceType = $$("km_list_importconf_type").value;
+    if (defaultId === 1 && this.mDb.import.getDefaultConfId(sourceType) != 0) {
+        km_alert(km_getLStr("error.title"), km_getLStr("error.import.default"));
+        return;
+    }
+    
     var params = {
-        "sourceType": $$("km_list_importconf_type").value,
+        "sourceType": sourceType,
         "detail": $$("km_textbox_importconf_detail").value,
         "itemId": $$('km_list_importconf_item').value,
-        "defaultId": ($$('km_checkbox_importconf_default').checked)? 1: 0,
+        "defaultId": defaultId,
         "internal": $$("km_list_importconf_internal").value
     };
     
@@ -100,13 +108,24 @@ ImportConf.prototype.updateRecord = function () {
         return;
     }
     
+    var confId = this.mTree.getSelectedRowValue("import_conf_id");
+    // 既定値の設定は一つだけ
+    var defaultId = ($$('km_checkbox_importconf_default').checked)? 1: 0;
+    if (defaultId === 1) {
+        var sourceType = $$("km_list_importconf_type").value;
+        var defaultConfId = this.mDb.import.getDefaultConfId(sourceType);
+        if (defaultConfId != 0 && defaultConfId != confId ) {
+            km_alert(km_getLStr("error.title"), km_getLStr("error.import.default"));
+            return;
+        }
+        
+    }
     var params = {
         "detail": $$("km_textbox_importconf_detail").value,
         "itemId": $$('km_list_importconf_item').value,
-        "defaultId": ($$('km_checkbox_importconf_default').checked)? 1: 0,
+        "defaultId": defaultId,
         "internal": $$("km_list_importconf_internal").value
     };
-    var id = this.mTree.getSelectedRowValue("import_conf_id");
     
     // permissionがなければdetailは変更不可
     var permission = this.mTree.getSelectedRowValue("import_conf_permission");
@@ -118,7 +137,7 @@ ImportConf.prototype.updateRecord = function () {
             return;
         }
     }
-    this.mDb.import.update(id, params, updateCallback.bind(this));
+    this.mDb.import.update(confId, params, updateCallback.bind(this));
     
 };
 ImportConf.prototype.deleteRecord = function () {

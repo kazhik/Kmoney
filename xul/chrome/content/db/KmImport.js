@@ -20,6 +20,17 @@ KmImport.prototype.loadConf = function(sourceType, loadCallback) {
 
     loadCallback(this.mDb.getRecords(), this.mDb.getColumns());
 };
+KmImport.prototype.getDefaultConfId = function(sourceType) {
+    this.mDb.selectQuery("select id from km_import "
+                         + "where default_id = 1 and source_type = " + sourceType);
+
+    var records = this.mDb.getRecords();
+    if (records.length === 0) {
+        return 0;
+    }
+    return records[0][0];
+}
+
 KmImport.prototype.insert = function(params, insertCallback) {
     var sql = "insert into km_import ("
       + "source_type, "
