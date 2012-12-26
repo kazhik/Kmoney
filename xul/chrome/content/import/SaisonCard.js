@@ -65,6 +65,8 @@ SaisonCard.prototype.importDb = function (name, csvFile, userId, importCallback)
                         strBuff = strBuff.replace("円", "");
                         strBuff = strBuff.replace("割引対象優待後金額：", "");
                         rec["payAmount"] = parseFloat(strBuff);
+                    } else {
+                        rec["payAmount"] = rec["boughtAmount"];
                     }
                     rec["detail"] = rowArray[i][1];
                     var itemInfo = this.getItemInfo(rowArray[i][1]);

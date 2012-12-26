@@ -125,7 +125,12 @@ KmBankTrns.prototype.loadDuplicate = function(loadCallback) {
         "D.name as bank_name, ",
         "A.user_id, ",
         "C.name as user_name, ",
-        "A.source, ",
+        "E.name, ",
+        "case",
+        "when A.internal = 0 then '" + km_getLStr("internal.none") + "'",
+        "when A.internal = 1 then '" + km_getLStr("internal.self") + "'",
+        "when A.internal = 2 then '" + km_getLStr("internal.family") + "'",
+        "end as type, ",
         "A.internal, ",
         "A.id ",
         "from km_bank_trns A ",
@@ -134,7 +139,9 @@ KmBankTrns.prototype.loadDuplicate = function(loadCallback) {
         "inner join km_user C ",
         " on A.user_id = C.id ",
         "inner join km_bank_info D ",
-        " on A.bank_id = D.id "
+        " on A.bank_id = D.id ",
+        "inner join km_source E",
+        " on A.source = E.id "
     ].join(" ");
     sql += ["inner join",
                "(select G.transaction_date, G.income, G.expense",
