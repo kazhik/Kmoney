@@ -67,6 +67,7 @@ CreditCardImport.prototype.importDb = function (name, csvFile, userId, importCal
                         return;
                     }
                     rec["itemId"] = itemInfo["itemId"];
+                    rec["internal"] = itemInfo["internal"];
                     if (rowArray[i].length >= 4 && rowArray[i][3].length > 0) {
                         rec["payMonth"] = rowArray[i][3].replace("/", "-", "g");
                     }

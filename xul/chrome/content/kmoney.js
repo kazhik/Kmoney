@@ -760,7 +760,7 @@ Kmoney.prototype.populateInternalList = function () {
 Kmoney.prototype.populateSummaryPeriodList = function () {
     // レコードが存在する最も古い年から今年までをリストに入れる
 
-    function getCallback(oldestYear) {
+    function getCallback(oldestYear, oldestMonth) {
         var thisYear = (new Date()).getFullYear();
         if (isNaN(oldestYear)) {
             // レコード0件の場合は今年
@@ -779,15 +779,15 @@ Kmoney.prototype.populateSummaryPeriodList = function () {
     
         $$('km_list_summary_monthfromY').appendItem("-", 0);
         $$('km_list_summary_monthtoY').appendItem("-", 0);
-        var defaultValue = oldestYear;
+        var defaultFromYear = oldestYear;
         for (var year = oldestYear; year <= thisYear; year++) {
             $$('km_list_summary_monthfromY').appendItem(year, year);
             $$('km_list_summary_monthtoY').appendItem(year, year);
             if (year === monthFromDefault.getFullYear()) {
-                defaultValue = year;
+                defaultFromYear = year;
             }
         }
-        $$('km_list_summary_monthfromY').value = defaultValue;
+        $$('km_list_summary_monthfromY').value = defaultFromYear;
         $$('km_list_summary_monthtoY').value = monthToDefault.getFullYear();
         
         $$('km_list_summary_monthfromM').removeAllItems();
@@ -799,8 +799,13 @@ Kmoney.prototype.populateSummaryPeriodList = function () {
             $$('km_list_summary_monthfromM').appendItem(i + 1, monthValue);
             $$('km_list_summary_monthtoM').appendItem(i + 1, monthValue);
         }
-        $$('km_list_summary_monthfromM').value = zeroFill(monthFromDefault.getMonth() + 1);
-        $$('km_list_summary_monthtoM').value = zeroFill(monthToDefault.getMonth() + 1);
+        if (defaultFromYear == oldestYear) {
+            $$('km_list_summary_monthfromM').value = zeroFill(oldestMonth, 2);
+        } else {
+            $$('km_list_summary_monthfromM').value =
+                zeroFill(monthFromDefault.getMonth() + 1, 2);
+        }
+        $$('km_list_summary_monthtoM').value = zeroFill(monthToDefault.getMonth() + 1, 2);
         
     }
     this.mDb.transactions.getOldestYear(getCallback.bind(this));

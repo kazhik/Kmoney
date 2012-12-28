@@ -63,6 +63,7 @@ EMoneyImport.prototype.importDb = function (name, csvFile, userId, importCallbac
                         return;
                     }
                     rec["itemId"] = itemInfo["itemId"];
+                    rec["internal"] = itemInfo["internal"];
         
                     newRecordArray.push(rec);
         

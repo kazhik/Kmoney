@@ -18,11 +18,12 @@ KmvTransactions.prototype.checkItem = function(itemId, checkCallback) {
 };
 
 KmvTransactions.prototype.getOldestYear = function(getCallback) {
-    var sql = "select strftime('%Y', min(transaction_date)) from kmv_transactions";
+    var sql = "select strftime('%Y', min(transaction_date)), "
+        + "strftime('%m', min(transaction_date)) from kmv_transactions";
     this.mDb.selectQuery(sql);
     var records = this.mDb.getRecords();
 
-    getCallback(parseInt(records[0][0]));
+    getCallback(parseInt(records[0][0]), parseInt(records[0][1]));
 };
 KmvTransactions.prototype.load = function(sortParams, queryParams, loadCallback) {
     var orderBy = "";

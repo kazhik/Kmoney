@@ -60,6 +60,7 @@ CashImport.prototype.importDb = function (name, csvFile, userId, importCallback)
                         return;
                     }
                     rec["itemId"] = itemInfo["itemId"];
+                    rec["internal"] = itemInfo["internal"];
                     rec["income"] = parseFloat(rowArray[i][2]) || 0;
                     rec["expense"] = parseFloat(rowArray[i][3]) || 0;
         
