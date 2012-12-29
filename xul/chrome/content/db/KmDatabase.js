@@ -247,7 +247,9 @@ KmDatabase.prototype.createTables = function() {
         '"name" TEXT)',
     'CREATE TABLE "km_import" (' +
         '"id" INTEGER PRIMARY KEY ,' +
+        '"user_id" INTEGER,' +
         '"source_type" INTEGER,' +
+        '"source_name" TEXT,' +
         '"detail" TEXT,' +
         '"item_id" INTEGER,' +
         '"default_id" BOOL,' +
@@ -255,7 +257,9 @@ KmDatabase.prototype.createTables = function() {
         '"internal" INTEGER)',
     'CREATE TABLE "km_import_history" (' +
         '"id" INTEGER PRIMARY KEY  NOT NULL ,' +
+        '"user_id" INTEGER,' +
         '"source_type" INTEGER,' +
+        '"source_name" TEXT,' +
         '"source_url" TEXT,' +
         '"period_from" DATETIME,' +
         '"period_to" DATETIME,' +

@@ -47,9 +47,9 @@ ImportDialog.prototype.addEventListeners = function () {
     $$('km_list_user').addEventListener("command",
         this.listeners['km_list_user.command']);
     
-    this.listeners['km_list_source.command'] = this.onSelectSource.bind(this);
-    $$('km_list_source').addEventListener("command",
-        this.listeners['km_list_source.command']);
+    this.listeners['km_list_importname.command'] = this.onSelectSource.bind(this);
+    $$('km_list_importname').addEventListener("command",
+        this.listeners['km_list_importname.command']);
 
     this.listeners['km_dialog_import.dialogaccept'] = this.onAccept.bind(this);
     $$('km_dialog_import').addEventListener("dialogaccept",
@@ -71,8 +71,8 @@ ImportDialog.prototype.removeEventListeners = function () {
     $$('km_list_user').removeEventListener("command",
         this.listeners['km_list_user.command']);
     
-    $$('km_list_source').removeEventListener("command",
-        this.listeners['km_list_source.command']);
+    $$('km_list_importname').removeEventListener("command",
+        this.listeners['km_list_importname.command']);
 
     $$('km_dialog_import').removeEventListener("dialogaccept",
         this.listeners['km_dialog_import.dialogaccept']);
@@ -92,17 +92,17 @@ ImportDialog.prototype.populateSourceList = function () {
         nameList = this.mDb.creditCardInfo.getCardList(this.retVals['user']);
     }
     if (nameList.length > 0) {
-        $$("km_list_source").hidden = false;
+        $$("km_list_importname").hidden = false;
         
-        $$("km_list_source").removeAllItems();
+        $$("km_list_importname").removeAllItems();
         for (var i = 0; i < nameList.length; i++) {
-            $$("km_list_source").appendItem(nameList[i][1], nameList[i][1]);
+            $$("km_list_importname").appendItem(nameList[i][1], nameList[i][1]);
         }
-        $$("km_list_source").selectedIndex = 0;
-        this.retVals['name'] = $$("km_list_source").value;
+        $$("km_list_importname").selectedIndex = 0;
+        this.retVals['name'] = $$("km_list_importname").value;
     } else {
-        $$("km_list_source").hidden = true;
-        this.retVals['name'] = importType;
+        $$("km_list_importname").hidden = true;
+        this.retVals['name'] = null;
     }
 };
 ImportDialog.prototype.onSelectImportType = function () {
@@ -114,7 +114,7 @@ ImportDialog.prototype.onSelectUser = function () {
     this.populateSourceList();    
 };
 ImportDialog.prototype.onSelectSource = function () {
-    this.retVals['name'] = $$("km_list_source").value;
+    this.retVals['name'] = $$("km_list_importname").value;
 };
 ImportDialog.prototype.selectFile = function () {
     const nsIFilePicker = Ci.nsIFilePicker;

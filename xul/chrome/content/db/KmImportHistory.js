@@ -3,13 +3,17 @@ function KmImportHistory(db) {
 }
 KmImportHistory.prototype.insert = function(params, insertCallback) {
     var sql = ["insert into km_import_history (",
+               "user_id, ",
                "source_type, ",
+               "source_name, ",
                "source_url, ",
                "period_from, ",
                "period_to, ",
                "import_date ",
                ") values (",
+               ":user_id,",
                ":source_type,",
+               ":source_name,",
                ":source_url,",
                ":period_from,",
                ":period_to,",

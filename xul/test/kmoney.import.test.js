@@ -7,6 +7,7 @@ function testImport() {
     execUpdate("delete from km_import");
     importConfTest();
     
+
     insertMizuhoTestConf();
     mizuhoTest();
 
@@ -15,7 +16,7 @@ function testImport() {
     
     insertSuicaTestConf();
     suicaTest();
-    
+
     insertCashTestConf();
     cashTest();
     
@@ -24,89 +25,244 @@ function testImport() {
     
     insertEMoneyTestConf();
     emoneyTest();
+    
+    insertCreditcardTestConf();
+    creditcardTest();
+
 
 }
-function insertEMoneyTestConf() {
+function insertCreditcardTestConf() {
     var sql = "insert into km_import ("
       + "source_type, "
+      + "source_name, "
+      + "user_id, "
       + "detail, "
       + "item_id, "
       + "default_id, "
       + "permission, "
       + "internal "
       + ")"
-      + "select 12, "
+      + "select 4, "
+      + "'DCカード',"
+      + "1,"
       + "'既定値', "
       + "3, "
       + "1, "
       + "1, "
       + "0 "
       + "where not exists "
-      + "(select 1 from km_import where source_type = 12 and detail = '既定値')";
+      + "(select 1 from km_import where user_id = 1 and source_type = 4 and detail = '既定値')";
     execUpdate(sql);
     sql = "insert into km_import ("
       + "source_type, "
+      + "source_name, "
+      + "user_id, "
       + "detail, "
       + "item_id, "
       + "default_id, "
       + "permission, "
       + "internal "
       + ")"
-      + "select 12, "
+      + "select 4, "
+      + "'DCカード',"
+      + "1,"
       + "'バス', "
       + "3, "
       + "0, "
       + "1, "
       + "0 "
       + "where not exists "
-      + "(select 1 from km_import where source_type = 12 and detail = 'バス')";
+      + "(select 1 from km_import where user_id = 1 and source_type = 4 and detail = 'バス')";
     execUpdate(sql);      
     sql = "insert into km_import ("
       + "source_type, "
+      + "source_name, "
+      + "user_id, "
       + "detail, "
       + "item_id, "
       + "default_id, "
       + "permission, "
       + "internal "
       + ")"
-      + "select 12, "
+      + "select 4, "
+      + "'DCカード',"
+      + "1,"
       + "'チャージ', "
       + "4, "
       + "0, "
       + "1, "
       + "1 "
       + "where not exists "
-      + "(select 1 from km_import where source_type = 12 and detail = 'チャージ')";
+      + "(select 1 from km_import where user_id = 1 and source_type = 4 and detail = 'チャージ')";
     execUpdate(sql);      
     sql = "insert into km_import ("
       + "source_type, "
+      + "source_name, "
+      + "user_id, "
       + "detail, "
       + "item_id, "
       + "default_id, "
       + "permission, "
       + "internal "
       + ")"
-      + "select 12, "
+      + "select 4, "
+      + "'DCカード',"
+      + "1,"
       + "'松屋', "
       + "1, "
       + "0, "
       + "1, "
       + "0 "
       + "where not exists "
-      + "(select 1 from km_import where source_type = 12 and detail = '松屋')";
+      + "(select 1 from km_import where user_id = 1 and source_type = 4 and detail = '松屋')";
+      execUpdate(sql);      
+}
+function creditcardTest() {
+    function importCallback() {
+        done["value"] = true;
+    }
+    execUpdate("delete from km_import_history where user_id = 1"
+               + " and source_type = 4");
+    
+    var importer = app.getImportModule("クレジットカード（汎用）");
+    
+    var importFile = utils.normalizeToFile("file/creditcard.csv");
+    var done = {value: false};
+    importer.importDb("DCカード", importFile, 1, importCallback);
+    utils.wait(done);
+
+    var sql = ["select transaction_date, item_id, detail,",
+               "expense, card_id, user_id, internal",
+               "from km_creditcard_trns order by id desc"].join(" ");
+    var statement = execSelect(sql);
+    assert.isTrue(statement !== null);
+    assert.equal("2012-11-08", statement.row.transaction_date);
+    assert.equal(3, statement.row.item_id);
+    assert.equal(1, statement.row.user_id);
+    assert.equal(0, statement.row.internal);
+    statement = getNext(statement);
+    assert.equal("2012-11-04", statement.row.transaction_date);
+    statement = getNext(statement);
+    assert.equal("2012-10-09", statement.row.transaction_date);
+    assert.equal("サイゼリア", statement.row.detail);
+    assert.equal(0, statement.row.internal);
+    statement = getNext(statement);
+    assert.equal("2012-09-12", statement.row.transaction_date);
+    assert.equal(3, statement.row.item_id);
+    statement = getNext(statement);
+    assert.equal("2012-08-28", statement.row.transaction_date);
+    assert.equal(9000, statement.row.expense);
+    assert.equal(3, statement.row.item_id);
+    statement = getNext(statement);
+    assert.equal("2012-07-31", statement.row.transaction_date);
+    assert.equal("さくら水産", statement.row.detail);
+    statement = getNext(statement);
+    assert.equal("2012-06-01", statement.row.transaction_date);
+    statement = getNext(statement);
+    assert.equal("2012-05-02", statement.row.transaction_date);
+    statement = getNext(statement);
+    assert.equal("2012-05-01", statement.row.transaction_date);
+    assert.equal(0, statement.row.internal);
+    closeStatement(statement);
+}
+
+function insertEMoneyTestConf() {
+    var sql = "insert into km_import ("
+      + "source_type, "
+      + "source_name, "
+      + "user_id, "
+      + "detail, "
+      + "item_id, "
+      + "default_id, "
+      + "permission, "
+      + "internal "
+      + ")"
+      + "select 5, "
+      + "'Suica', "
+      + "2, "
+      + "'既定値', "
+      + "3, "
+      + "1, "
+      + "1, "
+      + "0 "
+      + "where not exists "
+      + "(select 1 from km_import where user_id = 2 and source_type = 5 and detail = '既定値')";
+    execUpdate(sql);
+    sql = "insert into km_import ("
+      + "source_type, "
+      + "source_name, "
+      + "user_id, "
+      + "detail, "
+      + "item_id, "
+      + "default_id, "
+      + "permission, "
+      + "internal "
+      + ")"
+      + "select 5, "
+      + "'Suica', "
+      + "2, "
+      + "'バス', "
+      + "3, "
+      + "0, "
+      + "1, "
+      + "0 "
+      + "where not exists "
+      + "(select 1 from km_import where user_id = 2 and source_type = 5 and detail = 'バス')";
+    execUpdate(sql);      
+    sql = "insert into km_import ("
+      + "source_type, "
+      + "source_name, "
+      + "user_id, "
+      + "detail, "
+      + "item_id, "
+      + "default_id, "
+      + "permission, "
+      + "internal "
+      + ")"
+      + "select 5, "
+      + "'Suica', "
+      + "2, "
+      + "'チャージ', "
+      + "4, "
+      + "0, "
+      + "1, "
+      + "1 "
+      + "where not exists "
+      + "(select 1 from km_import where user_id = 2 and source_type = 5 and detail = 'チャージ')";
+    execUpdate(sql);      
+    sql = "insert into km_import ("
+      + "source_type, "
+      + "source_name, "
+      + "user_id, "
+      + "detail, "
+      + "item_id, "
+      + "default_id, "
+      + "permission, "
+      + "internal "
+      + ")"
+      + "select 5, "
+      + "'Suica', "
+      + "2, "
+      + "'松屋', "
+      + "1, "
+      + "0, "
+      + "1, "
+      + "0 "
+      + "where not exists "
+      + "(select 1 from km_import where user_id = 2 and source_type = 5 and detail = '松屋')";
       execUpdate(sql);      
 }
 function emoneyTest() {
     function importCallback() {
         done["value"] = true;
     }
-    execUpdate("delete from km_import_history where source_type = 12");
+    execUpdate("delete from km_import_history where user_id = 2 and source_type = 5");
     
     var importer = app.getImportModule("電子マネー（汎用）");
     
     var importFile = utils.normalizeToFile("file/emoney.csv");
     var done = {value: false};
-    importer.importDb("Suica", importFile, 1, importCallback);
+    importer.importDb("Suica", importFile, 2, importCallback);
     utils.wait(done);
 
     var sql = ["select transaction_date, item_id, detail,",
@@ -116,7 +272,7 @@ function emoneyTest() {
     assert.isTrue(statement !== null);
     assert.equal("2012-11-18", statement.row.transaction_date);
     assert.equal(4, statement.row.item_id);
-    assert.equal(1, statement.row.user_id);
+    assert.equal(2, statement.row.user_id);
     assert.equal(1, statement.row.internal);
     assert.equal("チャージ", statement.row.detail);
     statement = getNext(statement);
@@ -143,9 +299,21 @@ function emoneyTest() {
     assert.equal(0, statement.row.internal);
     closeStatement(statement);
 }
+
 function insertBankTestConf() {
-    var sql = "insert into km_import ("
+    var sql = "insert into km_bank_info ("
+      + "name, "
+      + "user_id "
+      + ")"
+      + "select 'ソニー銀行', "
+      + "2 "
+      + "where not exists "
+      + "(select 1 from km_bank_info where name = 'ソニー銀行' and user_id = 2)";
+    execUpdate(sql);
+    sql = "insert into km_import ("
       + "source_type, "
+      + "source_name, "
+      + "user_id, "
       + "detail, "
       + "item_id, "
       + "default_id, "
@@ -153,16 +321,20 @@ function insertBankTestConf() {
       + "internal "
       + ")"
       + "select 3, "
+      + "'ソニー銀行', "
+      + "2, "
       + "'既定値', "
       + "1, "
       + "1, "
       + "1, "
       + "0 "
       + "where not exists "
-      + "(select 1 from km_import where source_type = 3 and detail = '既定値')";
+      + "(select 1 from km_import where user_id = 2 and source_type = 3 and detail = '既定値')";
     execUpdate(sql);
     sql = "insert into km_import ("
       + "source_type, "
+      + "source_name, "
+      + "user_id, "
       + "detail, "
       + "item_id, "
       + "default_id, "
@@ -170,26 +342,28 @@ function insertBankTestConf() {
       + "internal "
       + ")"
       + "select 3, "
+      + "'ソニー銀行', "
+      + "2, "
       + "'ATM', "
       + "4, "
       + "0, "
       + "1, "
       + "1 "
       + "where not exists "
-      + "(select 1 from km_import where source_type = 3 and detail = 'ATM')";
+      + "(select 1 from km_import where user_id = 2 and source_type = 3 and detail = 'ATM')";
     execUpdate(sql);      
 }
 function bankTest() {
     function importCallback() {
         done["value"] = true;
     }
-    execUpdate("delete from km_import_history where source_type = 3");
+    execUpdate("delete from km_import_history where user_id = 2 and source_type = 3");
     
     var importer = app.getImportModule("銀行口座（汎用）");
     
     var importFile = utils.normalizeToFile("file/bank.csv");
     var done = {value: false};
-    importer.importDb("銀行口座（汎用）", importFile, 1, importCallback);
+    importer.importDb("ソニー銀行", importFile, 2, importCallback);
     utils.wait(done);
 
     var sql = ["select transaction_date, item_id, detail,",
@@ -199,7 +373,7 @@ function bankTest() {
     assert.isTrue(statement !== null);
     assert.equal("2012-11-08", statement.row.transaction_date);
     assert.equal(1, statement.row.item_id);
-    assert.equal(1, statement.row.user_id);
+    assert.equal(2, statement.row.user_id);
     assert.equal(0, statement.row.internal);
     assert.equal("bank-detail9", statement.row.detail);
     statement = getNext(statement);
@@ -226,6 +400,8 @@ function bankTest() {
 function insertCashTestConf() {
     var sql = "insert into km_import ("
       + "source_type, "
+      + "source_name, "
+      + "user_id, "
       + "detail, "
       + "item_id, "
       + "default_id, "
@@ -233,16 +409,20 @@ function insertCashTestConf() {
       + "internal "
       + ")"
       + "select 2, "
+      + "'', "
+      + "1, "
       + "'既定値', "
       + "1, "
       + "1, "
       + "1, "
       + "0 "
       + "where not exists "
-      + "(select 1 from km_import where source_type = 2 and detail = '既定値')";
+      + "(select 1 from km_import where user_id = 1 and source_type = 2 and detail = '既定値')";
     execUpdate(sql);
     sql = "insert into km_import ("
       + "source_type, "
+      + "source_name, "
+      + "user_id, "
       + "detail, "
       + "item_id, "
       + "default_id, "
@@ -250,13 +430,15 @@ function insertCashTestConf() {
       + "internal "
       + ")"
       + "select 2, "
+      + "'', "
+      + "1, "
       + "'ATM', "
       + "4, "
       + "0, "
       + "1, "
       + "1 "
       + "where not exists "
-      + "(select 1 from km_import where source_type = 2 and detail = 'ATM')";
+      + "(select 1 from km_import where user_id = 1 and source_type = 2 and detail = 'ATM')";
     execUpdate(sql);    
     
 }
@@ -264,7 +446,8 @@ function cashTest() {
     function importCallback() {
         done["value"] = true;
     }
-    execUpdate("delete from km_import_history where source_type = 2");
+    execUpdate("delete from km_import_history where user_id = 1 and source_type = 2");
+    execUpdate("delete from km_realmoney_trns where source = 2");
     
     var importer = app.getImportModule("現金（汎用）");
     
@@ -298,11 +481,11 @@ function cashTest() {
     
 }
 
-
-
 function insertSuicaTestConf() {
     var sql = "insert into km_import ("
       + "source_type, "
+      + "source_name, "
+      + "user_id, "
       + "detail, "
       + "item_id, "
       + "default_id, "
@@ -310,17 +493,21 @@ function insertSuicaTestConf() {
       + "internal "
       + ")"
       + "select 12, "
+      + "'', "
+      + "2, "
       + "'既定値', "
       + "3, "
       + "1, "
       + "1, "
       + "0 "
       + "where not exists "
-      + "(select 1 from km_import where source_type = 12 and detail = '既定値')";
+      + "(select 1 from km_import where user_id = 2 and source_type = 12 and detail = '既定値')";
     execUpdate(sql);
 
     sql = "insert into km_import ("
       + "source_type, "
+      + "source_name, "
+      + "user_id, "
       + "detail, "
       + "item_id, "
       + "default_id, "
@@ -328,20 +515,22 @@ function insertSuicaTestConf() {
       + "internal "
       + ")"
       + "select 12, "
+      + "'', "
+      + "2, "
       + "'物販', "
       + "1, "
       + "0, "
       + "1, "
       + "0 "
       + "where not exists "
-      + "(select 1 from km_import where source_type = 12 and detail = '物販')";
+      + "(select 1 from km_import where user_id = 2 and source_type = 12 and detail = '物販')";
     execUpdate(sql);    
 }
 function suicaTest() {
     function importCallback() {
         done["value"] = true;
     }
-    execUpdate("delete from km_import_history where source_type = 12");
+    execUpdate("delete from km_import_history where user_id = 2 and source_type = 12");
     
     var importer = app.getImportModule("Suica");
     
@@ -373,7 +562,7 @@ function saisonTest() {
     function importCallback() {
         done["value"] = true;
     }
-    execUpdate("delete from km_import_history where source_type = 10");
+    execUpdate("delete from km_import_history where user_id = 2 and source_type = 10");
     
     var importer = app.getImportModule("セゾンカード");
     
@@ -411,6 +600,8 @@ function saisonTest() {
 function insertSaisonTestConf() {
     var sql = "insert into km_import ("
       + "source_type, "
+      + "source_name, "
+      + "user_id, "
       + "detail, "
       + "item_id, "
       + "default_id, "
@@ -418,16 +609,20 @@ function insertSaisonTestConf() {
       + "internal "
       + ")"
       + "select 10, "
+      + "'', "
+      + "2, "
       + "'既定値', "
       + "1, "
       + "1, "
       + "1, "
       + "0 "
       + "where not exists "
-      + "(select 1 from km_import where source_type = 10 and detail = '既定値')";
+      + "(select 1 from km_import where user_id = 2 and source_type = 10 and detail = '既定値')";
     execUpdate(sql);
     sql = "insert into km_import ("
       + "source_type, "
+      + "source_name, "
+      + "user_id, "
       + "detail, "
       + "item_id, "
       + "default_id, "
@@ -435,13 +630,16 @@ function insertSaisonTestConf() {
       + "internal "
       + ")"
       + "select 10, "
+      + "'', "
+      + "2, "
       + "'さくら水産', "
       + "2, "
       + "0, "
       + "1, "
       + "0 "
       + "where not exists "
-      + "(select 1 from km_import where source_type = 10 and detail = 'さくら水産')";
+      + "(select 1 from km_import "
+      + "where user_id = 2 and source_type = 10 and detail = 'さくら水産')";
     execUpdate(sql);
     
 }
@@ -449,14 +647,14 @@ function mizuhoTest() {
     function importCallback() {
         done["value"] = true;
     }
-    execUpdate("delete from km_import_history where source_type = 7");
-    
+    execUpdate("delete from km_import_history "
+               + " where user_id = 1 and source_type = 7");
+
     var importer = app.getImportModule("みずほ銀行");
     
     var importFile = utils.normalizeToFile("file/import-mizuho.ofx");
     var done = {value: false};
     importer.importDb("みずほ銀行", importFile, 1, importCallback);
-    
     utils.wait(done);
     var sql = ["select transaction_date, item_id, detail,",
                "income, expense, bank_id, user_id",
@@ -495,6 +693,8 @@ function insertMizuhoTestConf() {
     
     var sql = "insert into km_import ("
       + "source_type, "
+      + "source_name, "
+      + "user_id, "
       + "detail, "
       + "item_id, "
       + "default_id, "
@@ -502,6 +702,8 @@ function insertMizuhoTestConf() {
       + "internal "
       + ")"
       + "select 7, "
+      + "'', "
+      + "1, "
       + "'クレジットカード', "
       + "1, "
       + "1, "
@@ -518,12 +720,13 @@ function importConfTest() {
                                    "ImportConf",
         "chrome, resizable, centerscreen, dialog", app.mDb, app.itemMap);
     
-    utils.wait(500);
+    utils.wait(1000);
 
     var tree = dialog.importConf.mTree;
 
     // みずほ銀行を選択し、設定を追加    
-    $('km_list_importconf_type', dialog).selectedIndex = 5;
+    $('km_list_import_user', dialog).selectedIndex = 0;
+    $('km_list_import_sourcetype', dialog).selectedIndex = 5;
     $('km_textbox_importconf_detail', dialog).value = "ＡＴＭ";
     $('km_list_importconf_item', dialog).selectedIndex = 3;
     $('km_list_importconf_internal', dialog).selectedIndex = 1;

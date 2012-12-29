@@ -659,7 +659,7 @@ Kmoney.prototype.importFile = function () {
             "chrome, resizable, centerscreen, modal, dialog",
             this.mDb, importTypeList, this.users, retVals);
         
-        if (retVals['name'] === null) {
+        if (retVals['importtype'] === null) {
             return;
         }
         var importer = this.getImportModule(retVals["importtype"]);

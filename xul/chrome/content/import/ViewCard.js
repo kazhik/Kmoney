@@ -11,7 +11,9 @@ ViewCard.prototype.importDb = function (name, htmlFile, userId, importCallback) 
         function onFileOpen(inputStream, status) {
             function insertCallback() {
                 var importHistory = {
+                    "user_id": userId,
                     "source_type": sourceType,
+                    "source_name": name,
                     "source_url": htmlFile.path,
                     "period_from": newRecordArray[0]["transactionDate"],
                     "period_to": newRecordArray[newRecordArray.length - 1]["transactionDate"]
@@ -95,8 +97,8 @@ ViewCard.prototype.importDb = function (name, htmlFile, userId, importCallback) 
         }
         NetUtil.asyncFetch(htmlFile, onFileOpen.bind(this));
     }
-    cardId = this.mDb.creditCardInfo.getCardId(name, userId);
-    this.loadImportConf(name, onLoadImportConf.bind(this));
+    cardId = this.mDb.creditCardInfo.getCardId(this.type, userId);
+    this.loadImportConf(userId, null, onLoadImportConf.bind(this));
 
 
 };

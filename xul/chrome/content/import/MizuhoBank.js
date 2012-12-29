@@ -12,7 +12,9 @@ MizuhoBank.prototype.importDb = function (name, inputFile, userId, importCallbac
         function onFileOpen(inputStream, status) {
             function insertCallback() {
                 var importHistory = {
+                    "user_id": userId,
                     "source_type": sourceType,
+                    "source_name": name,
                     "source_url": inputFile.path,
                     "period_from": newRecordArray[0]["transactionDate"],
                     "period_to": newRecordArray[newRecordArray.length - 1]["transactionDate"]
@@ -97,7 +99,7 @@ MizuhoBank.prototype.importDb = function (name, inputFile, userId, importCallbac
         }
         NetUtil.asyncFetch(inputFile, onFileOpen.bind(this));
     }
-    bankId = this.mDb.bankInfo.getBankId(name, userId);
-    this.loadImportConf(name, onLoadImportConf.bind(this))
+    bankId = this.mDb.bankInfo.getBankId(this.type, userId);
+    this.loadImportConf(userId, null, onLoadImportConf.bind(this))
 
 };

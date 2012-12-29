@@ -12,7 +12,9 @@ CreditCardImport.prototype.importDb = function (name, csvFile, userId, importCal
         function onFileOpen(inputStream, status) {
             function insertCallback() {
                 var importHistory = {
+                    "user_id": userId,
                     "source_type": sourceType,
+                    "source_name": name,
                     "source_url": csvFile.path,
                     "period_from": newRecordArray[0]["transactionDate"],
                     "period_to": newRecordArray[newRecordArray.length - 1]["transactionDate"]
@@ -44,8 +46,6 @@ CreditCardImport.prototype.importDb = function (name, csvFile, userId, importCal
                 var matchResult = rowArray[i][0].match(/(\d{4})\/(\d{1,2})\/(\d{1,2})/);
                 if (rowArray[i].length > 1 && matchResult !== null) {
                     var rec = {
-                        "payAmount": 0,
-                        "payMonth": "",
                         "boughtAmount": 0,
                         "itemId": 0,
                         "detail": "",
@@ -58,7 +58,6 @@ CreditCardImport.prototype.importDb = function (name, csvFile, userId, importCal
                     rec["transactionDate"] = toYYYYMMDD(matchResult[1], matchResult[2], matchResult[3],
                                                         "-"),
                     rec["boughtAmount"] = parseFloat(rowArray[i][2]);
-                    rec["payAmount"] = parseFloat(rowArray[i][2]);
                     rec["detail"] = rowArray[i][1];
                     var itemInfo = this.getItemInfo(rowArray[i][1]);
                     if (itemInfo["itemId"] === undefined) {
@@ -70,6 +69,7 @@ CreditCardImport.prototype.importDb = function (name, csvFile, userId, importCal
                     rec["internal"] = itemInfo["internal"];
                     if (rowArray[i].length >= 4 && rowArray[i][3].length > 0) {
                         rec["payMonth"] = rowArray[i][3].replace("/", "-", "g");
+                        rec["payAmount"] = rec["boughtAmount"];
                     }
         
                     newRecordArray.push(rec);
@@ -84,6 +84,6 @@ CreditCardImport.prototype.importDb = function (name, csvFile, userId, importCal
         NetUtil.asyncFetch(csvFile, onFileOpen.bind(this));
     }
     cardId = this.mDb.creditCardInfo.getCardId(name, userId);
-    this.loadImportConf(name, onLoadImportConf.bind(this));
+    this.loadImportConf(userId, name, onLoadImportConf.bind(this));
 
 };

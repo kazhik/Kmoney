@@ -8,7 +8,9 @@ KantanKakeibo.prototype.importDb = function (name, kantanDbFile, userId, importC
         function loadCallback(records) {
             function insertCallback() {
                 var importHistory = {
+                    "user_id": userId,
                     "source_type": sourceType,
+                    "source_name": name,
                     "source_url": kantanDbFile.path,
                     "period_from": newRecordArray[0]["transactionDate"],
                     "period_to": newRecordArray[newRecordArray.length - 1]["transactionDate"]
@@ -60,7 +62,7 @@ KantanKakeibo.prototype.importDb = function (name, kantanDbFile, userId, importC
         kantanDb.load(kantanDbFile, loadCallback.bind(this));
         
     }
-    this.loadImportConf(name, onLoadImportConf.bind(this))
+    this.loadImportConf(userId, null, onLoadImportConf.bind(this))
     
 };
 

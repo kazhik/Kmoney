@@ -12,7 +12,9 @@ UCCard.prototype.importDb = function (name, csvFile, userId, importCallback) {
         function onFileOpen(inputStream, status) {
             function insertCallback() {
                 var importHistory = {
+                    "user_id": userId,
                     "source_type": sourceType,
+                    "source_name": name,
                     "source_url": csvFile.path,
                     "period_from": newRecordArray[0]["transactionDate"],
                     "period_to": newRecordArray[newRecordArray.length - 1]["transactionDate"]
@@ -84,7 +86,7 @@ UCCard.prototype.importDb = function (name, csvFile, userId, importCallback) {
         }
         NetUtil.asyncFetch(csvFile, onFileOpen.bind(this));
     }
-    cardId = this.mDb.creditCardInfo.getCardId(name, userId);
-    this.loadImportConf(name, onLoadImportConf.bind(this));
+    cardId = this.mDb.creditCardInfo.getCardId(this.type, userId);
+    this.loadImportConf(userId, null, onLoadImportConf.bind(this));
 
 };

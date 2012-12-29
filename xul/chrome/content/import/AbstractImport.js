@@ -4,7 +4,7 @@ function AbstractImport(db, type) {
     this.importItemArray = [];
 }
 
-AbstractImport.prototype.loadImportConf = function (srcName, loadCallback) {
+AbstractImport.prototype.loadImportConf = function (userId, srcName, loadCallback) {
     function onLoadSourceType(sourceType) {
         function onLoad(records) {
             var importConf = [];
@@ -19,9 +19,9 @@ AbstractImport.prototype.loadImportConf = function (srcName, loadCallback) {
             }
             loadCallback(sourceType, this.importItemArray);
         }
-        this.mDb.import.load(sourceType, onLoad.bind(this));
+        this.mDb.import.load(userId, sourceType, srcName, onLoad.bind(this));
     }
-    this.mDb.source.loadSourceType(srcName, onLoadSourceType.bind(this));
+    this.mDb.source.loadSourceType(this.type, onLoadSourceType.bind(this));
 
 };
 

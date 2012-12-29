@@ -15,7 +15,14 @@
 
    <vbox>
         <hbox align="center">
-            <menulist id="km_list_importconf_type" label="&menulist.selecttype;">
+            <label control="km_list_import_user" value="&edit.user;" />
+            <menulist id="km_list_import_user">
+                <menupopup></menupopup>
+            </menulist>
+            <menulist id="km_list_import_sourcetype" label="&menulist.selecttype;">
+                <menupopup></menupopup>
+            </menulist>
+            <menulist id="km_list_import_sourcename" hidden="true">
                 <menupopup></menupopup>
             </menulist>
         </hbox>

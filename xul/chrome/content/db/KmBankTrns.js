@@ -201,7 +201,6 @@ KmBankTrns.prototype.execInsert = function(newRecordArray, importFlag, insertCal
         km_debug(sql);
         sqlStatement = this.mDb.createStatementWithParams(sql, newRecordArray[i]);
         sqlStmtArray.push(sqlStatement);
-
     }
     this.mDb.execTransaction(sqlStmtArray);
     

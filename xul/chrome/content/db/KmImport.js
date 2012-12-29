@@ -2,27 +2,62 @@ function KmImport(db) {
     this.mDb = db;
 }
 
-KmImport.prototype.load = function(sourceType, loadCallback) {
-    this.mDb.selectQuery("select detail, item_id, default_id, internal " +
-                         "from km_import " + "where source_type = " + sourceType);
-
+KmImport.prototype.load = function(userId, sourceType, sourceName, loadCallback) {
+    var sql = ["select detail, item_id, default_id, internal ",
+               "from km_import ",
+               "where user_id = :userId",
+               " and source_type = :sourceType"].join(" ");
+    if (sourceName !== null) {
+        sql += " and source_name = :sourceName";
+    }
+    var param = {
+        "userId": parseInt(userId),
+        "sourceType": parseInt(sourceType),
+        "sourceName": sourceName
+    };
     
+    var sqlStatement = this.mDb.createStatementWithParams(sql, param);
+    this.mDb.execSelect(sqlStatement);
+
     loadCallback(this.mDb.getRecords());
 };
-KmImport.prototype.loadConf = function(sourceType, loadCallback) {
+KmImport.prototype.loadConf = function(userId, sourceType, sourceName, loadCallback) {
     km_debug("KmImport.loadConf start");
-    this.mDb.selectQuery("select A.id, A.source_type, A.detail, A.item_id,"
-                         + "B.name, A.default_id, A.internal, A.permission "
-                         + "from km_import A "
-                         + "inner join km_item B "
-                         + "on A.item_id = B.id "
-                         + "where A.source_type = " + sourceType);
+    var sql = ["select A.id, A.source_type, A.detail, A.item_id,",
+               "B.name, A.default_id, A.internal, A.permission ",
+               "from km_import A ",
+               "inner join km_item B ",
+               "on A.item_id = B.id ",
+               "where user_id = :userId",
+               " and source_type = :sourceType"].join(" ");
+    if (sourceName !== "") {
+        sql += " and source_name = :sourceName";
+    }
+    var param = {
+        "userId": parseInt(userId),
+        "sourceType": parseInt(sourceType),
+        "sourceName": sourceName
+    };
+    var sqlStatement = this.mDb.createStatementWithParams(sql, param);
+    this.mDb.execSelect(sqlStatement);
 
     loadCallback(this.mDb.getRecords(), this.mDb.getColumns());
 };
-KmImport.prototype.getDefaultConfId = function(sourceType) {
-    this.mDb.selectQuery("select id from km_import "
-                         + "where default_id = 1 and source_type = " + sourceType);
+KmImport.prototype.getDefaultConfId = function(userId, sourceType, sourceName) {
+    var sql = ["select id from km_import ",
+               "where default_id = 1 ",
+               " and user_id = :userId",
+               " and source_type = :sourceType"].join(" ");
+    if (sourceName !== "") {
+        sql += " and source_name = :sourceName";
+    }
+    var param = {
+        "userId": parseInt(userId),
+        "sourceType": parseInt(sourceType),
+        "sourceName": sourceName
+    };
+    var sqlStatement = this.mDb.createStatementWithParams(sql, param);
+    this.mDb.execSelect(sqlStatement);
 
     var records = this.mDb.getRecords();
     if (records.length === 0) {
@@ -33,14 +68,18 @@ KmImport.prototype.getDefaultConfId = function(sourceType) {
 
 KmImport.prototype.insert = function(params, insertCallback) {
     var sql = "insert into km_import ("
+      + "user_id, "
       + "source_type, "
+      + "source_name, "
       + "detail, "
       + "item_id, "
       + "default_id, "
       + "permission, "
       + "internal "
       + ") values ( "
+      + ":userId, "
       + ":sourceType, "
+      + ":sourceName, "
       + ":detail, "
       + ":itemId, "
       + ":defaultId, "

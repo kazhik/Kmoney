@@ -20,7 +20,8 @@ ImportConf.prototype.initialize = function(db, itemMap) {
     this.addEventListeners();
 
     this.mTree.init();
-    
+
+    this.initUserList();    
     this.initImportTypeList();
     this.populateInternalList();
     this.initItemList(itemMap);
@@ -47,10 +48,18 @@ ImportConf.prototype.addEventListeners = function () {
     $$('km_button_importconf_close').addEventListener("command",
         this.listeners['km_button_importconf_close.command']);
 
-    this.listeners['km_list_importconf_type.command'] = this.onSelectType.bind(this);
-    $$('km_list_importconf_type').addEventListener("command",
-        this.listeners['km_list_importconf_type.command']);
-    
+    this.listeners['km_list_import_user.command'] = this.onSelectUser.bind(this);
+    $$('km_list_import_user').addEventListener("command",
+        this.listeners['km_list_import_user.command']);
+
+    this.listeners['km_list_import_sourcetype.command'] = this.onSelectType.bind(this);
+    $$('km_list_import_sourcetype').addEventListener("command",
+        this.listeners['km_list_import_sourcetype.command']);
+
+    this.listeners['km_list_import_sourcename.command'] = this.onSelectName.bind(this);
+    $$('km_list_import_sourcename').addEventListener("command",
+        this.listeners['km_list_import_sourcename.command']);
+
     this.listeners['km_tree_import_conf.select'] = this.onSelect.bind(this);
     $$('km_tree_import_conf').addEventListener("select",
         this.listeners['km_tree_import_conf.select']);
@@ -69,26 +78,37 @@ ImportConf.prototype.removeEventListeners = function () {
     $$('km_button_importconf_close').removeEventListener("command",
         this.listeners['km_button_importconf_close.command']);
 
-    $$('km_list_importconf_type').removeEventListener("command",
-        this.listeners['km_list_importconf_type.command']);
+    $$('km_list_import_user').removeEventListener("command",
+        this.listeners['km_list_import_user.command']);
+
+    $$('km_list_import_sourcetype').removeEventListener("command",
+        this.listeners['km_list_import_sourcetype.command']);
+
+    $$('km_list_import_sourcename').removeEventListener("command",
+        this.listeners['km_list_import_sourcename.command']);
 
     $$('km_tree_import_conf').removeEventListener("select",
         this.listeners['km_tree_import_conf.select']);
 };
 ImportConf.prototype.addRecord = function () {
     function insertCallback(id) {
-        this.onSelectType();
+        this.onSelectCondition();
     }
     // 既定値の設定は一つだけ
     var defaultId = ($$('km_checkbox_importconf_default').checked)? 1: 0;
-    var sourceType = $$("km_list_importconf_type").value;
-    if (defaultId === 1 && this.mDb.import.getDefaultConfId(sourceType) != 0) {
+    var userId = $$("km_list_import_user").value;
+    var sourceType = $$("km_list_import_sourcetype").value;
+    var sourceName = $$("km_list_import_sourcename").value;
+    if (defaultId === 1 &&
+        this.mDb.import.getDefaultConfId(userId, sourceType, sourceName) != 0) {
         km_alert(km_getLStr("error.title"), km_getLStr("error.import.default"));
         return;
     }
     
     var params = {
+        "userId": userId,
         "sourceType": sourceType,
+        "sourceName": sourceName,
         "detail": $$("km_textbox_importconf_detail").value,
         "itemId": $$('km_list_importconf_item').value,
         "defaultId": defaultId,
@@ -100,7 +120,7 @@ ImportConf.prototype.addRecord = function () {
 };
 ImportConf.prototype.updateRecord = function () {
     function updateCallback() {
-        this.onSelectType();
+        this.onSelectCondition();
     }
 
     if (this.mTree.checkSelected() === false) {
@@ -112,8 +132,10 @@ ImportConf.prototype.updateRecord = function () {
     // 既定値の設定は一つだけ
     var defaultId = ($$('km_checkbox_importconf_default').checked)? 1: 0;
     if (defaultId === 1) {
-        var sourceType = $$("km_list_importconf_type").value;
-        var defaultConfId = this.mDb.import.getDefaultConfId(sourceType);
+        var userId = $$("km_list_import_user").value;
+        var sourceType = $$("km_list_import_sourcetype").value;
+        var sourceName = $$("km_list_import_sourcename").value;
+        var defaultConfId = this.mDb.import.getDefaultConfId(userId, sourceType, sourceName);
         if (defaultConfId != 0 && defaultConfId != confId ) {
             km_alert(km_getLStr("error.title"), km_getLStr("error.import.default"));
             return;
@@ -142,7 +164,7 @@ ImportConf.prototype.updateRecord = function () {
 };
 ImportConf.prototype.deleteRecord = function () {
     function deleteCallback() {
-        this.onSelectType();
+        this.onSelectCondition();
     }
 
     if (this.mTree.checkSelected() === false) {
@@ -175,27 +197,46 @@ ImportConf.prototype.onSelect = function () {
         this.mTree.getSelectedRowValue("import_conf_internal");
         
 };
-
+ImportConf.prototype.initUserList = function () {
+    var userList = this.mDb.userInfo.mUserList;
+    
+    $$('km_list_import_user').removeAllItems();
+    for (var i = 0; i < userList.length; i++) {
+        $$('km_list_import_user').appendItem(userList[i][1], userList[i][0]);
+    }
+    $$('km_list_import_user').selectedIndex = 0;
+};
 ImportConf.prototype.initImportTypeList = function () {
     function loadCallback(records) {
-        $$('km_list_importconf_type').removeAllItems();
+        $$('km_list_import_sourcetype').removeAllItems();
         for (var i = 0; i < records.length; i++) {
-            $$('km_list_importconf_type').appendItem(records[i][1], records[i][0]);
+            $$('km_list_import_sourcetype').appendItem(records[i][1], records[i][0]);
         }
     }
     this.mDb.source.load(loadCallback.bind(this));
 };
+ImportConf.prototype.onSelectUser = function () {
+};
 ImportConf.prototype.onSelectType = function () {
+    this.populateImportSourceNameList();
+    this.onSelectCondition();
+};
+ImportConf.prototype.onSelectName = function () {
+    this.onSelectCondition();
+};
+ImportConf.prototype.onSelectCondition = function () {
     function loadCallback(records, columns) {
         this.mTree.populateTableData(records, columns);
         this.mTree.showTable(true);
     }
-    var type = $$("km_list_importconf_type").value;
+    var userId = $$("km_list_import_user").value;
+    var type = $$("km_list_import_sourcetype").value;
+    var name = $$("km_list_import_sourcename").value;
     
     if (parseInt(type) === 0) {
         return;
     }
-    this.mDb.import.loadConf(type, loadCallback.bind(this));
+    this.mDb.import.loadConf(userId, type, name, loadCallback.bind(this));
   
 };
 ImportConf.prototype.initItemList = function (itemMap) {
@@ -211,4 +252,28 @@ ImportConf.prototype.populateInternalList = function () {
     $$('km_list_importconf_internal').appendItem(km_getLStr("internal.self"), 1);
     $$('km_list_importconf_internal').appendItem(km_getLStr("internal.family"), 2);
     $$('km_list_importconf_internal').selectedIndex = 0;
+};
+ImportConf.prototype.populateImportSourceNameList = function () {
+    var userId = $$("km_list_import_user").value;
+    var importType = $$("km_list_import_sourcetype").selectedItem.label;
+
+    var nameList = [];
+    if (importType === km_getLStr("import.bank")) {
+        nameList = this.mDb.bankInfo.getBankList(userId);
+    } else if (importType === km_getLStr("import.emoney")) {
+        nameList = this.mDb.emoneyInfo.getMoneyList(userId);
+    } else if (importType === km_getLStr("import.creditcard")) {
+        nameList = this.mDb.creditCardInfo.getCardList(userId);
+    }
+    if (nameList.length > 0) {
+        $$("km_list_import_sourcename").hidden = false;
+        
+        $$("km_list_import_sourcename").removeAllItems();
+        for (var i = 0; i < nameList.length; i++) {
+            $$("km_list_import_sourcename").appendItem(nameList[i][1], nameList[i][1]);
+        }
+        $$("km_list_import_sourcename").selectedIndex = 0;
+    } else {
+        $$("km_list_import_sourcename").hidden = true;
+    }
 };

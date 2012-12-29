@@ -22,7 +22,7 @@
         <menulist id="km_list_importtype">
             <menupopup></menupopup>
         </menulist>
-        <menulist id="km_list_source" hidden="true">
+        <menulist id="km_list_importname" hidden="true">
             <menupopup></menupopup>
         </menulist>
     </hbox>
