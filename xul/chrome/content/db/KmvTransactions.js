@@ -157,8 +157,6 @@ KmvTransactions.prototype.loadSumPerMonth = function(params, loadCallback) {
 KmvTransactions.prototype.loadAllSumPerMonth = function(sortParams, queryParams, loadCallback) {
     var sql = ["select",
                         "strftime('%Y/%m', A.transaction_date) as transaction_month,",
-                        "A.item_id as item_id,",
-                        "A.item_name as item_name,",
                         "sum(A.expense - A.income) as sumpermonth",
                         "from kmv_transactions A"].join(" ");
     
@@ -178,7 +176,10 @@ KmvTransactions.prototype.loadAllSumPerMonth = function(sortParams, queryParams,
             sql += " where A.internal = 0 and A.sum_include = 1 ";
         }
     }
-    sql += " group by transaction_month, item_id ";
+    sql += " group by transaction_month ";
+    if (queryParams["itemId"] !== 0) {
+        sql += ", item_id ";
+    }
 
     sql += " order by ";
     if (sortParams !== undefined) {
