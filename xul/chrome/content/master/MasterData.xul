@@ -13,8 +13,10 @@
     <script type="application/x-javascript" src="CardMaster.js" />
     <script type="application/x-javascript" src="BankMaster.js" />
     <script type="application/x-javascript" src="EMoneyMaster.js" />
+    <script type="application/x-javascript" src="SourceMaster.js" />
     <script type="application/x-javascript" src="MasterData.js" />
    <vbox flex="1">
+        <hbox flex="1">
         <tabbox id="km_master_tabbox" handleCtrlPageUpDown="true" flex="1">
             <tabs id="km_tabs">
                 <tab id="km_tab_master_user" label="&tab.user_master;" persist="selected" />
@@ -22,6 +24,7 @@
                 <tab id="km_tab_master_bank" label="&tab.bank_master;" persist="selected" />
                 <tab id="km_tab_master_creditcard" label="&tab.creditcard_master;" persist="selected" />
                 <tab id="km_tab_master_emoney" label="&tab.emoney_master;" persist="selected" />
+                <tab id="km_tab_master_import" label="&tab.import_master;" persist="selected" />
             </tabs>
             <tabpanels flex="1">
                 <tabpanel flex="1">
@@ -127,12 +130,40 @@
                         </tree>
                     </vbox>
                 </tabpanel>
+                <tabpanel flex="1">
+                    <vbox flex="1">
+                        <tree id="km_tree_master_importtype" flex="1" seltype="single"
+                              enableColumnDrag="false"
+                              hidecolumnpicker="true">
+                            <treecols>
+                                <treecol id="source_id" hidden="true" ignoreincolumnpicker="true" />
+                                <treecol id="source_name" label="&column.sourcetype;" flex="1"
+                                         persist="width" />
+                                <treecol id="enabled" hidden="true" ignoreincolumnpicker="true" />
+                                <treecol id="enabledStr" label="&column.enabled;"
+                                         flex="1" persist="width" />
+                            </treecols>
+                            <treechildren />
+                        </tree>
+
+                    </vbox>
+                </tabpanel>
             </tabpanels>
         </tabbox>
+        <vbox id="km_box_order" hidden="true" pack="center">
+            <button id="km_order_up" label="&button.up;"
+                    accesskey="&button.up.accesskey;" />
+            <button id="km_order_down" label="&button.down;"
+                    accesskey="&button.down.accesskey;" />
+        </vbox>
+        </hbox>
+
 		<vbox>
 			<hbox align="center">
-				<label id="km_label_name" control="km_textbox_name" value="&edit.name;" />
-				<textbox id="km_textbox_name" size="7" />
+				<hbox id="km_box_name" align="center">
+                    <label id="km_label_name" control="km_textbox_name" value="&edit.name;" />
+                    <textbox id="km_textbox_name" size="7" />
+                </hbox>
 				<hbox id="km_box_user" align="center">
 					<label control="km_list_user" value="&edit.username;" />
 					<menulist id="km_list_user">
@@ -154,8 +185,11 @@
                 <hbox id="km_box_item" align="center">
     				<checkbox id="km_master_sum" label="&column.sum_include;" />
                 </hbox>
+                <hbox id="km_box_source" align="center">
+    				<checkbox id="km_master_enabled" label="&column.enabled;" />
+                </hbox>
 			</hbox>
-			<hbox align="right">
+			<hbox pack="end">
 				<button id="km_button_master_add" accesskey="&button.add.accesskey;"
 						label="&button.add;" />
 				<button id="km_button_master_update" accesskey="&button.update.accesskey;"

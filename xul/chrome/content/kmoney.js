@@ -367,6 +367,7 @@ Kmoney.prototype.openSelectDb = function () {
     
     
 };
+
 Kmoney.prototype.openSetMaster = function () {
     if (!this.mDb.isConnected()) {
         return;

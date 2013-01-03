@@ -38,6 +38,12 @@
 <!ENTITY menu.data.accesskey          "D">
 <!ENTITY menu.data.duplicate          "重複行を表示">
 <!ENTITY menu.data.duplicate.accesskey          "P">
+<!ENTITY menu.data.order          "表示順">
+<!ENTITY menu.data.order.accesskey          "O">
+<!ENTITY menu.data.order.item          "費目">
+<!ENTITY menu.data.order.item.ak          "I">
+<!ENTITY menu.data.order.source          "入力元">
+<!ENTITY menu.data.order.source.ak          "S">
 
 <!ENTITY menu.setting          "設定">
 <!ENTITY menu.setting.accesskey          "S">
@@ -87,6 +93,7 @@
 <!ENTITY tab.bank_master          "銀行">
 <!ENTITY tab.creditcard_master      "クレジットカード">
 <!ENTITY tab.emoney_master          "電子マネー">
+<!ENTITY tab.import_master          "インポート元">
 
 <!-- column -->
 <!ENTITY column.date          "日付">
@@ -109,6 +116,7 @@
 <!ENTITY column.assetname          "資産名">
 <!ENTITY column.assettype          "種別">
 <!ENTITY column.amount          "金額">
+<!ENTITY column.enabled          "有効">
 
 <!-- edit -->
 <!ENTITY edit.date          "日付">
@@ -157,6 +165,10 @@
 <!ENTITY button.selectfile.accesskey          "S">
 <!ENTITY button.query          "検索">
 <!ENTITY button.query.accesskey          "Q">
+<!ENTITY button.up          "上へ">
+<!ENTITY button.up.accesskey          "U">
+<!ENTITY button.down          "下へ">
+<!ENTITY button.down.accesskey          "D">
 
 <!ENTITY select.type          "種別">
 <!ENTITY select.importtype          "インポート種別">

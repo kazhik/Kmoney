@@ -129,6 +129,15 @@ TreeViewController.prototype = {
         //this.treetable.view.init() also fails.
         this.treeTable.view = this.treeView;
     },
+    
+    moveUp: function() {
+        
+    },
+    
+    moveDown: function() {
+        
+    },
+    
     getCurrentSortParams: function () {
         if (this.mSortOrder === null) {
             return undefined;

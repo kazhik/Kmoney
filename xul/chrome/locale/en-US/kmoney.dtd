@@ -38,6 +38,12 @@
 <!ENTITY menu.data.accesskey          "D">
 <!ENTITY menu.data.duplicate          "Extract duplicate rows">
 <!ENTITY menu.data.duplicate.accesskey          "P">
+<!ENTITY menu.data.order          "Display Order">
+<!ENTITY menu.data.order.accesskey          "O">
+<!ENTITY menu.data.order.item          "Item">
+<!ENTITY menu.data.order.item.ak          "I">
+<!ENTITY menu.data.order.source          "Source">
+<!ENTITY menu.data.order.source.ak          "S">
 
 <!ENTITY menu.setting          "Setting">
 <!ENTITY menu.setting.accesskey          "S">
@@ -87,6 +93,7 @@
 <!ENTITY tab.bank_master          "Bank">
 <!ENTITY tab.creditcard_master          "CreditCard">
 <!ENTITY tab.emoney_master          "E-Money">
+<!ENTITY tab.import_master          "Import Source">
 
 <!-- column -->
 <!ENTITY column.date          "Date">
@@ -109,6 +116,7 @@
 <!ENTITY column.assetname          "AssetName">
 <!ENTITY column.assettype          "AssetType">
 <!ENTITY column.amount          "Amount">
+<!ENTITY column.enabled          "Enabled">
 
 <!-- edit -->
 <!ENTITY edit.date          "Date">
@@ -156,6 +164,10 @@
 <!ENTITY button.selectfile.accesskey          "S">
 <!ENTITY button.query          "Query">
 <!ENTITY button.query.accesskey          "Q">
+<!ENTITY button.up          "Up">
+<!ENTITY button.up.accesskey          "U">
+<!ENTITY button.down          "Down">
+<!ENTITY button.down.accesskey          "D">
 
 <!ENTITY select.type          "Type">
 <!ENTITY select.importtype          "Import Type">

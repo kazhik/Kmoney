@@ -10,6 +10,7 @@ function MasterData() {
     this.cardMaster = null;
     this.bankMaster = null;
     this.emoneyMaster = null;
+    this.sourceMaster = null;
 
     this.listeners = [];
 
@@ -34,6 +35,8 @@ MasterData.prototype.initialize = function (db) {
     this.bankMaster.initialize(db);
     this.emoneyMaster = new EMoneyMaster();
     this.emoneyMaster.initialize(db);
+    this.sourceMaster = new SourceMaster();
+    this.sourceMaster.initialize(db);
 
     this.addEventListeners();
 
@@ -46,6 +49,7 @@ MasterData.prototype.terminate = function () {
     this.cardMaster.terminate();
     this.bankMaster.terminate();
     this.emoneyMaster.terminate();
+    this.sourceMaster.terminate();
 };
 MasterData.prototype.addRecord = function () {
     var tab = this.getSelectedTab();
@@ -93,6 +97,9 @@ MasterData.prototype.getSelectedTab = function () {
     case 'km_tab_master_emoney':
         tab = this.emoneyMaster;
         break;
+    case 'km_tab_master_import':
+        tab = this.sourceMaster;
+        break;
     }
     return tab;
 };
@@ -119,6 +126,14 @@ MasterData.prototype.addEventListeners = function () {
 
     this.listeners['km_tabs.select'] = this.onTabSelected.bind(this);
     $$('km_tabs').addEventListener("select", this.listeners['km_tabs.select']);
+
+    this.listeners['km_order_up.command'] = this.moveUp.bind(this);
+    $$('km_order_up').addEventListener("command",
+        this.listeners['km_order_up.command']);
+
+    this.listeners['km_order_down.command'] = this.moveDown.bind(this);
+    $$('km_order_down').addEventListener("command",
+        this.listeners['km_order_down.command']);
 };
 
 MasterData.prototype.removeEventListeners = function () {
@@ -135,8 +150,23 @@ MasterData.prototype.removeEventListeners = function () {
     this.listeners['km_button_master_close.command']);
 
     $$('km_tabs').removeEventListener("select", this.listeners['km_tabs.select']);
+
+    $$('km_order_up').removeEventListener("command",
+        this.listeners['km_order_up.command']);
+
+    $$('km_order_down').removeEventListener("command",
+        this.listeners['km_order_down.command']);
+
 };
 
+MasterData.prototype.moveUp = function () {
+    var tab = this.getSelectedTab();
+    tab.moveUp();
+}
+MasterData.prototype.moveDown = function () {
+    var tab = this.getSelectedTab();
+    tab.moveDown();
+}
 MasterData.prototype.loadUserList = function () {
     function loadCallback(records) {
         $$('km_list_user').removeAllItems();
@@ -192,42 +222,56 @@ MasterData.prototype.onTabSelected = function (e) {
     switch ($$('km_master_tabbox').selectedTab.id) {
     case 'km_tab_master_user':
         $$('km_label_name').value = km_getLStr("master.username")
-        $$('km_box_item').hidden = true;
-        $$('km_box_user').hidden = true;
-        $$('km_box_creditcard').hidden = true;
-        $$('km_box_bank').hidden = true;
+        $$('km_textbox_name').readOnly = false;
+        showElements(['km_button_master_add', 'km_button_master_update',
+                      'km_button_master_delete']);
+        hideElements(['km_box_item', 'km_box_user',
+                      'km_box_creditcard', 'km_box_bank', 'km_box_source']);
         break;
     case 'km_tab_master_item':
         $$('km_label_name').value = km_getLStr("master.itemname")
-        $$('km_box_item').hidden = false;
-        $$('km_box_user').hidden = true;
-        $$('km_box_creditcard').hidden = true;
-        $$('km_box_bank').hidden = true;
+        $$('km_textbox_name').readOnly = false;
+        showElements(['km_box_item',
+                      'km_button_master_add', 'km_button_master_update',
+                      'km_button_master_delete']);
+        hideElements(['km_box_user', 'km_box_creditcard', 'km_box_bank', 'km_box_source']);
         break;
     case 'km_tab_master_bank':
         $$('km_label_name').value = km_getLStr("master.bankname")
-        $$('km_box_item').hidden = true;
-        $$('km_box_user').hidden = false;
-        $$('km_box_creditcard').hidden = true;
-        $$('km_box_bank').hidden = true;
+        $$('km_textbox_name').readOnly = false;
+        showElements(['km_box_user',
+                      'km_button_master_add', 'km_button_master_update',
+                      'km_button_master_delete']);
+        hideElements(['km_box_item', 'km_box_creditcard', 'km_box_bank', 'km_box_source']);
         this.loadUserList();
         break;
     case 'km_tab_master_creditcard':
         $$('km_label_name').value = km_getLStr("master.cardname")
-        $$('km_box_item').hidden = true;
-        $$('km_box_user').hidden = false;
-        $$('km_box_creditcard').hidden = true;
-        $$('km_box_bank').hidden = false;
+        $$('km_textbox_name').readOnly = false;
+        showElements(['km_box_user', 'km_box_bank',
+                      'km_button_master_add', 'km_button_master_update',
+                      'km_button_master_delete']);
+        hideElements(['km_box_item', 'km_box_creditcard', 'km_box_source']);
         this.loadUserList();
         this.loadBankList();
         break;
     case 'km_tab_master_emoney':
         $$('km_label_name').value = km_getLStr("master.emoneyname")
-        $$('km_box_item').hidden = true;
-        $$('km_box_user').hidden = false;
-        $$('km_box_creditcard').hidden = true;
-        $$('km_box_bank').hidden = true;
+        $$('km_textbox_name').readOnly = false;
+        showElements(['km_box_user',
+                      'km_button_master_add', 'km_button_master_update',
+                      'km_button_master_delete']);
+        hideElements(['km_box_item', 'km_box_bank', 'km_box_creditcard', 'km_box_source']);
         this.loadUserList();
+        break;
+    case 'km_tab_master_import':
+        $$('km_label_name').value = km_getLStr("master.source");
+        $$('km_textbox_name').readOnly = true;
+        showElements(['km_box_source', 'km_button_master_update']);
+        hideElements(['km_box_item', 'km_box_user',
+                      'km_box_creditcard', 'km_box_bank',
+                      'km_button_master_add',
+                      'km_button_master_delete']);
         break;
     }
 };

@@ -537,7 +537,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 						</menulist>
 					</hbox>
 				</hbox>
-				<hbox id="km_box_edit_buttons" align="right">
+				<hbox id="km_box_edit_buttons" pack="end">
 					<button id="km_button_add" accesskey="&button.add.accesskey;"
 							label="&button.add;" />
 					<button id="km_button_update" accesskey="&button.update.accesskey;"

@@ -62,7 +62,7 @@
                 </menulist>
 				<checkbox id="km_checkbox_importconf_default" label="&edit.default;" />
 			</hbox>
-			<hbox align="right">
+			<hbox pack="end">
 				<button id="km_button_importconf_add" accesskey="&button.add.accesskey;"
 						label="&button.add;" />
 				<button id="km_button_importconf_update" accesskey="&button.update.accesskey;"
