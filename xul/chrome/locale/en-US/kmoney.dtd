@@ -126,6 +126,7 @@
 <!ENTITY edit.detail          "Detail">
 <!ENTITY edit.amount          "Amount">
 <!ENTITY edit.user          "User">
+<!ENTITY edit.username          "User Name">
 <!ENTITY edit.internal          "Type">
 <!ENTITY edit.bank          "Bank">
 <!ENTITY edit.creditcard          "CreditCard">
@@ -135,7 +136,7 @@
 <!ENTITY edit.importfrom          "Source">
 <!ENTITY edit.default          "Default">
 <!ENTITY edit.paymonth          "PayMonth">
-<!ENTITY edit.table          "Table">Type
+<!ENTITY edit.table          "Table">
 <!ENTITY edit.graph          "Graph">
 <!ENTITY edit.asset          "AssetName">
 <!ENTITY edit.assettype          "Type">
