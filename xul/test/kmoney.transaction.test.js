@@ -27,7 +27,7 @@ function creditcardTransactionTest() {
     assert.equal("40001", tree.getSelectedRowValue('expense'));
     
     // 更新
-    $('km_list_item', win).selectedIndex = 1;
+    $('km_list_category', win).selectedIndex = 1;
     $('km_textbox_detail', win).value = "detail2";
     $('km_textbox_amount', win).value = "3200";
     $('km_list_user', win).selectedIndex = 0;
@@ -41,7 +41,7 @@ function creditcardTransactionTest() {
     tree.treeView.selection.select(rowCnt - 1);
     assert.equal("3200", tree.getSelectedRowValue('expense'));
     assert.equal("detail2", tree.getSelectedRowValue('detail'));
-    assert.equal("外食", tree.getSelectedRowValue('item_name'));
+    assert.equal("外食", tree.getSelectedRowValue('category_name'));
     assert.equal("太郎", tree.getSelectedRowValue('user_name'));
     assert.equal("ビューカード", tree.getSelectedRowValue('card_name'));
     assert.equal("2012-12", tree.getSelectedRowValue('pay_month'));
@@ -70,7 +70,7 @@ function emoneyTransactionTest() {
     
     // 更新
     $('km_radgroup_income-expense', win).selectedItem = $('km_radio_income', win);
-    $('km_list_item', win).selectedIndex = 1;
+    $('km_list_category', win).selectedIndex = 1;
     $('km_textbox_detail', win).value = "detail2";
     $('km_textbox_amount', win).value = "3200";
     $('km_list_user', win).selectedIndex = 1;
@@ -82,7 +82,7 @@ function emoneyTransactionTest() {
     assert.equal("3200", tree.getSelectedRowValue('income'));
     assert.equal("0", tree.getSelectedRowValue('expense'));
     assert.equal("detail2", tree.getSelectedRowValue('detail'));
-    assert.equal("外食", tree.getSelectedRowValue('item_name'));
+    assert.equal("外食", tree.getSelectedRowValue('category_name'));
     assert.equal("花子", tree.getSelectedRowValue('user_name'));
     assert.equal("家族", tree.getSelectedRowValue('internal_name'));
     
@@ -110,7 +110,7 @@ function bankTransactionTest() {
     
     // 更新
     $('km_radgroup_income-expense', win).selectedItem = $('km_radio_income', win);
-    $('km_list_item', win).selectedIndex = 1;
+    $('km_list_category', win).selectedIndex = 1;
     $('km_textbox_detail', win).value = "detail2";
     $('km_textbox_amount', win).value = "3200";
     $('km_list_user', win).selectedIndex = 1;
@@ -122,7 +122,7 @@ function bankTransactionTest() {
     assert.equal("3200", tree.getSelectedRowValue('income'));
     assert.equal("0", tree.getSelectedRowValue('expense'));
     assert.equal("detail2", tree.getSelectedRowValue('detail'));
-    assert.equal("外食", tree.getSelectedRowValue('item_name'));
+    assert.equal("外食", tree.getSelectedRowValue('category_name'));
     assert.equal("2", tree.getSelectedRowValue('user_id'));
     assert.equal("家族", tree.getSelectedRowValue('internal_name'));
     
@@ -149,7 +149,7 @@ function cashTransactionTest() {
     
     // 更新
     $('km_radgroup_income-expense', win).selectedItem = $('km_radio_income', win);
-    $('km_list_item', win).selectedIndex = 1;
+    $('km_list_category', win).selectedIndex = 1;
     $('km_textbox_detail', win).value = "detail2";
     $('km_textbox_amount', win).value = "3200";
     $('km_list_user', win).selectedIndex = 1;
@@ -161,7 +161,7 @@ function cashTransactionTest() {
     assert.equal("3200", tree.getSelectedRowValue('income'));
     assert.equal("0", tree.getSelectedRowValue('expense'));
     assert.equal("detail2", tree.getSelectedRowValue('detail'));
-    assert.equal("外食", tree.getSelectedRowValue('item_name'));
+    assert.equal("外食", tree.getSelectedRowValue('category_name'));
     assert.equal("2", tree.getSelectedRowValue('user_id'));
     assert.equal("家族", tree.getSelectedRowValue('internal_name'));
     

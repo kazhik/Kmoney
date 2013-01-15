@@ -17,7 +17,7 @@ Transaction.prototype.getCommonQueryParam = function (i) {
     };
     if (param['key'] === "date") {
         param['value'] = $$('km_date_qcond_value' + i).value;
-    } else if (param['key'] === "item") {
+    } else if (param['key'] === "category") {
         param['value'] = $$('km_list_qcond_value' + i).value;
     } else if (param['key'] === "detail") {
         param['value'] = $$('km_textbox_qcond_value' + i).value;

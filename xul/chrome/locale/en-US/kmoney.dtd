@@ -40,8 +40,8 @@
 <!ENTITY menu.data.duplicate.accesskey          "P">
 <!ENTITY menu.data.order          "Display Order">
 <!ENTITY menu.data.order.accesskey          "O">
-<!ENTITY menu.data.order.item          "Item">
-<!ENTITY menu.data.order.item.ak          "I">
+<!ENTITY menu.data.order.category          "Category">
+<!ENTITY menu.data.order.category.ak          "I">
 <!ENTITY menu.data.order.source          "Source">
 <!ENTITY menu.data.order.source.ak          "S">
 
@@ -85,11 +85,11 @@
 <!ENTITY tab.asset          "Asset">
 
 <!ENTITY tab.user          "User">
-<!ENTITY tab.item          "Item">
+<!ENTITY tab.category          "Category">
 <!ENTITY tab.source          "DataSource">
 
 <!ENTITY tab.user_master          "User">
-<!ENTITY tab.item_master          "Item">
+<!ENTITY tab.category_master          "Category">
 <!ENTITY tab.bank_master          "Bank">
 <!ENTITY tab.creditcard_master          "CreditCard">
 <!ENTITY tab.emoney_master          "E-Money">
@@ -99,13 +99,13 @@
 <!ENTITY column.date          "Date">
 <!ENTITY column.income          "Income">
 <!ENTITY column.expense          "Expense">
-<!ENTITY column.item          "Item">
+<!ENTITY column.category          "Category">
 <!ENTITY column.detail          "Detail">
 <!ENTITY column.bankname          "BankName">
 <!ENTITY column.cardname          "CardName">
 <!ENTITY column.emoneyname          "EMoneyName">
 <!ENTITY column.username          "UserName">
-<!ENTITY column.itemname          "ItemName">
+<!ENTITY column.categoryname          "CategoryName">
 <!ENTITY column.internal          "Internal">
 <!ENTITY column.type          "Type">
 <!ENTITY column.sourcetype          "SourceType">
@@ -122,7 +122,7 @@
 <!ENTITY edit.date          "Date">
 <!ENTITY edit.income          "Income">
 <!ENTITY edit.expense          "Expense">
-<!ENTITY edit.item          "Item">
+<!ENTITY edit.category          "Category">
 <!ENTITY edit.detail          "Detail">
 <!ENTITY edit.amount          "Amount">
 <!ENTITY edit.user          "User">

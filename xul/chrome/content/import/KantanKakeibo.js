@@ -23,7 +23,7 @@ KantanKakeibo.prototype.importDb = function (name, kantanDbFile, userId, importC
                     "transactionDate": records[i][0],
                     "income": 0,
                     "expense": 0,
-                    "itemId": 0,
+                    "categoryId": 0,
                     "detail": "",
                     "userId": userId,
                     "internal": 0,
@@ -46,13 +46,13 @@ KantanKakeibo.prototype.importDb = function (name, kantanDbFile, userId, importC
                 } else {
                     rec["detail"] = memo;
                 }
-                var itemInfo = this.getItemInfo(records[i][2]);
-                if (itemInfo["itemId"] === undefined) {
+                var category = this.getItemInfo(records[i][2]);
+                if (category["categoryId"] === undefined) {
                     km_alert(km_getLStr("error.title"),
                              km_getLStr("error.import.noConf"));
                 }
-                rec["itemId"] = itemInfo["itemId"];
-                rec["internal"] = itemInfo["internal"];
+                rec["categoryId"] = category["categoryId"];
+                rec["internal"] = category["internal"];
         
                 newRecordArray.push(rec);
             }

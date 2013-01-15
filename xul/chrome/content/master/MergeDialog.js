@@ -21,16 +21,16 @@ MergeDialog.prototype.onAccept = function () {
 };
 
 MergeDialog.prototype.onCancel = function () {
-    this.retVals['itemid'] = null;
+    this.retVals['categoryid'] = null;
 
     this.removeEventListeners();
 };
 
 
 MergeDialog.prototype.addEventListeners = function () {
-    this.listeners['km_merge_item.command'] = this.onSelectItem.bind(this);
-    $$('km_merge_item').addEventListener("command",
-        this.listeners['km_merge_item.command']);
+    this.listeners['km_merge_category.command'] = this.onSelectItem.bind(this);
+    $$('km_merge_category').addEventListener("command",
+        this.listeners['km_merge_category.command']);
 
     this.listeners['km_dialog_merge.dialogaccept'] = this.onAccept.bind(this);
     $$('km_dialog_merge').addEventListener("dialogaccept",
@@ -42,8 +42,8 @@ MergeDialog.prototype.addEventListeners = function () {
 
 };
 MergeDialog.prototype.removeEventListeners = function () {
-    $$('km_merge_item').removeEventListener("command",
-        this.listeners['km_merge_item.command']);
+    $$('km_merge_category').removeEventListener("command",
+        this.listeners['km_merge_category.command']);
 
     $$('km_dialog_merge').removeEventListener("dialogaccept",
         this.listeners['km_dialog_merge.dialogaccept']);
@@ -52,15 +52,15 @@ MergeDialog.prototype.removeEventListeners = function () {
         this.listeners['km_dialog_merge.dialogcancel']);
 };
 
-MergeDialog.prototype.populateItemList = function (itemList) {
-    $$('km_merge_item').removeAllItems();
+MergeDialog.prototype.populateItemList = function (categoryList) {
+    $$('km_merge_category').removeAllItems();
 
-    for (var i = 0; i < itemList.length; i++) {
-        $$('km_merge_item').appendItem(itemList[i][1], itemList[i][0]);
+    for (var i = 0; i < categoryList.length; i++) {
+        $$('km_merge_category').appendItem(categoryList[i][1], categoryList[i][0]);
     }
     
-    $$('km_merge_item').selectedIndex = 0;
+    $$('km_merge_category').selectedIndex = 0;
 };
 MergeDialog.prototype.onSelectItem = function () {
-    this.retVals['itemid'] = $$("km_merge_item").value;
+    this.retVals['categoryid'] = $$("km_merge_category").value;
 };

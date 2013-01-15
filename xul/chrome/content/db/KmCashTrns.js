@@ -15,8 +15,8 @@ KmCashTrns.prototype.load = function(sortParams, queryParams, loadCallback) {
         if (key === "date") {
             keyCol = "A.transaction_date";
             operator = queryParams[i]['operator'];
-        } else if (key === "item") {
-            keyCol = "A.item_id";
+        } else if (key === "category") {
+            keyCol = "A.category_id";
             operator = "=";
         } else if (key === "detail") {
             keyCol = "A.detail";
@@ -43,8 +43,8 @@ KmCashTrns.prototype.load = function(sortParams, queryParams, loadCallback) {
     var sql = [
         "select ",
         "A.transaction_date, ",
-        "A.item_id, ",
-        "B.name as item_name, ",
+        "A.category_id, ",
+        "B.name as category_name, ",
         "A.detail, ",
         "A.income, ",
         "A.expense, ",
@@ -58,9 +58,9 @@ KmCashTrns.prototype.load = function(sortParams, queryParams, loadCallback) {
         "end as type, ",
         "A.internal, ",
         "A.id ",
-        "from km_realmoney_trns A ",
-        "left join km_item B ",
-        " on A.item_id = B.id ",
+        "from km_cash_trns A ",
+        "left join km_category B ",
+        " on A.category_id = B.id ",
         "inner join km_user C ",
         " on A.user_id = C.id ",
         "inner join km_source D",
@@ -109,8 +109,8 @@ KmCashTrns.prototype.loadDuplicate = function(loadCallback) {
     var sql = [
         "select ",
         "A.transaction_date, ",
-        "A.item_id, ",
-        "B.name as item_name, ",
+        "A.category_id, ",
+        "B.name as category_name, ",
         "A.detail, ",
         "A.income, ",
         "A.expense, ",
@@ -124,9 +124,9 @@ KmCashTrns.prototype.loadDuplicate = function(loadCallback) {
         "end as type, ",
         "A.internal, ",
         "A.id ",
-        "from km_realmoney_trns A ",
-        "left join km_item B ",
-        " on A.item_id = B.id ",
+        "from km_cash_trns A ",
+        "left join km_category B ",
+        " on A.category_id = B.id ",
         "inner join km_user C ",
         " on A.user_id = C.id ",
         "inner join km_source D",
@@ -134,7 +134,7 @@ KmCashTrns.prototype.loadDuplicate = function(loadCallback) {
         ].join(" ");
     sql += ["inner join",
                "(select G.transaction_date, G.income, G.expense",
-               "from km_realmoney_trns G",
+               "from km_cash_trns G",
                "group by G.transaction_date, G.income, G.expense",
                "having count(G.transaction_date) > 1) F",
                "on A.transaction_date = F.transaction_date",
@@ -155,11 +155,11 @@ KmCashTrns.prototype.insert = function(newRecordArray, insertCallback) {
 KmCashTrns.prototype.execInsert = function (newRecordArray, importFlag, insertCallback) {
     var sqlStmtArray = [];
     for (var i = 0; i < newRecordArray.length; i++) {
-        var sql = ["insert into km_realmoney_trns (",
+        var sql = ["insert into km_cash_trns (",
                         "transaction_date, ",
                         "income, ",
                         "expense, ",
-                        "item_id, ",
+                        "category_id, ",
                         "detail, ",
                         "user_id, ",
                         "internal, ",
@@ -170,7 +170,7 @@ KmCashTrns.prototype.execInsert = function (newRecordArray, importFlag, insertCa
                         ":transactionDate,",
                         ":income,",
                         ":expense,",
-                        ":itemId,",
+                        ":categoryId,",
                         ":detail,",
                         ":userId,",
                         ":internal,",
@@ -205,10 +205,10 @@ KmCashTrns.prototype.update = function(idList, params, updateCallback) {
     var inClause = keyList.join(",");
     var sql;
     if (oneColumn) {
-        sql = "update km_realmoney_trns ";
+        sql = "update km_cash_trns ";
         sql += "set ";
-        if (params["itemId"] !== undefined) {
-            sql += "item_id = :itemId, ";
+        if (params["categoryId"] !== undefined) {
+            sql += "category_id = :categoryId, ";
         } else if (params["detail"] !== undefined) {
             sql += "detail = :detail, ";
         } else if (params["userId"] !== undefined) {
@@ -218,12 +218,12 @@ KmCashTrns.prototype.update = function(idList, params, updateCallback) {
         sql += "where id in (" + inClause + ")";
 
     } else {
-        sql = ["update km_realmoney_trns ",
+        sql = ["update km_cash_trns ",
                    "set ",
                    "transaction_date = :transactionDate, ",
                    "income = :income, ",
                    "expense = :expense, ",
-                   "item_id = :itemId, ",
+                   "category_id = :categoryId, ",
                    "detail = :detail, ",
                    "user_id = :userId, ",
                    "last_update_date = datetime('now', 'localtime'), ",
@@ -245,7 +245,7 @@ KmCashTrns.prototype.delete = function(idList, deleteCallback) {
         params[key] = idList[i];
     }
     var inClause = keyList.join(",");
-    var sql = "delete from km_realmoney_trns where id in (" + inClause + ")";
+    var sql = "delete from km_cash_trns where id in (" + inClause + ")";
     km_log(sql);
     var sqlStatement = this.mDb.createStatementWithParams(sql, params);
     this.mDb.execTransaction([sqlStatement]);

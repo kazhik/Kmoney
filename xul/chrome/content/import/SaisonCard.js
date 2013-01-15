@@ -50,7 +50,7 @@ SaisonCard.prototype.importDb = function (name, csvFile, userId, importCallback)
                         "payAmount": 0,
                         "payMonth": payMonth,
                         "boughtAmount": 0,
-                        "itemId": 0,
+                        "categoryId": 0,
                         "detail": "",
                         "userId": userId,
                         "cardId": cardId,
@@ -71,13 +71,13 @@ SaisonCard.prototype.importDb = function (name, csvFile, userId, importCallback)
                         rec["payAmount"] = rec["boughtAmount"];
                     }
                     rec["detail"] = rowArray[i][1];
-                    var itemInfo = this.getItemInfo(rowArray[i][1]);
-                    if (itemInfo["itemId"] === undefined) {
+                    var category = this.getItemInfo(rowArray[i][1]);
+                    if (category["categoryId"] === undefined) {
                         km_alert(km_getLStr("error.title"),
                         km_getLStr("error.import.noConf"));
                         return;
                     }
-                    rec["itemId"] = itemInfo["itemId"];
+                    rec["categoryId"] = category["categoryId"];
 
                     if (rowArray[i][3] != "１回") {
                         // TODO: 一回払いでないときはどんなデータになる？

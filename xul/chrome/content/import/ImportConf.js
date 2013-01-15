@@ -15,7 +15,7 @@ function openImportConfDialog() {
     importConf.initialize(window.arguments[0], window.arguments[1]);
 }
 
-ImportConf.prototype.initialize = function(db, itemMap) {
+ImportConf.prototype.initialize = function(db, categoryMap) {
     this.mDb = db;
     this.addEventListeners();
 
@@ -24,7 +24,7 @@ ImportConf.prototype.initialize = function(db, itemMap) {
     this.initUserList();    
     this.initImportTypeList();
     this.populateInternalList();
-    this.initItemList(itemMap);
+    this.initItemList(categoryMap);
 };
 ImportConf.prototype.close = function () {
     this.removeEventListeners();
@@ -110,7 +110,7 @@ ImportConf.prototype.addRecord = function () {
         "sourceType": sourceType,
         "sourceName": sourceName,
         "detail": $$("km_textbox_importconf_detail").value,
-        "itemId": $$('km_list_importconf_item').value,
+        "categoryId": $$('km_list_importconf_category').value,
         "defaultId": defaultId,
         "internal": $$("km_list_importconf_internal").value
     };
@@ -144,7 +144,7 @@ ImportConf.prototype.updateRecord = function () {
     }
     var params = {
         "detail": $$("km_textbox_importconf_detail").value,
-        "itemId": $$('km_list_importconf_item').value,
+        "categoryId": $$('km_list_importconf_category').value,
         "defaultId": defaultId,
         "internal": $$("km_list_importconf_internal").value
     };
@@ -189,8 +189,8 @@ ImportConf.prototype.deleteRecord = function () {
 ImportConf.prototype.onSelect = function () {
     $$("km_textbox_importconf_detail").value =
         this.mTree.getSelectedRowValue("import_conf_detail");
-    $$('km_list_importconf_item').value =
-        this.mTree.getSelectedRowValue("import_conf_itemid");
+    $$('km_list_importconf_category').value =
+        this.mTree.getSelectedRowValue("import_conf_categoryid");
     $$('km_checkbox_importconf_default').checked =
         (Number(this.mTree.getSelectedRowValue("import_conf_default")) === 1);
     $$("km_list_importconf_internal").value =
@@ -239,12 +239,12 @@ ImportConf.prototype.onSelectCondition = function () {
     this.mDb.import.loadConf(userId, type, name, loadCallback.bind(this));
   
 };
-ImportConf.prototype.initItemList = function (itemMap) {
-    $$('km_list_importconf_item').removeAllItems();
-    for (var key in itemMap) {
-        $$('km_list_importconf_item').appendItem(key, itemMap[key]);
+ImportConf.prototype.initItemList = function (categoryMap) {
+    $$('km_list_importconf_category').removeAllItems();
+    for (var key in categoryMap) {
+        $$('km_list_importconf_category').appendItem(key, categoryMap[key]);
     }
-    $$('km_list_importconf_item').selectedIndex = 0;
+    $$('km_list_importconf_category').selectedIndex = 0;
 };
 ImportConf.prototype.populateInternalList = function () {
     $$('km_list_importconf_internal').removeAllItems();

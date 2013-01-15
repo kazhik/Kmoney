@@ -6,7 +6,7 @@ function testCreditCardInsert() {
     function insertCallback(id) {
         // km_creditcard_trnsに挿入されたレコードを確認
         var sql = ["select id, transaction_date, detail, expense, card_id, ",
-                   "item_id, user_id, source, internal",
+                   "category_id, user_id, source, internal",
                    "from km_creditcard_trns",
                    "order by id desc limit 1"].join(" ");
         var statement = execSelect(sql);
@@ -17,7 +17,7 @@ function testCreditCardInsert() {
         assert.equal("testdata", statement.row.detail);
         assert.equal(3980, statement.row.expense);
         assert.equal(5, statement.row.card_id);
-        assert.equal(1, statement.row.item_id);
+        assert.equal(1, statement.row.category_id);
         assert.equal(3, statement.row.user_id);
         assert.equal(4, statement.row.source);
         assert.equal(6, statement.row.internal);
@@ -63,7 +63,7 @@ function testCreditCardInsert() {
     }
     var params = {
         "transactionDate": '2012-12-31',
-        "itemId": 1,
+        "categoryId": 1,
         "detail": 'testdata',
         "boughtAmount": 3980,
         "userId": 3,
@@ -102,7 +102,7 @@ function testCreditCardUpdate() {
                 }
                 // km_creditcard_trnsに挿入されたレコードを確認
                 var sql = ["select id, transaction_date, detail, expense, card_id, ",
-                           "item_id, user_id, source, internal",
+                           "category_id, user_id, source, internal",
                            "from km_creditcard_trns",
                            "order by id desc limit 1"].join(" ");
                 var statement = execSelect(sql);
@@ -113,7 +113,7 @@ function testCreditCardUpdate() {
                 assert.equal("testdata5", statement.row.detail);
                 assert.equal(4002, statement.row.expense);
                 assert.equal(6, statement.row.card_id);
-                assert.equal(2, statement.row.item_id);
+                assert.equal(2, statement.row.category_id);
                 assert.equal(2, statement.row.user_id);
                 assert.equal(3, statement.row.source);
                 assert.equal(8, statement.row.internal);
@@ -129,7 +129,7 @@ function testCreditCardUpdate() {
 
                 var params = {
                     "transactionDate": '2013-01-01',
-                    "itemId": 1,
+                    "categoryId": 1,
                     "detail": 'testdata10',
                     "boughtAmount": 223,
                     "userId": 3,
@@ -146,7 +146,7 @@ function testCreditCardUpdate() {
             
             // km_creditcard_trnsに挿入されたレコードを確認
             var sql = ["select id, transaction_date, detail, expense, card_id, ",
-                       "item_id, user_id, source, internal",
+                       "category_id, user_id, source, internal",
                        "from km_creditcard_trns",
                        "order by id desc limit 1"].join(" ");
             var statement = execSelect(sql);
@@ -157,7 +157,7 @@ function testCreditCardUpdate() {
             assert.equal("testdata2", statement.row.detail);
             assert.equal(3980, statement.row.expense);
             assert.equal(5, statement.row.card_id);
-            assert.equal(1, statement.row.item_id);
+            assert.equal(1, statement.row.category_id);
             assert.equal(3, statement.row.user_id);
             assert.equal(4, statement.row.source);
             assert.equal(6, statement.row.internal);
@@ -205,7 +205,7 @@ function testCreditCardUpdate() {
             // 支払月なし
             var params = {
                 "transactionDate": '2012-12-24',
-                "itemId": 2,
+                "categoryId": 2,
                 "detail": 'testdata5',
                 "boughtAmount": 4002,
                 "userId": 2,
@@ -223,7 +223,7 @@ function testCreditCardUpdate() {
     }
     var params = {
         "transactionDate": '2012-12-31',
-        "itemId": 1,
+        "categoryId": 1,
         "detail": 'testdata',
         "boughtAmount": 3980,
         "userId": 3,
@@ -272,7 +272,7 @@ function testCreditCardDelete() {
     }
     var params = {
         "transactionDate": '2012-12-31',
-        "itemId": 1,
+        "categoryId": 1,
         "detail": 'testdata',
         "boughtAmount": 3980,
         "userId": 3,

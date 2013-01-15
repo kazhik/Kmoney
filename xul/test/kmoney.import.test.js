@@ -37,7 +37,7 @@ function insertCreditcardTestConf() {
       + "source_name, "
       + "user_id, "
       + "detail, "
-      + "item_id, "
+      + "category_id, "
       + "default_id, "
       + "permission, "
       + "internal "
@@ -58,7 +58,7 @@ function insertCreditcardTestConf() {
       + "source_name, "
       + "user_id, "
       + "detail, "
-      + "item_id, "
+      + "category_id, "
       + "default_id, "
       + "permission, "
       + "internal "
@@ -79,7 +79,7 @@ function insertCreditcardTestConf() {
       + "source_name, "
       + "user_id, "
       + "detail, "
-      + "item_id, "
+      + "category_id, "
       + "default_id, "
       + "permission, "
       + "internal "
@@ -100,7 +100,7 @@ function insertCreditcardTestConf() {
       + "source_name, "
       + "user_id, "
       + "detail, "
-      + "item_id, "
+      + "category_id, "
       + "default_id, "
       + "permission, "
       + "internal "
@@ -131,13 +131,13 @@ function creditcardTest() {
     importer.importDb("DCカード", importFile, 1, importCallback);
     utils.wait(done);
 
-    var sql = ["select transaction_date, item_id, detail,",
+    var sql = ["select transaction_date, category_id, detail,",
                "expense, card_id, user_id, internal",
                "from km_creditcard_trns order by id desc"].join(" ");
     var statement = execSelect(sql);
     assert.isTrue(statement !== null);
     assert.equal("2012-11-08", statement.row.transaction_date);
-    assert.equal(3, statement.row.item_id);
+    assert.equal(3, statement.row.category_id);
     assert.equal(1, statement.row.user_id);
     assert.equal(0, statement.row.internal);
     statement = getNext(statement);
@@ -148,11 +148,11 @@ function creditcardTest() {
     assert.equal(0, statement.row.internal);
     statement = getNext(statement);
     assert.equal("2012-09-12", statement.row.transaction_date);
-    assert.equal(3, statement.row.item_id);
+    assert.equal(3, statement.row.category_id);
     statement = getNext(statement);
     assert.equal("2012-08-28", statement.row.transaction_date);
     assert.equal(9000, statement.row.expense);
-    assert.equal(3, statement.row.item_id);
+    assert.equal(3, statement.row.category_id);
     statement = getNext(statement);
     assert.equal("2012-07-31", statement.row.transaction_date);
     assert.equal("さくら水産", statement.row.detail);
@@ -172,7 +172,7 @@ function insertEMoneyTestConf() {
       + "source_name, "
       + "user_id, "
       + "detail, "
-      + "item_id, "
+      + "category_id, "
       + "default_id, "
       + "permission, "
       + "internal "
@@ -193,7 +193,7 @@ function insertEMoneyTestConf() {
       + "source_name, "
       + "user_id, "
       + "detail, "
-      + "item_id, "
+      + "category_id, "
       + "default_id, "
       + "permission, "
       + "internal "
@@ -214,7 +214,7 @@ function insertEMoneyTestConf() {
       + "source_name, "
       + "user_id, "
       + "detail, "
-      + "item_id, "
+      + "category_id, "
       + "default_id, "
       + "permission, "
       + "internal "
@@ -235,7 +235,7 @@ function insertEMoneyTestConf() {
       + "source_name, "
       + "user_id, "
       + "detail, "
-      + "item_id, "
+      + "category_id, "
       + "default_id, "
       + "permission, "
       + "internal "
@@ -265,13 +265,13 @@ function emoneyTest() {
     importer.importDb("Suica", importFile, 2, importCallback);
     utils.wait(done);
 
-    var sql = ["select transaction_date, item_id, detail,",
+    var sql = ["select transaction_date, category_id, detail,",
                "income, expense, money_id, user_id, internal",
                "from km_emoney_trns order by id desc"].join(" ");
     var statement = execSelect(sql);
     assert.isTrue(statement !== null);
     assert.equal("2012-11-18", statement.row.transaction_date);
-    assert.equal(4, statement.row.item_id);
+    assert.equal(4, statement.row.category_id);
     assert.equal(2, statement.row.user_id);
     assert.equal(1, statement.row.internal);
     assert.equal("チャージ", statement.row.detail);
@@ -283,10 +283,10 @@ function emoneyTest() {
     statement = getNext(statement);
     assert.equal("2012-09-01", statement.row.transaction_date);
     assert.equal(360, statement.row.expense);
-    assert.equal(3, statement.row.item_id);
+    assert.equal(3, statement.row.category_id);
     statement = getNext(statement);
     assert.equal("2012-08-28", statement.row.transaction_date);
-    assert.equal(1, statement.row.item_id);
+    assert.equal(1, statement.row.category_id);
     assert.equal("松屋", statement.row.detail);
     statement = getNext(statement);
     assert.equal("2012-07-31", statement.row.transaction_date);
@@ -315,7 +315,7 @@ function insertBankTestConf() {
       + "source_name, "
       + "user_id, "
       + "detail, "
-      + "item_id, "
+      + "category_id, "
       + "default_id, "
       + "permission, "
       + "internal "
@@ -336,7 +336,7 @@ function insertBankTestConf() {
       + "source_name, "
       + "user_id, "
       + "detail, "
-      + "item_id, "
+      + "category_id, "
       + "default_id, "
       + "permission, "
       + "internal "
@@ -366,13 +366,13 @@ function bankTest() {
     importer.importDb("ソニー銀行", importFile, 2, importCallback);
     utils.wait(done);
 
-    var sql = ["select transaction_date, item_id, detail,",
+    var sql = ["select transaction_date, category_id, detail,",
                "income, expense, bank_id, user_id, internal",
                "from km_bank_trns order by id desc"].join(" ");
     var statement = execSelect(sql);
     assert.isTrue(statement !== null);
     assert.equal("2012-11-08", statement.row.transaction_date);
-    assert.equal(1, statement.row.item_id);
+    assert.equal(1, statement.row.category_id);
     assert.equal(2, statement.row.user_id);
     assert.equal(0, statement.row.internal);
     assert.equal("bank-detail9", statement.row.detail);
@@ -390,7 +390,7 @@ function bankTest() {
     assert.equal("2012-07-31", statement.row.transaction_date);
     assert.equal(0, statement.row.expense);
     assert.equal(20000, statement.row.income);
-    assert.equal(4, statement.row.item_id);
+    assert.equal(4, statement.row.category_id);
     assert.equal(1, statement.row.internal);
     assert.equal("ATM", statement.row.detail);
     closeStatement(statement);
@@ -403,7 +403,7 @@ function insertCashTestConf() {
       + "source_name, "
       + "user_id, "
       + "detail, "
-      + "item_id, "
+      + "category_id, "
       + "default_id, "
       + "permission, "
       + "internal "
@@ -424,7 +424,7 @@ function insertCashTestConf() {
       + "source_name, "
       + "user_id, "
       + "detail, "
-      + "item_id, "
+      + "category_id, "
       + "default_id, "
       + "permission, "
       + "internal "
@@ -447,7 +447,7 @@ function cashTest() {
         done["value"] = true;
     }
     execUpdate("delete from km_import_history where user_id = 1 and source_type = 2");
-    execUpdate("delete from km_realmoney_trns where source = 2");
+    execUpdate("delete from km_cash_trns where source = 2");
     
     var importer = app.getImportModule("現金（汎用）");
     
@@ -456,14 +456,14 @@ function cashTest() {
     importer.importDb("現金（汎用）", importFile, 1, importCallback);
     utils.wait(done);
 
-    var sql = ["select transaction_date, item_id, detail,",
+    var sql = ["select transaction_date, category_id, detail,",
                "income, expense, user_id, internal",
-               "from km_realmoney_trns order by id desc"].join(" ");
+               "from km_cash_trns order by id desc"].join(" ");
     var statement = execSelect(sql);
     assert.isTrue(statement !== null);
     assert.equal("2012-11-08", statement.row.transaction_date);
     assert.equal(3040, statement.row.expense);
-    assert.equal(1, statement.row.item_id);
+    assert.equal(1, statement.row.category_id);
     assert.equal(1, statement.row.user_id);
     assert.equal("cash-detail9", statement.row.detail);
     statement = getNext(statement);
@@ -475,7 +475,7 @@ function cashTest() {
     assert.equal("2012-09-12", statement.row.transaction_date);
     assert.equal(0, statement.row.expense);
     assert.equal(10000, statement.row.income);
-    assert.equal(4, statement.row.item_id);
+    assert.equal(4, statement.row.category_id);
     assert.equal(1, statement.row.internal);
     closeStatement(statement);
     
@@ -487,7 +487,7 @@ function insertSuicaTestConf() {
       + "source_name, "
       + "user_id, "
       + "detail, "
-      + "item_id, "
+      + "category_id, "
       + "default_id, "
       + "permission, "
       + "internal "
@@ -509,7 +509,7 @@ function insertSuicaTestConf() {
       + "source_name, "
       + "user_id, "
       + "detail, "
-      + "item_id, "
+      + "category_id, "
       + "default_id, "
       + "permission, "
       + "internal "
@@ -539,21 +539,21 @@ function suicaTest() {
     importer.importDb("Suica", importFile, 2, importCallback);
     utils.wait(done);
 
-    var sql = ["select transaction_date, item_id, detail,",
+    var sql = ["select transaction_date, category_id, detail,",
                "income, expense, money_id, user_id",
                "from km_emoney_trns order by id desc"].join(" ");
     var statement = execSelect(sql);
     assert.isTrue(statement !== null);
     assert.equal("2012-11-07", statement.row.transaction_date);
     assert.equal(928, statement.row.expense);
-    assert.equal(1, statement.row.item_id);
+    assert.equal(1, statement.row.category_id);
     assert.equal(2, statement.row.user_id);
     assert.equal("物販", statement.row.detail);
     statement = getNext(statement);
     statement = getNext(statement);
     assert.equal("2012-11-03", statement.row.transaction_date);
     assert.equal(130, statement.row.expense);
-    assert.equal(3, statement.row.item_id);
+    assert.equal(3, statement.row.category_id);
     assert.equal(2, statement.row.user_id);
     closeStatement(statement);
     
@@ -571,7 +571,7 @@ function saisonTest() {
     importer.importDb("セゾンカード", importFile, 2, importCallback);
     utils.wait(done);
 
-    var sql = ["select A.transaction_date, A.item_id, A.detail,",
+    var sql = ["select A.transaction_date, A.category_id, A.detail,",
                "A.expense, A.card_id, A.user_id,",
                "B.pay_month, B.pay_amount, B.bought_amount",
                "from km_creditcard_trns A,",
@@ -582,13 +582,13 @@ function saisonTest() {
     assert.isTrue(statement !== null);
     assert.equal("2012-07-29", statement.row.transaction_date);
     assert.equal(2405, statement.row.expense);
-    assert.equal(1, statement.row.item_id);
+    assert.equal(1, statement.row.category_id);
     assert.equal(2, statement.row.user_id);
     assert.equal("2012-09", statement.row.pay_month);
     assert.equal("三省堂書店", statement.row.detail);
     statement = getNext(statement);
     assert.equal("2012-07-20", statement.row.transaction_date);
-    assert.equal(1, statement.row.item_id);
+    assert.equal(1, statement.row.category_id);
     assert.equal(2, statement.row.user_id);
     assert.equal("2012-09", statement.row.pay_month);
     assert.equal(1900, statement.row.pay_amount);
@@ -603,7 +603,7 @@ function insertSaisonTestConf() {
       + "source_name, "
       + "user_id, "
       + "detail, "
-      + "item_id, "
+      + "category_id, "
       + "default_id, "
       + "permission, "
       + "internal "
@@ -624,7 +624,7 @@ function insertSaisonTestConf() {
       + "source_name, "
       + "user_id, "
       + "detail, "
-      + "item_id, "
+      + "category_id, "
       + "default_id, "
       + "permission, "
       + "internal "
@@ -656,7 +656,7 @@ function mizuhoTest() {
     var done = {value: false};
     importer.importDb("みずほ銀行", importFile, 1, importCallback);
     utils.wait(done);
-    var sql = ["select transaction_date, item_id, detail,",
+    var sql = ["select transaction_date, category_id, detail,",
                "income, expense, bank_id, user_id",
                "from km_bank_trns order by id desc"].join(" ");
     var statement = execSelect(sql);
@@ -696,7 +696,7 @@ function insertMizuhoTestConf() {
       + "source_name, "
       + "user_id, "
       + "detail, "
-      + "item_id, "
+      + "category_id, "
       + "default_id, "
       + "permission, "
       + "internal "
@@ -718,7 +718,7 @@ function insertMizuhoTestConf() {
 function importConfTest() {
     var dialog = window.openDialog("chrome://kmoney/content/import/ImportConf.xul",
                                    "ImportConf",
-        "chrome, resizable, centerscreen, dialog", app.mDb, app.itemMap);
+        "chrome, resizable, centerscreen, dialog", app.mDb, app.categoryMap);
     
     utils.wait(1000);
 
@@ -728,7 +728,7 @@ function importConfTest() {
     $('km_list_import_user', dialog).selectedIndex = 0;
     $('km_list_import_sourcetype', dialog).selectedIndex = 5;
     $('km_textbox_importconf_detail', dialog).value = "ＡＴＭ";
-    $('km_list_importconf_item', dialog).selectedIndex = 3;
+    $('km_list_importconf_category', dialog).selectedIndex = 3;
     $('km_list_importconf_internal', dialog).selectedIndex = 1;
     $('km_checkbox_importconf_default', dialog).checked = true;
     action.clickOn($('km_button_importconf_add', dialog));

@@ -6,7 +6,7 @@ function MasterData() {
     this.mDb = null;
 
     this.userMaster = null;
-    this.itemMaster = null;
+    this.categoryMaster = null;
     this.cardMaster = null;
     this.bankMaster = null;
     this.emoneyMaster = null;
@@ -27,8 +27,8 @@ MasterData.prototype.initialize = function (db) {
 
     this.userMaster = new UserMaster();
     this.userMaster.initialize(db);
-    this.itemMaster = new ItemMaster();
-    this.itemMaster.initialize(db);
+    this.categoryMaster = new CategoryMaster();
+    this.categoryMaster.initialize(db);
     this.cardMaster = new CardMaster();
     this.cardMaster.initialize(db);
     this.bankMaster = new BankMaster();
@@ -45,7 +45,7 @@ MasterData.prototype.initialize = function (db) {
 };
 MasterData.prototype.terminate = function () {
     this.userMaster.terminate();
-    this.itemMaster.terminate();
+    this.categoryMaster.terminate();
     this.cardMaster.terminate();
     this.bankMaster.terminate();
     this.emoneyMaster.terminate();
@@ -85,8 +85,8 @@ MasterData.prototype.getSelectedTab = function () {
     case 'km_tab_master_user':
         tab = this.userMaster;
         break;
-    case 'km_tab_master_item':
-        tab = this.itemMaster;
+    case 'km_tab_master_category':
+        tab = this.categoryMaster;
         break;
     case 'km_tab_master_bank':
         tab = this.bankMaster;
@@ -225,13 +225,13 @@ MasterData.prototype.onTabSelected = function (e) {
         $$('km_textbox_name').readOnly = false;
         showElements(['km_button_master_add', 'km_button_master_update',
                       'km_button_master_delete']);
-        hideElements(['km_box_item', 'km_box_user',
+        hideElements(['km_box_category', 'km_box_user',
                       'km_box_creditcard', 'km_box_bank', 'km_box_source']);
         break;
-    case 'km_tab_master_item':
-        $$('km_label_name').value = km_getLStr("master.itemname")
+    case 'km_tab_master_category':
+        $$('km_label_name').value = km_getLStr("master.categoryname")
         $$('km_textbox_name').readOnly = false;
-        showElements(['km_box_item',
+        showElements(['km_box_category',
                       'km_button_master_add', 'km_button_master_update',
                       'km_button_master_delete']);
         hideElements(['km_box_user', 'km_box_creditcard', 'km_box_bank', 'km_box_source']);
@@ -242,7 +242,7 @@ MasterData.prototype.onTabSelected = function (e) {
         showElements(['km_box_user',
                       'km_button_master_add', 'km_button_master_update',
                       'km_button_master_delete']);
-        hideElements(['km_box_item', 'km_box_creditcard', 'km_box_bank', 'km_box_source']);
+        hideElements(['km_box_category', 'km_box_creditcard', 'km_box_bank', 'km_box_source']);
         this.loadUserList();
         break;
     case 'km_tab_master_creditcard':
@@ -251,7 +251,7 @@ MasterData.prototype.onTabSelected = function (e) {
         showElements(['km_box_user', 'km_box_bank',
                       'km_button_master_add', 'km_button_master_update',
                       'km_button_master_delete']);
-        hideElements(['km_box_item', 'km_box_creditcard', 'km_box_source']);
+        hideElements(['km_box_category', 'km_box_creditcard', 'km_box_source']);
         this.loadUserList();
         this.loadBankList();
         break;
@@ -261,14 +261,14 @@ MasterData.prototype.onTabSelected = function (e) {
         showElements(['km_box_user',
                       'km_button_master_add', 'km_button_master_update',
                       'km_button_master_delete']);
-        hideElements(['km_box_item', 'km_box_bank', 'km_box_creditcard', 'km_box_source']);
+        hideElements(['km_box_category', 'km_box_bank', 'km_box_creditcard', 'km_box_source']);
         this.loadUserList();
         break;
     case 'km_tab_master_import':
         $$('km_label_name').value = km_getLStr("master.source");
         $$('km_textbox_name').readOnly = true;
         showElements(['km_box_source', 'km_button_master_update']);
-        hideElements(['km_box_item', 'km_box_user',
+        hideElements(['km_box_category', 'km_box_user',
                       'km_box_creditcard', 'km_box_bank',
                       'km_button_master_add',
                       'km_button_master_delete']);

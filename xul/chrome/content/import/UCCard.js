@@ -49,7 +49,7 @@ UCCard.prototype.importDb = function (name, csvFile, userId, importCallback) {
                         "payAmount": 0,
                         "payMonth": payMonth,
                         "boughtAmount": 0,
-                        "itemId": 0,
+                        "categoryId": 0,
                         "detail": "",
                         "userId": userId,
                         "cardId": cardId,
@@ -61,13 +61,13 @@ UCCard.prototype.importDb = function (name, csvFile, userId, importCallback) {
                     rec["boughtAmount"] = parseFloat(rowArray[i][6]);
                     rec["payAmount"] = parseFloat(rowArray[i][7]);
                     rec["detail"] = rowArray[i][3];
-                    var itemInfo = this.getItemInfo(rowArray[i][3]);
-                    if (itemInfo["itemId"] === undefined) {
+                    var category = this.getItemInfo(rowArray[i][3]);
+                    if (category["categoryId"] === undefined) {
                         km_alert(km_getLStr("error.title"),
                                  km_getLStr("error.import.noConf"));
                         return;
                     }
-                    rec["itemId"] = itemInfo["itemId"];
+                    rec["categoryId"] = category["categoryId"];
         
                     if (rowArray[i][0] != "１回払い") {
                         // TODO: 一回払いでないときはどんなデータになる？

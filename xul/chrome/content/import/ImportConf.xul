@@ -37,9 +37,9 @@
                 <treecol id="import_conf_detail" label="&column.detail;"
                          flex="1" persist="width" />
                 <splitter class="tree-splitter" />  
-                <treecol id="import_conf_itemid" hidden="true" ignoreincolumnpicker="true" />
+                <treecol id="import_conf_categoryid" hidden="true" ignoreincolumnpicker="true" />
                 <splitter class="tree-splitter" />  
-                <treecol id="import_conf_itemname" label="&column.itemname;"
+                <treecol id="import_conf_categoryname" label="&column.categoryname;"
                          flex="1" persist="width" />
                 <treecol id="import_conf_default" hidden="true" ignoreincolumnpicker="true" />
                 <treecol id="import_conf_internal" hidden="true" ignoreincolumnpicker="true" />
@@ -52,8 +52,8 @@
 			<hbox align="center">
 				<label control="km_textbox_importconf_detail" value="&edit.detail;" />
 				<textbox id="km_textbox_importconf_detail" size="10" />
-    			<label control="km_list_importconf_item" value="&edit.item;" />
-                <menulist id="km_list_importconf_item">
+    			<label control="km_list_importconf_category" value="&edit.category;" />
+                <menulist id="km_list_importconf_category">
                     <menupopup></menupopup>
                 </menulist>
     			<label control="km_list_importconf_internal" value="&edit.internal;" />

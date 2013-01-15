@@ -17,7 +17,7 @@ function Kmoney() {
     this.summary = null;
     this.balance = null;
     this.asset = null;
-    this.itemMap = {};
+    this.categoryMap = {};
     this.users = {};
     this.currentUser = {};
 
@@ -218,8 +218,8 @@ Kmoney.prototype.addEventListeners = function () {
     this.listeners['kmc-importconf.command'] = this.openImportConf.bind(this);
     $$('kmc-importconf').addEventListener("command", this.listeners['kmc-importconf.command']);
 
-    this.listeners['kmc-update-item'] = this.updateSelectedRow.bind(this, 'item');
-    $$('kmc-update-item').addEventListener("command", this.listeners['kmc-update-item']);
+    this.listeners['kmc-update-category'] = this.updateSelectedRow.bind(this, 'category');
+    $$('kmc-update-category').addEventListener("command", this.listeners['kmc-update-category']);
     
     this.listeners['kmc-update-detail'] = this.updateSelectedRow.bind(this, 'detail');
     $$('kmc-update-detail').addEventListener("command", this.listeners['kmc-update-detail']);
@@ -327,7 +327,7 @@ Kmoney.prototype.removeEventListeners = function () {
 
     $$('kmc-importconf').removeEventListener("command", this.listeners['kmc-importconf.command']);
 
-    $$('kmc-update-item').removeEventListener("command", this.listeners['kmc-update-item']);
+    $$('kmc-update-category').removeEventListener("command", this.listeners['kmc-update-category']);
     
     $$('kmc-update-detail').removeEventListener("command", this.listeners['kmc-update-detail']);
 
@@ -383,7 +383,7 @@ Kmoney.prototype.openImportConf = function () {
     }
 
     window.openDialog("chrome://kmoney/content/import/ImportConf.xul", "ImportConf",
-        "chrome, resizable, centerscreen, modal, dialog", this.mDb, this.itemMap);
+        "chrome, resizable, centerscreen, modal, dialog", this.mDb, this.categoryMap);
 
 };
 Kmoney.prototype.openSetUser = function () {
@@ -524,11 +524,11 @@ Kmoney.prototype.changeUIElements = function(tabId) {
         hideElements(['km_box_summary_bank', 'km_box_edit1',
                       'km_box_edit2', 'km_box_asset',
                       'km_box_qcond1', 'km_box_qcond2', 'km_box_edit_buttons']);
-        showElements(['km_box_summary_item', 'km_box_summary_qcond',
+        showElements(['km_box_summ_category', 'km_box_summary_qcond',
                       'km_radgroup_viewmode']);
         $$('km_menu_data_duplicate').disabled = true;
     } else if (tabId === 'km_tab_balance') {
-        hideElements(['km_box_summary_item',
+        hideElements(['km_box_summ_category',
                       'km_box_edit1', 'km_box_edit2', 'km_box_asset',
                       'km_box_qcond1', 'km_box_qcond2', 'km_box_edit_buttons',
                       'km_radgroup_viewmode']);
@@ -708,17 +708,17 @@ Kmoney.prototype.openDatabase = function () {
 };
 
 Kmoney.prototype.populateItemList = function () {
-    var itemList = this.mDb.itemInfo.mItemList;
-    $$('km_list_item').removeAllItems();
-    $$('km_list_summary_item').removeAllItems();
-    $$('km_list_summary_item').appendItem(km_getLStr('query_condition.none'), 0);
-    for (var i = 0; i < itemList.length; i++) {
-        $$('km_list_item').appendItem(itemList[i][1], itemList[i][0]);
-        $$('km_list_summary_item').appendItem(itemList[i][1], itemList[i][0]);
-        this.itemMap[itemList[i][1]] = itemList[i][0];
+    var categoryList = this.mDb.category.mItemList;
+    $$('km_list_category').removeAllItems();
+    $$('km_list_summ_category').removeAllItems();
+    $$('km_list_summ_category').appendItem(km_getLStr('query_condition.none'), 0);
+    for (var i = 0; i < categoryList.length; i++) {
+        $$('km_list_category').appendItem(categoryList[i][1], categoryList[i][0]);
+        $$('km_list_summ_category').appendItem(categoryList[i][1], categoryList[i][0]);
+        this.categoryMap[categoryList[i][1]] = categoryList[i][0];
     }
-    $$('km_list_item').selectedIndex = 0;
-    $$('km_list_summary_item').selectedIndex = 0;
+    $$('km_list_category').selectedIndex = 0;
+    $$('km_list_summ_category').selectedIndex = 0;
 
 };
 Kmoney.prototype.populateSummaryUserList = function (tabId) {
@@ -831,8 +831,8 @@ Kmoney.prototype.updateSelectedRow = function(type) {
     
     var list = [];
     var elem = null;
-    if (type === "item") {
-        elem = $$('km_list_item');
+    if (type === "category") {
+        elem = $$('km_list_category');
     } else if (type === "detail") {
     } else if (type === "user") {
         elem = $$('km_list_user');
@@ -862,8 +862,8 @@ Kmoney.prototype.updateSelectedRow = function(type) {
         }
     }
     var params = {};
-    if (type === "item") {
-        params["itemId"] = retVals["newValue"];
+    if (type === "category") {
+        params["categoryId"] = retVals["newValue"];
     } else if (type === "detail") {
         params["detail"] = retVals["newValue"];
     } else if (type === "user") {
@@ -908,7 +908,7 @@ Kmoney.prototype.addRecord = function () {
     
         var params = {
             "transactionDate": $$('km_date_transdate').value,
-            "itemId": $$('km_list_item').value,
+            "categoryId": $$('km_list_category').value,
             "detail": $$('km_textbox_detail').value,
             "income": 0,
             "expense": 0,
@@ -949,7 +949,7 @@ Kmoney.prototype.updateRecord = function () {
     
         var params = {
             "transactionDate": $$('km_date_transdate').value,
-            "itemId": $$('km_list_item').value,
+            "categoryId": $$('km_list_category').value,
             "detail": $$('km_textbox_detail').value,
             "income": 0,
             "expense": 0,
@@ -1095,7 +1095,7 @@ Kmoney.prototype.populateQueryCondition = function (elementId) {
     $$(elementId).removeAllItems();
     $$(elementId).appendItem(km_getLStr("query_condition.none"), "none");
     $$(elementId).appendItem(km_getLStr("query_condition.date"), "date");
-    $$(elementId).appendItem(km_getLStr("query_condition.item"), "item");
+    $$(elementId).appendItem(km_getLStr("query_condition.category"), "category");
     $$(elementId).appendItem(km_getLStr("query_condition.detail"), "detail");
     $$(elementId).appendItem(km_getLStr("query_condition.user"), "user");
 
@@ -1127,15 +1127,15 @@ Kmoney.prototype.onQueryConditionSelect = function(elementNo) {
         now.setMonth(now.getMonth() - 2);
         now.setDate(1);
         $$('km_date_qcond_value' + elementNo).value = convDateToYYYYMMDD(now, "-");
-    } else if (key === "item") {
+    } else if (key === "category") {
         $$('km_date_qcond_value' + elementNo).hidden = true;
         $$('km_textbox_qcond_value' + elementNo).hidden = true;
         $$('km_list_qcond_value' + elementNo).hidden = false;
         $$('km_list_query_operator' + elementNo).hidden = true;
         
         $$('km_list_qcond_value' + elementNo).removeAllItems();
-        for (mapKey in this.itemMap) {
-            $$('km_list_qcond_value' + elementNo).appendItem(mapKey, this.itemMap[mapKey]);
+        for (mapKey in this.categoryMap) {
+            $$('km_list_qcond_value' + elementNo).appendItem(mapKey, this.categoryMap[mapKey]);
         }
         $$('km_list_qcond_value' + elementNo).selectedIndex = 0;
     } else if (key === "detail") {

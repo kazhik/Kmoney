@@ -44,7 +44,7 @@ CashImport.prototype.importDb = function (name, csvFile, userId, importCallback)
                 if (matchResult !== null) {
                     var rec = {
                         "transactionDate": "",
-                        "itemId": 0,
+                        "categoryId": 0,
                         "detail": "",
                         "income": 0,
                         "expense": 0,
@@ -55,14 +55,14 @@ CashImport.prototype.importDb = function (name, csvFile, userId, importCallback)
                     rec["transactionDate"] = toYYYYMMDD(matchResult[1], matchResult[2], matchResult[3],
                                                         "-"),
                     rec["detail"] = rowArray[i][1];
-                    var itemInfo = this.getItemInfo(rowArray[i][1]);
-                    if (itemInfo["itemId"] === undefined) {
+                    var category = this.getItemInfo(rowArray[i][1]);
+                    if (category["categoryId"] === undefined) {
                         km_alert(km_getLStr("error.title"),
                                  km_getLStr("error.import.noConf"));
                         return;
                     }
-                    rec["itemId"] = itemInfo["itemId"];
-                    rec["internal"] = itemInfo["internal"];
+                    rec["categoryId"] = category["categoryId"];
+                    rec["internal"] = category["internal"];
                     rec["income"] = parseFloat(rowArray[i][2]) || 0;
                     rec["expense"] = parseFloat(rowArray[i][3]) || 0;
         

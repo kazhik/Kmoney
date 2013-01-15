@@ -1,27 +1,27 @@
-function KmItemInfo(db) {
+function KmCategory(db) {
     this.mDb = db;
     this.mItemList = null;
 }
 
-KmItemInfo.prototype.loadItemList = function(loadCallback) {
-    this.mDb.selectQuery("select id, name from km_item");
+KmCategory.prototype.loadItemList = function(loadCallback) {
+    this.mDb.selectQuery("select id, name from km_category");
     this.mItemList = this.mDb.getRecords();
     loadCallback(this.mItemList);
 
 };
-KmItemInfo.prototype.loadMaster = function(loadCallback) {
+KmCategory.prototype.loadMaster = function(loadCallback) {
     var sql = ["select id, name, sum_include,",
                "case",
                "when sum_include = 0 then '" + km_getLStr("sum_include.false") + "'",
                "when sum_include = 1 then '" + km_getLStr("sum_include.true") + "'",
                "end",
-               "from km_item"].join(" ");
+               "from km_category"].join(" ");
     this.mDb.selectQuery(sql);
     loadCallback(this.mDb.getRecords(), this.mDb.getColumns());
 };
 
-KmItemInfo.prototype.insert = function(name, sumInclude, insertCallback) {
-    var sql = "insert into km_item ("
+KmCategory.prototype.insert = function(name, sumInclude, insertCallback) {
+    var sql = "insert into km_category ("
       + "name, "
       + "sum_include "
       + ") values ( "
@@ -37,8 +37,8 @@ KmItemInfo.prototype.insert = function(name, sumInclude, insertCallback) {
     this.mDb.execTransaction([sqlStatement]);
     insertCallback(this.mDb.getLastInsertRowId());
 };
-KmItemInfo.prototype.update = function(id, name, sumInclude, updateCallback) {
-    var sql = "update km_item "
+KmCategory.prototype.update = function(id, name, sumInclude, updateCallback) {
+    var sql = "update km_category "
           + "set "
           + "name = :name, "
           + "sum_include = :sumInclude "
@@ -54,20 +54,20 @@ KmItemInfo.prototype.update = function(id, name, sumInclude, updateCallback) {
     
     updateCallback();
 };
-KmItemInfo.prototype.delete = function(itemId, newItemId, deleteCallback) {
+KmCategory.prototype.delete = function(categoryId, newItemId, deleteCallback) {
     var params = {
-        "item_id": itemId,
+        "category_id": categoryId,
     };
     var stmtArray = [];
     // 削除する費目のトランザクションデータとインポート設定を変更
     if (newItemId !== null) {
-        params["new_item_id"] = newItemId;
+        params["new_category_id"] = newItemId;
         var sqlArray = [
-            "update km_realmoney_trns set item_id = :new_item_id where item_id = :item_id", 
-            "update km_bank_trns set item_id = :new_item_id where item_id = :item_id", 
-            "update km_creditcard_trns set item_id = :new_item_id where item_id = :item_id", 
-            "update km_emoney_trns set item_id = :new_item_id where item_id = :item_id",
-            "update km_import set item_id = :new_item_id where item_id = :item_id"
+            "update km_cash_trns set category_id = :new_category_id where category_id = :category_id", 
+            "update km_bank_trns set category_id = :new_category_id where category_id = :category_id", 
+            "update km_creditcard_trns set category_id = :new_category_id where category_id = :category_id", 
+            "update km_emoney_trns set category_id = :new_category_id where category_id = :category_id",
+            "update km_import set category_id = :new_category_id where category_id = :category_id"
         ];
         for (var i = 0; i < sqlArray.length; i++) {
             km_log(sqlArray[i]);
@@ -75,7 +75,7 @@ KmItemInfo.prototype.delete = function(itemId, newItemId, deleteCallback) {
             stmtArray.push(updateStatement);
         }
     }
-    sql = "delete from km_item where id = :item_id";
+    sql = "delete from km_category where id = :category_id";
     var deleteStatement = this.mDb.createStatementWithParams(sql, params);
     km_debug(sql);
     stmtArray.push(deleteStatement);

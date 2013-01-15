@@ -16,7 +16,7 @@ function KmDatabase() {
     this.emoneyTrns = new KmEMoneyTrns(this.mDb);
     
     this.userInfo = new KmUserInfo(this.mDb);
-    this.itemInfo = new KmItemInfo(this.mDb);
+    this.category = new KmCategory(this.mDb);
     
     this.asset = new KmAsset(this.mDb);
     
@@ -174,7 +174,7 @@ KmDatabase.prototype.createTables = function() {
       '"bank_id" INTEGER,' +
       '"internal" INTEGER DEFAULT (0) ,' +
       '"last_update_date" DATETIME,' +
-      '"item_id" INTEGER,' +
+      '"category_id" INTEGER,' +
       '"user_id" INTEGER,' +
       '"source" INTEGER)',
     'CREATE TABLE "km_creditcard_info" (' +
@@ -201,9 +201,9 @@ KmDatabase.prototype.createTables = function() {
       '"expense" REAL,' +
       '"card_id" INTEGER,' +
       '"last_update_date" DATETIME,' +
-      '"item_id" INTEGER,' +
+      '"category_id" INTEGER,' +
       '"user_id" INTEGER,' +
-      '"internal" BOOL,' +
+      '"internal" INTEGER,' +
       '"source" INTEGER)',
     'CREATE TABLE "km_emoney_info" (' +
       '"id" INTEGER PRIMARY KEY,' +
@@ -216,23 +216,23 @@ KmDatabase.prototype.createTables = function() {
       '"detail" TEXT,' +
       '"money_id" INTEGER,' +
       '"last_update_date" DATETIME,' +
-      '"item_id" INTEGER,' +
+      '"category_id" INTEGER,' +
       '"user_id" INTEGER,' +
       '"source" INTEGER,' +
-      '"internal" BOOL,' +
+      '"internal" INTEGER,' +
       '"income" REAL)',
-    'CREATE TABLE "km_realmoney_trns" (' +
+    'CREATE TABLE "km_cash_trns" (' +
       '"id" INTEGER PRIMARY KEY,' +
       '"transaction_date" DATETIME NOT NULL ,' +
       '"income" REAL,' +
       '"expense" REAL,' +
-      '"item_id" INTEGER,' +
+      '"category_id" INTEGER,' +
       '"detail" TEXT,' +
       '"user_id" INTEGER,' +
-      '"internal" BOOL,' +
+      '"internal" INTEGER,' +
       '"last_update_date" DATETIME,' +
       '"source" INTEGER)',
-    'CREATE TABLE "km_item" (' +
+    'CREATE TABLE "km_category" (' +
         '"id" INTEGER PRIMARY KEY NOT NULL,' +
         '"name" TEXT, ' +
         '"sum_include" BOOL)',
@@ -251,7 +251,7 @@ KmDatabase.prototype.createTables = function() {
         '"source_type" INTEGER,' +
         '"source_name" TEXT,' +
         '"detail" TEXT,' +
-        '"item_id" INTEGER,' +
+        '"category_id" INTEGER,' +
         '"default_id" BOOL,' +
         '"permission" BOOL,' +
         '"internal" INTEGER)',
@@ -284,8 +284,8 @@ KmDatabase.prototype.createTables = function() {
         '"id" INTEGER PRIMARY KEY  NOT NULL ,"undo_sql" TEXT,"db_transaction_id" INTEGER)',
     'CREATE VIEW "kmv_transactions" AS   select ' +
     '   A.transaction_date, ' +
-    '   A.item_id, ' +
-    '   B.name as item_name, ' +
+    '   A.category_id, ' +
+    '   B.name as category_name, ' +
     '   B.sum_include as sum_include, ' +
     '   A.detail, ' +
     '   A.income, ' +
@@ -298,7 +298,7 @@ KmDatabase.prototype.createTables = function() {
     'from ( ' +
     'select ' +
     '   transaction_date, ' +
-    '   item_id, ' +
+    '   category_id, ' +
     '   detail, ' +
     '   income, ' +
     '   expense, ' +
@@ -310,7 +310,7 @@ KmDatabase.prototype.createTables = function() {
     'union ' +
     'select ' +
     '   transaction_date, ' +
-    '   item_id, ' +
+    '   category_id, ' +
     '   detail, ' +
     '   0 as income, ' +
     '   expense, ' +
@@ -322,7 +322,7 @@ KmDatabase.prototype.createTables = function() {
     'union ' +
     'select ' +
     '   transaction_date, ' +
-    '   item_id, ' +
+    '   category_id, ' +
     '   detail, ' +
     '   income, ' +
     '   expense, ' +
@@ -330,11 +330,11 @@ KmDatabase.prototype.createTables = function() {
     '   internal, ' +
     '   "realmoney" as type, ' +
     '   id ' +
-    'from km_realmoney_trns ' +
+    'from km_cash_trns ' +
     'union ' +
     'select ' +
     '   transaction_date, ' +
-    '   item_id, ' +
+    '   category_id, ' +
     '   detail, ' +
     '   income, ' +
     '   expense, ' +
@@ -344,8 +344,8 @@ KmDatabase.prototype.createTables = function() {
     '   id ' +
     'from km_bank_trns ' +
     ') A ' +
-    'inner join km_item B ' +
-    'on A.item_id = B.id ' +
+    'inner join km_category B ' +
+    'on A.category_id = B.id ' +
     'inner join km_user C ' +
     'on A.user_id = C.id '
   ];
@@ -375,16 +375,16 @@ KmDatabase.prototype.createInitialRecords = function() {
         this.userInfo.insert(users[i], insertCallback.bind(this));
     }
     
-    // km_item
-    var items = [
+    // km_category
+    var categories = [
         ['食材・生活用品', 1],
         ['外食', 1],
         ['交通費', 1],
         ['ATM', 1],
         ['交際費', 1]
     ];
-    for (var i = 0; i < items.length; i++) {
-        this.itemInfo.insert(items[i][0], items[i][1], insertCallback.bind(this));
+    for (var i = 0; i < categories.length; i++) {
+        this.category.insert(categories[i][0], categories[i][1], insertCallback.bind(this));
     }
     
     // km_source
@@ -485,7 +485,7 @@ KmDatabase.prototype.loadMasterData = function() {
     function loadCallback() {
         
     }
-    this.itemInfo.loadItemList(loadCallback.bind(this));
+    this.category.loadItemList(loadCallback.bind(this));
     this.userInfo.load(loadCallback.bind(this));
     this.bankInfo.load(loadCallback.bind(this));
     this.creditCardInfo.load(loadCallback.bind(this));
@@ -531,31 +531,31 @@ KmDatabase.prototype.assetDelete = function(id, callback) {
 
 KmDatabase.prototype.cashInsert = function(params, callback) {
     function insertCallback(id) {
-        this.dropTrigger("km_realmoney_trns_insert");
+        this.dropTrigger("km_cash_trns_insert");
         callback(id);
     }
-    this.createTriggerOnInsert("km_realmoney_trns", "km_realmoney_trns_insert");
+    this.createTriggerOnInsert("km_cash_trns", "km_cash_trns_insert");
     this.createTransactionId();
     this.cashTrns.insert(params, insertCallback.bind(this));
     
 };
 KmDatabase.prototype.cashUpdate = function(idList, params, callback) {
     function updateCallback(id) {
-        this.dropTrigger("km_realmoney_trns_update");
+        this.dropTrigger("km_cash_trns_update");
         callback(id);
     }
     
-    this.createTriggerOnUpdate("km_realmoney_trns", "km_realmoney_trns_update");
+    this.createTriggerOnUpdate("km_cash_trns", "km_cash_trns_update");
     this.createTransactionId();
     this.cashTrns.update(idList, params, updateCallback.bind(this));
 };
 KmDatabase.prototype.cashDelete = function(idList, callback) {
     function deleteCallback() {
-        this.dropTrigger("km_realmoney_trns_delete");
+        this.dropTrigger("km_cash_trns_delete");
         callback();
     }
     
-    this.createTriggerOnDelete("km_realmoney_trns", "km_realmoney_trns_delete");
+    this.createTriggerOnDelete("km_cash_trns", "km_cash_trns_delete");
     this.createTransactionId();
     this.cashTrns.delete(idList, deleteCallback.bind(this));
 };

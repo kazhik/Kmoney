@@ -47,7 +47,7 @@ EMoneyTransaction.prototype.openEdit = function (id) {
 
 EMoneyTransaction.prototype.onSelect = function () {
     $$('km_date_transdate').value = this.mTree.getSelectedRowValue('transaction_date');
-    $$('km_list_item').value = this.mTree.getSelectedRowValue('item_id');
+    $$('km_list_category').value = this.mTree.getSelectedRowValue('category_id');
     $$('km_textbox_detail').value = this.mTree.getSelectedRowValue('detail');
     var amount = this.mTree.getSelectedRowValue('income');
     if (Number(amount) == 0) {

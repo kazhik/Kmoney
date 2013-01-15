@@ -15,14 +15,14 @@ KantanKakeiboDb.prototype.load = function(dbFile, loadCallback) {
     var sql = ["select ",
                "A.date_time, ",
                "A.balance_type, ",
-               "B.item_name, ",
+               "B.category_name, ",
                "C.detail_name, ",
                "A.cash_value, ",
                "A.information ",
                "from cash_flow A, balance_item B ",
                "left join item_detail C ",
                "on A.item_detail_id = C._id  ",
-               "where A.balance_item_id = B._id ",
+               "where A.balance_category_id = B._id ",
                "order by A.date_time, A.time "].join(" ");
     kantanDb.selectQuery(sql);
     loadCallback(kantanDb.getRecords());

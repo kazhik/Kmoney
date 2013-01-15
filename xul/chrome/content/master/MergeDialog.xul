@@ -14,8 +14,8 @@
 
   <vbox>
     <hbox align="center">
-        <label control="km_merge_item" value="&select.merge_into;" />
-        <menulist id="km_merge_item">
+        <label control="km_merge_category" value="&select.merge_into;" />
+        <menulist id="km_merge_category">
             <menupopup></menupopup>
         </menulist>
     </hbox>

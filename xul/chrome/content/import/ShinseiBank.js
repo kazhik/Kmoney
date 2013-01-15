@@ -44,7 +44,7 @@ ShinseiBank.prototype.importDb = function (name, csvFile, userId, importCallback
                 if (rowArray[i][0].match(/\d{4}\/\d{2}\/\d{2}$/)) {
                     var rec = {
                         "transactionDate": "",
-                        "itemId": 0,
+                        "categoryId": 0,
                         "detail": "",
                         "income": 0,
                         "expense": 0,
@@ -57,13 +57,13 @@ ShinseiBank.prototype.importDb = function (name, csvFile, userId, importCallback
                     rec["expense"] = parseFloat(rowArray[i][3]) || 0;
                     rec["income"] = parseFloat(rowArray[i][4]) || 0;
                     rec["detail"] = rowArray[i][2];
-                    var itemInfo = this.getItemInfo(rowArray[i][2]);
-                    if (itemInfo["itemId"] === undefined) {
+                    var category = this.getItemInfo(rowArray[i][2]);
+                    if (category["categoryId"] === undefined) {
                         km_alert(km_getLStr("error.title"),
                                  km_getLStr("error.import.noConf"));
                         return;
                     }
-                    rec["itemId"] = itemInfo["itemId"];
+                    rec["categoryId"] = category["categoryId"];
         
                     if (rec["detail"] === "振込手数料" && rec["income"] > 0) {
                         // キャッシュバック

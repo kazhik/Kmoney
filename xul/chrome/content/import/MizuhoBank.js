@@ -55,7 +55,7 @@ MizuhoBank.prototype.importDb = function (name, inputFile, userId, importCallbac
                 if (matchedLine[1].match(/<\/STMTTRN>/)) {
                     var rec = {
                         "transactionDate": "",
-                        "itemId": 0,
+                        "categoryId": 0,
                         "detail": "",
                         "income": 0,
                         "expense": 0,
@@ -68,14 +68,14 @@ MizuhoBank.prototype.importDb = function (name, inputFile, userId, importCallbac
                     rec["expense"] = (trnAmt > 0) ? 0 : Math.abs(trnAmt);
                     rec["income"] = (trnAmt <= 0) ? 0 : trnAmt;
                     rec["detail"] = memo;
-                    var itemInfo = this.getItemInfo(memo);
-                    if (itemInfo["itemId"] === undefined) {
+                    var category = this.getItemInfo(memo);
+                    if (category["categoryId"] === undefined) {
                         km_alert(km_getLStr("error.title"),
                                  km_getLStr("error.import.noConf"));
                         return;
                     }
-                    rec["itemId"] = itemInfo["itemId"];
-                    rec["internal"] = itemInfo["internal"];
+                    rec["categoryId"] = category["categoryId"];
+                    rec["internal"] = category["internal"];
     
                     newRecordArray.push(rec);
     

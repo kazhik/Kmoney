@@ -19,7 +19,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
     <script type="application/x-javascript" src="db/KmEMoneyTrns.js" />
     <script type="application/x-javascript" src="db/KmImport.js" />
     <script type="application/x-javascript" src="db/KmImportHistory.js" />
-    <script type="application/x-javascript" src="db/KmItemInfo.js" />
+    <script type="application/x-javascript" src="db/KmCategory.js" />
     <script type="application/x-javascript" src="db/KmSource.js" />
     <script type="application/x-javascript" src="db/KmUserInfo.js" />
     <script type="application/x-javascript" src="db/KmAsset.js" />
@@ -58,7 +58,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
         <command id="kmc-undo" disabled="true"/>
         <command id="kmc-delete" />
         <command id="kmc-asset" />
-        <command id="kmc-update-item" />
+        <command id="kmc-update-category" />
         <command id="kmc-update-detail" />
         <command id="kmc-update-user" />
         <command id="kmc-update-bank" disabled="true" />
@@ -74,7 +74,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
             <menu id="km_update_selectedrow" label="&menu.updateSelected;"
                   accesskey="&menu.updateSelected.ak;">
                 <menupopup>
-                    <menuitem label="&edit.item;" command="kmc-update-item"
+                    <menuitem label="&edit.category;" command="kmc-update-category"
                               accesskey="&menu.updateSelectedItem.ak;" />
                     <menuitem label="&edit.detail;" command="kmc-update-detail"
                               accesskey="&menu.updateSelectedDetail.ak;" />
@@ -118,7 +118,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                         <menu id="km_menu_update" label="&menu.updateSelected;"
                               accesskey="&menu.updateSelected.ak;">
                             <menupopup>
-                                <menuitem label="&edit.item;" command="kmc-update-item"
+                                <menuitem label="&edit.category;" command="kmc-update-category"
                                           accesskey="&menu.updateSelectedItem.ak;" />
                                 <menuitem label="&edit.detail;" command="kmc-update-detail"
                                           accesskey="&menu.updateSelectedDetail.ak;" />
@@ -206,9 +206,9 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                         <menupopup></menupopup>
                     </menulist>
                 </hbox>
-                <hbox id="km_box_summary_item" align="center">
-                    <label control="km_list_summary_item" value="&edit.item;" />
-                    <menulist id="km_list_summary_item">
+                <hbox id="km_box_summ_category" align="center">
+                    <label control="km_list_summ_category" value="&edit.category;" />
+                    <menulist id="km_list_summ_category">
                         <menupopup></menupopup>
                     </menulist>
                 </hbox>
@@ -300,7 +300,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                             <treecols id="km_cols_all">
 								<treecol id="transaction_date" label="&column.date;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
-								<treecol id="item_id" label="&column.item;" flex="1" persist="width" />
+								<treecol id="category_id" label="&column.category;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
 								<treecol id="detail" label="&column.detail;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
@@ -326,9 +326,9 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                             <treecols id="km_cols_cash">
 								<treecol id="transaction_date" label="&column.date;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
-								<treecol id="item_id" hidden="true" ignoreincolumnpicker="true" />
+								<treecol id="category_id" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" />  
-								<treecol id="item_name" label="&column.item;" flex="1" persist="width" />
+								<treecol id="category_name" label="&column.category;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
 								<treecol id="detail" label="&column.detail;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
@@ -359,9 +359,9 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                             <treecols id="km_cols_bank">
 								<treecol id="transaction_date" label="&column.date;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
-								<treecol id="item_id" hidden="true" ignoreincolumnpicker="true" />
+								<treecol id="category_id" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" />  
-								<treecol id="item_name" label="&column.item;" flex="1" persist="width" />
+								<treecol id="category_name" label="&column.category;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
 								<treecol id="detail" label="&column.detail;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
@@ -397,9 +397,9 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                             <treecols id="km_cols_creditcard">
 								<treecol id="transaction_date" label="&column.date;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
-								<treecol id="item_id" hidden="true" ignoreincolumnpicker="true" />
+								<treecol id="category_id" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" />  
-								<treecol id="item_name" label="&column.item;" flex="1" persist="width" />
+								<treecol id="category_name" label="&column.category;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
 								<treecol id="detail" label="&column.detail;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
@@ -435,9 +435,9 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
                             <treecols id="km_cols_emoney">
 								<treecol id="transaction_date" label="&column.date;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
-								<treecol id="item_id" hidden="true" ignoreincolumnpicker="true" />
+								<treecol id="category_id" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" />  
-								<treecol id="item_name" label="&column.item;" flex="1" persist="width" />
+								<treecol id="category_name" label="&column.category;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
 								<treecol id="detail" label="&column.detail;" flex="1" persist="width" />
 								<splitter class="tree-splitter" />  
@@ -496,8 +496,8 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
 							<radio id="km_radio_expense" label="&edit.expense;" selected="true" />
 						</radiogroup>
 					</groupbox>
-					<label control="km_list_item" value="&edit.item;" />
-					<menulist id="km_list_item">
+					<label control="km_list_category" value="&edit.category;" />
+					<menulist id="km_list_category">
 						<menupopup></menupopup>
 					</menulist>
 					<label control="km_textbox_detail" value="&edit.detail;" />

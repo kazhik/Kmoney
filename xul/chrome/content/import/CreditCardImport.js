@@ -47,7 +47,7 @@ CreditCardImport.prototype.importDb = function (name, csvFile, userId, importCal
                 if (rowArray[i].length > 1 && matchResult !== null) {
                     var rec = {
                         "boughtAmount": 0,
-                        "itemId": 0,
+                        "categoryId": 0,
                         "detail": "",
                         "userId": userId,
                         "cardId": cardId,
@@ -59,14 +59,14 @@ CreditCardImport.prototype.importDb = function (name, csvFile, userId, importCal
                                                         "-"),
                     rec["boughtAmount"] = parseFloat(rowArray[i][2]);
                     rec["detail"] = rowArray[i][1];
-                    var itemInfo = this.getItemInfo(rowArray[i][1]);
-                    if (itemInfo["itemId"] === undefined) {
+                    var category = this.getItemInfo(rowArray[i][1]);
+                    if (category["categoryId"] === undefined) {
                         km_alert(km_getLStr("error.title"),
                                  km_getLStr("error.import.noConf"));
                         return;
                     }
-                    rec["itemId"] = itemInfo["itemId"];
-                    rec["internal"] = itemInfo["internal"];
+                    rec["categoryId"] = category["categoryId"];
+                    rec["internal"] = category["internal"];
                     if (rowArray[i].length >= 4 && rowArray[i][3].length > 0) {
                         rec["payMonth"] = rowArray[i][3].replace("/", "-", "g");
                         rec["payAmount"] = rec["boughtAmount"];

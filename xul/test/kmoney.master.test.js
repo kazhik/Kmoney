@@ -11,7 +11,7 @@ function testMasterData() {
     utils.wait(500);
 
     userMasterTest(dialog);
-    itemMasterTest(dialog);
+    categoryMasterTest(dialog);
     bankMasterTest(dialog);
     creditcardMasterTest(dialog);
     emoneyMasterTest(dialog);
@@ -104,19 +104,19 @@ function bankMasterTest(dialog) {
     assert.equal(rowCnt - 1, bankTree.treeView.rowCount);
 
 }
-function itemMasterTest(dialog) {
+function categoryMasterTest(dialog) {
     var masterData = dialog.masterData;
-    $('km_master_tabbox', dialog).selectedTab = $('km_tab_master_item', dialog);
+    $('km_master_tabbox', dialog).selectedTab = $('km_tab_master_category', dialog);
 
-    var itemTree = masterData.itemMaster.mTree;
+    var itemTree = masterData.categoryMaster.mTree;
     // 費目追加    
     $('km_textbox_name', dialog).value = "item1";
     action.clickOn($('km_button_master_add', dialog));
     
     var rowCnt = itemTree.treeView.rowCount;
     itemTree.treeView.selection.select(rowCnt - 1);
-    assert.equal("item1", itemTree.getSelectedRowValue('master_item_name'));
-    assert.equal("0", itemTree.getSelectedRowValue('master_item_sum_value'));
+    assert.equal("item1", itemTree.getSelectedRowValue('master_category_name'));
+    assert.equal("0", itemTree.getSelectedRowValue('master_item_category_value'));
 
     $('km_textbox_name', dialog).value = "item2";
     $('km_master_sum', dialog).checked = true;
@@ -124,8 +124,8 @@ function itemMasterTest(dialog) {
     
     rowCnt = itemTree.treeView.rowCount;
     itemTree.treeView.selection.select(rowCnt - 1);
-    assert.equal("item2", itemTree.getSelectedRowValue('master_item_name'));
-    assert.equal("1", itemTree.getSelectedRowValue('master_item_sum_value'));
+    assert.equal("item2", itemTree.getSelectedRowValue('master_category_name'));
+    assert.equal("1", itemTree.getSelectedRowValue('master_item_category_value'));
 
     // 費目更新    
     $('km_textbox_name', dialog).value = "item3";
@@ -133,8 +133,8 @@ function itemMasterTest(dialog) {
     action.clickOn($('km_button_master_update', dialog));
     rowCnt = itemTree.treeView.rowCount;
     itemTree.treeView.selection.select(rowCnt - 1);
-    assert.equal("item3", itemTree.getSelectedRowValue('master_item_name'));
-    assert.equal("0", itemTree.getSelectedRowValue('master_item_sum_value'));
+    assert.equal("item3", itemTree.getSelectedRowValue('master_category_name'));
+    assert.equal("0", itemTree.getSelectedRowValue('master_item_category_value'));
     
     // 費目変更    
     action.clickOn($('km_button_master_delete', dialog));

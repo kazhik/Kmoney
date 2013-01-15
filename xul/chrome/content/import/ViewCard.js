@@ -62,7 +62,7 @@ ViewCard.prototype.importDb = function (name, htmlFile, userId, importCallback) 
                         "payAmount": 0,
                         "payMonth": payMonth,
                         "boughtAmount": 0,
-                        "itemId": 0,
+                        "categoryId": 0,
                         "detail": "",
                         "userId": userId,
                         "cardId": cardId,
@@ -75,13 +75,13 @@ ViewCard.prototype.importDb = function (name, htmlFile, userId, importCallback) 
                     var dateElem = htmlDoc.getElementById("RtUseInfoList__ctl" + dataNo + "_LblUseDte");
                     rec["transactionDate"] = dateElem.textContent.replace(/\//g, "-");
                     rec["detail"] = columnData[2].textContent.trim();
-                    var itemInfo = this.getItemInfo(rec["detail"]);
-                    if (itemInfo["itemId"] === undefined) {
+                    var category = this.getItemInfo(rec["detail"]);
+                    if (category["categoryId"] === undefined) {
                         km_alert(km_getLStr("error.title"), km_getLStr("error.import.noConf"));
                         return;
                     }
-                    rec["itemId"] = itemInfo["itemId"];
-                    rec["internal"] = itemInfo["internal"];
+                    rec["categoryId"] = category["categoryId"];
+                    rec["internal"] = category["internal"];
                     columnData2 = rowData[i].getElementsByTagName("th");
                     rec["payAmount"] = columnData2[0].textContent.trim().replace(/,/g, "");
         

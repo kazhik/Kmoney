@@ -9,8 +9,8 @@ SummaryView.prototype.initialize = function (db) {
     this.mDb = db;
     this.mTree.init(this.loadTable.bind(this));
 
-    this.listeners['km_list_summary_item.command'] = this.onConditionChanged.bind(this);
-    $$('km_list_summary_item').addEventListener("command", this.listeners['km_list_summary_item.command']);
+    this.listeners['km_list_summ_category.command'] = this.onConditionChanged.bind(this);
+    $$('km_list_summ_category').addEventListener("command", this.listeners['km_list_summ_category.command']);
 
     this.listeners['km_radgroup_viewmode.command'] = this.onViewModeChanged.bind(this);
     $$('km_radgroup_viewmode').addEventListener("command",
@@ -19,8 +19,8 @@ SummaryView.prototype.initialize = function (db) {
                                                  
 };
 SummaryView.prototype.terminate = function () {
-    $$('km_list_summary_item').removeEventListener("command",
-                                              this.listeners['km_list_summary_item.command']);
+    $$('km_list_summ_category').removeEventListener("command",
+                                              this.listeners['km_list_summ_category.command']);
 
     $$('km_radgroup_viewmode').removeEventListener("command",
                                                   this.listeners['km_radgroup_viewmode.command']);
@@ -30,15 +30,15 @@ SummaryView.prototype.onViewModeChanged = function () {
 };
 SummaryView.prototype.changeSummaryItemList = function () {
     if ($$('km_radio_table').selected) {
-        if ($$('km_list_summary_item').getItemAtIndex(0).value != 0) {
-            $$('km_list_summary_item').insertItemAt(0, km_getLStr('query_condition.none'), 0);
+        if ($$('km_list_summ_category').getItemAtIndex(0).value != 0) {
+            $$('km_list_summ_category').insertItemAt(0, km_getLStr('query_condition.none'), 0);
         }
     } else {
-        if ($$('km_list_summary_item').getItemAtIndex(0).value == 0) {
-            $$('km_list_summary_item').removeItemAt(0);
+        if ($$('km_list_summ_category').getItemAtIndex(0).value == 0) {
+            $$('km_list_summ_category').removeItemAt(0);
         }
     }
-    $$('km_list_summary_item').selectedIndex = 0;
+    $$('km_list_summ_category').selectedIndex = 0;
 }
 
 SummaryView.prototype.onConditionChanged = function () {
@@ -65,7 +65,7 @@ SummaryView.prototype.loadTable = function (sortParams) {
         sortParams = this.mTree.getCurrentSortParams();
     }
     var queryParams = {
-        "itemId": strToInt($$('km_list_summary_item').value),
+        "categoryId": strToInt($$('km_list_summ_category').value),
         "userId": strToInt($$('km_list_summary_user').value)
     };
     
@@ -121,7 +121,7 @@ SummaryView.prototype.drawGraph = function () {
     var params = {
         "periodFrom": monthfromY + "/" + monthfromM,
         "periodTo": monthtoY + "/" + monthtoM,
-        "itemId": strToInt($$('km_list_summary_item').value),
+        "categoryId": strToInt($$('km_list_summ_category').value),
         "userId": strToInt($$('km_list_summary_user').value)
     };
     

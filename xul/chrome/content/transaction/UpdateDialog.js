@@ -52,7 +52,7 @@ UpdateDialog.prototype.removeEventListeners = function () {
         this.listeners['km_dialog_update.dialogcancel']);
 };
 
-UpdateDialog.prototype.populateItemList = function (type, itemList) {
+UpdateDialog.prototype.populateItemList = function (type, categoryList) {
     if (type === "detail") {
         hideElements(["menulistbox"]);
         showElements(["textbox"]);
@@ -62,8 +62,8 @@ UpdateDialog.prototype.populateItemList = function (type, itemList) {
     } else {
         showElements(["menulistbox"]);
         hideElements(["textbox"]);
-        if (type === "item") {
-            $$('update_menulist').value = km_getLStr("query_condition.item");
+        if (type === "category") {
+            $$('update_menulist').value = km_getLStr("query_condition.category");
         } else if (type === "user") {
             $$('update_menulist').value = km_getLStr("query_condition.user");
         } else if (type === "bank") {
@@ -76,8 +76,8 @@ UpdateDialog.prototype.populateItemList = function (type, itemList) {
 
         $$('km_update_menulist').removeAllItems();
     
-        for (var i = 0; i < itemList.length; i++) {
-            $$('km_update_menulist').appendItem(itemList[i].label, itemList[i].value);
+        for (var i = 0; i < categoryList.length; i++) {
+            $$('km_update_menulist').appendItem(categoryList[i].label, categoryList[i].value);
         }
         
         $$('km_update_menulist').selectedIndex = 0;

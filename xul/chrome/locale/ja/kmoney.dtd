@@ -40,8 +40,8 @@
 <!ENTITY menu.data.duplicate.accesskey          "P">
 <!ENTITY menu.data.order          "表示順">
 <!ENTITY menu.data.order.accesskey          "O">
-<!ENTITY menu.data.order.item          "費目">
-<!ENTITY menu.data.order.item.ak          "I">
+<!ENTITY menu.data.order.category          "費目">
+<!ENTITY menu.data.order.category.ak          "I">
 <!ENTITY menu.data.order.source          "入力元">
 <!ENTITY menu.data.order.source.ak          "S">
 
@@ -85,11 +85,11 @@
 <!ENTITY tab.asset          "資産">
 
 <!ENTITY tab.user          "ユーザー">
-<!ENTITY tab.item          "費目">
+<!ENTITY tab.category          "費目">
 <!ENTITY tab.source          "入力元">
 
 <!ENTITY tab.user_master          "ユーザー">
-<!ENTITY tab.item_master          "費目">
+<!ENTITY tab.category_master          "費目">
 <!ENTITY tab.bank_master          "銀行">
 <!ENTITY tab.creditcard_master      "クレジットカード">
 <!ENTITY tab.emoney_master          "電子マネー">
@@ -99,13 +99,13 @@
 <!ENTITY column.date          "日付">
 <!ENTITY column.income          "収入">
 <!ENTITY column.expense          "支出">
-<!ENTITY column.item          "費目">
+<!ENTITY column.category          "費目">
 <!ENTITY column.detail          "詳細">
 <!ENTITY column.bankname          "銀行名">
 <!ENTITY column.cardname          "カード名">
 <!ENTITY column.emoneyname          "電子マネー名">
 <!ENTITY column.username          "ユーザ">
-<!ENTITY column.itemname          "費目名">
+<!ENTITY column.categoryname          "費目名">
 <!ENTITY column.internal          "家計内">
 <!ENTITY column.type          "種別">
 <!ENTITY column.sourcetype          "入力元">
@@ -122,7 +122,7 @@
 <!ENTITY edit.date          "日付">
 <!ENTITY edit.income          "収入">
 <!ENTITY edit.expense          "支出">
-<!ENTITY edit.item          "費目">
+<!ENTITY edit.category          "費目">
 <!ENTITY edit.detail          "詳細">
 <!ENTITY edit.amount          "金額">
 <!ENTITY edit.user          "ユーザ">

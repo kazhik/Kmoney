@@ -61,7 +61,7 @@ Suica.prototype.importDb = function (name, suicaHtmlFile, userId, importCallback
                     "transactionDate": "",
                     "income": 0,
                     "expense": 0,
-                    "itemId": 0,
+                    "categoryId": 0,
                     "detail": "",
                     "userId": userId,
                     "moneyId": emoneyId,
@@ -96,14 +96,14 @@ Suica.prototype.importDb = function (name, suicaHtmlFile, userId, importCallback
                         rec["detail"] += columnData[3].textContent.trim();
                         rec["detail"] += ":";
                         rec["detail"] += columnData[4].textContent.trim();
-                        rec["itemId"] = this.getItemId("交通費");
+                        rec["categoryId"] = this.getItemId("交通費");
                     } else {
-                        rec["itemId"] = this.getItemId(rec["detail"]);
+                        rec["categoryId"] = this.getItemId(rec["detail"]);
                     }
                     rec["income"] = 0;
                     rec["expense"] = prevBalance - balance;
                 } else {
-                    rec["itemId"] = this.getItemId("チャージ");
+                    rec["categoryId"] = this.getItemId("チャージ");
                     rec["internal"] = 1;
                     rec["income"] = balance - prevBalance;
                     rec["expense"] = 0;

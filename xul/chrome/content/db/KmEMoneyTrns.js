@@ -14,8 +14,8 @@ KmEMoneyTrns.prototype.load = function(sortParams, queryParams, loadCallback) {
         if (key === "date") {
             keyCol = "A.transaction_date";
             operator = queryParams[i]['operator'];
-        } else if (key === "item") {
-            keyCol = "A.item_id";
+        } else if (key === "category") {
+            keyCol = "A.category_id";
             operator = "=";
         } else if (key === "detail") {
             keyCol = "A.detail";
@@ -44,8 +44,8 @@ KmEMoneyTrns.prototype.load = function(sortParams, queryParams, loadCallback) {
 
     var sql = ["select ",
                "A.transaction_date, ",
-               "A.item_id, ",
-               "B.name as item_name, ",
+               "A.category_id, ",
+               "B.name as category_name, ",
                "A.detail, ",
                "A.income, ",
                "A.expense, ",
@@ -62,8 +62,8 @@ KmEMoneyTrns.prototype.load = function(sortParams, queryParams, loadCallback) {
                "A.internal, ",
                "A.id ",
                "from km_emoney_trns A ",
-               "left join km_item B ",
-               " on A.item_id = B.id ",
+               "left join km_category B ",
+               " on A.category_id = B.id ",
                "inner join km_user C ",
                " on A.user_id = C.id ",
                "inner join km_emoney_info D ",
@@ -114,8 +114,8 @@ KmEMoneyTrns.prototype.load = function(sortParams, queryParams, loadCallback) {
 KmEMoneyTrns.prototype.loadDuplicate = function(loadCallback) {
     var sql = ["select ",
                "A.transaction_date, ",
-               "A.item_id, ",
-               "B.name as item_name, ",
+               "A.category_id, ",
+               "B.name as category_name, ",
                "A.detail, ",
                "A.income, ",
                "A.expense, ",
@@ -132,8 +132,8 @@ KmEMoneyTrns.prototype.loadDuplicate = function(loadCallback) {
                "A.internal, ",
                "A.id ",
                "from km_emoney_trns A ",
-               "left join km_item B ",
-               " on A.item_id = B.id ",
+               "left join km_category B ",
+               " on A.category_id = B.id ",
                "inner join km_user C ",
                " on A.user_id = C.id ",
                "inner join km_emoney_info D ",
@@ -170,7 +170,7 @@ KmEMoneyTrns.prototype.execInsert = function (newRecordArray, importFlag, insert
                   + "transaction_date, "
                   + "income, "
                   + "expense, "
-                  + "item_id, "
+                  + "category_id, "
                   + "detail, "
                   + "user_id, "
                   + "money_id, "
@@ -182,7 +182,7 @@ KmEMoneyTrns.prototype.execInsert = function (newRecordArray, importFlag, insert
                   + ":transactionDate, "
                   + ":income, "
                   + ":expense, "
-                  + ":itemId, "
+                  + ":categoryId, "
                   + ":detail, "
                   + ":userId, "
                   + ":moneyId, "
@@ -218,8 +218,8 @@ KmEMoneyTrns.prototype.update = function(idList, params, updateCallback) {
     if (oneColumn) {
         sql = "update km_emoney_trns ";
         sql += "set ";
-        if (params["itemId"] !== undefined) {
-            sql += "item_id = :itemId, ";
+        if (params["categoryId"] !== undefined) {
+            sql += "category_id = :categoryId, ";
         } else if (params["detail"] !== undefined) {
             sql += "detail = :detail, ";
         } else if (params["userId"] !== undefined) {
@@ -235,7 +235,7 @@ KmEMoneyTrns.prototype.update = function(idList, params, updateCallback) {
                 + "transaction_date = :transactionDate, "
                 + "income = :income, "
                 + "expense = :expense, "
-                + "item_id = :itemId, "
+                + "category_id = :categoryId, "
                 + "detail = :detail, "
                 + "user_id = :userId, "
                 + "money_id = :moneyId, "

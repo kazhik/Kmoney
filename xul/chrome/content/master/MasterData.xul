@@ -9,7 +9,7 @@
     <script type="application/x-javascript" src="../globals.js" />
     <script type="application/x-javascript" src="../common/TreeView.js" />
     <script type="application/x-javascript" src="UserMaster.js" />
-    <script type="application/x-javascript" src="ItemMaster.js" />
+    <script type="application/x-javascript" src="CategoryMaster.js" />
     <script type="application/x-javascript" src="CardMaster.js" />
     <script type="application/x-javascript" src="BankMaster.js" />
     <script type="application/x-javascript" src="EMoneyMaster.js" />
@@ -20,7 +20,7 @@
         <tabbox id="km_master_tabbox" handleCtrlPageUpDown="true" flex="1">
             <tabs id="km_tabs">
                 <tab id="km_tab_master_user" label="&tab.user_master;" persist="selected" />
-                <tab id="km_tab_master_item" label="&tab.item_master;" persist="selected" />
+                <tab id="km_tab_master_category" label="&tab.category_master;" persist="selected" />
                 <tab id="km_tab_master_bank" label="&tab.bank_master;" persist="selected" />
                 <tab id="km_tab_master_creditcard" label="&tab.creditcard_master;" persist="selected" />
                 <tab id="km_tab_master_emoney" label="&tab.emoney_master;" persist="selected" />
@@ -43,19 +43,19 @@
                     </vbox>
                 </tabpanel>
                 <tabpanel flex="1">
-                    <vbox id="km_master_item" flex="1">
-                        <tree id="km_tree_master_item" flex="1" seltype="single"
+                    <vbox id="km_master_category" flex="1">
+                        <tree id="km_tree_master_category" flex="1" seltype="single"
 							enableColumnDrag="false">
-                            <treecols id="km_cols_master_item">
-								<treecol id="master_item_id" hidden="true" ignoreincolumnpicker="true" />
+                            <treecols id="km_cols_master_category">
+								<treecol id="master_category_id" hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" />  
-								<treecol id="master_item_name" label="&column.itemname;" flex="1"
+								<treecol id="master_category_name" label="&column.categoryname;" flex="1"
                                          persist="width"/>
 								<splitter class="tree-splitter" />  
-								<treecol id="master_item_sum_value"
+								<treecol id="master_category_sum_value"
                                          hidden="true" ignoreincolumnpicker="true" />
 								<splitter class="tree-splitter" />  
-								<treecol id="master_item_sum_label" label="&column.sum_include;"
+								<treecol id="master_category_sum_label" label="&column.sum_include;"
 										 flex="1" persist="width" />
 							</treecols>
                             <treechildren />
@@ -182,7 +182,7 @@
 						<menupopup></menupopup>
 					</menulist>
 				</hbox>
-                <hbox id="km_box_item" align="center">
+                <hbox id="km_box_category" align="center">
     				<checkbox id="km_master_sum" label="&column.sum_include;" />
                 </hbox>
                 <hbox id="km_box_source" align="center">

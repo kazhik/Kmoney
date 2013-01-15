@@ -11,7 +11,7 @@ AbstractImport.prototype.loadImportConf = function (userId, srcName, loadCallbac
             for (var i = 0; i < records.length; i++) {
                 var importItem = {
                     "detail": records[i][0],
-                    "itemId": records[i][1],
+                    "categoryId": records[i][1],
                     "default": records[i][2],
                     "internal": records[i][3]
                 }
@@ -39,7 +39,7 @@ AbstractImport.prototype.getItemInfo = function (detail) {
 };
 
 AbstractImport.prototype.getItemId = function (detail) {
-    var itemInfo = this.getItemInfo(detail);
-    return itemInfo["itemId"];
+    var category = this.getItemInfo(detail);
+    return category["categoryId"];
 
 };

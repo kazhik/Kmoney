@@ -46,7 +46,7 @@ EMoneyImport.prototype.importDb = function (name, csvFile, userId, importCallbac
                         "transactionDate": "",
                         "income": 0,
                         "expense": 0,
-                        "itemId": 0,
+                        "categoryId": 0,
                         "detail": "",
                         "userId": userId,
                         "moneyId": emoneyId,
@@ -58,14 +58,14 @@ EMoneyImport.prototype.importDb = function (name, csvFile, userId, importCallbac
                     rec["detail"] = rowArray[i][1];
                     rec["income"] = parseFloat(rowArray[i][2]) || 0;
                     rec["expense"] = parseFloat(rowArray[i][3]) || 0;
-                    var itemInfo = this.getItemInfo(rowArray[i][1]);
-                    if (itemInfo["itemId"] === undefined) {
+                    var category = this.getItemInfo(rowArray[i][1]);
+                    if (category["categoryId"] === undefined) {
                         km_alert(km_getLStr("error.title"),
                                  km_getLStr("error.import.noConf"));
                         return;
                     }
-                    rec["itemId"] = itemInfo["itemId"];
-                    rec["internal"] = itemInfo["internal"];
+                    rec["categoryId"] = category["categoryId"];
+                    rec["internal"] = category["internal"];
         
                     newRecordArray.push(rec);
         

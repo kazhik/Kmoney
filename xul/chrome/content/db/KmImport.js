@@ -3,7 +3,7 @@ function KmImport(db) {
 }
 
 KmImport.prototype.load = function(userId, sourceType, sourceName, loadCallback) {
-    var sql = ["select detail, item_id, default_id, internal ",
+    var sql = ["select detail, category_id, default_id, internal ",
                "from km_import ",
                "where user_id = :userId",
                " and source_type = :sourceType"].join(" ");
@@ -23,11 +23,11 @@ KmImport.prototype.load = function(userId, sourceType, sourceName, loadCallback)
 };
 KmImport.prototype.loadConf = function(userId, sourceType, sourceName, loadCallback) {
     km_debug("KmImport.loadConf start");
-    var sql = ["select A.id, A.source_type, A.detail, A.item_id,",
+    var sql = ["select A.id, A.source_type, A.detail, A.category_id,",
                "B.name, A.default_id, A.internal, A.permission ",
                "from km_import A ",
-               "inner join km_item B ",
-               "on A.item_id = B.id ",
+               "inner join km_category B ",
+               "on A.category_id = B.id ",
                "where user_id = :userId",
                " and source_type = :sourceType"].join(" ");
     if (sourceName !== "") {
@@ -72,7 +72,7 @@ KmImport.prototype.insert = function(params, insertCallback) {
       + "source_type, "
       + "source_name, "
       + "detail, "
-      + "item_id, "
+      + "category_id, "
       + "default_id, "
       + "permission, "
       + "internal "
@@ -81,7 +81,7 @@ KmImport.prototype.insert = function(params, insertCallback) {
       + ":sourceType, "
       + ":sourceName, "
       + ":detail, "
-      + ":itemId, "
+      + ":categoryId, "
       + ":defaultId, "
       + "1, "
       + ":internal)";
@@ -94,7 +94,7 @@ KmImport.prototype.insert = function(params, insertCallback) {
 KmImport.prototype.update = function(id, params, updateCallback) {
     var sql = "update km_import "
       + "set detail = :detail, "
-      + "item_id = :itemId, "
+      + "category_id = :categoryId, "
       + "default_id = :defaultId, "
       + "internal = :internal "
       + "where id = :id";
@@ -114,10 +114,10 @@ KmImport.prototype.delete = function(id, deleteCallback) {
     this.mDb.execTransaction([sqlStatement]);
     deleteCallback();
 };
-KmImport.prototype.deleteItem = function(itemId, deleteCallback) {
-    var sql = "delete from km_import where item_id = :item_id";
+KmImport.prototype.deleteItem = function(categoryId, deleteCallback) {
+    var sql = "delete from km_import where category_id = :category_id";
     var params = {
-        "item_id": itemId
+        "category_id": categoryId
     };
     var sqlStatement = this.mDb.createStatementWithParams(sql, params);
     this.mDb.execTransaction([sqlStatement]);

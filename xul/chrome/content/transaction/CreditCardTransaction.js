@@ -52,7 +52,7 @@ CreditCardTransaction.prototype.openEdit = function (id) {
 };
 CreditCardTransaction.prototype.onSelect = function () {
     $$('km_date_transdate').value = this.mTree.getSelectedRowValue('transaction_date');
-    $$('km_list_item').value = this.mTree.getSelectedRowValue('item_id');
+    $$('km_list_category').value = this.mTree.getSelectedRowValue('category_id');
     $$('km_textbox_detail').value = this.mTree.getSelectedRowValue('detail');
     $$('km_textbox_amount').value = this.mTree.getSelectedRowValue('expense');
     $$('km_radgroup_income-expense').selectedItem = $$('km_radio_expense');

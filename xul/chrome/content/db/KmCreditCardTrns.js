@@ -14,8 +14,8 @@ KmCreditCardTrns.prototype.load = function(sortParams, queryParams, loadCallback
         if (key === "date") {
             keyCol = "A.transaction_date";
             operator = queryParams[i]['operator'];
-        } else if (key === "item") {
-            keyCol = "A.item_id";
+        } else if (key === "category") {
+            keyCol = "A.category_id";
             operator = "=";
         } else if (key === "detail") {
             keyCol = "A.detail";
@@ -44,8 +44,8 @@ KmCreditCardTrns.prototype.load = function(sortParams, queryParams, loadCallback
 
     var sql = ["select ",
                "A.transaction_date, ",
-               "A.item_id, ",
-               "B.name as item_name, ",
+               "A.category_id, ",
+               "B.name as category_name, ",
                "A.detail, ",
                "A.expense, ",
                "A.card_id, ",
@@ -63,8 +63,8 @@ KmCreditCardTrns.prototype.load = function(sortParams, queryParams, loadCallback
                "A.internal, ",
                "A.id ",
                "from km_creditcard_trns A ",
-               "left join km_item B ",
-               " on A.item_id = B.id ",
+               "left join km_category B ",
+               " on A.category_id = B.id ",
                "inner join km_user C ",
                " on A.user_id = C.id ",
                "inner join km_creditcard_info D ",
@@ -114,8 +114,8 @@ KmCreditCardTrns.prototype.load = function(sortParams, queryParams, loadCallback
 KmCreditCardTrns.prototype.loadDuplicate = function(loadCallback) {
     var sql = ["select ",
                "A.transaction_date, ",
-               "A.item_id, ",
-               "B.name as item_name, ",
+               "A.category_id, ",
+               "B.name as category_name, ",
                "A.detail, ",
                "A.expense, ",
                "A.card_id, ",
@@ -133,8 +133,8 @@ KmCreditCardTrns.prototype.loadDuplicate = function(loadCallback) {
                "A.internal, ",
                "A.id ",
                "from km_creditcard_trns A ",
-               "left join km_item B ",
-               " on A.item_id = B.id ",
+               "left join km_category B ",
+               " on A.category_id = B.id ",
                "inner join km_user C ",
                " on A.user_id = C.id ",
                "inner join km_creditcard_info D ",
@@ -170,7 +170,7 @@ KmCreditCardTrns.prototype.execInsert = function (newRecordArray, importFlag, in
     for (var i = 0; i < newRecordArray.length; i++) {
         sqlTransaction = ["insert into km_creditcard_trns (",
                           "transaction_date, ",
-                          "item_id, ",
+                          "category_id, ",
                           "detail, ",
                           "expense, ",
                           "user_id, ",
@@ -181,7 +181,7 @@ KmCreditCardTrns.prototype.execInsert = function (newRecordArray, importFlag, in
                           ") ",
                           "select ",
                           ":transactionDate, ",
-                          ":itemId, ",
+                          ":categoryId, ",
                           ":detail, ",
                           ":boughtAmount, ",
                           ":userId, ",
@@ -263,8 +263,8 @@ KmCreditCardTrns.prototype.updateOneColumn = function(idList, params, updateCall
     var sqlStmtArray = [];
     sql = "update km_creditcard_trns ";
     sql += "set ";
-    if (params["itemId"] !== undefined) {
-        sql += "item_id = :itemId, ";
+    if (params["categoryId"] !== undefined) {
+        sql += "category_id = :categoryId, ";
     } else if (params["detail"] !== undefined) {
         sql += "detail = :detail, ";
     } else if (params["userId"] !== undefined) {
@@ -304,7 +304,7 @@ KmCreditCardTrns.prototype.updateMultiColumn = function(params, updateCallback) 
                "set ",
                "transaction_date = :transactionDate, ",
                "expense = :boughtAmount, ",
-               "item_id = :itemId, ",
+               "category_id = :categoryId, ",
                "detail = :detail, ",
                "user_id = :userId, ",
                "card_id = :cardId, ",
