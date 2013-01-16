@@ -370,18 +370,19 @@ KmDatabase.prototype.createInitialRecords = function() {
     }
     
     // km_user
-    var users = ['太郎', '花子'];
+    var users = [km_getLStr("data.user.husband"),
+                 km_getLStr("data.user.wife")];
     for (var i = 0; i < users.length; i++) {
         this.userInfo.insert(users[i], insertCallback.bind(this));
     }
     
     // km_category
     var categories = [
-        ['食材・生活用品', 1],
-        ['外食', 1],
-        ['交通費', 1],
-        ['ATM', 1],
-        ['交際費', 1]
+        [km_getLStr("data.category.groceries"), 1],
+        [km_getLStr("data.category.foods"), 1],
+        [km_getLStr("data.category.transportation"), 1],
+        [km_getLStr("data.category.atm"), 1],
+        [km_getLStr("data.category.social"), 1]
     ];
     for (var i = 0; i < categories.length; i++) {
         this.category.insert(categories[i][0], categories[i][1], insertCallback.bind(this));
@@ -393,43 +394,43 @@ KmDatabase.prototype.createInitialRecords = function() {
          "import": 0,
          "enabled": 1,
          "file_ext": ""},
-        {"name": "現金（汎用）",
+        {"name": km_getLStr("data.source.cash"),
          "import": 1,
          "enabled": 1,
          "file_ext": "csv"},
-        {"name": "銀行口座（汎用）",
+        {"name": km_getLStr("data.source.bank"),
          "import": 1,
          "enabled": 1,
          "file_ext": "csv"},
-        {"name": "クレジットカード（汎用）",
+        {"name": km_getLStr("data.source.creditcard"),
          "import": 1,
          "enabled": 1,
          "file_ext": "csv"},
-        {"name": "電子マネー（汎用）",
+        {"name": km_getLStr("data.source.emoney"),
          "import": 1,
          "enabled": 1,
          "file_ext": "csv"},
-        {"name": "かんたん家計簿",
+        {"name": km_getLStr("data.source.kantan"),
          "import": 1,
          "enabled": 1,
          "file_ext": "db"},
-        {"name": "みずほ銀行",
+        {"name": km_getLStr("data.bank.mizuho"),
          "import": 1,
          "enabled": 1,
          "file_ext": "ofx"},
-        {"name": "新生銀行",
+        {"name": km_getLStr("data.bank.shinsei"),
          "import": 1,
          "enabled": 1,
          "file_ext": "csv"},
-        {"name": "ビューカード",
+        {"name": km_getLStr("data.creditcard.View"),
          "import": 1,
          "enabled": 1,
          "file_ext": "html"},
-        {"name": "セゾンカード",
+        {"name": km_getLStr("data.creditcard.Saison"),
          "import": 1,
          "enabled": 1,
          "file_ext": "csv"},
-        {"name": "UCカード",
+        {"name": km_getLStr("data.creditcard.UC"),
          "import": 1,
          "enabled": 1,
          "file_ext": "csv"},
@@ -444,9 +445,9 @@ KmDatabase.prototype.createInitialRecords = function() {
     
     // km_bank_info
     var bankInfo = [
-        {"name": "みずほ銀行",
+        {"name": km_getLStr("data.bank.mizuho"),
          "userId": 1},
-        {"name": "新生銀行",
+        {"name": km_getLStr("data.bank.shinsei"),
          "userId": 2}
     ];
     for (var i = 0; i < bankInfo.length; i++) {
@@ -455,13 +456,25 @@ KmDatabase.prototype.createInitialRecords = function() {
     
     // km_creditcard_info
     var cardInfo = [
-        {"name": "UCカード",
+        {"name": km_getLStr("data.creditcard.visa"),
          "userId": 1,
          "bankId": 1},
-        {"name": "ビューカード",
+        {"name": km_getLStr("data.creditcard.master"),
          "userId": 1,
          "bankId": 1},
-        {"name": "セゾンカード",
+        {"name": km_getLStr("data.creditcard.amex"),
+         "userId": 1,
+         "bankId": 1},
+        {"name": km_getLStr("data.creditcard.JCB"),
+         "userId": 1,
+         "bankId": 1},
+        {"name": km_getLStr("data.creditcard.UC"),
+         "userId": 1,
+         "bankId": 1},
+        {"name": km_getLStr("data.creditcard.Saison"),
+         "userId": 1,
+         "bankId": 1},
+        {"name": km_getLStr("data.creditcard.View"),
          "userId": 2,
          "bankId": 2}
     ];
