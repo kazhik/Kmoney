@@ -1,0 +1,71 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MonthlyActivity" >
+
+    <LinearLayout
+        android:id="@+id/month"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center_horizontal|center" >
+
+        <Button
+            android:id="@+id/buttonPrev"
+            style="?android:attr/buttonStyleSmall"
+            android:textAppearance="?android:attr/textAppearanceSmallInverse" 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/prevMonth" />
+
+        <TextView
+            android:id="@+id/textViewDate"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal|center"
+            android:layout_weight="1"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <Button
+            android:id="@+id/buttonNext"
+            style="?android:attr/buttonStyleSmall"
+            android:textAppearance="?android:attr/textAppearanceSmallInverse" 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/nextMonth" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true" >
+
+        <Button
+            android:id="@+id/buttonEntry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/entry" />
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/sum" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/listViewMonthly"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/buttons"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/month" >
+    </ListView>
+
+</RelativeLayout>

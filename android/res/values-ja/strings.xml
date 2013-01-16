@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Kmoney</string>
+    <string name="menu_settings">設定</string>
+    <string name="income">収入</string>
+    <string name="expense">支出</string>
+    <string name="detail">詳細</string>
+    <string name="history">履歴</string>
+    <string name="zero">0</string>
+    <string name="one">1</string>
+    <string name="two">2</string>
+    <string name="three">3</string>
+    <string name="four">4</string>
+    <string name="five">5</string>
+    <string name="six">6</string>
+    <string name="seven">7</string>
+    <string name="eight">8</string>
+    <string name="nine">9</string>
+    <string name="clear">C</string>
+    <string name="backspace">BS</string>
+    <string name="date_format">%1$d年%2$d月%3$d日(%4$s)</string>
+    <string name="month_format">%1$d年%2$d月</string>
+    <string name="entry">入力</string>
+    <string name="prevMonth">前月</string>
+    <string name="nextMonth">翌月</string>
+    <string name="prevDay">前日</string>
+    <string name="nextDay">翌日</string>
+    <string name="photo">写真</string>
+    <string name="cash">現金</string>
+    <string name="bank">銀行</string>
+    <string name="creditcard">クレジットカード</string>
+    <string name="emoney">電子マネー</string>
+    <string name="delete">削除</string>
+    <string name="sum">集計</string>
+    
+</resources>

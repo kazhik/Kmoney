@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<string-array name="default_items">
+<item>groceries</item>
+<item>food services</item>
+<item>transportation</item>
+<item>social expense</item>
+<item>hobbies</item>
+<item>books</item>
+<item>house</item>
+<item>clothing</item>
+<item>medical services</item>
+</string-array>
+
+<string-array name="default_banks">
+<item>Mizuho Bank</item>
+<item>BTMU</item>
+<item>SMBC</item>
+<item>Shinsei Bank</item>
+<item>Japan Post Bank</item>
+</string-array>
+
+<string-array name="default_creditcards">
+<item>Visa</item>
+<item>Master</item>
+<item>Amex</item>
+<item>JCB</item>
+</string-array>
+
+<string-array name="default_emoneys">
+<item>Suica</item>
+<item>Edy</item>
+<item>WAON</item>
+<item>nanaco</item>
+</string-array>
+
+</resources>

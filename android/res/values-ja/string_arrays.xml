@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+<string-array name="default_items">
+<item>食材・生活用品</item>
+<item>外食</item>
+<item>交通費</item>
+<item>交際費</item>
+<item>趣味・娯楽</item>
+<item>新聞・雑誌・書籍</item>
+<item>住居・家電</item>
+<item>衣料品</item>
+<item>医療・サービス</item>
+</string-array>
+
+<string-array name="default_banks">
+<item>みずほ銀行</item>
+<item>三菱東京UFJ銀行</item>
+<item>三井住友銀行</item>
+<item>新生銀行</item>
+<item>ゆうちょ銀行</item>
+</string-array>
+
+<string-array name="default_creditcards">
+<item>Visa</item>
+<item>Master</item>
+<item>Amex</item>
+<item>JCB</item>
+</string-array>
+
+<string-array name="default_emoneys">
+<item>Suica</item>
+<item>Edy</item>
+<item>WAON</item>
+<item>nanaco</item>
+</string-array>
+
+</resources>
