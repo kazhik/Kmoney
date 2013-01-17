@@ -401,18 +401,24 @@ public class KmoneyActivity extends FragmentActivity {
 		
 	}
 
+	private String formatDate(int year, int month, int day) {
+		Calendar cal = Calendar.getInstance();
+		cal.set(year, month, day);
+		
+		// 曜日
+		SimpleDateFormat sdfDayOfWeek = new SimpleDateFormat("E", Locale.getDefault());
+		// 月名
+		SimpleDateFormat sdfMonthName = new SimpleDateFormat("MMM", Locale.getDefault());
+		
+		return String.format(getString(R.string.date_format),
+				year, month + 1, day,
+				sdfDayOfWeek.format(cal.getTime()),
+				sdfMonthName.format(cal.getTime()));
+		
+	}
 	private void setDateText(int year, int month, int day) {
-		Calendar calToday = Calendar.getInstance();
-		calToday.set(year, month, day);
-
-		SimpleDateFormat sdf = new SimpleDateFormat("E", Locale.getDefault());
-		String dateFormat = getString(R.string.date_format);
-
-		String today = String.format(dateFormat, year, month + 1, day,
-				sdf.format(calToday.getTime()));
 		TextView tv = (TextView) findViewById(R.id.textViewDate);
-		tv.setText(today);
-
+		tv.setText(this.formatDate(year, month, day));
 	}
 	
 	private void initCurrentUser() {
@@ -432,17 +438,11 @@ public class KmoneyActivity extends FragmentActivity {
 
 		int year = this.currentDay.get(Calendar.YEAR);
 		int month = this.currentDay.get(Calendar.MONTH);
-		int day = this.currentDay.get(Calendar.DATE);
-
-		SimpleDateFormat sdf = new SimpleDateFormat("E", Locale.getDefault());
-		String dateFormat = getString(R.string.date_format);
-
-		String today = String.format(dateFormat, year, month + 1, day,
-				sdf.format(this.currentDay.getTime()));
-		TextView tv = (TextView) findViewById(R.id.textViewDate);
-		tv.setText(today);
+		int day = this.currentDay.get(Calendar.DAY_OF_MONTH);
+		this.setDateText(year, month, day);
 
 		// 長押し設定
+		TextView tv = (TextView) findViewById(R.id.textViewDate);
 		tv.setOnLongClickListener(new DateClickListener(year, month, day));
 
 	}
@@ -640,14 +640,7 @@ public class KmoneyActivity extends FragmentActivity {
 		int month = this.currentDay.get(Calendar.MONTH);
 		int day = this.currentDay.get(Calendar.DATE);
 
-		SimpleDateFormat sdf = new SimpleDateFormat("E", Locale.getDefault());
-		String dateFormat = getString(R.string.date_format);
-
-		String today = String.format(dateFormat, year, month + 1, day,
-				sdf.format(this.currentDay.getTime()));
-		TextView tv = (TextView) findViewById(R.id.textViewDate);
-		tv.setText(today);
-
+		this.setDateText(year, month, day);
 	}
 	private void deleteTransaction(int type, int id) {
 		if (type == TransactionType.CASH) {

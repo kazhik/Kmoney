@@ -1,10 +1,13 @@
 package net.kazhik.android.kmoney;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import net.kazhik.android.kmoney.bean.TransactionView;
 import net.kazhik.android.kmoney.db.KmBankTrns;
@@ -109,12 +112,27 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 		int month = calToday.get(Calendar.MONTH);
 
 		this.currentMonth.set(year, month);
-
-		String monthFormat = getString(R.string.month_format);
-
 		TextView tv = (TextView) findViewById(R.id.textViewDate);
-		tv.setText(String.format(monthFormat, year, month + 1));
+		tv.setText(this.formatMonth(year, month));
 
+	}
+	private String formatTransactionDate(String trnsDate) throws ParseException {
+		SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+		sdfDate.parse(trnsDate).getTime();
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(sdfDate.parse(trnsDate));
+		
+		// 曜日
+		SimpleDateFormat sdfDayOfWeek = new SimpleDateFormat("E", Locale.getDefault());
+		// 月名
+		SimpleDateFormat sdfMonthName = new SimpleDateFormat("MMM", Locale.getDefault());
+		
+		return String.format(getString(R.string.day_format),
+				cal.get(Calendar.MONTH) + 1,
+				cal.get(Calendar.DAY_OF_MONTH),
+				sdfDayOfWeek.format(cal.getTime()),
+				sdfMonthName.format(cal.getTime()));
 	}
 
 	private void loadList() {
@@ -129,7 +147,12 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 			TransactionView tv = it.next();
 
 			HashMap<String, String> map = new HashMap<String, String>();
-			map.put("date", tv.getTransactionDate());
+			try {
+				map.put("date", this.formatTransactionDate(tv.getTransactionDate()));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			map.put("detail", tv.getDetail());
 			map.put("amount", tv.getExpense().toPlainString());
 			map.put("type", tv.getType());
@@ -147,17 +170,29 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 		lv.setAdapter(this.listAdapter);
 	}
 
+	private String formatMonth(int year, int month) {
+		Calendar calToday = Calendar.getInstance();
+		calToday.set(Calendar.YEAR, year);
+		calToday.set(Calendar.MONTH, month);
+
+		// 月名
+		SimpleDateFormat sdfMonthName = new SimpleDateFormat("MMM", Locale.getDefault());
+
+		String monthFormat = getString(R.string.month_format);
+
+		return String.format(monthFormat,
+				year, month + 1, sdfMonthName.format(calToday.getTime()));
+		
+	}
 	private void changeMonth(String direction) {
 		if (direction.equals("prev")) {
 			this.currentMonth.shiftMonth(-1);
 		} else {
 			this.currentMonth.shiftMonth(1);
 		}
-		String monthFormat = getString(R.string.month_format);
 
 		TextView tv = (TextView) findViewById(R.id.textViewDate);
-		tv.setText(String.format(monthFormat, this.currentMonth.getYear(),
-				this.currentMonth.getMonth() + 1));
+		tv.setText(this.formatMonth(this.currentMonth.getYear(), this.currentMonth.getMonth()));
 	}
 
 	public void onCreateContextMenu(ContextMenu menu, View view,

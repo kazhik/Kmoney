@@ -20,6 +20,7 @@
     <string name="clear">C</string>
     <string name="backspace">BS</string>
     <string name="date_format">%1$d年%2$d月%3$d日(%4$s)</string>
+    <string name="day_format">%1$d月%2$d日(%3$s)</string>
     <string name="month_format">%1$d年%2$d月</string>
     <string name="entry">入力</string>
     <string name="prevMonth">前月</string>
