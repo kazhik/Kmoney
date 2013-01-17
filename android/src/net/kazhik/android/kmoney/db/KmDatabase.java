@@ -9,9 +9,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class KmDatabase {
 
-    public static final String DATABASE_NAME = "kmoneys.sqlite"; //$NON-NLS-1$
-
-    public static final int DATABASE_VERSION = 2;
+    public static final String DATABASE_NAME = "kmoneys.sqlite";
+    public static final int DATABASE_VERSION = 5;
 
     private final Context context; 
     private DatabaseHelper DBHelper;
@@ -63,7 +62,27 @@ public class KmDatabase {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) 
-        {               
+        {
+        	// http://stackoverflow.com/questions/3505900/sqliteopenhelper-onupgrade-confusion-android
+        	db.beginTransaction();
+            try {
+				KmBankInfo.upgrade(db);
+				KmCreditCardInfo.upgrade(db);
+				KmEMoneyInfo.upgrade(db);
+				KmCategory.upgrade(db);
+				KmCashTrns.upgrade(db);
+				KmBankTrns.upgrade(db);
+				KmCreditCardTrns.upgrade(db);
+				KmEMoneyTrns.upgrade(db);
+				KmvTransactions.upgrade(db);
+	        	db.setTransactionSuccessful();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				db.endTransaction();
+			}
+        	
         }
     } 
 

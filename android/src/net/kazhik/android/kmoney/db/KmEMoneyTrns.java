@@ -22,7 +22,8 @@ public class KmEMoneyTrns extends KmTable {
 		    "internal INTEGER," +
 	        "user_id INTEGER," +
 	        "source INTEGER," +
-	        "money_id INTEGER)";
+	        "money_id INTEGER," +
+	        "last_update_date DATETIME)";
 	private static final String TABLE_NAME = "km_emoney_trns";
 	
     public KmEMoneyTrns(Context context) {
@@ -32,6 +33,10 @@ public class KmEMoneyTrns extends KmTable {
     	db.execSQL(CREATE_TABLE);
 
     }
+	public static void upgrade(SQLiteDatabase db) {
+		KmTable.upgrade(db, TABLE_NAME, CREATE_TABLE);
+	}
+
     public EMoneyTransaction select(int id) throws ParseException {
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 		qb.setTables(TABLE_NAME);

@@ -34,6 +34,10 @@ public class KmCreditCardInfo extends KmTable {
         	}
         }
     }
+	public static void upgrade(SQLiteDatabase db) {
+		KmTable.upgrade(db, TABLE_NAME, CREATE_TABLE);
+	}
+
 	public List<CreditCardInfo> getCreditCardList() {
 		return this.getCreditCardList(0);
 	}

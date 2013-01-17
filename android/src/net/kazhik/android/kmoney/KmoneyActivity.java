@@ -35,6 +35,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.SQLException;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
@@ -426,9 +427,14 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 
 	private void initDatabase() {
-		KmDatabase db = new KmDatabase(this);
-		db.open();
-		db.close();
+		try {
+			KmDatabase db = new KmDatabase(this);
+			db.open();
+			db.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
@@ -580,6 +586,8 @@ public class KmoneyActivity extends FragmentActivity {
 
 		Spinner spinner = (Spinner) findViewById(R.id.spinnerTypeDetail);
 		spinner.setOnItemSelectedListener(new SelectTypeDetailListener());
+		
+		spinner.setEnabled(false);
 	}
 	private void initTypeList() {
 		ArrayAdapter<Item> adapter = new ArrayAdapter<Item>(this,
@@ -597,19 +605,24 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 
 	private void onChangeTransactionType(int id) {
+		Spinner spinner = (Spinner) findViewById(R.id.spinnerTypeDetail);
 		
 		List<Item> trnsTypeList = new ArrayList<Item>();
 		if (id == TransactionType.CASH) {
 			this.transactionType = TransactionType.CASH;
+			spinner.setEnabled(false);
 		} else if (id == TransactionType.BANK) {
 			this.transactionType = TransactionType.BANK;
 			trnsTypeList = this.transactionTypeDetail.get("bank");
+			spinner.setEnabled(true);
 		} else if (id == TransactionType.CREDITCARD) {
 			this.transactionType = TransactionType.CREDITCARD;
 			trnsTypeList = this.transactionTypeDetail.get("creditcard");
+			spinner.setEnabled(true);
 		} else if (id == TransactionType.EMONEY) {
 			this.transactionType = TransactionType.EMONEY;
 			trnsTypeList = this.transactionTypeDetail.get("emoney");
+			spinner.setEnabled(true);
 		}
 		if (trnsTypeList.isEmpty()) {
 			return;
@@ -624,7 +637,6 @@ public class KmoneyActivity extends FragmentActivity {
 
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-		Spinner spinner = (Spinner) findViewById(R.id.spinnerTypeDetail);
 		spinner.setAdapter(adapter);
 
 	}

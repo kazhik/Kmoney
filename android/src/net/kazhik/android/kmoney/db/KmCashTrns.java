@@ -21,7 +21,8 @@ public class KmCashTrns extends KmTable {
 	        "detail TEXT," +
 		    "internal INTEGER," +
 	        "user_id INTEGER," +
-	        "source INTEGER)";
+	        "source INTEGER," +
+	        "last_update_date DATETIME)";
 	private static final String TABLE_NAME = "km_realmoney_trns";
 	
     public KmCashTrns(Context context) {
@@ -31,6 +32,10 @@ public class KmCashTrns extends KmTable {
     	db.execSQL(CREATE_TABLE);
 
     }
+	public static void upgrade(SQLiteDatabase db) {
+		KmTable.upgrade(db, TABLE_NAME, CREATE_TABLE);
+	}
+
     public CashTransaction select(int id) throws ParseException {
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 		qb.setTables(TABLE_NAME);

@@ -21,7 +21,8 @@ public class KmCreditCardTrns extends KmTable {
 		    "internal INTEGER," +
 	        "user_id INTEGER," +
 	        "source INTEGER," +
-	        "card_id INTEGER)";
+	        "card_id INTEGER," +
+	        "last_update_date DATETIME)";
 	private static final String TABLE_NAME = "km_creditcard_trns";
 	
     public KmCreditCardTrns(Context context) {
@@ -31,6 +32,10 @@ public class KmCreditCardTrns extends KmTable {
     	db.execSQL(CREATE_TABLE);
 
     }
+	public static void upgrade(SQLiteDatabase db) {
+		KmTable.upgrade(db, TABLE_NAME, CREATE_TABLE);
+	}
+
     public CreditCardTransaction select(int id) throws ParseException {
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 		qb.setTables(TABLE_NAME);

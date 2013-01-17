@@ -29,6 +29,10 @@ public class KmCategory extends KmTable {
             db.insert(TABLE_NAME, null, initialValues);
         }
     }
+	public static void upgrade(SQLiteDatabase db) {
+		KmTable.upgrade(db, TABLE_NAME, CREATE_TABLE);
+	}
+
     public List<Category> getCategoryList(int max) {
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 		qb.setTables(TABLE_NAME);

@@ -50,7 +50,7 @@ public class KmvTransactions extends KmTable {
 			+ "'" + TransactionView.BANK + "' AS type, "
 			+ "id "
 			+ "FROM km_bank_trns)";
-	private static final String TABLE_NAME = "kmv_transactions";
+	private static final String VIEW_NAME = "kmv_transactions";
 
 	public KmvTransactions(Context context) {
 		super(context);
@@ -60,9 +60,15 @@ public class KmvTransactions extends KmTable {
 		db.execSQL(CREATE_VIEW);
 
 	}
-    public List<String> getDetailHistory(String type, int max) {
+	public static void upgrade(SQLiteDatabase db) {
+		db.execSQL("DROP VIEW " + VIEW_NAME);
+		db.execSQL(CREATE_VIEW);
+	}
+
+
+	public List<String> getDetailHistory(String type, int max) {
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-		qb.setTables(TABLE_NAME);
+		qb.setTables(VIEW_NAME);
 
 		String[] columns = { "detail", "count(*) as cnt" };
 		String selection = "type = ?";
@@ -92,7 +98,7 @@ public class KmvTransactions extends KmTable {
 	
 	public List<TransactionView> getList(int year, int month) {
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-		qb.setTables(TABLE_NAME);
+		qb.setTables(VIEW_NAME);
 		
 		String[] columns = { "transaction_date", "detail", "expense", "type", "id" };
 		String selection = null;

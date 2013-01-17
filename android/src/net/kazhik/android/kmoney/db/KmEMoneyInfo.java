@@ -31,6 +31,10 @@ public class KmEMoneyInfo extends KmTable {
         	}
         }    	
     }
+	public static void upgrade(SQLiteDatabase db) {
+		KmTable.upgrade(db, TABLE_NAME, CREATE_TABLE);
+	}
+
     public KmEMoneyInfo(Context context) {
     	super(context);
     }
