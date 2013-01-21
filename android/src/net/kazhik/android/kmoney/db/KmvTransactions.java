@@ -10,8 +10,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 
 public class KmvTransactions extends KmTable {
+	private static final String VIEW_NAME = "kmv_transactions";
 	private static final String CREATE_VIEW =
-			"CREATE VIEW kmv_transactions AS "
+			"CREATE VIEW " + VIEW_NAME + " AS "
 			+ "SELECT "
 			+ "transaction_date,"
 			+ "detail,"
@@ -25,7 +26,7 @@ public class KmvTransactions extends KmTable {
 			+ "income - expense AS expense, "
 			+ "'" + TransactionView.EMONEY + "' AS type, "
 			+ "id "
-			+ "FROM km_emoney_trns "
+			+ "FROM " + KmEMoneyTrns.TABLE_NAME + " "
 			+ "UNION "
 			+ "SELECT "
 			+ "transaction_date,"
@@ -33,7 +34,7 @@ public class KmvTransactions extends KmTable {
 			+ "expense, "
 			+ "'" + TransactionView.CREDITCARD + "' AS type, "
 			+ "id "
-			+ "FROM km_creditcard_trns "
+			+ "FROM " + KmCreditCardTrns.TABLE_NAME + " "
 			+ "UNION "
 			+ "SELECT "
 			+ "transaction_date,"
@@ -41,7 +42,7 @@ public class KmvTransactions extends KmTable {
 			+ "income - expense AS expense, "
 			+ "'" + TransactionView.CASH + "' AS type, "
 			+ "id "
-			+ "FROM km_realmoney_trns "
+			+ "FROM " + KmCashTrns.TABLE_NAME + " " 
 			+ "UNION "
 			+ "SELECT "
 			+ "transaction_date,"
@@ -49,8 +50,7 @@ public class KmvTransactions extends KmTable {
 			+ "income - expense AS expense, "
 			+ "'" + TransactionView.BANK + "' AS type, "
 			+ "id "
-			+ "FROM km_bank_trns)";
-	private static final String VIEW_NAME = "kmv_transactions";
+			+ "FROM " + KmBankTrns.TABLE_NAME + ")";
 
 	public KmvTransactions(Context context) {
 		super(context);
@@ -103,7 +103,7 @@ public class KmvTransactions extends KmTable {
 		String[] columns = { "transaction_date", "detail", "expense", "type", "id" };
 		String selection = null;
 		String[] selectionArgs = null;
-		String sortOrder = null;
+		String sortOrder = "transaction_date, id";
 		String limit = null;
 		
 		Cursor cursor = qb.query(this.db, columns, selection, selectionArgs, null,

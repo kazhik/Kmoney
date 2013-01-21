@@ -11,8 +11,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 
 public class KmEMoneyTrns extends KmTable {
+	public static final String TABLE_NAME = "km_emoney_trns";
 	private static final String CREATE_TABLE =
-		    "CREATE TABLE km_emoney_trns (" +
+		    "CREATE TABLE " + TABLE_NAME + " (" +
 	        "id INTEGER PRIMARY KEY," +
 		    "transaction_date DATETIME," +
 	        "income REAL," +
@@ -24,7 +25,6 @@ public class KmEMoneyTrns extends KmTable {
 	        "source INTEGER," +
 	        "money_id INTEGER," +
 	        "last_update_date DATETIME)";
-	private static final String TABLE_NAME = "km_emoney_trns";
 	
     public KmEMoneyTrns(Context context) {
     	super(context);
@@ -79,6 +79,7 @@ public class KmEMoneyTrns extends KmTable {
         values.put("user_id", trn.getUserId());
         values.put("source", trn.getSource());
         values.put("money_id", trn.getEmoneyId());
+        values.put("last_update_date", this.getLastUpdateDateString());
         
         this.db.insert(TABLE_NAME, null, values);
     	
@@ -95,6 +96,7 @@ public class KmEMoneyTrns extends KmTable {
         values.put("user_id", trn.getUserId());
         values.put("source", trn.getSource());
         values.put("money_id", trn.getEmoneyId());
+        values.put("last_update_date", this.getLastUpdateDateString());
 
         this.db.update(TABLE_NAME, values, "id = " + trn.getId(), null);
     	

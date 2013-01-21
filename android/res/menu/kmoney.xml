@@ -1,9 +1,31 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
+        android:id="@+id/menu_export"
+        android:icon="@android:drawable/ic_menu_save"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/menu_export"/>
+    <item
         android:id="@+id/menu_settings"
+        android:icon="@android:drawable/ic_menu_preferences"
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/menu_settings"/>
+    <item
+        android:id="@+id/menu_master"
+        android:icon="@android:drawable/ic_menu_manage"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/menu_master">
+        
+        <menu>
+            <item android:id="@+id/master_category" android:title="@string/category"/>
+            <item android:id="@+id/master_bank" android:title="@string/bank"/>
+            <item android:id="@+id/master_creditcard" android:title="@string/creditcard"/>
+            <item android:id="@+id/master_emoney" android:title="@string/emoney"/>
+            <item android:id="@+id/master_user" android:title="@string/user"/>
+            </menu>
+    </item>
 
 </menu>

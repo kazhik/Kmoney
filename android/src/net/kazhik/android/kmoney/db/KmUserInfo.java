@@ -5,46 +5,41 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.kazhik.android.kmoney.Item;
-import net.kazhik.android.kmoney.bean.BankInfo;
+import net.kazhik.android.kmoney.bean.UserInfo;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 
-public class KmBankInfo extends KmTable {
-	public static final String TABLE_NAME = "km_bank_info";
+public class KmUserInfo extends KmTable {
+	public static final String TABLE_NAME = "km_user_info";
 	private static final String CREATE_TABLE =
 		    "CREATE TABLE "+ TABLE_NAME + "(" +
 	        "id INTEGER PRIMARY KEY," +
-	        "name TEXT," +
-	        "user_id INTEGER)";
+	        "name TEXT)";
 
-    public static void init(SQLiteDatabase db, String[] banks){
+    public static void init(SQLiteDatabase db, String[] users){
     	db.execSQL(CREATE_TABLE);
 
         ContentValues initialValues = new ContentValues();
         
-        for (int i = 0; i < banks.length; i++) {
-        	for (int j = 0; j < 2; j++) {
-                initialValues.put("name", banks[i]);
-                initialValues.put("user_id", j + 1);
-                db.insert(TABLE_NAME, null, initialValues);
-        	}
+        for (int i = 0; i < users.length; i++) {
+            initialValues.put("name", users[i]);
+            db.insert(TABLE_NAME, null, initialValues);
         }
     }
 	public static void upgrade(SQLiteDatabase db) {
 		KmTable.upgrade(db, TABLE_NAME, CREATE_TABLE);
 	}
     
-    public KmBankInfo(Context context) {
+    public KmUserInfo(Context context) {
     	super(context);
     }
-    public void insert(String name, int userId) {
+    public void insert(String name) {
         ContentValues values = new ContentValues();
         
         values.put("name", name);
-        values.put("user_id", userId);
         
         this.db.insert(TABLE_NAME, null, values);
     	
@@ -62,25 +57,20 @@ public class KmBankInfo extends KmTable {
     	
     }
     
-	public List<Item> getBankNameList(int userId) {
+	public List<Item> getUserNameList() {
 		List<Item> itemList = new ArrayList<Item>();
-		Iterator<BankInfo> it = this.getBankList(0).iterator();
+		Iterator<UserInfo> it = this.getUserList(0).iterator();
 		while (it.hasNext()) {
-			BankInfo info = it.next();
-			if (info.getUserId() == userId) {
-				itemList.add(new Item(info.getId(), info.getName()));
-			}
+			UserInfo info = it.next();
+			itemList.add(new Item(info.getId(), info.getName()));
 		}
 		return itemList;
 	}    
-	public List<BankInfo> getBankList() {
-		return this.getBankList(0);
-	}
-	public List<BankInfo> getBankList(int max) {
+	public List<UserInfo> getUserList(int max) {
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 		qb.setTables(TABLE_NAME);
 
-		String[] columns = { "id", "name", "user_id" };
+		String[] columns = { "id", "name" };
 		String selection = null;
 		String[] selectionArgs = null;
 		String sortOrder = null;
@@ -89,25 +79,24 @@ public class KmBankInfo extends KmTable {
 		Cursor cursor = qb.query(this.db, columns, selection, selectionArgs, null,
 				null, sortOrder, limit);
 		
-		List<BankInfo> bankList = new ArrayList<BankInfo>();
+		List<UserInfo> userList = new ArrayList<UserInfo>();
 		
 		if (cursor == null) {
-			return bankList;
+			return userList;
 		}
 		
 		cursor.moveToFirst();
 		while (cursor.isAfterLast() == false) {
 			int idx = 0;
-			BankInfo info = new BankInfo();
+			UserInfo info = new UserInfo();
 			info.setId(cursor.getInt(idx++));
 			info.setName(cursor.getString(idx++));
-			info.setUserId(cursor.getInt(idx++));
-			bankList.add(info);
+			userList.add(info);
 			
 			cursor.moveToNext();
 		}
 		cursor.close();
 		
-		return bankList;
+		return userList;
 	}
 }

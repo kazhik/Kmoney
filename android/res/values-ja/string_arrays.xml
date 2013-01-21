@@ -36,4 +36,9 @@
 <item>nanaco</item>
 </string-array>
 
+<string-array name="default_users">
+<item>太郎</item>
+<item>花子</item>
+</string-array>
+
 </resources>

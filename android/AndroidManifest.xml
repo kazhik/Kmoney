@@ -8,7 +8,8 @@
         android:minSdkVersion="8"
         android:targetSdkVersion="17" />
     <instrumentation android:targetPackage="net.kazhik.android.kmoney" android:label="Kmoney Unit Test" android:name="android.test.InstrumentationTestRunner"></instrumentation>
-
+<uses-permission
+    android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <application
         android:installLocation="auto"
         android:allowBackup="true"

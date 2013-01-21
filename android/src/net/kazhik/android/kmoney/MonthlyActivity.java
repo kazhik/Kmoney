@@ -16,6 +16,8 @@ import net.kazhik.android.kmoney.db.KmCreditCardTrns;
 import net.kazhik.android.kmoney.db.KmEMoneyTrns;
 import net.kazhik.android.kmoney.db.KmvTransactions;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -64,7 +66,24 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 		}
 
 	}
+	
+	private class ConfirmDeleteListener implements DialogInterface.OnClickListener {
+		private int position;
+		
+		public ConfirmDeleteListener(int position) {
+			this.position = position;
+		}
 
+		@Override
+		public void onClick(DialogInterface dialog, int which) {
+			if (which == DialogInterface.BUTTON_POSITIVE) {
+				MonthlyActivity.this.deleteTransaction(this.position);
+			}
+			
+		}
+	}
+
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -136,12 +155,15 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 	}
 
 	private void loadList() {
+		// DBからデータを読み込む
 		KmvTransactions trns = new KmvTransactions(this);
 		trns.open(true);
 		List<TransactionView> trnList = trns.getList(
 				this.currentMonth.getYear(), this.currentMonth.getMonth());
 		trns.close();
 
+		// 読み込んだデータをHashMapに保持
+		this.mapList.clear();
 		Iterator<TransactionView> it = trnList.iterator();
 		while (it.hasNext()) {
 			TransactionView tv = it.next();
@@ -160,6 +182,7 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 			this.mapList.add(map);
 		}
 
+		// 画面上のリストに表示
 		this.listAdapter = new SimpleAdapter(this,
 				this.mapList,
 				R.layout.monthly_row,
@@ -198,11 +221,24 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 	public void onCreateContextMenu(ContextMenu menu, View view,
 			ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, view, menuInfo);
+
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+		
+		HashMap<String, String> map = this.mapList.get(info.position);
+		
+		menu.setHeaderTitle(map.get("date") + " " + map.get("detail"));
 		menu.add(Menu.NONE, ContextMenuItem.DELETE.ordinal(), Menu.NONE, R.string.delete);
 	}
 	
-	private void deleteTransaction(String type, int id) {
+	public void deleteTransaction(int position) {
 		
+		// 画面上から削除
+		HashMap<String, String> removed = this.mapList.remove(position);
+		this.listAdapter.notifyDataSetChanged();
+
+		// DBから削除
+		String type = removed.get("type");
+		int id = Integer.parseInt(removed.get("id"));
 		if (type.equals(TransactionView.CASH)) {
 			KmCashTrns cashTrn = new KmCashTrns(this);
 			cashTrn.open(false);
@@ -225,16 +261,22 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 			emoneyTrn.close();
 		}
 		
+		
 	}
 
 	public boolean onContextItemSelected(MenuItem item) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 
 		if (item.getItemId() == ContextMenuItem.DELETE.ordinal()) {
-			HashMap<String, String> removed = this.mapList.remove(info.position);
-			this.listAdapter.notifyDataSetChanged();
-			
-			this.deleteTransaction(removed.get("type"), Integer.parseInt(removed.get("id")));
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			// Add the buttons
+			builder.setPositiveButton(android.R.string.ok,
+					new ConfirmDeleteListener(info.position));
+			builder.setNegativeButton(android.R.string.cancel,
+					new ConfirmDeleteListener(info.position));
+			builder.setTitle(R.string.confirm_delete);
+			AlertDialog dialog = builder.create();
+			dialog.show();
 			
 		}
 		return true;
@@ -257,5 +299,6 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 		// Toast.LENGTH_SHORT).show();
 
 	}
+
 
 }

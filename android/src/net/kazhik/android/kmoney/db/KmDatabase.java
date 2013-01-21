@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class KmDatabase {
 
     public static final String DATABASE_NAME = "kmoneys.sqlite";
-    public static final int DATABASE_VERSION = 5;
+    public static final int DATABASE_VERSION = 10;
 
     private final Context context; 
     private DatabaseHelper DBHelper;
@@ -29,7 +29,7 @@ public class KmDatabase {
 
     private static class DatabaseHelper extends SQLiteOpenHelper 
     {
-    	private Context context;
+		private Context context;
         DatabaseHelper(Context context) 
         {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -50,6 +50,9 @@ public class KmDatabase {
             
             String[] items = this.context.getResources().getStringArray(R.array.default_items);
             KmCategory.init(db, items);
+
+            String[] users = this.context.getResources().getStringArray(R.array.default_users);
+            KmUserInfo.init(db, users);
             
             KmCashTrns.init(db);
             KmBankTrns.init(db);
@@ -59,6 +62,12 @@ public class KmDatabase {
             
             
         }
+    	@Override
+		public void onDowngrade(SQLiteDatabase db, int oldVersion,
+				int newVersion) {
+//			super.onDowngrade(db, oldVersion, newVersion);
+		}
+
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) 
@@ -70,6 +79,7 @@ public class KmDatabase {
 				KmCreditCardInfo.upgrade(db);
 				KmEMoneyInfo.upgrade(db);
 				KmCategory.upgrade(db);
+				KmUserInfo.upgrade(db);
 				KmCashTrns.upgrade(db);
 				KmBankTrns.upgrade(db);
 				KmCreditCardTrns.upgrade(db);

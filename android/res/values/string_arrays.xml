@@ -35,4 +35,9 @@
 <item>nanaco</item>
 </string-array>
 
+<string-array name="default_users">
+<item>John</item>
+<item>Mary</item>
+</string-array>
+
 </resources>

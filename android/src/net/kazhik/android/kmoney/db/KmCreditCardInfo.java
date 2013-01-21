@@ -1,8 +1,10 @@
 package net.kazhik.android.kmoney.db;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import net.kazhik.android.kmoney.Item;
 import net.kazhik.android.kmoney.bean.CreditCardInfo;
 import android.content.ContentValues;
 import android.content.Context;
@@ -11,12 +13,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 
 public class KmCreditCardInfo extends KmTable {
+	public static final String TABLE_NAME = "km_creditcard_info";
 	private static final String CREATE_TABLE =
-		    "CREATE TABLE km_creditcard_info (" +
+		    "CREATE TABLE " + TABLE_NAME + " (" +
 	        "id INTEGER PRIMARY KEY," +
 	        "name TEXT," +
 	        "user_id INTEGER)";
-	private static final String TABLE_NAME = "km_creditcard_info";
 
     public KmCreditCardInfo(Context context) {
     	super(context);
@@ -37,7 +39,39 @@ public class KmCreditCardInfo extends KmTable {
 	public static void upgrade(SQLiteDatabase db) {
 		KmTable.upgrade(db, TABLE_NAME, CREATE_TABLE);
 	}
+    public void insert(String name, int userId) {
+        ContentValues values = new ContentValues();
+        
+        values.put("name", name);
+        values.put("user_id", userId);
+        
+        this.db.insert(TABLE_NAME, null, values);
+    	
+    }
+    public void update(int id, String name) {
+        ContentValues values = new ContentValues();
+        
+        values.put("name", name);
 
+        this.db.update(TABLE_NAME, values, "id = " + id, null);
+    	
+    }
+    public void delete(int id) {
+    	this.db.delete(TABLE_NAME, "id = " + id, null);
+    	
+    }
+
+	public List<Item> getCreditCardNameList(int userId) {
+		List<Item> itemList = new ArrayList<Item>();
+		Iterator<CreditCardInfo> it = this.getCreditCardList(0).iterator();
+		while (it.hasNext()) {
+			CreditCardInfo info = it.next();
+			if (info.getUser_id() == userId) {
+				itemList.add(new Item(info.getId(), info.getName()));
+			}
+		}
+		return itemList;
+	}    
 	public List<CreditCardInfo> getCreditCardList() {
 		return this.getCreditCardList(0);
 	}

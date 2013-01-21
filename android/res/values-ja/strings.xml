@@ -3,6 +3,9 @@
 
     <string name="app_name">Kmoney</string>
     <string name="menu_settings">設定</string>
+    <string name="menu_export">エクスポート</string>
+    <string name="menu_master">基本データ</string>
+    <string name="please_select">選択してください</string>
     <string name="income">収入</string>
     <string name="expense">支出</string>
     <string name="detail">詳細</string>
@@ -32,7 +35,15 @@
     <string name="bank">銀行</string>
     <string name="creditcard">クレジットカード</string>
     <string name="emoney">電子マネー</string>
+    <string name="category">費目</string>
+    <string name="user">ユーザー</string>
+    <string name="add">追加</string>
     <string name="delete">削除</string>
     <string name="sum">集計</string>
+    <string name="confirm_delete">本当に削除しますか？</string>
+    <string name="export_in_progress">データベースをエクスポートしています&#8230;</string>
+    <string name="export_done">エクスポートが完了しました</string>
+    <string name="export_failed">エクスポートが失敗しました</string>
+    <string name="detail_nothing">履歴がありません</string>
     
 </resources>

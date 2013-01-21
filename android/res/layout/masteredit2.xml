@@ -1,0 +1,66 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" android:orientation="vertical">
+
+    <LinearLayout
+        
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal" >
+
+            <TextView
+                android:id="@+id/textViewMaster"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>        
+        <EditText
+            android:id="@+id/editTextMaster"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="text" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/editTextMaster"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal" >
+
+            <TextView
+                android:id="@+id/textViewMaster2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>        
+        <EditText
+            android:id="@+id/editTextMaster2"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="text" />
+    </LinearLayout>
+
+<!-- 
+    <LinearLayout
+        android:id="@+id/buttons"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal" >
+
+        <Button
+            android:id="@+id/buttonCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@android:string/cancel" />
+
+        <Button
+            android:id="@+id/buttonOk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@android:string/ok" />
+    </LinearLayout>
+ -->
+
+</LinearLayout>

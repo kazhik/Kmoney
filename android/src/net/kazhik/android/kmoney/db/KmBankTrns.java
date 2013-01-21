@@ -23,7 +23,7 @@ public class KmBankTrns extends KmTable {
 			+ "source INTEGER,"
 			+ "bank_id INTEGER,"
 			+ "last_update_time DATETIME)";
-	private static final String TABLE_NAME = "km_bank_trns";
+	public static final String TABLE_NAME = "km_bank_trns";
 
 	public KmBankTrns(Context context) {
 		super(context);
@@ -82,6 +82,7 @@ public class KmBankTrns extends KmTable {
 		values.put("user_id", trn.getUserId());
 		values.put("source", trn.getSource());
 		values.put("bank_id", trn.getBankId());
+        values.put("last_update_date", this.getLastUpdateDateString());
 
 		this.db.insert(TABLE_NAME, null, values);
 
@@ -99,6 +100,7 @@ public class KmBankTrns extends KmTable {
 		values.put("user_id", trn.getUserId());
 		values.put("source", trn.getSource());
 		values.put("bank_id", trn.getBankId());
+        values.put("last_update_date", this.getLastUpdateDateString());
 
 		this.db.update(TABLE_NAME, values, "id = " + trn.getId(), null);
 

@@ -1,9 +1,15 @@
 package net.kazhik.android.kmoney.bean;
 
-public class BankInfo {
+public class UserInfo {
 	private int id;
 	private String name;
-	private int userId;
+	
+	public UserInfo() {
+	
+	}
+	public UserInfo(String name) {
+		this.name = name;
+	}
 	public int getId() {
 		return id;
 	}
@@ -15,12 +21,6 @@ public class BankInfo {
 	}
 	public void setName(String name) {
 		this.name = name;
-	}
-	public int getUserId() {
-		return userId;
-	}
-	public void setUserId(int user_id) {
-		this.userId = user_id;
 	}
 
 }

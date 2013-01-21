@@ -11,25 +11,22 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import net.kazhik.android.kmoney.bean.BankInfo;
 import net.kazhik.android.kmoney.bean.BankTransaction;
 import net.kazhik.android.kmoney.bean.CashTransaction;
-import net.kazhik.android.kmoney.bean.CreditCardInfo;
-import net.kazhik.android.kmoney.bean.CreditCardTransaction;
-import net.kazhik.android.kmoney.bean.EMoneyInfo;
-import net.kazhik.android.kmoney.bean.EMoneyTransaction;
 import net.kazhik.android.kmoney.bean.Category;
+import net.kazhik.android.kmoney.bean.CreditCardTransaction;
+import net.kazhik.android.kmoney.bean.EMoneyTransaction;
 import net.kazhik.android.kmoney.bean.Transaction;
 import net.kazhik.android.kmoney.bean.TransactionView;
 import net.kazhik.android.kmoney.db.KmBankInfo;
 import net.kazhik.android.kmoney.db.KmBankTrns;
 import net.kazhik.android.kmoney.db.KmCashTrns;
+import net.kazhik.android.kmoney.db.KmCategory;
 import net.kazhik.android.kmoney.db.KmCreditCardInfo;
 import net.kazhik.android.kmoney.db.KmCreditCardTrns;
 import net.kazhik.android.kmoney.db.KmDatabase;
 import net.kazhik.android.kmoney.db.KmEMoneyInfo;
 import net.kazhik.android.kmoney.db.KmEMoneyTrns;
-import net.kazhik.android.kmoney.db.KmCategory;
 import net.kazhik.android.kmoney.db.KmvTransactions;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -39,6 +36,7 @@ import android.database.SQLException;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -49,6 +47,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 public class KmoneyActivity extends FragmentActivity {
@@ -332,10 +331,10 @@ public class KmoneyActivity extends FragmentActivity {
 		ToggleButton tglButton = (ToggleButton)findViewById(R.id.toggleButtonIncomeExpense);
 		if (trn.getIncome().compareTo(new BigDecimal("0")) != 0) {
 			tglButton.setChecked(true);
-			tv.setText(trn.getIncome().toPlainString());
+			tv.setText(Money.toString(trn.getIncome()));
 		} else {
 			tglButton.setChecked(false);
-			tv.setText(trn.getExpense().toPlainString());
+			tv.setText(Money.toString(trn.getExpense()));
 		}
 		Spinner spinner = (Spinner)findViewById(R.id.spinnerItem);
 		int pos = this.getSpinnerPosition(spinner, trn.getCategoryId());
@@ -533,49 +532,25 @@ public class KmoneyActivity extends FragmentActivity {
 	private List<Item> getBankList() {
 		KmBankInfo bankInfo = new KmBankInfo(this);
 		bankInfo.open(true);
-		List<BankInfo> bankList = bankInfo.getBankList();
+		List<Item> itemList = bankInfo.getBankNameList(this.userId);
 		bankInfo.close();
 		
-		List<Item> itemList = new ArrayList<Item>();
-		Iterator<BankInfo> it = bankList.iterator();
-		while (it.hasNext()) {
-			BankInfo info = it.next();
-			if (info.getUser_id() == this.userId) {
-				itemList.add(new Item(info.getId(), info.getName()));
-			}
-		}
 		return itemList;
 	}
 	private List<Item> getCreditCardList() {
 		KmCreditCardInfo cardInfo = new KmCreditCardInfo(this);
 		cardInfo.open(true);
-		List<CreditCardInfo> cardList = cardInfo.getCreditCardList();
+		List<Item> itemList = cardInfo.getCreditCardNameList(this.userId);
 		cardInfo.close();
 		
-		List<Item> itemList = new ArrayList<Item>();
-		Iterator<CreditCardInfo> it = cardList.iterator();
-		while (it.hasNext()) {
-			CreditCardInfo info = it.next();
-			if (info.getUser_id() == this.userId) {
-				itemList.add(new Item(info.getId(), info.getName()));
-			}
-		}
 		return itemList;
 	}
 	private List<Item> getEMoneyList() {
 		KmEMoneyInfo emoneyInfo = new KmEMoneyInfo(this);
 		emoneyInfo.open(true);
-		List<EMoneyInfo> emoneyList = emoneyInfo.getEMoneyList();
+		List<Item> itemList = emoneyInfo.getEMoneyNameList(this.userId);
 		emoneyInfo.close();
 		
-		List<Item> itemList = new ArrayList<Item>();
-		Iterator<EMoneyInfo> it = emoneyList.iterator();
-		while (it.hasNext()) {
-			EMoneyInfo info = it.next();
-			if (info.getUser_id() == this.userId) {
-				itemList.add(new Item(info.getId(), info.getName()));
-			}
-		}
 		return itemList;
 	}
 	private void initTransactionTypeDetal() {
@@ -879,11 +854,44 @@ public class KmoneyActivity extends FragmentActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.kmoney, menu);
 		return true;
 	}
-
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		MasterData masterData = null;
+		switch (item.getItemId()) {
+		case R.id.menu_export:
+			ExportDatabaseTask exportDb = new ExportDatabaseTask(this);
+			exportDb.execute(this.getDatabasePath(KmDatabase.DATABASE_NAME).toString());
+			break;
+		case R.id.menu_settings:
+			break;
+		case R.id.master_category:
+			masterData = new MasterData(this, MasterData.Type.CATEGORY, this.userId);
+			masterData.showDialog();
+			break;
+		case R.id.master_bank:
+			masterData = new MasterData(this, MasterData.Type.BANK, this.userId);
+			masterData.showDialog();
+			break;
+		case R.id.master_creditcard:
+			masterData = new MasterData(this, MasterData.Type.CREDITCARD, this.userId);
+			masterData.showDialog();
+			break;
+		case R.id.master_emoney:
+			masterData = new MasterData(this, MasterData.Type.EMONEY, this.userId);
+			masterData.showDialog();
+			break;
+		case R.id.master_user:
+			masterData = new MasterData(this, MasterData.Type.USER, this.userId);
+			masterData.showDialog();
+			break;
+		default:
+			break;
+		}
+		return true;
+	}
 	private void showDetailHistoryDialog() {
 		String type;
 		if (this.transactionType == TransactionType.CASH) {
@@ -904,10 +912,15 @@ public class KmoneyActivity extends FragmentActivity {
 		List<String> detailList = trans.getDetailHistory(type, 10);
 		trans.close();
 		
+		if (detailList.isEmpty()) {
+			Toast.makeText(this, R.string.detail_nothing, Toast.LENGTH_SHORT).show();
+			return;
+		}
+		
 		CharSequence[] details = detailList.toArray(new CharSequence[detailList.size()]);
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//		builder.setTitle("Make your selection");
+		builder.setTitle(R.string.please_select);
 		builder.setItems(details, new HistoryClickListener());
 		AlertDialog alert = builder.create();
 		alert.show();

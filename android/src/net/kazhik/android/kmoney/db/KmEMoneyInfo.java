@@ -1,8 +1,10 @@
 package net.kazhik.android.kmoney.db;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import net.kazhik.android.kmoney.Item;
 import net.kazhik.android.kmoney.bean.EMoneyInfo;
 import android.content.ContentValues;
 import android.content.Context;
@@ -11,12 +13,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 
 public class KmEMoneyInfo extends KmTable {
+	public static final String TABLE_NAME = "km_emoney_info";
 	private static final String CREATE_TABLE =
-		    "CREATE TABLE km_emoney_info (" +
+		    "CREATE TABLE " + TABLE_NAME + " (" +
 	        "id INTEGER PRIMARY KEY," +
 	        "name TEXT," +
 	        "user_id INTEGER)";
-	private static final String TABLE_NAME = "km_emoney_info";
 
     public static void init(SQLiteDatabase db, String[] emoneys){
     	db.execSQL(CREATE_TABLE);
@@ -24,6 +26,7 @@ public class KmEMoneyInfo extends KmTable {
         ContentValues initialValues = new ContentValues();
         
         for (int i = 0; i < emoneys.length; i++) {
+        	// 初期ユーザー二人にそれぞれ同じカードのデータを作る
         	for (int j = 0; j < 2; j++) {
                 initialValues.put("name", emoneys[i]);
                 initialValues.put("user_id", j + 1);
@@ -38,7 +41,41 @@ public class KmEMoneyInfo extends KmTable {
     public KmEMoneyInfo(Context context) {
     	super(context);
     }
-	public List<EMoneyInfo> getEMoneyList() {
+    public void insert(String name, int userId) {
+        ContentValues values = new ContentValues();
+        
+        values.put("name", name);
+        values.put("user_id", userId);
+        
+        this.db.insert(TABLE_NAME, null, values);
+    	
+    }
+    public void update(int id, String name) {
+        ContentValues values = new ContentValues();
+        
+        values.put("name", name);
+
+        this.db.update(TABLE_NAME, values, "id = " + id, null);
+    	
+    }
+    public void delete(int id) {
+    	this.db.delete(TABLE_NAME, "id = " + id, null);
+    	
+    }
+
+    public List<Item> getEMoneyNameList(int userId) {
+		List<Item> itemList = new ArrayList<Item>();
+		Iterator<EMoneyInfo> it = this.getEMoneyList(0).iterator();
+		while (it.hasNext()) {
+			EMoneyInfo info = it.next();
+			if (info.getUser_id() == userId) {
+				itemList.add(new Item(info.getId(), info.getName()));
+			}
+		}
+		return itemList;
+	}    
+
+    public List<EMoneyInfo> getEMoneyList() {
 		return this.getEMoneyList(0);
 	}
 	public List<EMoneyInfo> getEMoneyList(int max) {

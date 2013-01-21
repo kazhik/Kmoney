@@ -1,11 +1,13 @@
 package net.kazhik.android.kmoney.db;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import net.kazhik.android.kmoney.StringUtils;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -36,6 +38,8 @@ public abstract class KmTable {
 		this.dbHelper.close();
 	}
 	public static void upgrade(SQLiteDatabase db, String tableName, String createSql) {
+		String sql = createSql.replace("CREATE TABLE", "CREATE TABLE IF NOT EXISTS");
+		db.execSQL(sql);
 		String tmpTable = "temp_" + tableName;
 		List<String> colList = KmTable.getColumns(db, tableName);
 		db.execSQL("ALTER TABLE " + tableName + " RENAME TO " + tmpTable);
@@ -44,7 +48,7 @@ public abstract class KmTable {
 		colList.retainAll(KmTable.getColumns(db, tableName));
 		
 		String cols = StringUtils.join(colList, ",");
-		String sql = String.format("INSERT INTO %s (%s) SELECT %s FROM %s",
+		sql = String.format("INSERT INTO %s (%s) SELECT %s FROM %s",
 				tableName, cols, cols, tmpTable);
 		db.execSQL(sql); 
 		
@@ -69,4 +73,11 @@ public abstract class KmTable {
 	    }
 	    return ar;
 	}
+	
+	public String getLastUpdateDateString() {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()); 
+		return dateFormat.format(new Date());
+		
+	}
+	
 }
