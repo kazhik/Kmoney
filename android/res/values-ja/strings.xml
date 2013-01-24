@@ -4,6 +4,8 @@
     <string name="app_name">Kmoney</string>
     <string name="menu_settings">設定</string>
     <string name="menu_export">エクスポート</string>
+    <string name="menu_export_sdcard">SDカード</string>
+    <string name="menu_export_dropbox">Dropbox</string>
     <string name="menu_master">基本データ</string>
     <string name="please_select">選択してください</string>
     <string name="income">収入</string>

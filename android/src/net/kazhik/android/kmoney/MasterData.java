@@ -160,6 +160,7 @@ public class MasterData implements OnClickListener {
 			titleResId = R.string.user;
 		} else {
 			return;
+
 		}
 		// 読み込んだデータをHashMapに保持
 		Iterator<Item> it = this.itemList.iterator();

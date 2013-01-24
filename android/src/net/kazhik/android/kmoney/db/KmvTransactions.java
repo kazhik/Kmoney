@@ -69,6 +69,7 @@ public class KmvTransactions extends KmTable {
 	public List<String> getDetailHistory(String type, int max) {
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 		qb.setTables(VIEW_NAME);
+		
 
 		String[] columns = { "detail", "count(*) as cnt" };
 		String selection = "type = ?";
@@ -101,8 +102,10 @@ public class KmvTransactions extends KmTable {
 		qb.setTables(VIEW_NAME);
 		
 		String[] columns = { "transaction_date", "detail", "expense", "type", "id" };
-		String selection = null;
-		String[] selectionArgs = null;
+
+		String selection =  "strftime('%Y%m', transaction_date) = ?";
+		String[] selectionArgs = {String.format("%04d%02d", year, month)};
+		
 		String sortOrder = "transaction_date, id";
 		String limit = null;
 		

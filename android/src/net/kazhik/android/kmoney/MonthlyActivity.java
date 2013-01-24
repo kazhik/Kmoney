@@ -93,7 +93,7 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 		this.initMonthButton();
 		this.initMonthText();
 
-		this.loadList();
+		this.loadList(this.currentMonth.getYear(), this.currentMonth.getMonth());
 
 		ListView lv = (ListView) findViewById(R.id.listViewMonthly);
 		lv.setOnItemClickListener(this);
@@ -154,12 +154,11 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 				sdfMonthName.format(cal.getTime()));
 	}
 
-	private void loadList() {
+	private void loadList(int year, int month) {
 		// DBからデータを読み込む
 		KmvTransactions trns = new KmvTransactions(this);
 		trns.open(true);
-		List<TransactionView> trnList = trns.getList(
-				this.currentMonth.getYear(), this.currentMonth.getMonth());
+		List<TransactionView> trnList = trns.getList(year, month + 1);
 		trns.close();
 
 		// 読み込んだデータをHashMapに保持
@@ -213,9 +212,13 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 		} else {
 			this.currentMonth.shiftMonth(1);
 		}
+		int year = this.currentMonth.getYear();
+		int month = this.currentMonth.getMonth();
 
 		TextView tv = (TextView) findViewById(R.id.textViewDate);
-		tv.setText(this.formatMonth(this.currentMonth.getYear(), this.currentMonth.getMonth()));
+		tv.setText(this.formatMonth(year, month));
+		
+		this.loadList(year, month);
 	}
 
 	public void onCreateContextMenu(ContextMenu menu, View view,

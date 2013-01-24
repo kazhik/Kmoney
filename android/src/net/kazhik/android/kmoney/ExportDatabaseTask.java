@@ -48,7 +48,6 @@ public class ExportDatabaseTask extends AsyncTask<String, Void, Boolean> {
 			return false;
 		}
 	}
-
 	// can use UI thread here
 	protected void onPostExecute(final Boolean success) {
 		if (this.dialog.isShowing()) {

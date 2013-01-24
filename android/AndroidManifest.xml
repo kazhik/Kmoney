@@ -2,25 +2,40 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.kazhik.android.kmoney"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0" xmlns:tools="http://schemas.android.com/tools">
 
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="17" />
-    <instrumentation android:targetPackage="net.kazhik.android.kmoney" android:label="Kmoney Unit Test" android:name="android.test.InstrumentationTestRunner"></instrumentation>
-<uses-permission
-    android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <instrumentation
+        android:name="android.test.InstrumentationTestRunner"
+        android:label="Kmoney Unit Test"
+        android:targetPackage="net.kazhik.android.kmoney" >
+    </instrumentation>
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
-        android:installLocation="auto"
         android:allowBackup="true"
-        android:theme="@android:style/Theme.NoTitleBar"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name">
+        android:installLocation="auto"
+        android:label="@string/app_name"
+        android:theme="@android:style/Theme.NoTitleBar" >
         <activity
             android:name="net.kazhik.android.kmoney.KmoneyActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name" tools:ignore="ExportedActivity">
             <intent-filter>
+
+                <!-- Change this to be db- followed by your app key -->
+                <data android:scheme="db-kuyk8nn6g6osz3s" />
+
+                <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />
+                
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -29,7 +44,8 @@
             android:name="net.kazhik.android.kmoney.MonthlyActivity"
             android:label="@string/app_name" >
         </activity>
-        <uses-library android:name="android.test.runner"/>
+
+        <uses-library android:name="android.test.runner" />
     </application>
 
 </manifest>

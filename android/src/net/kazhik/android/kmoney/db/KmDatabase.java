@@ -39,19 +39,23 @@ public class KmDatabase {
         @Override
         public void onCreate(SQLiteDatabase db) 
         {
-            String[] banks = this.context.getResources().getStringArray(R.array.default_banks);
+            String[] categories = this.context.getResources().getStringArray(
+            		R.array.default_categories);
+            KmCategory.init(db, categories);
+            String[] banks = this.context.getResources().getStringArray(
+            		R.array.default_banks);
             KmBankInfo.init(db, banks);
             
-            String[] cards = this.context.getResources().getStringArray(R.array.default_creditcards);
+            String[] cards = this.context.getResources().getStringArray(
+            		R.array.default_creditcards);
             KmCreditCardInfo.init(db, cards);
             
-            String[] emoneys = this.context.getResources().getStringArray(R.array.default_emoneys);
+            String[] emoneys = this.context.getResources().getStringArray(
+            		R.array.default_emoneys);
             KmEMoneyInfo.init(db, emoneys);
-            
-            String[] items = this.context.getResources().getStringArray(R.array.default_items);
-            KmCategory.init(db, items);
 
-            String[] users = this.context.getResources().getStringArray(R.array.default_users);
+            String[] users = this.context.getResources().getStringArray(
+            		R.array.default_users);
             KmUserInfo.init(db, users);
             
             KmCashTrns.init(db);

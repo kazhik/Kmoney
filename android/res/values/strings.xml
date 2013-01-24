@@ -4,6 +4,8 @@
     <string name="app_name">Kmoney</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_export">Export</string>
+    <string name="menu_export_sdcard">SD Card</string>
+    <string name="menu_export_dropbox">Dropbox</string>
     <string name="menu_master">Master Data</string>
     <string name="please_select">Please select</string>
     <string name="income">Income</string>

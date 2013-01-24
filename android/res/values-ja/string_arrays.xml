@@ -2,7 +2,7 @@
 <resources>
 
 
-<string-array name="default_items">
+<string-array name="default_categories">
 <item>食材・生活用品</item>
 <item>外食</item>
 <item>交通費</item>

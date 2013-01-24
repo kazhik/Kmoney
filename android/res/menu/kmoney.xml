@@ -5,7 +5,15 @@
         android:icon="@android:drawable/ic_menu_save"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="@string/menu_export"/>
+        android:title="@string/menu_export">
+        
+        <menu>
+            <item android:id="@+id/menu_export_sdcard"
+                 android:title="@string/menu_export_sdcard"/>
+            <item android:id="@+id/menu_export_dropbox"
+                 android:title="@string/menu_export_dropbox"/>
+            </menu>
+    </item>
     <item
         android:id="@+id/menu_settings"
         android:icon="@android:drawable/ic_menu_preferences"
@@ -25,7 +33,7 @@
             <item android:id="@+id/master_creditcard" android:title="@string/creditcard"/>
             <item android:id="@+id/master_emoney" android:title="@string/emoney"/>
             <item android:id="@+id/master_user" android:title="@string/user"/>
-            </menu>
+        </menu>
     </item>
 
 </menu>
