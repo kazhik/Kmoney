@@ -1,16 +1,18 @@
 package net.kazhik.android.kmoney.db;
 
+import net.kazhik.android.kmoney.Constants;
 import net.kazhik.android.kmoney.R;
 import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 
 public class KmDatabase {
 
     public static final String DATABASE_NAME = "kmoneys.sqlite";
-    public static final int DATABASE_VERSION = 10;
+    public static final int DATABASE_VERSION = 11;
 
     private final Context context; 
     private DatabaseHelper DBHelper;
@@ -91,8 +93,7 @@ public class KmDatabase {
 				KmvTransactions.upgrade(db);
 	        	db.setTransactionSuccessful();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Log.e(Constants.APPNAME, e.getMessage(), e);
 			} finally {
 				db.endTransaction();
 			}

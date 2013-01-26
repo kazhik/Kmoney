@@ -151,9 +151,28 @@ public class KmoneyActivity extends FragmentActivity {
 				tv.setText(newVal);
 				tv.resizeText();
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Log.e(Constants.APPNAME, e.getMessage(), e);
 			}
+
+		}
+
+	}
+	private class DecimalMarkClickListener implements View.OnClickListener {
+		@Override
+		public void onClick(View v) {
+			if (Money.getDefaultFractionDigits() == 0) {
+				return;
+			}
+			
+			AutoResizeTextView tv = (AutoResizeTextView) findViewById(R.id.textViewAmount);
+			String currentStr = tv.getText().toString();
+			
+			char decimalMark = Money.getSeparator();
+			if (currentStr.indexOf(decimalMark) != -1) {
+				return;
+			}
+			tv.setText(currentStr + decimalMark);
+			tv.resizeText();
 
 		}
 
@@ -162,8 +181,7 @@ public class KmoneyActivity extends FragmentActivity {
 	private class ClearButtonClickListener implements View.OnClickListener {
 		@Override
 		public void onClick(View v) {
-			TextView tv = (TextView) findViewById(R.id.textViewAmount);
-			tv.setText("");
+			KmoneyActivity.this.initAmount();
 
 		}
 	}
@@ -177,10 +195,13 @@ public class KmoneyActivity extends FragmentActivity {
 				try {
 					str = Money.backspace(str.toString());
 				} catch (ParseException e) {
-					// TODO
-					e.printStackTrace();
+					Log.e(Constants.APPNAME, e.getMessage(), e);
 				}
-				tv.setText(str);
+				if (str.length() == 0) {
+					KmoneyActivity.this.initAmount();
+				} else {
+					tv.setText(str);
+				}
 			}
 
 		}
@@ -297,6 +318,8 @@ public class KmoneyActivity extends FragmentActivity {
 		this.initCategoryList();
 		this.initTypeList();
 		this.initNumberButton();
+		this.initDecimalMarkButton();
+		this.initAmount();
 		this.initClearButton();
 		this.initBackspaceButton();
 		this.initDateText();
@@ -470,10 +493,13 @@ public class KmoneyActivity extends FragmentActivity {
 			db.open();
 			db.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e(Constants.APPNAME, e.getMessage(), e);
 		}
 
+	}
+	private void initAmount() {
+		AutoResizeTextView tv = (AutoResizeTextView) findViewById(R.id.textViewAmount);
+		tv.setText(Money.toString(new BigDecimal(0)));
 	}
 
 	private void initDateText() {
@@ -520,6 +546,10 @@ public class KmoneyActivity extends FragmentActivity {
 			Button btn = (Button) findViewById(idArray[i]);
 			btn.setOnClickListener(new NumberClickListener(i));
 		}
+	}
+	private void initDecimalMarkButton() {
+		Button btn = (Button) findViewById(R.id.buttonDecimalMark);
+		btn.setOnClickListener(new DecimalMarkClickListener());
 	}
 
 	private void initPhotoButton() {

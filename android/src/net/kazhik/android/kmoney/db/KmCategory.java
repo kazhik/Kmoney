@@ -70,15 +70,20 @@ public class KmCategory extends KmTable {
     
     public List<Category> getCategoryList(int max) {
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-		qb.setTables(TABLE_NAME);
 
-		String[] columns = { "id", "name" };
+		StringBuffer strBuff = new StringBuffer(TABLE_NAME + " A");
+		strBuff.append(" left join kmv_transactions B");
+		strBuff.append(" on (A.id = B.category_id)");
+		qb.setTables(strBuff.toString());
+
+		String[] columns = { "A.id", "A.name", "count(B.id) as cnt" };
 		String selection = null;
 		String[] selectionArgs = null;
-		String sortOrder = null;
+		String groupBy = "A.id";
+		String sortOrder = "cnt desc";
 		String limit = (max == 0)? null: Integer.toString(max);
 		
-		Cursor cursor = qb.query(this.db, columns, selection, selectionArgs, null,
+		Cursor cursor = qb.query(this.db, columns, selection, selectionArgs, groupBy,
 				null, sortOrder, limit);
 		
 		List<Category> categoryList = new ArrayList<Category>();

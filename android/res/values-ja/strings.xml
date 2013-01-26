@@ -1,29 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Kmoney</string>
     <string name="menu_settings">設定</string>
     <string name="menu_export">エクスポート</string>
     <string name="menu_export_sdcard">SDカード</string>
-    <string name="menu_export_dropbox">Dropbox</string>
     <string name="menu_master">基本データ</string>
     <string name="please_select">選択してください</string>
     <string name="income">収入</string>
     <string name="expense">支出</string>
     <string name="detail">詳細</string>
     <string name="history">履歴</string>
-    <string name="zero">0</string>
-    <string name="one">1</string>
-    <string name="two">2</string>
-    <string name="three">3</string>
-    <string name="four">4</string>
-    <string name="five">5</string>
-    <string name="six">6</string>
-    <string name="seven">7</string>
-    <string name="eight">8</string>
-    <string name="nine">9</string>
-    <string name="clear">C</string>
-    <string name="backspace">BS</string>
     <string name="date_format">%1$d年%2$d月%3$d日(%4$s)</string>
     <string name="day_format">%1$d月%2$d日(%3$s)</string>
     <string name="month_format">%1$d年%2$d月</string>

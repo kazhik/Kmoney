@@ -298,12 +298,12 @@
                 android:textAppearance="?android:attr/textAppearanceLargeInverse" />
 
             <Button
-                android:id="@+id/buttonPoint"
+                android:id="@+id/buttonDecimalMark"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:minHeight="60dp"
-                android:text="."
+                android:text="@string/decimal_mark"
                 android:textAppearance="?android:attr/textAppearanceLargeInverse" />
             <Button
                 android:id="@+id/buttonBlank3"
