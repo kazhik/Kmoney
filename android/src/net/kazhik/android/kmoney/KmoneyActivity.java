@@ -149,6 +149,14 @@ public class KmoneyActivity extends FragmentActivity {
 		}
 
 	}
+	private class DoubleZeroClickListener implements View.OnClickListener {
+		@Override
+		public void onClick(View v) {
+			KmoneyActivity.this.addNumber(0);
+			KmoneyActivity.this.addNumber(0);
+		}
+
+	}
 	private class DecimalMarkClickListener implements View.OnClickListener {
 		@Override
 		public void onClick(View v) {
@@ -288,11 +296,8 @@ public class KmoneyActivity extends FragmentActivity {
 
 		this.initCategoryList();
 		this.initTypeList();
-		this.initAmount();
-		this.initNumberButton();
-		this.initDecimalMarkButton();
+		this.initAmountInput();
 		this.initClearButton();
-		this.initBackspaceButton();
 		this.initDateText();
 		this.initDateButton();
 		this.initOkButton();
@@ -470,12 +475,6 @@ public class KmoneyActivity extends FragmentActivity {
 		}
 
 	}
-	private void initAmount() {
-		this.amount = new Money();
-		AutoResizeTextView tv = (AutoResizeTextView) findViewById(R.id.textViewAmount);
-		tv.setText(this.amount.setValue("0"));
-	}
-
 	private void initDateText() {
 		// 本日の日付をセット
 		this.currentDay = Calendar.getInstance();
@@ -506,26 +505,35 @@ public class KmoneyActivity extends FragmentActivity {
 
 	}
 
-	private void initBackspaceButton() {
-		Button btn = (Button) findViewById(R.id.buttonBackSpace);
-		btn.setOnClickListener(new BackspaceButtonClickListener());
-
+	private void initAmount() {
+		AutoResizeTextView tv = (AutoResizeTextView) findViewById(R.id.textViewAmount);
+		tv.setText(this.amount.setValue("0"));
 	}
 
-	private void initNumberButton() {
+	private void initAmountInput() {
+		this.amount = new Money();
+		AutoResizeTextView tv = (AutoResizeTextView) findViewById(R.id.textViewAmount);
+		tv.setText(this.amount.setValue("0"));
+
 		int idArray[] = { R.id.button0, R.id.button1, R.id.button2,
 				R.id.button3, R.id.button4, R.id.button5, R.id.button6,
 				R.id.button7, R.id.button8, R.id.button9 };
 		for (int i = 0; i < 10; i++) {
-			Button btn = (Button) findViewById(idArray[i]);
-			btn.setOnClickListener(new NumberClickListener(i));
+			Button btnNum = (Button) findViewById(idArray[i]);
+			btnNum.setOnClickListener(new NumberClickListener(i));
 		}
-	}
-	private void initDecimalMarkButton() {
-		Button btn = (Button) findViewById(R.id.buttonDecimalMark);
-		btn.setOnClickListener(new DecimalMarkClickListener());
-		
-		btn.setText(Character.toString(this.amount.getDecimalMark()));
+		Button btnMark = (Button) findViewById(R.id.buttonDecimalMark);
+		if (this.amount.getFractionDigits() == 0) {
+			btnMark.setOnClickListener(new DoubleZeroClickListener());
+			btnMark.setText(getResources().getString(R.string.doublezero));
+		} else {
+			btnMark.setOnClickListener(new DecimalMarkClickListener());
+			btnMark.setText(Character.toString(this.amount.getDecimalMark()));
+		}
+
+		Button btnBs = (Button) findViewById(R.id.buttonBackSpace);
+		btnBs.setOnClickListener(new BackspaceButtonClickListener());
+	
 	}
 
 	private void initPhotoButton() {
@@ -671,7 +679,7 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 	private void addNumber(int number) {
 		try {
-			String str = this.amount.addChar(Character.forDigit(number,  10));
+			String str = this.amount.addChar(Character.forDigit(number, 10));
 			AutoResizeTextView tv = (AutoResizeTextView) findViewById(R.id.textViewAmount);
 			tv.setText(str);
 			tv.resizeText();
