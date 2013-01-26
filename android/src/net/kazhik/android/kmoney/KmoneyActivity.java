@@ -67,6 +67,7 @@ public class KmoneyActivity extends FragmentActivity {
 	private int userId;
 	private int transactionType;
 	private Map<String, List<Item>> transactionTypeDetail;
+	private Money amount;
 
 	private int updateType;
 	private int updateId;
@@ -143,16 +144,7 @@ public class KmoneyActivity extends FragmentActivity {
 
 		@Override
 		public void onClick(View v) {
-			AutoResizeTextView tv = (AutoResizeTextView) findViewById(R.id.textViewAmount);
-			String newVal;
-			try {
-				newVal = Money.add(tv.getText().toString(),
-						Integer.toString(this.number));
-				tv.setText(newVal);
-				tv.resizeText();
-			} catch (ParseException e) {
-				Log.e(Constants.APPNAME, e.getMessage(), e);
-			}
+			KmoneyActivity.this.addNumber(this.number);
 
 		}
 
@@ -160,24 +152,11 @@ public class KmoneyActivity extends FragmentActivity {
 	private class DecimalMarkClickListener implements View.OnClickListener {
 		@Override
 		public void onClick(View v) {
-			if (Money.getDefaultFractionDigits() == 0) {
-				return;
-			}
-			
-			AutoResizeTextView tv = (AutoResizeTextView) findViewById(R.id.textViewAmount);
-			String currentStr = tv.getText().toString();
-			
-			char decimalMark = Money.getSeparator();
-			if (currentStr.indexOf(decimalMark) != -1) {
-				return;
-			}
-			tv.setText(currentStr + decimalMark);
-			tv.resizeText();
+			KmoneyActivity.this.addDecimalMark();
 
 		}
 
 	}
-
 	private class ClearButtonClickListener implements View.OnClickListener {
 		@Override
 		public void onClick(View v) {
@@ -189,22 +168,14 @@ public class KmoneyActivity extends FragmentActivity {
 	private class BackspaceButtonClickListener implements View.OnClickListener {
 		@Override
 		public void onClick(View v) {
-			TextView tv = (TextView) findViewById(R.id.textViewAmount);
-			CharSequence str = tv.getText();
-			if (str.length() > 0) {
-				try {
-					str = Money.backspace(str.toString());
-				} catch (ParseException e) {
-					Log.e(Constants.APPNAME, e.getMessage(), e);
-				}
-				if (str.length() == 0) {
-					KmoneyActivity.this.initAmount();
-				} else {
-					tv.setText(str);
-				}
-			}
-
+			KmoneyActivity.this.backspace();
 		}
+	}
+	private void backspace() {
+		String str = this.amount.backspace();
+		TextView tv = (TextView) findViewById(R.id.textViewAmount);
+		tv.setText(str);
+		
 	}
 
 	private class PhotoButtonClickListener implements View.OnClickListener {
@@ -317,9 +288,9 @@ public class KmoneyActivity extends FragmentActivity {
 
 		this.initCategoryList();
 		this.initTypeList();
+		this.initAmount();
 		this.initNumberButton();
 		this.initDecimalMarkButton();
-		this.initAmount();
 		this.initClearButton();
 		this.initBackspaceButton();
 		this.initDateText();
@@ -380,13 +351,15 @@ public class KmoneyActivity extends FragmentActivity {
 
 		TextView tv = (TextView) findViewById(R.id.textViewAmount);
 		ToggleButton tglButton = (ToggleButton) findViewById(R.id.toggleButtonIncomeExpense);
+		String str;
 		if (trn.getIncome().compareTo(new BigDecimal("0")) != 0) {
 			tglButton.setChecked(true);
-			tv.setText(Money.toString(trn.getIncome()));
+			str = this.amount.setValue(trn.getIncome().toPlainString());
 		} else {
 			tglButton.setChecked(false);
-			tv.setText(Money.toString(trn.getExpense()));
+			str = this.amount.setValue(trn.getExpense().toPlainString());
 		}
+		tv.setText(str);
 		Spinner spinner = (Spinner) findViewById(R.id.spinnerItem);
 		int pos = this.getSpinnerPosition(spinner, trn.getCategoryId());
 		spinner.setSelection(pos);
@@ -498,8 +471,9 @@ public class KmoneyActivity extends FragmentActivity {
 
 	}
 	private void initAmount() {
+		this.amount = new Money();
 		AutoResizeTextView tv = (AutoResizeTextView) findViewById(R.id.textViewAmount);
-		tv.setText(Money.toString(new BigDecimal(0)));
+		tv.setText(this.amount.setValue("0"));
 	}
 
 	private void initDateText() {
@@ -550,6 +524,8 @@ public class KmoneyActivity extends FragmentActivity {
 	private void initDecimalMarkButton() {
 		Button btn = (Button) findViewById(R.id.buttonDecimalMark);
 		btn.setOnClickListener(new DecimalMarkClickListener());
+		
+		btn.setText(Character.toString(this.amount.getDecimalMark()));
 	}
 
 	private void initPhotoButton() {
@@ -693,6 +669,33 @@ public class KmoneyActivity extends FragmentActivity {
 		spinner.setAdapter(adapter);
 
 	}
+	private void addNumber(int number) {
+		try {
+			String str = this.amount.addChar(Character.forDigit(number,  10));
+			AutoResizeTextView tv = (AutoResizeTextView) findViewById(R.id.textViewAmount);
+			tv.setText(str);
+			tv.resizeText();
+		} catch (ParseException e) {
+			Log.e(Constants.APPNAME, e.getMessage(), e);
+		}
+		
+	}
+	private void addDecimalMark() {
+		if (this.amount.getFractionDigits() == 0) {
+			return;
+		}
+		try {
+			String str = this.amount.addDecimalMark();
+			AutoResizeTextView tv =
+					(AutoResizeTextView) findViewById(R.id.textViewAmount);
+			tv.setText(str);
+			tv.resizeText();
+		} catch (ParseException e) {
+			Log.e(Constants.APPNAME, e.getMessage());
+		}
+		
+		
+	}
 
 	private void changeDay(String direction) {
 		if (direction.equals("prev")) {
@@ -789,11 +792,11 @@ public class KmoneyActivity extends FragmentActivity {
 		TextView tv = (TextView) findViewById(R.id.textViewAmount);
 		// トグルボタンON(checked)なら収入、OFFなら支出
 		if (tglButton.isChecked()) {
-			tran.setIncome(Money.toBigDecimal(tv.getText().toString()));
+			tran.setIncome(this.amount.getValue());
 			tran.setExpense(new BigDecimal("0"));
 		} else {
 			tran.setIncome(new BigDecimal("0"));
-			tran.setExpense(Money.toBigDecimal(tv.getText().toString()));
+			tran.setExpense(this.amount.getValue());
 		}
 		Spinner spinner = (Spinner) findViewById(R.id.spinnerItem);
 		Item item = (Item) spinner.getSelectedItem();
@@ -826,11 +829,11 @@ public class KmoneyActivity extends FragmentActivity {
 		TextView tv = (TextView) findViewById(R.id.textViewAmount);
 		// トグルボタンON(checked)なら収入、OFFなら支出
 		if (tglButton.isChecked()) {
-			tran.setIncome(Money.toBigDecimal(tv.getText().toString()));
+			tran.setIncome(this.amount.getValue());
 			tran.setExpense(new BigDecimal("0"));
 		} else {
 			tran.setIncome(new BigDecimal("0"));
-			tran.setExpense(Money.toBigDecimal(tv.getText().toString()));
+			tran.setExpense(this.amount.getValue());
 		}
 		Item item;
 		Spinner bankSpinner = (Spinner) findViewById(R.id.spinnerTypeDetail);
@@ -869,11 +872,11 @@ public class KmoneyActivity extends FragmentActivity {
 		TextView tv = (TextView) findViewById(R.id.textViewAmount);
 		// トグルボタンON(checked)なら収入、OFFなら支出
 		if (tglButton.isChecked()) {
-			tran.setIncome(Money.toBigDecimal(tv.getText().toString()));
+			tran.setIncome(this.amount.getValue());
 			tran.setExpense(new BigDecimal("0"));
 		} else {
 			tran.setIncome(new BigDecimal("0"));
-			tran.setExpense(Money.toBigDecimal(tv.getText().toString()));
+			tran.setExpense(this.amount.getValue());
 		}
 		Item item;
 		Spinner cardSpinner = (Spinner) findViewById(R.id.spinnerTypeDetail);
@@ -912,11 +915,11 @@ public class KmoneyActivity extends FragmentActivity {
 		TextView tv = (TextView) findViewById(R.id.textViewAmount);
 		// トグルボタンON(checked)なら収入、OFFなら支出
 		if (tglButton.isChecked()) {
-			tran.setIncome(Money.toBigDecimal(tv.getText().toString()));
+			tran.setIncome(this.amount.getValue());
 			tran.setExpense(new BigDecimal("0"));
 		} else {
 			tran.setIncome(new BigDecimal("0"));
-			tran.setExpense(Money.toBigDecimal(tv.getText().toString()));
+			tran.setExpense(this.amount.getValue());
 		}
 		Item item;
 		Spinner emoneySpinner = (Spinner) findViewById(R.id.spinnerTypeDetail);
