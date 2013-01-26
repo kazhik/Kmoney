@@ -81,41 +81,6 @@ public class KmoneyActivity extends FragmentActivity {
 	private Uri imageFileUri = null;
 	
 
-	private class SelectItemListener implements OnItemSelectedListener {
-
-		@Override
-		public void onItemSelected(AdapterView<?> parent, View view,
-				int position, long id) {
-
-			// Spinner spinner = (Spinner) parent;
-			// Item item = (Item) spinner.getSelectedItem();
-			// Toast.makeText(KmoneyActivity.this, item.getName(),
-			// Toast.LENGTH_LONG).show();
-
-		}
-
-		@Override
-		public void onNothingSelected(AdapterView<?> arg0) {
-
-		}
-
-	}
-
-	private class SelectTypeDetailListener implements OnItemSelectedListener {
-
-		@Override
-		public void onItemSelected(AdapterView<?> parent, View view,
-				int position, long id) {
-
-		}
-
-		@Override
-		public void onNothingSelected(AdapterView<?> arg0) {
-
-		}
-
-	}
-
 	private class SelectTypeListener implements OnItemSelectedListener {
 
 		@Override
@@ -365,7 +330,7 @@ public class KmoneyActivity extends FragmentActivity {
 			str = this.amount.setValue(trn.getExpense().toPlainString());
 		}
 		tv.setText(str);
-		Spinner spinner = (Spinner) findViewById(R.id.spinnerItem);
+		Spinner spinner = (Spinner) findViewById(R.id.spinnerCategory);
 		int pos = this.getSpinnerPosition(spinner, trn.getCategoryId());
 		spinner.setSelection(pos);
 
@@ -578,9 +543,8 @@ public class KmoneyActivity extends FragmentActivity {
 
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-		Spinner spinner = (Spinner) findViewById(R.id.spinnerItem);
-		spinner.setAdapter(adapter);
-		spinner.setOnItemSelectedListener(new SelectItemListener());
+		Spinner spinnerCategory = (Spinner) findViewById(R.id.spinnerCategory);
+		spinnerCategory.setAdapter(adapter);
 	}
 
 	private List<Item> getBankList() {
@@ -617,7 +581,6 @@ public class KmoneyActivity extends FragmentActivity {
 		this.transactionTypeDetail.put("emoney", this.getEMoneyList());
 
 		Spinner spinner = (Spinner) findViewById(R.id.spinnerTypeDetail);
-		spinner.setOnItemSelectedListener(new SelectTypeDetailListener());
 
 		spinner.setEnabled(false);
 	}
@@ -806,7 +769,7 @@ public class KmoneyActivity extends FragmentActivity {
 			tran.setIncome(new BigDecimal("0"));
 			tran.setExpense(this.amount.getValue());
 		}
-		Spinner spinner = (Spinner) findViewById(R.id.spinnerItem);
+		Spinner spinner = (Spinner) findViewById(R.id.spinnerCategory);
 		Item item = (Item) spinner.getSelectedItem();
 		tran.setCategoryId(item.getId());
 
@@ -848,7 +811,7 @@ public class KmoneyActivity extends FragmentActivity {
 		item = (Item) bankSpinner.getSelectedItem();
 		tran.setBankId(item.getId());
 
-		Spinner itemSpinner = (Spinner) findViewById(R.id.spinnerItem);
+		Spinner itemSpinner = (Spinner) findViewById(R.id.spinnerCategory);
 		item = (Item) itemSpinner.getSelectedItem();
 		tran.setCategoryId(item.getId());
 
@@ -891,7 +854,7 @@ public class KmoneyActivity extends FragmentActivity {
 		item = (Item) cardSpinner.getSelectedItem();
 		tran.setCardId(item.getId());
 
-		Spinner itemSpinner = (Spinner) findViewById(R.id.spinnerItem);
+		Spinner itemSpinner = (Spinner) findViewById(R.id.spinnerCategory);
 		item = (Item) itemSpinner.getSelectedItem();
 		tran.setCategoryId(item.getId());
 
@@ -934,7 +897,7 @@ public class KmoneyActivity extends FragmentActivity {
 		item = (Item) emoneySpinner.getSelectedItem();
 		tran.setEmoneyId(item.getId());
 
-		Spinner itemSpinner = (Spinner) findViewById(R.id.spinnerItem);
+		Spinner itemSpinner = (Spinner) findViewById(R.id.spinnerCategory);
 		item = (Item) itemSpinner.getSelectedItem();
 		tran.setCategoryId(item.getId());
 

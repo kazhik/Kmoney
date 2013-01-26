@@ -49,7 +49,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="match_parent" >
 
             <Spinner
                 android:id="@+id/spinnerType"
@@ -62,7 +62,7 @@
                 android:id="@+id/spinnerTypeDetail"
                 android:textAppearance="?android:attr/textAppearanceLarge" 
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1" />
         </LinearLayout>
 
@@ -71,7 +71,7 @@
             android:layout_height="match_parent" >
 
             <Spinner
-                android:id="@+id/spinnerItem"
+                android:id="@+id/spinnerCategory"
                 android:textAppearance="?android:attr/textAppearanceLarge" 
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
@@ -129,12 +129,15 @@
                 android:id="@+id/textViewAmount"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="5dp"
+                android:layout_marginRight="5dp"
                 android:layout_weight="1"
                 android:background="#ffffff"
-                android:textColor="#000000"
                 android:gravity="right|center_vertical"
+                android:paddingRight="3dp"
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="#000000"
                 android:textSize="48sp"
                 android:textStyle="bold" />
 
