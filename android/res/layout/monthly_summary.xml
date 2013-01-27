@@ -3,7 +3,7 @@
     android:background="#4B0082"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MonthlyActivity" >
+    tools:context=".MonthlySummaryActivity" >
 
     <LinearLayout
         android:id="@+id/month"
@@ -54,16 +54,16 @@
             android:textAppearance="?android:attr/textAppearanceMediumInverse" />
 
         <Button
-            android:id="@+id/buttonSum"
+            android:id="@+id/buttonList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/sum"
+            android:text="@string/list"
             android:textAppearance="?android:attr/textAppearanceMediumInverse" />
     </LinearLayout>
 
     <ListView
-        android:id="@+id/listViewMonthly"
+        android:id="@+id/listViewMonthlySummary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/buttons"

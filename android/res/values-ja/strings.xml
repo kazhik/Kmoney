@@ -11,7 +11,7 @@
     <string name="detail">詳細</string>
     <string name="history">履歴</string>
     <string name="date_format">%1$d年%2$d月%3$d日(%4$s)</string>
-    <string name="day_format">%1$d月%2$d日(%3$s)</string>
+    <string name="day_format">%1$d日(%2$s)</string>
     <string name="month_format">%1$d年%2$d月</string>
     <string name="entry">入力</string>
     <string name="prevMonth">前月</string>
@@ -28,6 +28,7 @@
     <string name="add">追加</string>
     <string name="delete">削除</string>
     <string name="sum">集計</string>
+    <string name="list">一覧</string>
     <string name="confirm_delete">本当に削除しますか？</string>
     <string name="export_in_progress">データベースをエクスポートしています&#8230;</string>
     <string name="export_done">エクスポートが完了しました</string>

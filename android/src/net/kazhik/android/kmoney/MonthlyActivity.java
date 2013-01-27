@@ -52,6 +52,15 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 		}
 
 	}
+	private class SumButtonClickListener implements View.OnClickListener {
+
+		@Override
+		public void onClick(View v) {
+			startActivity(new Intent(MonthlyActivity.this, MonthlySummaryActivity.class));
+
+		}
+
+	}
 
 	private class MonthButtonClickListener implements View.OnClickListener {
 		private String direction;
@@ -91,6 +100,7 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 		setContentView(R.layout.monthly);
 
 		this.initEntryButton();
+		this.initSumButton();
 		this.initMonthButton();
 		this.initMonthText();
 
@@ -112,6 +122,11 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 	private void initEntryButton() {
 		Button btn = (Button) findViewById(R.id.buttonEntry);
 		btn.setOnClickListener(new EntryButtonClickListener());
+
+	}
+	private void initSumButton() {
+		Button btn = (Button) findViewById(R.id.buttonSum);
+		btn.setOnClickListener(new SumButtonClickListener());
 
 	}
 
@@ -149,7 +164,6 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 		SimpleDateFormat sdfMonthName = new SimpleDateFormat("MMM", Locale.getDefault());
 		
 		return String.format(getString(R.string.day_format),
-				cal.get(Calendar.MONTH) + 1,
 				cal.get(Calendar.DAY_OF_MONTH),
 				sdfDayOfWeek.format(cal.getTime()),
 				sdfMonthName.format(cal.getTime()));

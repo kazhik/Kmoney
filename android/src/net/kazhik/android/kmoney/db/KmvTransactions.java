@@ -3,23 +3,27 @@ package net.kazhik.android.kmoney.db;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.kazhik.android.kmoney.Constants;
+import net.kazhik.android.kmoney.bean.TransactionSummary;
 import net.kazhik.android.kmoney.bean.TransactionView;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.util.Log;
 
 public class KmvTransactions extends KmTable {
 	private static final String VIEW_NAME = "kmv_transactions";
 	private static final String CREATE_VIEW =
 			"CREATE VIEW " + VIEW_NAME + " AS "
 			+ "SELECT "
-			+ "transaction_date,"
-			+ "category_id,"
-			+ "detail,"
-			+ "expense, "
-			+ "type, "
-			+ "id "
+			+ "A.transaction_date,"
+			+ "A.category_id,"
+			+ "B.name as category_name,"
+			+ "A.detail,"
+			+ "A.expense, "
+			+ "A.type, "
+			+ "A.id "
 			+ "FROM ("
 			+ "SELECT "
 			+ "transaction_date,"
@@ -55,7 +59,9 @@ public class KmvTransactions extends KmTable {
 			+ "income - expense AS expense, "
 			+ "'" + TransactionView.BANK + "' AS type, "
 			+ "id "
-			+ "FROM " + KmBankTrns.TABLE_NAME + ")";
+			+ "FROM " + KmBankTrns.TABLE_NAME + ") A "
+			+ "INNER JOIN km_category B "
+			+ "ON A.category_id = B.id";
 
 	public KmvTransactions(Context context) {
     	super(context);
@@ -69,7 +75,6 @@ public class KmvTransactions extends KmTable {
 		db.execSQL("DROP VIEW " + VIEW_NAME);
 		db.execSQL(CREATE_VIEW);
 	}
-
 
 	public List<String> getDetailHistory(String type, int max) {
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
@@ -102,11 +107,49 @@ public class KmvTransactions extends KmTable {
     	return detailList;
     }
 	
+	public List<TransactionSummary> getSummary(int year, int month) {
+		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+		qb.setTables(VIEW_NAME);
+		
+		String[] columns = { "strftime('%Y/%m', transaction_date) as transaction_month",
+				"category_name",
+				"sum(expense) as sum"};
+
+		String selection =  "transaction_month = ?";
+		String[] selectionArgs = {String.format("%04d/%02d", year, month)};
+		
+		String sortOrder = null;
+		String groupBy = "transaction_month, category_id";
+		
+		Cursor cursor = qb.query(this.db, columns, selection, selectionArgs, groupBy,
+				null, sortOrder, null);
+		
+		List<TransactionSummary> trnsList = new ArrayList<TransactionSummary>();
+		
+		if (cursor == null) {
+			return trnsList;
+		}
+		
+		cursor.moveToFirst();
+		while (cursor.isAfterLast() == false) {
+			TransactionSummary info = new TransactionSummary();
+			int idx = 1;
+			info.setCategoryName(cursor.getString(idx++));
+			info.setSum(cursor.getString(idx++));
+			trnsList.add(info);
+			
+			cursor.moveToNext();
+		}
+		cursor.close();
+		
+		return trnsList;		
+		
+	}
 	public List<TransactionView> getList(int year, int month) {
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 		qb.setTables(VIEW_NAME);
 		
-		String[] columns = { "transaction_date", "detail", "expense", "type", "id" };
+		String[] columns = { "transaction_date", "detail", "expense", "type", "id"};
 
 		String selection =  "strftime('%Y%m', transaction_date) = ?";
 		String[] selectionArgs = {String.format("%04d%02d", year, month)};

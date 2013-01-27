@@ -8,6 +8,7 @@ public class TransactionView {
 	private BigDecimal expense;
 	private String detail;
 	private String type;
+	
 	public static final String CASH = "cash";
 	public static final String BANK = "bank";
 	public static final String CREDITCARD = "creditcard";
