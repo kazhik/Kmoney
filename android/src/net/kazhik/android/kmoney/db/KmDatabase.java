@@ -12,7 +12,7 @@ import android.util.Log;
 public class KmDatabase {
 
     public static final String DATABASE_NAME = "kmoneys.sqlite";
-    public static final int DATABASE_VERSION = 11;
+    public static final int DATABASE_VERSION = 12;
 
     private final Context context; 
     private DatabaseHelper DBHelper;

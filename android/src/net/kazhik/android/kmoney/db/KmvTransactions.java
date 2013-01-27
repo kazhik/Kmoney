@@ -34,7 +34,7 @@ public class KmvTransactions extends KmTable {
 			+ "transaction_date,"
 			+ "category_id,"
 			+ "detail,"
-			+ "expense, "
+			+ "0 - expense AS expense, "
 			+ "'" + TransactionView.CREDITCARD + "' AS type, "
 			+ "id "
 			+ "FROM " + KmCreditCardTrns.TABLE_NAME + " "
@@ -58,7 +58,7 @@ public class KmvTransactions extends KmTable {
 			+ "FROM " + KmBankTrns.TABLE_NAME + ")";
 
 	public KmvTransactions(Context context) {
-		super(context);
+    	super(context);
 	}
 
 	public static void init(SQLiteDatabase db) {

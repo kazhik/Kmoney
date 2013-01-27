@@ -58,7 +58,6 @@ public class KmCreditCardTrns extends KmTable {
 		trn.setTransactionDate(cursor.getString(idx++));
     	trn.setCategoryId(cursor.getInt(idx++));
     	trn.setDetail(cursor.getString(idx++));
-    	trn.setIncome(new BigDecimal(cursor.getString(idx++)));
     	trn.setExpense(new BigDecimal(cursor.getString(idx++)));
     	trn.setCardId(cursor.getInt(idx++));
     	

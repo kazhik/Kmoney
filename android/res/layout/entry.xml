@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="fill_vertical"
+    android:background="#4B0082"
     android:orientation="vertical"
     tools:context=".KmoneyActivity" >
 
@@ -76,12 +77,6 @@
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
-
-            <Button
-                android:id="@+id/buttonPhoto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/photo" />
 
         </LinearLayout>
 
@@ -224,14 +219,13 @@
                 android:text="@string/six"
                 android:textAppearance="?android:attr/textAppearanceLargeInverse" />
             
-            <Button
-                android:id="@+id/buttonBlank1"
+            <ImageButton
+                android:id="@+id/buttonPhoto"
+                android:src="@android:drawable/ic_menu_camera"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_weight="1"
-                android:minHeight="60dp"
-                android:text=" "
-                android:textAppearance="?android:attr/textAppearanceLargeInverse" />
+                android:minHeight="60dp" />
 
         </TableRow>
 

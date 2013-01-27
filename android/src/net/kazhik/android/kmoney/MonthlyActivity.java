@@ -20,6 +20,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -162,6 +163,7 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 		trns.close();
 
 		// 読み込んだデータをHashMapに保持
+		Money amount = new Money();
 		this.mapList.clear();
 		Iterator<TransactionView> it = trnList.iterator();
 		while (it.hasNext()) {
@@ -171,11 +173,11 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 			try {
 				map.put("date", this.formatTransactionDate(tv.getTransactionDate()));
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Log.e(Constants.APPNAME, e.getMessage());
+				continue;
 			}
 			map.put("detail", tv.getDetail());
-			map.put("amount", tv.getExpense().toPlainString());
+			map.put("amount", amount.setValue(tv.getExpense().toPlainString()));
 			map.put("type", tv.getType());
 			map.put("id", String.valueOf(tv.getId()));
 			this.mapList.add(map);

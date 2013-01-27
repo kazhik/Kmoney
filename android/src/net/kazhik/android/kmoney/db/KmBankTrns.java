@@ -26,7 +26,7 @@ public class KmBankTrns extends KmTable {
 	public static final String TABLE_NAME = "km_bank_trns";
 
 	public KmBankTrns(Context context) {
-		super(context);
+    	super(context);
 	}
 
 	public static void init(SQLiteDatabase db) {

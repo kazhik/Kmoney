@@ -1,12 +1,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="#4B0082"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" android:orientation="vertical">
 
     <EditText
         android:id="@+id/editTextMaster"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="0dip"
         android:layout_weight="1"
         android:inputType="text" >
 

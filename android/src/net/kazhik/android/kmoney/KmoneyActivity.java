@@ -50,6 +50,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -309,7 +310,7 @@ public class KmoneyActivity extends FragmentActivity {
 		for (int i = 0; i < cnt; i++) {
 			Item item = adapter.getItem(i);
 			if (item.getId() == id) {
-				return id;
+				return i;
 			}
 		}
 		return -1;
@@ -322,7 +323,7 @@ public class KmoneyActivity extends FragmentActivity {
 		TextView tv = (TextView) findViewById(R.id.textViewAmount);
 		ToggleButton tglButton = (ToggleButton) findViewById(R.id.toggleButtonIncomeExpense);
 		String str;
-		if (trn.getIncome().compareTo(new BigDecimal("0")) != 0) {
+		if (trn.getIncome() != null && trn.getIncome().compareTo(new BigDecimal("0")) != 0) {
 			tglButton.setChecked(true);
 			str = this.amount.setValue(trn.getIncome().toPlainString());
 		} else {
@@ -502,7 +503,7 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 
 	private void initPhotoButton() {
-		Button btn = (Button) findViewById(R.id.buttonPhoto);
+		ImageButton btn = (ImageButton) findViewById(R.id.buttonPhoto);
 		btn.setOnClickListener(new PhotoButtonClickListener());
 
 	}
@@ -580,9 +581,6 @@ public class KmoneyActivity extends FragmentActivity {
 		this.transactionTypeDetail.put("creditcard", this.getCreditCardList());
 		this.transactionTypeDetail.put("emoney", this.getEMoneyList());
 
-		Spinner spinner = (Spinner) findViewById(R.id.spinnerTypeDetail);
-
-		spinner.setEnabled(false);
 	}
 
 	private void initTypeList() {
@@ -610,19 +608,19 @@ public class KmoneyActivity extends FragmentActivity {
 		List<Item> trnsTypeList = new ArrayList<Item>();
 		if (id == TransactionType.CASH) {
 			this.transactionType = TransactionType.CASH;
-			spinner.setEnabled(false);
+			spinner.setVisibility(View.INVISIBLE);
 		} else if (id == TransactionType.BANK) {
 			this.transactionType = TransactionType.BANK;
 			trnsTypeList = this.transactionTypeDetail.get("bank");
-			spinner.setEnabled(true);
+			spinner.setVisibility(View.VISIBLE);
 		} else if (id == TransactionType.CREDITCARD) {
 			this.transactionType = TransactionType.CREDITCARD;
 			trnsTypeList = this.transactionTypeDetail.get("creditcard");
-			spinner.setEnabled(true);
+			spinner.setVisibility(View.VISIBLE);
 		} else if (id == TransactionType.EMONEY) {
 			this.transactionType = TransactionType.EMONEY;
 			trnsTypeList = this.transactionTypeDetail.get("emoney");
-			spinner.setEnabled(true);
+			spinner.setVisibility(View.VISIBLE);
 		}
 		if (trnsTypeList.isEmpty()) {
 			return;
@@ -949,7 +947,7 @@ public class KmoneyActivity extends FragmentActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		MasterData masterData = null;
+		Intent i;
 		switch (item.getItemId()) {
 		case R.id.menu_export_sdcard:
 			ExportDatabaseTask exportDb = new ExportDatabaseTask(this);
@@ -961,26 +959,27 @@ public class KmoneyActivity extends FragmentActivity {
 		case R.id.menu_settings:
 			break;
 		case R.id.master_category:
-			masterData = new MasterData(this, MasterData.Type.CATEGORY,
-					this.userId);
-			masterData.showDialog();
+			i = new Intent(KmoneyActivity.this, CategoryListActivity.class);
+			startActivity(i);
 			break;
 		case R.id.master_bank:
-			masterData = new MasterData(this, MasterData.Type.BANK, this.userId);
-			masterData.showDialog();
+			i = new Intent(KmoneyActivity.this, BankListActivity.class);
+			i.putExtra("userId", this.userId);
+			startActivity(i);
 			break;
 		case R.id.master_creditcard:
-			masterData = new MasterData(this, MasterData.Type.CREDITCARD, this.userId);
-			masterData.showDialog();
+			i = new Intent(KmoneyActivity.this, CreditCardListActivity.class);
+			i.putExtra("userId", this.userId);
+			startActivity(i);
 			break;
 		case R.id.master_emoney:
-			masterData = new MasterData(this, MasterData.Type.EMONEY,
-					this.userId);
-			masterData.showDialog();
+			i = new Intent(KmoneyActivity.this, EMoneyListActivity.class);
+			i.putExtra("userId", this.userId);
+			startActivity(i);
 			break;
 		case R.id.master_user:
-			masterData = new MasterData(this, MasterData.Type.USER, this.userId);
-			masterData.showDialog();
+			i = new Intent(KmoneyActivity.this, UserListActivity.class);
+			startActivity(i);
 			break;
 		default:
 			break;

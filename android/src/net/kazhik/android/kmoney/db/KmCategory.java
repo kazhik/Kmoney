@@ -34,28 +34,29 @@ public class KmCategory extends KmTable {
 	public static void upgrade(SQLiteDatabase db) {
 		KmTable.upgrade(db, TABLE_NAME, CREATE_TABLE);
 	}
-    public void insert(String name) {
-        ContentValues values = new ContentValues();
-        
-        values.put("name", name);
-        
-        this.db.insert(TABLE_NAME, null, values);
-    	
-    }
-    public void update(int id, String name) {
-        ContentValues values = new ContentValues();
-        
-        values.put("name", name);
+	public void insert(String name) {
+	    ContentValues values = new ContentValues();
+	    
+	    values.put("name", name);
+	    
+	    this.db.insert(TABLE_NAME, null, values);
+		
+	}
 
-        this.db.update(TABLE_NAME, values, "id = " + id, null);
-    	
-    }
-    public void delete(int id) {
-    	this.db.delete(TABLE_NAME, "id = " + id, null);
-    	
-    }
+	public void update(int id, String name) {
+	    ContentValues values = new ContentValues();
+	    
+	    values.put("name", name);
+	
+	    this.db.update(TABLE_NAME, values, "id = " + id, null);
+		
+	}
 
-	public List<Item> getCategoryNameList() {
+	public void delete(int id) {
+		this.db.delete(TABLE_NAME, "id = " + id, null);
+		
+	}
+    public List<Item> getNameList() {
 		List<Item> itemList = new ArrayList<Item>();
 		Iterator<Category> it = this.getCategoryList().iterator();
 		while (it.hasNext()) {
