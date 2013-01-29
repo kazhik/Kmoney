@@ -48,6 +48,7 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 		@Override
 		public void onClick(View v) {
 			startActivity(new Intent(MonthlyActivity.this, KmoneyActivity.class));
+			finish();
 
 		}
 
@@ -108,6 +109,7 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 
 		ListView lv = (ListView) findViewById(R.id.listViewMonthly);
 		lv.setOnItemClickListener(this);
+		lv.setSelection(lv.getCount() - 1);
 
 		registerForContextMenu(lv);
 	}

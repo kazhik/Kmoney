@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import net.kazhik.android.kmoney.ExportDatabaseTask.Mode;
 import net.kazhik.android.kmoney.bean.BankTransaction;
 import net.kazhik.android.kmoney.bean.CashTransaction;
 import net.kazhik.android.kmoney.bean.Category;
@@ -34,10 +35,13 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.SQLException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -81,7 +85,8 @@ public class KmoneyActivity extends FragmentActivity {
 	private static final int REQUEST_CAMERA = 100;
 	private Uri imageFileUri = null;
 	
-
+	private SharedPreferences prefs;
+	
 	private class SelectTypeListener implements OnItemSelectedListener {
 
 		@Override
@@ -169,6 +174,7 @@ public class KmoneyActivity extends FragmentActivity {
 			KmoneyActivity.this.writeTransaction();
 
 			startActivity(new Intent(KmoneyActivity.this, MonthlyActivity.class));
+			finish();
 
 		}
 
@@ -179,6 +185,7 @@ public class KmoneyActivity extends FragmentActivity {
 		@Override
 		public void onClick(View v) {
 			startActivity(new Intent(KmoneyActivity.this, MonthlyActivity.class));
+			finish();
 
 		}
 
@@ -190,7 +197,12 @@ public class KmoneyActivity extends FragmentActivity {
 			KmoneyActivity.this.showDetailHistoryDialog();
 		}
 	}
-
+	private class CopyButtonClickListener implements View.OnClickListener {
+		@Override
+		public void onClick(View v) {
+			KmoneyActivity.this.copyAsNew();
+		}
+	}
 	private class DateSetListener implements DatePickerDialog.OnDateSetListener {
 
 		@Override
@@ -256,6 +268,8 @@ public class KmoneyActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.entry);
 
+		this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		
 		this.initCurrentUser();
 
 		this.initDatabase();
@@ -264,12 +278,13 @@ public class KmoneyActivity extends FragmentActivity {
 		this.initTypeList();
 		this.initAmountInput();
 		this.initClearButton();
-		this.initDateText();
+		this.initDateText(true);
 		this.initDateButton();
 		this.initOkButton();
 		this.initCancelButton();
 		this.initHistoryButton();
 		this.initPhotoButton();
+		this.initCopyButton();
 		this.initTransactionTypeDetal();
 		this.initDropbox();
 		
@@ -316,10 +331,20 @@ public class KmoneyActivity extends FragmentActivity {
 		return -1;
 
 	}
+	private void copyAsNew() {
+		this.updateId = 0;
+		this.initDateText(false);
+	}
+
 
 	private void setField(Transaction trn) {
 		this.currentDay.setTime(trn.getTransactionDate());
 
+		int year = this.currentDay.get(Calendar.YEAR);
+		int month = this.currentDay.get(Calendar.MONTH);
+		int day = this.currentDay.get(Calendar.DAY_OF_MONTH);
+		this.setDateText(year, month, day);		
+		
 		TextView tv = (TextView) findViewById(R.id.textViewAmount);
 		ToggleButton tglButton = (ToggleButton) findViewById(R.id.toggleButtonIncomeExpense);
 		String str;
@@ -420,13 +445,38 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 	
 	private void initDropbox() {
-		AppKeyPair appKeys = new AppKeyPair(APP_KEY, APP_SECRET);
-		AndroidAuthSession session = new AndroidAuthSession(appKeys,
-				ACCESS_TYPE);
+		AndroidAuthSession session = buildSession();
 		mDBApi = new DropboxAPI<AndroidAuthSession>(session);
 		
 	}
+    private AndroidAuthSession buildSession() {
+        AppKeyPair appKeyPair = new AppKeyPair(APP_KEY, APP_SECRET);
+        AndroidAuthSession session;
 
+        String[] stored = getKeys();
+        if (stored != null) {
+            AccessTokenPair accessToken = new AccessTokenPair(stored[0], stored[1]);
+            session = new AndroidAuthSession(appKeyPair, ACCESS_TYPE, accessToken);
+        } else {
+            session = new AndroidAuthSession(appKeyPair, ACCESS_TYPE);
+        }
+
+        return session;
+    }
+    private String[] getKeys() {
+        String key = this.prefs.getString("dropbox_key", null);
+        String secret = this.prefs.getString("dropbox_secret", null);
+        if (key != null && secret != null) {
+            String[] ret = new String[2];
+            ret[0] = key;
+            ret[1] = secret;
+            return ret;
+        } else {
+            return null;
+        }
+    }
+    
+    
 	private void initCurrentUser() {
 		this.userId = 1;
 	}
@@ -441,7 +491,7 @@ public class KmoneyActivity extends FragmentActivity {
 		}
 
 	}
-	private void initDateText() {
+	private void initDateText(boolean initListener) {
 		// 本日の日付をセット
 		this.currentDay = Calendar.getInstance();
 
@@ -450,9 +500,11 @@ public class KmoneyActivity extends FragmentActivity {
 		int day = this.currentDay.get(Calendar.DAY_OF_MONTH);
 		this.setDateText(year, month, day);
 
-		// 長押し設定
-		TextView tv = (TextView) findViewById(R.id.textViewDate);
-		tv.setOnLongClickListener(new DateClickListener(year, month, day));
+		if (initListener) {
+			// 長押し設定
+			TextView tv = (TextView) findViewById(R.id.textViewDate);
+			tv.setOnLongClickListener(new DateClickListener(year, month, day));
+		}
 
 	}
 
@@ -517,6 +569,11 @@ public class KmoneyActivity extends FragmentActivity {
 	private void initCancelButton() {
 		Button btn = (Button) findViewById(R.id.buttonCancel);
 		btn.setOnClickListener(new CancelButtonClickListener());
+
+	}
+	private void initCopyButton() {
+		Button btn = (Button) findViewById(R.id.buttonCopy);
+		btn.setOnClickListener(new CopyButtonClickListener());
 
 	}
 
@@ -932,11 +989,17 @@ public class KmoneyActivity extends FragmentActivity {
 
 				// Provide your own storeKeys to persist the access token pair
 				// A typical way to store tokens is using SharedPreferences
-//				storeKeys(tokens.key, tokens.secret);
+				storeKeys(tokens.key, tokens.secret);
 			} catch (IllegalStateException e) {
-				Log.i("DbAuthLog", "Error authenticating", e);
+				Log.i("Kmoney", "Error authenticating", e);
 			}
 		}
+	}
+	private void storeKeys(String key, String secret) {
+		Editor editor = this.prefs.edit();
+		editor.putString("dropbox_key", key);
+		editor.putString("dropbox_secret", secret);
+		editor.commit();
 	}
 
 	@Override
@@ -945,18 +1008,34 @@ public class KmoneyActivity extends FragmentActivity {
 		return true;
 	}
 
+	private void export() {
+		String exportType = PreferenceManager.getDefaultSharedPreferences(this)
+				.getString("export_type", "sdcard");
+		String dbPath = this.getDatabasePath(KmDatabase.DATABASE_NAME).toString();
+		if (exportType.equals("sdcard")) {
+			ExportDatabaseTask exportDb = new ExportDatabaseTask(Mode.SDCARD, this);
+			exportDb.execute(dbPath);
+		} else if (exportType.equals("dropbox")) {
+			if (this.mDBApi.getSession().isLinked()) {
+				ExportDatabaseTask exportDb = new ExportDatabaseTask(Mode.DROPBOX,
+						this.mDBApi, this);
+				exportDb.execute(dbPath);
+			} else {
+				this.mDBApi.getSession().startAuthentication(this);
+			}
+		}
+	}
+
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent i;
 		switch (item.getItemId()) {
-		case R.id.menu_export_sdcard:
-			ExportDatabaseTask exportDb = new ExportDatabaseTask(this);
-			exportDb.execute(this.getDatabasePath(KmDatabase.DATABASE_NAME).toString());
-			break;
-		case R.id.menu_export_dropbox:
-			mDBApi.getSession().startAuthentication(this);
+		case R.id.menu_export:
+			this.export();
 			break;
 		case R.id.menu_settings:
+			startActivity(new Intent(this, SettingsActivity.class));			
 			break;
 		case R.id.master_category:
 			i = new Intent(KmoneyActivity.this, CategoryListActivity.class);

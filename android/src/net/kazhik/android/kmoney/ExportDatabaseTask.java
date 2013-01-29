@@ -2,8 +2,11 @@ package net.kazhik.android.kmoney;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import net.kazhik.android.kmoney.db.KmDatabase;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -12,11 +15,30 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.dropbox.client2.DropboxAPI;
+import com.dropbox.client2.DropboxAPI.Entry;
+import com.dropbox.client2.android.AndroidAuthSession;
+import com.dropbox.client2.exception.DropboxException;
+import com.dropbox.client2.exception.DropboxUnlinkedException;
+
 public class ExportDatabaseTask extends AsyncTask<String, Void, Boolean> {
+	public enum Mode {
+		SDCARD,
+		DROPBOX
+	};
+	private DropboxAPI<AndroidAuthSession> dDBApi;
 	private ProgressDialog dialog = null;
 	private Context context;
+	private Mode mode;
 
-	public ExportDatabaseTask(Context ctx) {
+	public ExportDatabaseTask(Mode mode, DropboxAPI<AndroidAuthSession> dDBApi, Context ctx) {
+		this.mode = mode;
+		this.dDBApi = dDBApi;
+		this.context = ctx;
+		this.dialog = new ProgressDialog(ctx);
+	}
+	public ExportDatabaseTask(Mode mode, Context ctx) {
+		this.mode = mode;
 		this.context = ctx;
 		this.dialog = new ProgressDialog(ctx);
 	}
@@ -30,8 +52,18 @@ public class ExportDatabaseTask extends AsyncTask<String, Void, Boolean> {
 
 	// automatically done on worker thread (separate from UI thread)
 	protected Boolean doInBackground(final String... args) {
+		
+		if (this.mode == Mode.SDCARD) {
+			return this.sdcard(args[0]);
+		} else if (this.mode == Mode.DROPBOX) {
+			return this.dropbox(args[0]);
+		}
+		Log.e("Kmoney", "Unknown mode");
+		return false;
 
-		File dbFile = new File(args[0]);
+	}
+	private Boolean sdcard(final String filename) {
+		File dbFile = new File(filename);
 
 		File exportDir = new File(Environment.getExternalStorageDirectory(), "");
 		if (!exportDir.exists()) {
@@ -47,7 +79,36 @@ public class ExportDatabaseTask extends AsyncTask<String, Void, Boolean> {
 			Log.e("kmoney", e.getMessage(), e);
 			return false;
 		}
+		
 	}
+	private Boolean dropbox(final String filename) {
+		// Uploading content.
+		FileInputStream inputStream = null;
+		try {
+		    File file = new File(filename);
+		    inputStream = new FileInputStream(file);
+		    Entry newEntry = this.dDBApi.putFile(KmDatabase.DATABASE_NAME, inputStream,
+		            file.length(), null, null);
+		    Log.i("Kmoney", "The uploaded file's rev is: " + newEntry.rev);
+		    return true;
+		} catch (DropboxUnlinkedException e) {
+		    // User has unlinked, ask them to link again here.
+		    Log.e("Kmoney", "User has unlinked.");
+		    return false;
+		} catch (DropboxException e) {
+		    Log.e("Kmoney", "Something went wrong while uploading.");
+		    return false;
+		} catch (FileNotFoundException e) {
+		    Log.e("Kmoney", "File not found.");
+		    return false;
+		} finally {
+		    if (inputStream != null) {
+		        try {
+		            inputStream.close();
+		        } catch (IOException e) {}
+		    }
+		}		
+	}	
 	// can use UI thread here
 	protected void onPostExecute(final Boolean success) {
 		if (this.dialog.isShowing()) {

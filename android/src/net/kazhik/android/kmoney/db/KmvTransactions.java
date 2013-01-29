@@ -3,14 +3,12 @@ package net.kazhik.android.kmoney.db;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.kazhik.android.kmoney.Constants;
 import net.kazhik.android.kmoney.bean.TransactionSummary;
 import net.kazhik.android.kmoney.bean.TransactionView;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
-import android.util.Log;
 
 public class KmvTransactions extends KmTable {
 	private static final String VIEW_NAME = "kmv_transactions";

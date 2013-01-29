@@ -221,6 +221,7 @@
             
             <ImageButton
                 android:id="@+id/buttonPhoto"
+                android:contentDescription="@string/photo"
                 android:src="@android:drawable/ic_menu_camera"
                 android:layout_width="0dp"
                 android:layout_height="60dp"
@@ -262,12 +263,12 @@
                 android:textAppearance="?android:attr/textAppearanceLargeInverse" />
             
             <Button
-                android:id="@+id/buttonBlank2"
+                android:id="@+id/buttonCopy"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:minHeight="60dp"
-                android:text=" "
+                android:text="@string/copy"
                 android:textAppearance="?android:attr/textAppearanceLargeInverse" />
         </TableRow>
 
@@ -308,7 +309,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:minHeight="60dp"
-                android:text=" "
+                android:text=""
                 android:textAppearance="?android:attr/textAppearanceLargeInverse" />
             
         </TableRow>

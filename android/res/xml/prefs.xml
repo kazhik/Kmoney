@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/pref_settings_title" >
+
+    <PreferenceCategory android:title="@string/pref_export_settings_title" >
+
+        <ListPreference
+            android:dialogTitle="@string/pref_export_type"
+            android:entries="@array/export_type"
+            android:entryValues="@array/export_type_value"
+            android:key="export_type"
+            android:summary="@string/pref_export_type_summary"
+            android:title="@string/pref_export_type_title" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

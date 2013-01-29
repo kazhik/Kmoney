@@ -15,6 +15,7 @@
     <string name="doublezero">00</string>
     <string name="clear">C</string>
     <string name="backspace">BS</string>
+    <string name="copy">CP</string>
     <string name="decimal_mark">.</string>
     <string name="menu_export_dropbox">Dropbox</string>
     
@@ -51,5 +52,11 @@
     <string name="export_done">Export successful!</string>
     <string name="export_failed">Export failed</string>
     <string name="detail_nothing">No history</string>
+
+    <string name="pref_settings_title">Settings</string>
+    <string name="pref_export_settings_title">Export</string>
+    <string name="pref_export_type">Export Type</string>
+    <string name="pref_export_type_summary">Export Type</string>
+    <string name="pref_export_type_title">Export Type</string>
     
 </resources>
