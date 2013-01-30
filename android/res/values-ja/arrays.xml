@@ -2,10 +2,6 @@
 <resources>
 <string-array name="export_type">
 <item>Dropbox</item>
-<item>SD Card</item>
-</string-array>
-<string-array name="export_type_value">
-<item>dropbox</item>
-<item>sdcard</item>
+<item>SDカード</item>
 </string-array>
 </resources>
