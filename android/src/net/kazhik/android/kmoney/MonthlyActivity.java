@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import net.kazhik.android.kmoney.Constants.ContextMenuItem;
 import net.kazhik.android.kmoney.bean.TransactionView;
 import net.kazhik.android.kmoney.db.KmBankTrns;
 import net.kazhik.android.kmoney.db.KmCashTrns;
@@ -23,9 +24,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
@@ -35,29 +40,67 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 public class MonthlyActivity extends Activity implements OnItemClickListener {
+	private GestureDetector gestureDetector;
+	private View.OnTouchListener gestureListener;
 	private Month currentMonth = new Month();
 
-	private enum ContextMenuItem {
-		DELETE
-	}
 	private SimpleAdapter listAdapter;
 	private ArrayList<HashMap<String, String>> mapList = new ArrayList<HashMap<String, String>>();
-	
+
+	class SwipeDetector extends SimpleOnGestureListener {
+		private int swipeMinDistance;
+		private int swipeThresholdVerocity;
+
+		public SwipeDetector(int minDistance, int thresholdVerocity) {
+			this.swipeMinDistance = minDistance;
+			this.swipeThresholdVerocity = thresholdVerocity;
+		}
+
+		@Override
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+				float velocityY) {
+			try {
+				if (Math.abs(velocityX) <= this.swipeThresholdVerocity) {
+					return false;
+				}
+				// right to left swipe
+				if (e1.getX() - e2.getX() > this.swipeMinDistance) {
+					MonthlyActivity.this.changeMonth("next");
+				} else if (e2.getX() - e1.getX() > this.swipeMinDistance) {
+					MonthlyActivity.this.changeMonth("prev");
+				} else {
+					Log.d(Constants.APPNAME, "fail");
+				}
+			} catch (Exception e) {
+				// nothing
+			}
+			return false;
+		}
+
+	}
+
 	private class EntryButtonClickListener implements View.OnClickListener {
 
 		@Override
 		public void onClick(View v) {
-			startActivity(new Intent(MonthlyActivity.this, KmoneyActivity.class));
+//			startActivity(new Intent(MonthlyActivity.this, KmoneyActivity.class));
+			setResult(RESULT_OK);
 			finish();
 
 		}
 
 	}
+
 	private class SumButtonClickListener implements View.OnClickListener {
 
 		@Override
 		public void onClick(View v) {
-			startActivity(new Intent(MonthlyActivity.this, MonthlySummaryActivity.class));
+			Intent i = new Intent(MonthlyActivity.this,
+					MonthlySummaryActivity.class);
+			Month m = MonthlyActivity.this.currentMonth;
+			i.putExtra("year", m.getYear());
+			i.putExtra("month", m.getMonth());
+			startActivity(i);
 
 		}
 
@@ -77,10 +120,11 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 		}
 
 	}
-	
-	private class ConfirmDeleteListener implements DialogInterface.OnClickListener {
+
+	private class ConfirmDeleteListener implements
+			DialogInterface.OnClickListener {
 		private int position;
-		
+
 		public ConfirmDeleteListener(int position) {
 			this.position = position;
 		}
@@ -90,15 +134,27 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 			if (which == DialogInterface.BUTTON_POSITIVE) {
 				MonthlyActivity.this.deleteTransaction(this.position);
 			}
-			
+
 		}
 	}
 
-	
+	private class TouchListener implements View.OnTouchListener {
+
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			return MonthlyActivity.this.gestureDetector.onTouchEvent(event);
+		}
+
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.monthly);
+		try {
+			setContentView(R.layout.monthly);
+		} catch (Exception e) {
+			Log.e(Constants.APPNAME, e.getMessage());
+		}
 
 		this.initEntryButton();
 		this.initSumButton();
@@ -107,11 +163,20 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 
 		this.loadList(this.currentMonth.getYear(), this.currentMonth.getMonth());
 
+		ViewConfiguration vc = ViewConfiguration.get(this);
+		SwipeDetector swipeDetector = new SwipeDetector(
+				vc.getScaledPagingTouchSlop(),
+				vc.getScaledMinimumFlingVelocity());
+		this.gestureDetector = new GestureDetector(this, swipeDetector);
+		this.gestureListener = new TouchListener();
+
 		ListView lv = (ListView) findViewById(R.id.listViewMonthly);
 		lv.setOnItemClickListener(this);
+		lv.setOnTouchListener(this.gestureListener);
 		lv.setSelection(lv.getCount() - 1);
 
 		registerForContextMenu(lv);
+
 	}
 
 	@Override
@@ -126,6 +191,7 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 		btn.setOnClickListener(new EntryButtonClickListener());
 
 	}
+
 	private void initSumButton() {
 		Button btn = (Button) findViewById(R.id.buttonSum);
 		btn.setOnClickListener(new SumButtonClickListener());
@@ -153,18 +219,22 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 		tv.setText(this.formatMonth(year, month));
 
 	}
+
 	private String formatTransactionDate(String trnsDate) throws ParseException {
-		SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+		SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd",
+				Locale.getDefault());
 		sdfDate.parse(trnsDate).getTime();
-		
+
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(sdfDate.parse(trnsDate));
-		
+
 		// 曜日
-		SimpleDateFormat sdfDayOfWeek = new SimpleDateFormat("E", Locale.getDefault());
+		SimpleDateFormat sdfDayOfWeek = new SimpleDateFormat("E",
+				Locale.getDefault());
 		// 月名
-		SimpleDateFormat sdfMonthName = new SimpleDateFormat("MMM", Locale.getDefault());
-		
+		SimpleDateFormat sdfMonthName = new SimpleDateFormat("MMM",
+				Locale.getDefault());
+
 		return String.format(getString(R.string.day_format),
 				cal.get(Calendar.DAY_OF_MONTH),
 				sdfDayOfWeek.format(cal.getTime()),
@@ -187,7 +257,8 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 
 			HashMap<String, String> map = new HashMap<String, String>();
 			try {
-				map.put("date", this.formatTransactionDate(tv.getTransactionDate()));
+				map.put("date",
+						this.formatTransactionDate(tv.getTransactionDate()));
 			} catch (ParseException e) {
 				Log.e(Constants.APPNAME, e.getMessage());
 				continue;
@@ -200,12 +271,11 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 		}
 
 		// 画面上のリストに表示
-		this.listAdapter = new SimpleAdapter(this,
-				this.mapList,
+		this.listAdapter = new SimpleAdapter(this, this.mapList,
 				R.layout.monthly_row,
-				new String[] { "date", "detail", "amount" },
-				new int[] {	R.id.textViewDate, R.id.textViewDetail, R.id.textViewAmount }
-				);
+				new String[] { "date", "detail", "amount" }, new int[] {
+						R.id.textViewDate, R.id.textViewDetail,
+						R.id.textViewAmount });
 		ListView lv = (ListView) findViewById(R.id.listViewMonthly);
 		lv.setAdapter(this.listAdapter);
 	}
@@ -216,14 +286,16 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 		calToday.set(Calendar.MONTH, month);
 
 		// 月名
-		SimpleDateFormat sdfMonthName = new SimpleDateFormat("MMM", Locale.getDefault());
+		SimpleDateFormat sdfMonthName = new SimpleDateFormat("MMM",
+				Locale.getDefault());
 
 		String monthFormat = getString(R.string.month_format);
 
-		return String.format(monthFormat,
-				year, month + 1, sdfMonthName.format(calToday.getTime()));
-		
+		return String.format(monthFormat, year, month + 1,
+				sdfMonthName.format(calToday.getTime()));
+
 	}
+
 	private void changeMonth(String direction) {
 		if (direction.equals("prev")) {
 			this.currentMonth.shiftMonth(-1);
@@ -235,7 +307,7 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 
 		TextView tv = (TextView) findViewById(R.id.textViewDate);
 		tv.setText(this.formatMonth(year, month));
-		
+
 		this.loadList(year, month);
 	}
 
@@ -244,15 +316,16 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 		super.onCreateContextMenu(menu, view, menuInfo);
 
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-		
+
 		HashMap<String, String> map = this.mapList.get(info.position);
-		
+
 		menu.setHeaderTitle(map.get("date") + " " + map.get("detail"));
-		menu.add(Menu.NONE, ContextMenuItem.DELETE.ordinal(), Menu.NONE, R.string.delete);
+		menu.add(Menu.NONE, ContextMenuItem.DELETE.ordinal(), Menu.NONE,
+				R.string.delete);
 	}
-	
+
 	public void deleteTransaction(int position) {
-		
+
 		// 画面上から削除
 		HashMap<String, String> removed = this.mapList.remove(position);
 		this.listAdapter.notifyDataSetChanged();
@@ -281,12 +354,12 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 			emoneyTrn.delete(id);
 			emoneyTrn.close();
 		}
-		
-		
+
 	}
 
 	public boolean onContextItemSelected(MenuItem item) {
-		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+				.getMenuInfo();
 
 		if (item.getItemId() == ContextMenuItem.DELETE.ordinal()) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -298,7 +371,7 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 			builder.setTitle(R.string.confirm_delete);
 			AlertDialog dialog = builder.create();
 			dialog.show();
-			
+
 		}
 		return true;
 	}
@@ -314,12 +387,13 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 		Intent i = new Intent(MonthlyActivity.this, KmoneyActivity.class);
 		i.putExtra("id", map.get("id"));
 		i.putExtra("type", map.get("type"));
-		startActivity(i);
+		
+		setResult(RESULT_OK, i);
+		finish();
 
 		// Toast.makeText(getApplicationContext(), map.get("id"),
 		// Toast.LENGTH_SHORT).show();
 
 	}
-
 
 }

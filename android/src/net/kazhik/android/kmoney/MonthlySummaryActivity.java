@@ -1,6 +1,5 @@
 package net.kazhik.android.kmoney;
 
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,12 +24,13 @@ public class MonthlySummaryActivity extends Activity {
 
 	private SimpleAdapter listAdapter;
 	private ArrayList<HashMap<String, String>> mapList = new ArrayList<HashMap<String, String>>();
-	
+
 	private class EntryButtonClickListener implements View.OnClickListener {
 
 		@Override
 		public void onClick(View v) {
-			startActivity(new Intent(MonthlySummaryActivity.this, KmoneyActivity.class));
+			startActivity(new Intent(MonthlySummaryActivity.this,
+					KmoneyActivity.class));
 			finish();
 
 		}
@@ -41,7 +41,8 @@ public class MonthlySummaryActivity extends Activity {
 
 		@Override
 		public void onClick(View v) {
-			startActivity(new Intent(MonthlySummaryActivity.this, MonthlyActivity.class));
+			startActivity(new Intent(MonthlySummaryActivity.this,
+					MonthlyActivity.class));
 			finish();
 
 		}
@@ -62,20 +63,32 @@ public class MonthlySummaryActivity extends Activity {
 		}
 
 	}
-	
 
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.monthly_summary);
 
+		// MonthlyActivityから渡されるidを取得
+		Intent i = this.getIntent();
+		if (i == null) {
+			return;
+		}
+		Bundle b = i.getExtras();
+		if (b == null) {
+			return;
+		}
+
+		int year = b.getInt("year");
+		int month = b.getInt("month");
+		this.currentMonth.set(year, month);
+
 		this.initEntryButton();
 		this.initListButton();
 		this.initMonthButton();
-		this.initMonthText();
+		this.initMonthText(year, month);
 
-		this.loadList(this.currentMonth.getYear(), this.currentMonth.getMonth());
+		this.loadList(year, month);
 
 	}
 
@@ -84,6 +97,7 @@ public class MonthlySummaryActivity extends Activity {
 		btn.setOnClickListener(new EntryButtonClickListener());
 
 	}
+
 	private void initListButton() {
 		Button btn = (Button) findViewById(R.id.buttonList);
 		btn.setOnClickListener(new ListButtonClickListener());
@@ -99,14 +113,7 @@ public class MonthlySummaryActivity extends Activity {
 
 	}
 
-	private void initMonthText() {
-		// 今月をセット
-		Calendar calToday = Calendar.getInstance();
-
-		int year = calToday.get(Calendar.YEAR);
-		int month = calToday.get(Calendar.MONTH);
-
-		this.currentMonth.set(year, month);
+	private void initMonthText(int year, int month) {
 		TextView tv = (TextView) findViewById(R.id.textViewDate);
 		tv.setText(this.formatMonth(year, month));
 
@@ -133,12 +140,10 @@ public class MonthlySummaryActivity extends Activity {
 		}
 
 		// 画面上のリストに表示
-		this.listAdapter = new SimpleAdapter(this,
-				this.mapList,
-				R.layout.monthly_summary_row,
-				new String[] { "category_name", "sum" },
-				new int[] {	R.id.textViewCategory, R.id.textViewSum }
-				);
+		this.listAdapter = new SimpleAdapter(this, this.mapList,
+				R.layout.monthly_summary_row, new String[] { "category_name",
+						"sum" }, new int[] { R.id.textViewCategory,
+						R.id.textViewSum });
 		ListView lv = (ListView) findViewById(R.id.listViewMonthlySummary);
 		lv.setAdapter(this.listAdapter);
 	}
@@ -149,14 +154,16 @@ public class MonthlySummaryActivity extends Activity {
 		calToday.set(Calendar.MONTH, month);
 
 		// 月名
-		SimpleDateFormat sdfMonthName = new SimpleDateFormat("MMM", Locale.getDefault());
+		SimpleDateFormat sdfMonthName = new SimpleDateFormat("MMM",
+				Locale.getDefault());
 
 		String monthFormat = getString(R.string.month_format);
 
-		return String.format(monthFormat,
-				year, month + 1, sdfMonthName.format(calToday.getTime()));
-		
+		return String.format(monthFormat, year, month + 1,
+				sdfMonthName.format(calToday.getTime()));
+
 	}
+
 	private void changeMonth(String direction) {
 		if (direction.equals("prev")) {
 			this.currentMonth.shiftMonth(-1);
@@ -168,9 +175,8 @@ public class MonthlySummaryActivity extends Activity {
 
 		TextView tv = (TextView) findViewById(R.id.textViewDate);
 		tv.setText(this.formatMonth(year, month));
-		
+
 		this.loadList(year, month);
 	}
-
 
 }

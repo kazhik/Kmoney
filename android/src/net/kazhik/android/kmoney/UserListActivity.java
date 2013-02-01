@@ -65,6 +65,7 @@ public class UserListActivity extends FragmentActivity implements OnItemClickLis
 			
 		}
 	}
+	
     private class EditOkButtonListener implements OnClickListener {
     	private View dialogview;
 

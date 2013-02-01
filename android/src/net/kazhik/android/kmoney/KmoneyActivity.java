@@ -34,6 +34,7 @@ import net.kazhik.android.kmoney.db.KmvTransactions;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -45,6 +46,7 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -55,6 +57,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -83,10 +86,11 @@ public class KmoneyActivity extends FragmentActivity {
 	private DropboxAPI<AndroidAuthSession> mDBApi;
 
 	private static final int REQUEST_CAMERA = 100;
+	private static final int REQUEST_MONTHLY = 101;
 	private Uri imageFileUri = null;
-	
+
 	private SharedPreferences prefs;
-	
+
 	private class SelectTypeListener implements OnItemSelectedListener {
 
 		@Override
@@ -120,6 +124,7 @@ public class KmoneyActivity extends FragmentActivity {
 		}
 
 	}
+
 	private class DoubleZeroClickListener implements View.OnClickListener {
 		@Override
 		public void onClick(View v) {
@@ -128,6 +133,7 @@ public class KmoneyActivity extends FragmentActivity {
 		}
 
 	}
+
 	private class DecimalMarkClickListener implements View.OnClickListener {
 		@Override
 		public void onClick(View v) {
@@ -136,6 +142,7 @@ public class KmoneyActivity extends FragmentActivity {
 		}
 
 	}
+
 	private class ClearButtonClickListener implements View.OnClickListener {
 		@Override
 		public void onClick(View v) {
@@ -150,18 +157,12 @@ public class KmoneyActivity extends FragmentActivity {
 			KmoneyActivity.this.backspace();
 		}
 	}
-	private void backspace() {
-		String str = this.amount.backspace();
-		TextView tv = (TextView) findViewById(R.id.textViewAmount);
-		tv.setText(str);
-		
-	}
 
 	private class PhotoButtonClickListener implements View.OnClickListener {
 
 		@Override
 		public void onClick(View v) {
-			KmoneyActivity.this.takePicture();
+			KmoneyActivity.this.photo();
 
 		}
 
@@ -172,9 +173,7 @@ public class KmoneyActivity extends FragmentActivity {
 		@Override
 		public void onClick(View v) {
 			KmoneyActivity.this.writeTransaction();
-
-			startActivity(new Intent(KmoneyActivity.this, MonthlyActivity.class));
-			finish();
+			KmoneyActivity.this.monthly();
 
 		}
 
@@ -184,8 +183,7 @@ public class KmoneyActivity extends FragmentActivity {
 
 		@Override
 		public void onClick(View v) {
-			startActivity(new Intent(KmoneyActivity.this, MonthlyActivity.class));
-			finish();
+			KmoneyActivity.this.monthly();
 
 		}
 
@@ -197,23 +195,25 @@ public class KmoneyActivity extends FragmentActivity {
 			KmoneyActivity.this.showDetailHistoryDialog();
 		}
 	}
+
 	private class CopyButtonClickListener implements View.OnClickListener {
 		@Override
 		public void onClick(View v) {
 			KmoneyActivity.this.copyAsNew();
 		}
 	}
+
 	private class DateSetListener implements DatePickerDialog.OnDateSetListener {
 
 		@Override
 		public void onDateSet(DatePicker view, int year, int monthOfYear,
 				int dayOfMonth) {
 
-			
 			KmoneyActivity.this.setCurrentDay(year, monthOfYear, dayOfMonth);
 		}
 
 	}
+
 	private class DateClickListener implements View.OnLongClickListener {
 		private int year;
 		private int month;
@@ -251,6 +251,12 @@ public class KmoneyActivity extends FragmentActivity {
 
 	}
 
+	private class DeletePhotoButtonListener implements OnClickListener {
+		@Override
+		public void onClick(DialogInterface dialog, int which) {
+		}
+	}
+
 	private class HistoryClickListener implements
 			DialogInterface.OnClickListener {
 		public void onClick(DialogInterface dialog, int item) {
@@ -269,7 +275,7 @@ public class KmoneyActivity extends FragmentActivity {
 		setContentView(R.layout.entry);
 
 		this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		
+
 		this.initCurrentUser();
 
 		this.initDatabase();
@@ -287,33 +293,11 @@ public class KmoneyActivity extends FragmentActivity {
 		this.initCopyButton();
 		this.initTransactionTypeDetal();
 		this.initDropbox();
-		
 
-		// MonthlyActivityから渡されるidを取得
-		Intent i = this.getIntent();
-		if (i == null) {
-			return;
-		}
-		Bundle b = i.getExtras();
-		if (b == null) {
-			return;
-		}
+
 
 		this.updateId = 0;
 		this.updateType = TransactionType.NONE;
-		String idStr = b.getString("id");
-		if (idStr == null) {
-			return;
-		}
-		this.updateId = Integer.parseInt(idStr);
-
-		String typeStr = b.getString("type");
-		if (typeStr == null) {
-			return;
-		}
-		this.updateType = TransactionType.getType(typeStr);
-
-		this.loadTransaction(this.updateType, this.updateId);
 
 	}
 
@@ -331,11 +315,11 @@ public class KmoneyActivity extends FragmentActivity {
 		return -1;
 
 	}
+
 	private void copyAsNew() {
 		this.updateId = 0;
 		this.initDateText(false);
 	}
-
 
 	private void setField(Transaction trn) {
 		this.currentDay.setTime(trn.getTransactionDate());
@@ -343,12 +327,13 @@ public class KmoneyActivity extends FragmentActivity {
 		int year = this.currentDay.get(Calendar.YEAR);
 		int month = this.currentDay.get(Calendar.MONTH);
 		int day = this.currentDay.get(Calendar.DAY_OF_MONTH);
-		this.setDateText(year, month, day);		
-		
+		this.setDateText(year, month, day);
+
 		TextView tv = (TextView) findViewById(R.id.textViewAmount);
 		ToggleButton tglButton = (ToggleButton) findViewById(R.id.toggleButtonIncomeExpense);
 		String str;
-		if (trn.getIncome() != null && trn.getIncome().compareTo(new BigDecimal("0")) != 0) {
+		if (trn.getIncome() != null
+				&& trn.getIncome().compareTo(new BigDecimal("0")) != 0) {
 			tglButton.setChecked(true);
 			str = this.amount.setValue(trn.getIncome().toPlainString());
 		} else {
@@ -422,6 +407,13 @@ public class KmoneyActivity extends FragmentActivity {
 
 	}
 
+	private void backspace() {
+		String str = this.amount.backspace();
+		TextView tv = (TextView) findViewById(R.id.textViewAmount);
+		tv.setText(str);
+
+	}
+
 	private String formatDate(int year, int month, int day) {
 		Calendar cal = Calendar.getInstance();
 		cal.set(year, month, day);
@@ -443,40 +435,43 @@ public class KmoneyActivity extends FragmentActivity {
 		TextView tv = (TextView) findViewById(R.id.textViewDate);
 		tv.setText(this.formatDate(year, month, day));
 	}
-	
+
 	private void initDropbox() {
 		AndroidAuthSession session = buildSession();
 		mDBApi = new DropboxAPI<AndroidAuthSession>(session);
-		
+
 	}
-    private AndroidAuthSession buildSession() {
-        AppKeyPair appKeyPair = new AppKeyPair(APP_KEY, APP_SECRET);
-        AndroidAuthSession session;
 
-        String[] stored = getKeys();
-        if (stored != null) {
-            AccessTokenPair accessToken = new AccessTokenPair(stored[0], stored[1]);
-            session = new AndroidAuthSession(appKeyPair, ACCESS_TYPE, accessToken);
-        } else {
-            session = new AndroidAuthSession(appKeyPair, ACCESS_TYPE);
-        }
+	private AndroidAuthSession buildSession() {
+		AppKeyPair appKeyPair = new AppKeyPair(APP_KEY, APP_SECRET);
+		AndroidAuthSession session;
 
-        return session;
-    }
-    private String[] getKeys() {
-        String key = this.prefs.getString("dropbox_key", null);
-        String secret = this.prefs.getString("dropbox_secret", null);
-        if (key != null && secret != null) {
-            String[] ret = new String[2];
-            ret[0] = key;
-            ret[1] = secret;
-            return ret;
-        } else {
-            return null;
-        }
-    }
-    
-    
+		String[] stored = getKeys();
+		if (stored != null) {
+			AccessTokenPair accessToken = new AccessTokenPair(stored[0],
+					stored[1]);
+			session = new AndroidAuthSession(appKeyPair, ACCESS_TYPE,
+					accessToken);
+		} else {
+			session = new AndroidAuthSession(appKeyPair, ACCESS_TYPE);
+		}
+
+		return session;
+	}
+
+	private String[] getKeys() {
+		String key = this.prefs.getString("dropbox_key", null);
+		String secret = this.prefs.getString("dropbox_secret", null);
+		if (key != null && secret != null) {
+			String[] ret = new String[2];
+			ret[0] = key;
+			ret[1] = secret;
+			return ret;
+		} else {
+			return null;
+		}
+	}
+
 	private void initCurrentUser() {
 		this.userId = 1;
 	}
@@ -491,6 +486,7 @@ public class KmoneyActivity extends FragmentActivity {
 		}
 
 	}
+
 	private void initDateText(boolean initListener) {
 		// 本日の日付をセット
 		this.currentDay = Calendar.getInstance();
@@ -551,7 +547,7 @@ public class KmoneyActivity extends FragmentActivity {
 
 		Button btnBs = (Button) findViewById(R.id.buttonBackSpace);
 		btnBs.setOnClickListener(new BackspaceButtonClickListener());
-	
+
 	}
 
 	private void initPhotoButton() {
@@ -571,6 +567,7 @@ public class KmoneyActivity extends FragmentActivity {
 		btn.setOnClickListener(new CancelButtonClickListener());
 
 	}
+
 	private void initCopyButton() {
 		Button btn = (Button) findViewById(R.id.buttonCopy);
 		btn.setOnClickListener(new CopyButtonClickListener());
@@ -695,6 +692,7 @@ public class KmoneyActivity extends FragmentActivity {
 		spinner.setAdapter(adapter);
 
 	}
+
 	private void addNumber(int number) {
 		try {
 			String str = this.amount.addChar(Character.forDigit(number, 10));
@@ -704,23 +702,22 @@ public class KmoneyActivity extends FragmentActivity {
 		} catch (ParseException e) {
 			Log.e(Constants.APPNAME, e.getMessage(), e);
 		}
-		
+
 	}
+
 	private void addDecimalMark() {
 		if (this.amount.getFractionDigits() == 0) {
 			return;
 		}
 		try {
 			String str = this.amount.addDecimalMark();
-			AutoResizeTextView tv =
-					(AutoResizeTextView) findViewById(R.id.textViewAmount);
+			AutoResizeTextView tv = (AutoResizeTextView) findViewById(R.id.textViewAmount);
 			tv.setText(str);
 			tv.resizeText();
 		} catch (ParseException e) {
 			Log.e(Constants.APPNAME, e.getMessage());
 		}
-		
-		
+
 	}
 
 	private void changeDay(String direction) {
@@ -736,13 +733,13 @@ public class KmoneyActivity extends FragmentActivity {
 
 		this.setDateText(year, month, day);
 	}
+
 	private void setCurrentDay(int year, int month, int day) {
 		this.setDateText(year, month, day);
 		this.currentDay.set(Calendar.YEAR, year);
 		this.currentDay.set(Calendar.MONTH, month);
 		this.currentDay.set(Calendar.DAY_OF_MONTH, day);
 	}
-
 
 	private void deleteTransaction(int type, int id) {
 		if (type == TransactionType.CASH) {
@@ -978,6 +975,7 @@ public class KmoneyActivity extends FragmentActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		
 		if (mDBApi.getSession().authenticationSuccessful()) {
 			try {
 				// MANDATORY call to complete auth.
@@ -995,6 +993,7 @@ public class KmoneyActivity extends FragmentActivity {
 			}
 		}
 	}
+
 	private void storeKeys(String key, String secret) {
 		Editor editor = this.prefs.edit();
 		editor.putString("dropbox_key", key);
@@ -1011,14 +1010,16 @@ public class KmoneyActivity extends FragmentActivity {
 	private void export() {
 		String exportType = PreferenceManager.getDefaultSharedPreferences(this)
 				.getString("export_type", "sdcard");
-		String dbPath = this.getDatabasePath(KmDatabase.DATABASE_NAME).toString();
+		String dbPath = this.getDatabasePath(KmDatabase.DATABASE_NAME)
+				.toString();
 		if (exportType.equals("sdcard")) {
-			ExportDatabaseTask exportDb = new ExportDatabaseTask(Mode.SDCARD, this);
+			ExportDatabaseTask exportDb = new ExportDatabaseTask(Mode.SDCARD,
+					this);
 			exportDb.execute(dbPath);
 		} else if (exportType.equals("dropbox")) {
 			if (this.mDBApi.getSession().isLinked()) {
-				ExportDatabaseTask exportDb = new ExportDatabaseTask(Mode.DROPBOX,
-						this.mDBApi, this);
+				ExportDatabaseTask exportDb = new ExportDatabaseTask(
+						Mode.DROPBOX, this.mDBApi, this);
 				exportDb.execute(dbPath);
 			} else {
 				this.mDBApi.getSession().startAuthentication(this);
@@ -1026,7 +1027,6 @@ public class KmoneyActivity extends FragmentActivity {
 		}
 	}
 
-	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent i;
@@ -1035,7 +1035,7 @@ public class KmoneyActivity extends FragmentActivity {
 			this.export();
 			break;
 		case R.id.menu_settings:
-			startActivity(new Intent(this, SettingsActivity.class));			
+			startActivity(new Intent(this, SettingsActivity.class));
 			break;
 		case R.id.master_category:
 			i = new Intent(KmoneyActivity.this, CategoryListActivity.class);
@@ -1102,50 +1102,91 @@ public class KmoneyActivity extends FragmentActivity {
 		alert.show();
 
 	}
-	private static Uri getOutputMediaFileUri(){
-	      return Uri.fromFile(getOutputMediaFile());
+
+	private static Uri getOutputMediaFileUri() {
+		return Uri.fromFile(getOutputMediaFile());
 	}
+
 	/** Create a File for saving an image or video */
-	private static File getOutputMediaFile(){
-	    // To be safe, you should check that the SDCard is mounted
-	    // using Environment.getExternalStorageState() before doing this.
+	private static File getOutputMediaFile() {
+		// To be safe, you should check that the SDCard is mounted
+		// using Environment.getExternalStorageState() before doing this.
 
-	    File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-	              Environment.DIRECTORY_PICTURES), "Kmoney");
-	    // This location works best if you want the created images to be shared
-	    // between applications and persist after your app has been uninstalled.
+		File mediaStorageDir = new File(
+				Environment
+						.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+				"Kmoney");
+		// This location works best if you want the created images to be shared
+		// between applications and persist after your app has been uninstalled.
 
-	    // Create the storage directory if it does not exist
-	    if (! mediaStorageDir.exists()){
-	        if (! mediaStorageDir.mkdirs()){
-	            Log.d("Kmoney", "failed to create directory");
-	            return null;
-	        }
-	    }
+		// Create the storage directory if it does not exist
+		if (!mediaStorageDir.exists()) {
+			if (!mediaStorageDir.mkdirs()) {
+				Log.d("Kmoney", "failed to create directory");
+				return null;
+			}
+		}
 
-	    // Create a media file name
-	    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault());
-	    String timeStamp = sdf.format(new Date());
-	    File mediaFile = new File(mediaStorageDir.getPath() + File.separator
+		// Create a media file name
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss",
+				Locale.getDefault());
+		String timeStamp = sdf.format(new Date());
+		File mediaFile = new File(mediaStorageDir.getPath() + File.separator
 				+ "IMG_" + timeStamp + ".jpg");
 
-	    return mediaFile;
-	}	
-	
-	private void takePicture() {
-	    // create Intent to take a picture and return control to the calling application
-	    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-	    this.imageFileUri = getOutputMediaFileUri(); // create a file to save the image
-	    
-	    intent.putExtra(MediaStore.EXTRA_OUTPUT, this.imageFileUri); // set the image file name
-
-	    // start the image capture Intent
-	    startActivityForResult(intent, REQUEST_CAMERA);		
+		return mediaFile;
 	}
+
+	private void photo() {
+		if (this.imageFileUri != null) {
+			this.showPhoto();
+		} else {
+			this.takePicture();
+		}
+	}
+
+	private void showPhoto() {
+		LayoutInflater inflater = LayoutInflater.from(this);
+		View dialogview = inflater.inflate(R.layout.photo, null);
+
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setView(dialogview);
+		builder.setNegativeButton(android.R.string.cancel, null);
+		builder.setPositiveButton(R.string.delete,
+				new DeletePhotoButtonListener());
+
+		ImageView photoView = (ImageView) dialogview.findViewById(R.id.photo);
+		photoView.setImageURI(this.imageFileUri);
+
+		builder.show();
+
+	}
+
+	private void takePicture() {
+		// create Intent to take a picture and return control to the calling
+		// application
+		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+		this.imageFileUri = getOutputMediaFileUri(); // create a file to save
+														// the image
+
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, this.imageFileUri); // set the
+																		// image
+																		// file
+																		// name
+
+		// start the image capture Intent
+		startActivityForResult(intent, REQUEST_CAMERA);
+	}
+	private void monthly() {
+		Intent intent = new Intent(KmoneyActivity.this, MonthlyActivity.class);
+		startActivityForResult(intent, REQUEST_MONTHLY);
+		
+	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		
+
 		if (requestCode == REQUEST_CAMERA) {
 			if (resultCode == RESULT_OK) {
 				Uri imageUri;
@@ -1154,12 +1195,35 @@ public class KmoneyActivity extends FragmentActivity {
 				} else {
 					imageUri = this.imageFileUri;
 				}
-				Toast.makeText(this, "Image saved to:\n" + imageUri.getPath(),
-						Toast.LENGTH_LONG).show();
+				this.showPhoto();
 			} else {
 				this.imageFileUri = null;
 			}
+		} else if (requestCode == REQUEST_MONTHLY) {
+			if (data == null) {
+				return;
+			}
+			Bundle b = data.getExtras();
+			if (b == null) {
+				return;
+			}
+
+			String idStr = b.getString("id");
+			if (idStr == null) {
+				return;
+			}
+
+			String typeStr = b.getString("type");
+			if (typeStr == null) {
+				return;
+			}
+
+			this.updateId = Integer.parseInt(idStr);
+			this.updateType = TransactionType.getType(typeStr);
+
+			this.loadTransaction(this.updateType, this.updateId);
+			
 		}
-	}	
+	}
 
 }

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="fill_vertical"
-    android:background="#4B0082"
+    android:background="#556B2F"
     android:orientation="vertical"
     tools:context=".KmoneyActivity" >
 
