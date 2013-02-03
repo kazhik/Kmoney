@@ -4,6 +4,7 @@
     <string name="menu_settings">設定</string>
     <string name="menu_export">エクスポート</string>
     <string name="menu_master">基本データ</string>
+    <string name="menu_user">ユーザー切り替え</string>
     <string name="please_select">選択してください</string>
     <string name="income">収入</string>
     <string name="expense">支出</string>
@@ -39,5 +40,7 @@
     <string name="pref_export_type">エクスポート種別</string>
     <string name="pref_export_type_summary">SDカード/Dropbox</string>
     <string name="pref_export_type_title">エクスポート種別</string>
+
+    <string name="error_photo">写真を撮れませんでした。もう一度試してください</string>
     
 </resources>

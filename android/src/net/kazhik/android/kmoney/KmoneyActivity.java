@@ -30,6 +30,7 @@ import net.kazhik.android.kmoney.db.KmCreditCardTrns;
 import net.kazhik.android.kmoney.db.KmDatabase;
 import net.kazhik.android.kmoney.db.KmEMoneyInfo;
 import net.kazhik.android.kmoney.db.KmEMoneyTrns;
+import net.kazhik.android.kmoney.db.KmUserInfo;
 import net.kazhik.android.kmoney.db.KmvTransactions;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -38,6 +39,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.res.Configuration;
 import android.database.SQLException;
 import android.net.Uri;
 import android.os.Bundle;
@@ -79,18 +81,20 @@ public class KmoneyActivity extends FragmentActivity {
 
 	private int updateType;
 	private int updateId;
+	private Uri imageFileUri = null;
 
-	final static private String APP_KEY = "kuyk8nn6g6osz3s";
-	final static private String APP_SECRET = "58pm6zl92rcg5i9";
-	final static private AccessType ACCESS_TYPE = AccessType.APP_FOLDER;
-	private DropboxAPI<AndroidAuthSession> mDBApi;
+	private ExportDatabaseTask exportTask;
+	private DropboxAPI<AndroidAuthSession> mDBApi = null;
 
 	private static final int REQUEST_CAMERA = 100;
 	private static final int REQUEST_MONTHLY = 101;
-	private Uri imageFileUri = null;
 
 	private SharedPreferences prefs;
 
+	/**
+	 * 種別選択リスト
+	 *
+	 */
 	private class SelectTypeListener implements OnItemSelectedListener {
 
 		@Override
@@ -110,6 +114,10 @@ public class KmoneyActivity extends FragmentActivity {
 
 	}
 
+	/**
+	 * 数字キー
+	 *
+	 */
 	private class NumberClickListener implements View.OnClickListener {
 		int number;
 
@@ -125,6 +133,10 @@ public class KmoneyActivity extends FragmentActivity {
 
 	}
 
+	/**
+	 * "00"キー
+	 *
+	 */
 	private class DoubleZeroClickListener implements View.OnClickListener {
 		@Override
 		public void onClick(View v) {
@@ -134,6 +146,11 @@ public class KmoneyActivity extends FragmentActivity {
 
 	}
 
+
+	/**
+	 * 小数点キー
+	 *
+	 */
 	private class DecimalMarkClickListener implements View.OnClickListener {
 		@Override
 		public void onClick(View v) {
@@ -143,6 +160,10 @@ public class KmoneyActivity extends FragmentActivity {
 
 	}
 
+	/**
+	 * クリアボタン
+	 *
+	 */
 	private class ClearButtonClickListener implements View.OnClickListener {
 		@Override
 		public void onClick(View v) {
@@ -151,6 +172,10 @@ public class KmoneyActivity extends FragmentActivity {
 		}
 	}
 
+	/**
+	 * バックスペースボタン
+	 * 
+	 */
 	private class BackspaceButtonClickListener implements View.OnClickListener {
 		@Override
 		public void onClick(View v) {
@@ -158,6 +183,10 @@ public class KmoneyActivity extends FragmentActivity {
 		}
 	}
 
+	/**
+	 * 写真ボタン
+	 *
+	 */
 	private class PhotoButtonClickListener implements View.OnClickListener {
 
 		@Override
@@ -183,7 +212,7 @@ public class KmoneyActivity extends FragmentActivity {
 
 		@Override
 		public void onClick(View v) {
-			KmoneyActivity.this.monthly();
+			KmoneyActivity.this.cancel();
 
 		}
 
@@ -228,8 +257,8 @@ public class KmoneyActivity extends FragmentActivity {
 		@Override
 		public boolean onLongClick(View v) {
 			DatePickerDialog datePickerDialog = new DatePickerDialog(
-					KmoneyActivity.this, new DateSetListener(), year, month,
-					day);
+					KmoneyActivity.this, new DateSetListener(), this.year, this.month,
+					this.day);
 			datePickerDialog.show();
 			return false;
 		}
@@ -251,12 +280,19 @@ public class KmoneyActivity extends FragmentActivity {
 
 	}
 
+	
+	/**
+	 * 写真ダイアログの削除ボタン
+	 * @author kazhik
+	 *
+	 */
 	private class DeletePhotoButtonListener implements OnClickListener {
 		@Override
 		public void onClick(DialogInterface dialog, int which) {
+			KmoneyActivity.this.deletePhoto();
+			
 		}
 	}
-
 	private class HistoryClickListener implements
 			DialogInterface.OnClickListener {
 		public void onClick(DialogInterface dialog, int item) {
@@ -268,13 +304,38 @@ public class KmoneyActivity extends FragmentActivity {
 		}
 
 	}
-
+	private class SwitchUserListener implements DialogInterface.OnClickListener {
+		private List<Item> userList;
+		public SwitchUserListener(List<Item> userList) {
+			this.userList = userList;
+		}
+		@Override
+		public void onClick(DialogInterface dialog, int which) {
+			Item item = this.userList.get(which);
+			
+			KmoneyActivity.this.setUser(item.getId());
+		}
+		
+	}
+	private int getDefaultUser() {
+		return this.prefs.getInt("default_user", 0);
+	}
+	private void setUser(int userId) {
+		Editor editor = this.prefs.edit();
+		editor.putInt("default_user", userId);
+		editor.commit();
+		
+		this.userId = userId;
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.entry);
 
 		this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+		this.currentDay = Calendar.getInstance();
 
 		this.initCurrentUser();
 
@@ -292,14 +353,19 @@ public class KmoneyActivity extends FragmentActivity {
 		this.initPhotoButton();
 		this.initCopyButton();
 		this.initTransactionTypeDetal();
-		this.initDropbox();
-
-
+		this.initExport();
 
 		this.updateId = 0;
 		this.updateType = TransactionType.NONE;
 
 	}
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		
+		this.deletePhoto();
+	}
+
 
 	private int getSpinnerPosition(Spinner spinner, int id) {
 		@SuppressWarnings("unchecked")
@@ -436,27 +502,42 @@ public class KmoneyActivity extends FragmentActivity {
 		tv.setText(this.formatDate(year, month, day));
 	}
 
-	private void initDropbox() {
-		AndroidAuthSession session = buildSession();
-		mDBApi = new DropboxAPI<AndroidAuthSession>(session);
+	private void initExport() {
+		
+		String exportType = this.prefs.getString("export_type", "sdcard");
+		String dbPath = this.getDatabasePath(KmDatabase.DATABASE_NAME)
+				.toString();
+		if (exportType.equals("sdcard")) {
+			this.mDBApi = null;
+			this.exportTask = new ExportDatabaseTask(Mode.SDCARD, this, dbPath);
+		} else if (exportType.equals("dropbox")) {
+			final String APP_KEY = "kuyk8nn6g6osz3s";
+			final String APP_SECRET = "58pm6zl92rcg5i9";
+			final AccessType ACCESS_TYPE = AccessType.APP_FOLDER;
+			
+			AppKeyPair appKeyPair = new AppKeyPair(APP_KEY, APP_SECRET);
+			AndroidAuthSession session;
 
-	}
+			String[] stored = getKeys();
+			if (stored != null) {
+				AccessTokenPair accessToken = new AccessTokenPair(stored[0],
+						stored[1]);
+				session = new AndroidAuthSession(appKeyPair, ACCESS_TYPE,
+						accessToken);
+			} else {
+				session = new AndroidAuthSession(appKeyPair, ACCESS_TYPE);
+			}
 
-	private AndroidAuthSession buildSession() {
-		AppKeyPair appKeyPair = new AppKeyPair(APP_KEY, APP_SECRET);
-		AndroidAuthSession session;
-
-		String[] stored = getKeys();
-		if (stored != null) {
-			AccessTokenPair accessToken = new AccessTokenPair(stored[0],
-					stored[1]);
-			session = new AndroidAuthSession(appKeyPair, ACCESS_TYPE,
-					accessToken);
-		} else {
-			session = new AndroidAuthSession(appKeyPair, ACCESS_TYPE);
+			this.mDBApi = new DropboxAPI<AndroidAuthSession>(session);
+			
+			if (this.mDBApi.getSession().isLinked()) {
+				this.exportTask = new ExportDatabaseTask(Mode.DROPBOX, this.mDBApi, this, dbPath);
+			} else {
+				this.mDBApi.getSession().startAuthentication(this);
+			}
 		}
+		
 
-		return session;
 	}
 
 	private String[] getKeys() {
@@ -473,7 +554,7 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 
 	private void initCurrentUser() {
-		this.userId = 1;
+		this.userId = this.getDefaultUser();
 	}
 
 	private void initDatabase() {
@@ -488,8 +569,6 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 
 	private void initDateText(boolean initListener) {
-		// 本日の日付をセット
-		this.currentDay = Calendar.getInstance();
 
 		int year = this.currentDay.get(Calendar.YEAR);
 		int month = this.currentDay.get(Calendar.MONTH);
@@ -705,6 +784,9 @@ public class KmoneyActivity extends FragmentActivity {
 
 	}
 
+	/**
+	 * 小数点を追加
+	 */
 	private void addDecimalMark() {
 		if (this.amount.getFractionDigits() == 0) {
 			return;
@@ -720,6 +802,10 @@ public class KmoneyActivity extends FragmentActivity {
 
 	}
 
+	/**
+	 * 日付を変更
+	 * @param direction
+	 */
 	private void changeDay(String direction) {
 		if (direction.equals("prev")) {
 			this.currentDay.add(Calendar.DATE, -1);
@@ -734,6 +820,12 @@ public class KmoneyActivity extends FragmentActivity {
 		this.setDateText(year, month, day);
 	}
 
+	/**
+	 * 日付を設定
+	 * @param year
+	 * @param month
+	 * @param day
+	 */
 	private void setCurrentDay(int year, int month, int day) {
 		this.setDateText(year, month, day);
 		this.currentDay.set(Calendar.YEAR, year);
@@ -976,13 +1068,13 @@ public class KmoneyActivity extends FragmentActivity {
 	protected void onResume() {
 		super.onResume();
 		
-		if (mDBApi.getSession().authenticationSuccessful()) {
+		if (this.mDBApi != null && this.mDBApi.getSession().authenticationSuccessful()) {
 			try {
 				// MANDATORY call to complete auth.
 				// Sets the access token on the session
-				mDBApi.getSession().finishAuthentication();
+				this.mDBApi.getSession().finishAuthentication();
 
-				AccessTokenPair tokens = mDBApi.getSession()
+				AccessTokenPair tokens = this.mDBApi.getSession()
 						.getAccessTokenPair();
 
 				// Provide your own storeKeys to persist the access token pair
@@ -992,6 +1084,13 @@ public class KmoneyActivity extends FragmentActivity {
 				Log.i("Kmoney", "Error authenticating", e);
 			}
 		}
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		
+		this.initExport();
 	}
 
 	private void storeKeys(String key, String secret) {
@@ -1006,25 +1105,34 @@ public class KmoneyActivity extends FragmentActivity {
 		getMenuInflater().inflate(R.menu.kmoney, menu);
 		return true;
 	}
+	
+	private void switchUser() {
+		KmUserInfo user = new KmUserInfo(this);
+		user.open(true);
+		List<Item> userList = user.getUserNameList();
+		user.close();
 
-	private void export() {
-		String exportType = PreferenceManager.getDefaultSharedPreferences(this)
-				.getString("export_type", "sdcard");
-		String dbPath = this.getDatabasePath(KmDatabase.DATABASE_NAME)
-				.toString();
-		if (exportType.equals("sdcard")) {
-			ExportDatabaseTask exportDb = new ExportDatabaseTask(Mode.SDCARD,
-					this);
-			exportDb.execute(dbPath);
-		} else if (exportType.equals("dropbox")) {
-			if (this.mDBApi.getSession().isLinked()) {
-				ExportDatabaseTask exportDb = new ExportDatabaseTask(
-						Mode.DROPBOX, this.mDBApi, this);
-				exportDb.execute(dbPath);
-			} else {
-				this.mDBApi.getSession().startAuthentication(this);
-			}
+		if (userList.isEmpty()) {
+			Toast.makeText(this, R.string.detail_nothing, Toast.LENGTH_SHORT)
+					.show();
+			return;
 		}
+		ArrayList<String> nameList = new ArrayList<String>();
+		
+		Iterator<Item> it = userList.iterator();
+		while (it.hasNext()) {
+			nameList.add(it.next().getName());
+
+		}
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(R.string.user);
+		builder.setItems(nameList.toArray(new CharSequence[nameList.size()]),
+				new SwitchUserListener(userList));
+		
+		AlertDialog alert = builder.create();
+		alert.show();
+		
 	}
 
 	@Override
@@ -1032,10 +1140,13 @@ public class KmoneyActivity extends FragmentActivity {
 		Intent i;
 		switch (item.getItemId()) {
 		case R.id.menu_export:
-			this.export();
+			this.exportTask.execute();
 			break;
 		case R.id.menu_settings:
 			startActivity(new Intent(this, SettingsActivity.class));
+			break;
+		case R.id.menu_user:
+			this.switchUser();
 			break;
 		case R.id.master_category:
 			i = new Intent(KmoneyActivity.this, CategoryListActivity.class);
@@ -1139,13 +1250,13 @@ public class KmoneyActivity extends FragmentActivity {
 
 	private void photo() {
 		if (this.imageFileUri != null) {
-			this.showPhoto();
+			this.showPhoto(this.imageFileUri);
 		} else {
 			this.takePicture();
 		}
 	}
 
-	private void showPhoto() {
+	private void showPhoto(Uri imageFile) {
 		LayoutInflater inflater = LayoutInflater.from(this);
 		View dialogview = inflater.inflate(R.layout.photo, null);
 
@@ -1156,26 +1267,30 @@ public class KmoneyActivity extends FragmentActivity {
 				new DeletePhotoButtonListener());
 
 		ImageView photoView = (ImageView) dialogview.findViewById(R.id.photo);
-		photoView.setImageURI(this.imageFileUri);
+		photoView.setImageURI(imageFile);
 
 		builder.show();
 
 	}
+	private void deletePhoto() {
+		if (this.imageFileUri == null) {
+			return;
+		}
+		File file = new File(this.imageFileUri.getPath());
+		file.delete();
+		this.imageFileUri = null;
+	}
+
+	private void cancel() {
+		this.deletePhoto();
+		this.monthly();
+	}
 
 	private void takePicture() {
-		// create Intent to take a picture and return control to the calling
-		// application
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-		this.imageFileUri = getOutputMediaFileUri(); // create a file to save
-														// the image
-
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, this.imageFileUri); // set the
-																		// image
-																		// file
-																		// name
-
-		// start the image capture Intent
+		this.imageFileUri = getOutputMediaFileUri();
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, this.imageFileUri);
 		startActivityForResult(intent, REQUEST_CAMERA);
 	}
 	private void monthly() {
@@ -1194,8 +1309,14 @@ public class KmoneyActivity extends FragmentActivity {
 					imageUri = data.getData();
 				} else {
 					imageUri = this.imageFileUri;
+					if (imageUri == null) {
+						Toast.makeText(this, R.string.error_photo, Toast.LENGTH_SHORT)
+						.show();
+					}
 				}
-				this.showPhoto();
+				if (imageUri != null) {
+					this.showPhoto(imageUri);
+				}
 			} else {
 				this.imageFileUri = null;
 			}

@@ -21,7 +21,7 @@ import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.exception.DropboxException;
 import com.dropbox.client2.exception.DropboxUnlinkedException;
 
-public class ExportDatabaseTask extends AsyncTask<String, Void, Boolean> {
+public class ExportDatabaseTask extends AsyncTask<Void, Void, Boolean> {
 	public enum Mode {
 		SDCARD,
 		DROPBOX
@@ -30,16 +30,20 @@ public class ExportDatabaseTask extends AsyncTask<String, Void, Boolean> {
 	private ProgressDialog dialog = null;
 	private Context context;
 	private Mode mode;
+	private String dbPath;
 
-	public ExportDatabaseTask(Mode mode, DropboxAPI<AndroidAuthSession> dDBApi, Context ctx) {
+	public ExportDatabaseTask(Mode mode, DropboxAPI<AndroidAuthSession> dDBApi, Context ctx,
+			String dbPath) {
 		this.mode = mode;
 		this.dDBApi = dDBApi;
 		this.context = ctx;
+		this.dbPath = dbPath;
 		this.dialog = new ProgressDialog(ctx);
 	}
-	public ExportDatabaseTask(Mode mode, Context ctx) {
+	public ExportDatabaseTask(Mode mode, Context ctx, String dbPath) {
 		this.mode = mode;
 		this.context = ctx;
+		this.dbPath = dbPath;
 		this.dialog = new ProgressDialog(ctx);
 	}
 
@@ -51,12 +55,13 @@ public class ExportDatabaseTask extends AsyncTask<String, Void, Boolean> {
 	}
 
 	// automatically done on worker thread (separate from UI thread)
-	protected Boolean doInBackground(final String... args) {
+	@Override
+	protected Boolean doInBackground(Void... params) {
 		
 		if (this.mode == Mode.SDCARD) {
-			return this.sdcard(args[0]);
+			return this.sdcard(this.dbPath);
 		} else if (this.mode == Mode.DROPBOX) {
-			return this.dropbox(args[0]);
+			return this.dropbox(this.dbPath);
 		}
 		Log.e("Kmoney", "Unknown mode");
 		return false;
