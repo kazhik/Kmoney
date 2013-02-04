@@ -19,6 +19,7 @@ import net.kazhik.android.kmoney.bean.CashTransaction;
 import net.kazhik.android.kmoney.bean.Category;
 import net.kazhik.android.kmoney.bean.CreditCardTransaction;
 import net.kazhik.android.kmoney.bean.EMoneyTransaction;
+import net.kazhik.android.kmoney.bean.Item;
 import net.kazhik.android.kmoney.bean.Transaction;
 import net.kazhik.android.kmoney.bean.TransactionView;
 import net.kazhik.android.kmoney.db.KmBankInfo;
@@ -1106,6 +1107,17 @@ public class KmoneyActivity extends FragmentActivity {
 		return true;
 	}
 	
+	private List<String> toNameList(List<Item> itemList) {
+		ArrayList<String> nameList = new ArrayList<String>();
+		
+		Iterator<Item> it = itemList.iterator();
+		while (it.hasNext()) {
+			nameList.add(it.next().getName());
+
+		}
+		return nameList;
+	
+	}
 	private void switchUser() {
 		KmUserInfo user = new KmUserInfo(this);
 		user.open(true);
@@ -1117,14 +1129,8 @@ public class KmoneyActivity extends FragmentActivity {
 					.show();
 			return;
 		}
-		ArrayList<String> nameList = new ArrayList<String>();
-		
-		Iterator<Item> it = userList.iterator();
-		while (it.hasNext()) {
-			nameList.add(it.next().getName());
-
-		}
-		
+		List<String> nameList = this.toNameList(userList);
+				
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(R.string.user);
 		builder.setItems(nameList.toArray(new CharSequence[nameList.size()]),

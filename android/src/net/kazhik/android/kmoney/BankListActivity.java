@@ -1,35 +1,27 @@
 package net.kazhik.android.kmoney;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import net.kazhik.android.kmoney.Constants.ContextMenuItem;
+import net.kazhik.android.kmoney.bean.Item;
 import net.kazhik.android.kmoney.db.KmBankInfo;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
-public class BankListActivity extends FragmentActivity implements OnItemClickListener {
-	private SimpleAdapter listAdapter;
-	private ArrayList<HashMap<String, String>> mapList = new ArrayList<HashMap<String, String>>();
+public class BankListActivity extends MasterDataListActivity {
     private int updateId;
     private KmBankInfo tbl;
     private int userId;
@@ -87,6 +79,9 @@ public class BankListActivity extends FragmentActivity implements OnItemClickLis
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.masterdata);
 		
+		TextView txtView = (TextView)findViewById(R.id.textTitle);
+		txtView.setText(R.string.bank);
+		
 		this.initAddButton();
 		this.initCancelButton();
 
@@ -117,25 +112,10 @@ public class BankListActivity extends FragmentActivity implements OnItemClickLis
 	private void loadList(int userId) {
 		List<Item> itemList = this.tbl.getBankNameList(userId);
 		
-		this.mapList.clear();
-		Iterator<Item> it = itemList.iterator();
-		while (it.hasNext()) {
-			Item item = it.next();
-
-			HashMap<String, String> map = new HashMap<String, String>();
-			map.put("id", String.valueOf(item.getId()));
-			map.put("name", item.getName());
-			this.mapList.add(map);
-		}
-		this.listAdapter = new SimpleAdapter(this,
-				this.mapList,
-				android.R.layout.simple_list_item_1,
-				new String[] { "name" },
-				new int[] {	android.R.id.text1 }
-				);
+		this.setItemList(itemList);
 		
 		ListView lv = (ListView) findViewById(R.id.listMasterData);
-		lv.setAdapter(this.listAdapter);
+		lv.setAdapter(this.getListAdapter());
 		lv.setOnItemClickListener(this);
 
 		registerForContextMenu(lv);		
@@ -151,12 +131,7 @@ public class BankListActivity extends FragmentActivity implements OnItemClickLis
 	
 	private void delete(int position) {
 		
-		// 画面上から削除
-		HashMap<String, String> removed = this.mapList.remove(position);
-		this.listAdapter.notifyDataSetChanged();
-
-		// DBから削除
-		int id = Integer.parseInt(removed.get("id"));
+		int id = this.deleteItem(position);
 		this.tbl.delete(id);
 		
 	}
@@ -170,17 +145,6 @@ public class BankListActivity extends FragmentActivity implements OnItemClickLis
 		btn.setOnClickListener(new CancelButtonClickListener());
 
 	}	
-	public void onCreateContextMenu(ContextMenu menu, View view,
-			ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, view, menuInfo);
-
-		AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-		
-		HashMap<String, String> map = this.mapList.get(info.position);
-		
-		menu.setHeaderTitle(map.get("name"));
-		menu.add(Menu.NONE, ContextMenuItem.DELETE.ordinal(), Menu.NONE, R.string.delete);
-	}
 	public boolean onContextItemSelected(MenuItem item) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 

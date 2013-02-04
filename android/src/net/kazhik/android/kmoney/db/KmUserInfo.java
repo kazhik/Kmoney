@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.kazhik.android.kmoney.Item;
+import net.kazhik.android.kmoney.bean.Item;
 import net.kazhik.android.kmoney.bean.UserInfo;
 import android.content.ContentValues;
 import android.content.Context;

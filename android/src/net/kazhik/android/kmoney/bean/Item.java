@@ -1,4 +1,4 @@
-package net.kazhik.android.kmoney;
+package net.kazhik.android.kmoney.bean;
 
 public class Item {
 	private int id;
