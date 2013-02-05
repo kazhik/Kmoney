@@ -25,44 +25,6 @@ public class MonthlySummaryActivity extends Activity {
 	private SimpleAdapter listAdapter;
 	private ArrayList<HashMap<String, String>> mapList = new ArrayList<HashMap<String, String>>();
 
-	private class EntryButtonClickListener implements View.OnClickListener {
-
-		@Override
-		public void onClick(View v) {
-			startActivity(new Intent(MonthlySummaryActivity.this,
-					KmoneyActivity.class));
-			finish();
-
-		}
-
-	}
-
-	private class ListButtonClickListener implements View.OnClickListener {
-
-		@Override
-		public void onClick(View v) {
-			startActivity(new Intent(MonthlySummaryActivity.this,
-					MonthlyActivity.class));
-			finish();
-
-		}
-
-	}
-
-	private class MonthButtonClickListener implements View.OnClickListener {
-		private String direction;
-
-		public MonthButtonClickListener(String direction) {
-			this.direction = direction;
-
-		}
-
-		@Override
-		public void onClick(View v) {
-			MonthlySummaryActivity.this.changeMonth(this.direction);
-		}
-
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -93,18 +55,56 @@ public class MonthlySummaryActivity extends Activity {
 	}
 
 	private void initEntryButton() {
+		class EntryButtonClickListener implements View.OnClickListener {
+
+			@Override
+			public void onClick(View v) {
+				startActivity(new Intent(MonthlySummaryActivity.this,
+						KmoneyActivity.class));
+				finish();
+
+			}
+
+		}
 		Button btn = (Button) findViewById(R.id.buttonEntry);
 		btn.setOnClickListener(new EntryButtonClickListener());
 
 	}
 
 	private void initListButton() {
+		class ListButtonClickListener implements View.OnClickListener {
+
+			@Override
+			public void onClick(View v) {
+				startActivity(new Intent(MonthlySummaryActivity.this,
+						MonthlyActivity.class));
+				finish();
+
+			}
+
+		}
+
 		Button btn = (Button) findViewById(R.id.buttonList);
 		btn.setOnClickListener(new ListButtonClickListener());
 
 	}
 
 	private void initMonthButton() {
+		class MonthButtonClickListener implements View.OnClickListener {
+			private String direction;
+
+			public MonthButtonClickListener(String direction) {
+				this.direction = direction;
+
+			}
+
+			@Override
+			public void onClick(View v) {
+				MonthlySummaryActivity.this.changeMonth(this.direction);
+			}
+
+		}
+
 		Button btnPrev = (Button) findViewById(R.id.buttonPrev);
 		btnPrev.setOnClickListener(new MonthButtonClickListener("prev"));
 

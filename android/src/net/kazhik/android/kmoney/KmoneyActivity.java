@@ -92,232 +92,6 @@ public class KmoneyActivity extends FragmentActivity {
 
 	private SharedPreferences prefs;
 
-	/**
-	 * 種別選択リスト
-	 *
-	 */
-	private class SelectTypeListener implements OnItemSelectedListener {
-
-		@Override
-		public void onItemSelected(AdapterView<?> parent, View view,
-				int position, long id) {
-
-			Spinner spinner = (Spinner) parent;
-			Item item = (Item) spinner.getSelectedItem();
-			KmoneyActivity.this.onChangeTransactionType(item.getId());
-
-		}
-
-		@Override
-		public void onNothingSelected(AdapterView<?> arg0) {
-
-		}
-
-	}
-
-	/**
-	 * 数字キー
-	 *
-	 */
-	private class NumberClickListener implements View.OnClickListener {
-		int number;
-
-		public NumberClickListener(int number) {
-			this.number = number;
-		}
-
-		@Override
-		public void onClick(View v) {
-			KmoneyActivity.this.addNumber(this.number);
-
-		}
-
-	}
-
-	/**
-	 * "00"キー
-	 *
-	 */
-	private class DoubleZeroClickListener implements View.OnClickListener {
-		@Override
-		public void onClick(View v) {
-			KmoneyActivity.this.addNumber(0);
-			KmoneyActivity.this.addNumber(0);
-		}
-
-	}
-
-
-	/**
-	 * 小数点キー
-	 *
-	 */
-	private class DecimalMarkClickListener implements View.OnClickListener {
-		@Override
-		public void onClick(View v) {
-			KmoneyActivity.this.addDecimalMark();
-
-		}
-
-	}
-
-	/**
-	 * クリアボタン
-	 *
-	 */
-	private class ClearButtonClickListener implements View.OnClickListener {
-		@Override
-		public void onClick(View v) {
-			KmoneyActivity.this.initAmount();
-
-		}
-	}
-
-	/**
-	 * バックスペースボタン
-	 * 
-	 */
-	private class BackspaceButtonClickListener implements View.OnClickListener {
-		@Override
-		public void onClick(View v) {
-			KmoneyActivity.this.backspace();
-		}
-	}
-
-	/**
-	 * 写真ボタン
-	 *
-	 */
-	private class PhotoButtonClickListener implements View.OnClickListener {
-
-		@Override
-		public void onClick(View v) {
-			KmoneyActivity.this.photo();
-
-		}
-
-	}
-
-	private class OkButtonClickListener implements View.OnClickListener {
-
-		@Override
-		public void onClick(View v) {
-			KmoneyActivity.this.writeTransaction();
-			KmoneyActivity.this.monthly();
-
-		}
-
-	}
-
-	private class CancelButtonClickListener implements View.OnClickListener {
-
-		@Override
-		public void onClick(View v) {
-			KmoneyActivity.this.cancel();
-
-		}
-
-	}
-
-	private class HistoryButtonClickListener implements View.OnClickListener {
-		@Override
-		public void onClick(View v) {
-			KmoneyActivity.this.showDetailHistoryDialog();
-		}
-	}
-
-	private class CopyButtonClickListener implements View.OnClickListener {
-		@Override
-		public void onClick(View v) {
-			KmoneyActivity.this.copyAsNew();
-		}
-	}
-
-	private class DateSetListener implements DatePickerDialog.OnDateSetListener {
-
-		@Override
-		public void onDateSet(DatePicker view, int year, int monthOfYear,
-				int dayOfMonth) {
-
-			KmoneyActivity.this.setCurrentDay(year, monthOfYear, dayOfMonth);
-		}
-
-	}
-
-	private class DateClickListener implements View.OnLongClickListener {
-		private int year;
-		private int month;
-		private int day;
-
-		public DateClickListener(int year, int month, int day) {
-			this.year = year;
-			this.month = month;
-			this.day = day;
-		}
-
-		@Override
-		public boolean onLongClick(View v) {
-			DatePickerDialog datePickerDialog = new DatePickerDialog(
-					KmoneyActivity.this, new DateSetListener(), this.year, this.month,
-					this.day);
-			datePickerDialog.show();
-			return false;
-		}
-
-	}
-
-	private class DateButtonClickListener implements View.OnClickListener {
-		private String direction;
-
-		public DateButtonClickListener(String direction) {
-			this.direction = direction;
-
-		}
-
-		@Override
-		public void onClick(View v) {
-			KmoneyActivity.this.changeDay(this.direction);
-		}
-
-	}
-
-	
-	/**
-	 * 写真ダイアログの削除ボタン
-	 * @author kazhik
-	 *
-	 */
-	private class DeletePhotoButtonListener implements OnClickListener {
-		@Override
-		public void onClick(DialogInterface dialog, int which) {
-			KmoneyActivity.this.deletePhoto();
-			
-		}
-	}
-	private class HistoryClickListener implements
-			DialogInterface.OnClickListener {
-		public void onClick(DialogInterface dialog, int item) {
-			ListView lv = ((AlertDialog) dialog).getListView();
-			String str = (String) lv.getAdapter().getItem(item);
-
-			EditText detail = (EditText) findViewById(R.id.editTextDetail);
-			detail.setText(str);
-		}
-
-	}
-	private class SwitchUserListener implements DialogInterface.OnClickListener {
-		private List<Item> userList;
-		public SwitchUserListener(List<Item> userList) {
-			this.userList = userList;
-		}
-		@Override
-		public void onClick(DialogInterface dialog, int which) {
-			Item item = this.userList.get(which);
-			
-			KmoneyActivity.this.setUser(item.getId());
-		}
-		
-	}
 	private int getDefaultUser() {
 		return this.prefs.getInt("default_user", 0);
 	}
@@ -418,7 +192,6 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 
 	private void loadTransaction(int type, int id) {
-		Spinner spinner = (Spinner) findViewById(R.id.spinnerTypeDetail);
 		int typeDetailId = 0;
 
 		if (type == TransactionType.CASH) {
@@ -467,6 +240,7 @@ public class KmoneyActivity extends FragmentActivity {
 			trn.close();
 		}
 		if (typeDetailId > 0) {
+			Spinner spinner = (Spinner) findViewById(R.id.spinnerTypeDetail);
 			this.onChangeTransactionType(type);
 			int pos = this.getSpinnerPosition(spinner, typeDetailId);
 			spinner.setSelection(pos);
@@ -570,6 +344,37 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 
 	private void initDateText(boolean initListener) {
+		class DateSetListener implements DatePickerDialog.OnDateSetListener {
+
+			@Override
+			public void onDateSet(DatePicker view, int year, int monthOfYear,
+					int dayOfMonth) {
+
+				KmoneyActivity.this.setCurrentDay(year, monthOfYear, dayOfMonth);
+			}
+
+		}
+		class DateClickListener implements View.OnLongClickListener {
+			private int year;
+			private int month;
+			private int day;
+
+			public DateClickListener(int year, int month, int day) {
+				this.year = year;
+				this.month = month;
+				this.day = day;
+			}
+
+			@Override
+			public boolean onLongClick(View v) {
+				DatePickerDialog datePickerDialog = new DatePickerDialog(
+						KmoneyActivity.this, new DateSetListener(), this.year, this.month,
+						this.day);
+				datePickerDialog.show();
+				return false;
+			}
+
+		}
 
 		int year = this.currentDay.get(Calendar.YEAR);
 		int month = this.currentDay.get(Calendar.MONTH);
@@ -585,6 +390,20 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 
 	private void initDateButton() {
+		class DateButtonClickListener implements View.OnClickListener {
+			private String direction;
+
+			public DateButtonClickListener(String direction) {
+				this.direction = direction;
+
+			}
+
+			@Override
+			public void onClick(View v) {
+				KmoneyActivity.this.changeDay(this.direction);
+			}
+
+		}
 		Button btnPrev = (Button) findViewById(R.id.buttonPrev);
 		btnPrev.setOnClickListener(new DateButtonClickListener("prev"));
 
@@ -594,6 +413,13 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 
 	private void initClearButton() {
+		class ClearButtonClickListener implements View.OnClickListener {
+			@Override
+			public void onClick(View v) {
+				KmoneyActivity.this.initAmount();
+
+			}
+		}
 		Button btn = (Button) findViewById(R.id.buttonClear);
 		btn.setOnClickListener(new ClearButtonClickListener());
 
@@ -605,6 +431,70 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 
 	private void initAmountInput() {
+		/**
+		 * BSキー
+		 *
+		 */
+		class BackspaceButtonClickListener implements View.OnClickListener {
+			@Override
+			public void onClick(View v) {
+				KmoneyActivity.this.backspace();
+			}
+		}
+		/**
+		 * Clearキー
+		 *
+		 */
+		class ClearButtonClickListener implements View.OnClickListener {
+			@Override
+			public void onClick(View v) {
+				KmoneyActivity.this.initAmount();
+
+			}
+		}
+		/**
+		 * 小数点キー
+		 *
+		 */
+		class DecimalMarkClickListener implements View.OnClickListener {
+			@Override
+			public void onClick(View v) {
+				KmoneyActivity.this.addDecimalMark();
+
+			}
+
+		}
+		/**
+		 * 数字キー
+		 *
+		 */
+		class NumberClickListener implements View.OnClickListener {
+			int number;
+
+			public NumberClickListener(int number) {
+				this.number = number;
+			}
+
+			@Override
+			public void onClick(View v) {
+				KmoneyActivity.this.addNumber(this.number);
+
+			}
+
+		}
+		/**
+		 * "00"キー
+		 *
+		 */
+		class DoubleZeroClickListener implements View.OnClickListener {
+			@Override
+			public void onClick(View v) {
+				KmoneyActivity.this.addNumber(0);
+				KmoneyActivity.this.addNumber(0);
+			}
+
+		}
+
 		this.amount = new Money();
 		AutoResizeTextView tv = (AutoResizeTextView) findViewById(R.id.textViewAmount);
 		tv.setText(this.amount.setValue("0"));
@@ -628,33 +518,79 @@ public class KmoneyActivity extends FragmentActivity {
 		Button btnBs = (Button) findViewById(R.id.buttonBackSpace);
 		btnBs.setOnClickListener(new BackspaceButtonClickListener());
 
+		Button btnClear = (Button) findViewById(R.id.buttonClear);
+		btnClear.setOnClickListener(new ClearButtonClickListener());
 	}
 
 	private void initPhotoButton() {
+		class PhotoButtonClickListener implements View.OnClickListener {
+
+			@Override
+			public void onClick(View v) {
+				KmoneyActivity.this.photo();
+
+			}
+
+		}
+
 		ImageButton btn = (ImageButton) findViewById(R.id.buttonPhoto);
 		btn.setOnClickListener(new PhotoButtonClickListener());
 
 	}
 
 	private void initOkButton() {
+		class OkButtonClickListener implements View.OnClickListener {
+
+			@Override
+			public void onClick(View v) {
+				KmoneyActivity.this.writeTransaction();
+				KmoneyActivity.this.monthly();
+
+			}
+
+		}
 		Button btn = (Button) findViewById(R.id.buttonOk);
 		btn.setOnClickListener(new OkButtonClickListener());
 
 	}
 
 	private void initCancelButton() {
+		class CancelButtonClickListener implements View.OnClickListener {
+
+			@Override
+			public void onClick(View v) {
+				KmoneyActivity.this.cancel();
+
+			}
+
+		}
+
 		Button btn = (Button) findViewById(R.id.buttonCancel);
 		btn.setOnClickListener(new CancelButtonClickListener());
 
 	}
 
 	private void initCopyButton() {
+		class CopyButtonClickListener implements View.OnClickListener {
+			@Override
+			public void onClick(View v) {
+				KmoneyActivity.this.copyAsNew();
+			}
+		}
+
 		Button btn = (Button) findViewById(R.id.buttonCopy);
 		btn.setOnClickListener(new CopyButtonClickListener());
 
 	}
 
 	private void initHistoryButton() {
+		class HistoryButtonClickListener implements View.OnClickListener {
+			@Override
+			public void onClick(View v) {
+				KmoneyActivity.this.showDetailHistoryDialog();
+			}
+		}
+
 		Button btn = (Button) findViewById(R.id.buttonHistory);
 		btn.setOnClickListener(new HistoryButtonClickListener());
 	}
@@ -718,6 +654,24 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 
 	private void initTypeList() {
+		class SelectTypeListener implements OnItemSelectedListener {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+
+				Spinner spinner = (Spinner) parent;
+				Item item = (Item) spinner.getSelectedItem();
+				KmoneyActivity.this.onChangeTransactionType(item.getId());
+
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+
+			}
+
+		}
 		ArrayAdapter<Item> adapter = new ArrayAdapter<Item>(this,
 				android.R.layout.simple_spinner_item);
 		adapter.add(new Item(TransactionType.CASH, getResources().getString(
@@ -737,6 +691,7 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 
 	private void onChangeTransactionType(int id) {
+		
 		Spinner spinner = (Spinner) findViewById(R.id.spinnerTypeDetail);
 
 		List<Item> trnsTypeList = new ArrayList<Item>();
@@ -1119,6 +1074,19 @@ public class KmoneyActivity extends FragmentActivity {
 	
 	}
 	private void switchUser() {
+		class SwitchUserListener implements DialogInterface.OnClickListener {
+			private List<Item> userList;
+			public SwitchUserListener(List<Item> userList) {
+				this.userList = userList;
+			}
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Item item = this.userList.get(which);
+				
+				KmoneyActivity.this.setUser(item.getId());
+			}
+			
+		}
 		KmUserInfo user = new KmUserInfo(this);
 		user.open(true);
 		List<Item> userList = user.getUserNameList();
@@ -1184,6 +1152,16 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 
 	private void showDetailHistoryDialog() {
+		class HistoryClickListener implements DialogInterface.OnClickListener {
+			public void onClick(DialogInterface dialog, int item) {
+				ListView lv = ((AlertDialog) dialog).getListView();
+				String str = (String) lv.getAdapter().getItem(item);
+
+				EditText detail = (EditText) findViewById(R.id.editTextDetail);
+				detail.setText(str);
+			}
+
+		}		
 		String type;
 		if (this.transactionType == TransactionType.CASH) {
 			type = TransactionView.CASH;
@@ -1263,6 +1241,14 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 
 	private void showPhoto(Uri imageFile) {
+		class DeletePhotoButtonListener implements OnClickListener {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				KmoneyActivity.this.deletePhoto();
+				
+			}
+		}
+		
 		LayoutInflater inflater = LayoutInflater.from(this);
 		View dialogview = inflater.inflate(R.layout.photo, null);
 

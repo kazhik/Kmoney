@@ -47,106 +47,6 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 	private SimpleAdapter listAdapter;
 	private ArrayList<HashMap<String, String>> mapList = new ArrayList<HashMap<String, String>>();
 
-	class SwipeDetector extends SimpleOnGestureListener {
-		private int swipeMinDistance;
-		private int swipeThresholdVerocity;
-
-		public SwipeDetector(int minDistance, int thresholdVerocity) {
-			this.swipeMinDistance = minDistance;
-			this.swipeThresholdVerocity = thresholdVerocity;
-		}
-
-		@Override
-		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-				float velocityY) {
-			try {
-				if (Math.abs(velocityX) <= this.swipeThresholdVerocity) {
-					return false;
-				}
-				// right to left swipe
-				if (e1.getX() - e2.getX() > this.swipeMinDistance) {
-					MonthlyActivity.this.changeMonth("next");
-				} else if (e2.getX() - e1.getX() > this.swipeMinDistance) {
-					MonthlyActivity.this.changeMonth("prev");
-				} else {
-					Log.d(Constants.APPNAME, "fail");
-				}
-			} catch (Exception e) {
-				// nothing
-			}
-			return false;
-		}
-
-	}
-
-	private class EntryButtonClickListener implements View.OnClickListener {
-
-		@Override
-		public void onClick(View v) {
-//			startActivity(new Intent(MonthlyActivity.this, KmoneyActivity.class));
-			setResult(RESULT_OK);
-			finish();
-
-		}
-
-	}
-
-	private class SumButtonClickListener implements View.OnClickListener {
-
-		@Override
-		public void onClick(View v) {
-			Intent i = new Intent(MonthlyActivity.this,
-					MonthlySummaryActivity.class);
-			Month m = MonthlyActivity.this.currentMonth;
-			i.putExtra("year", m.getYear());
-			i.putExtra("month", m.getMonth());
-			startActivity(i);
-
-		}
-
-	}
-
-	private class MonthButtonClickListener implements View.OnClickListener {
-		private String direction;
-
-		public MonthButtonClickListener(String direction) {
-			this.direction = direction;
-
-		}
-
-		@Override
-		public void onClick(View v) {
-			MonthlyActivity.this.changeMonth(this.direction);
-		}
-
-	}
-
-	private class ConfirmDeleteListener implements
-			DialogInterface.OnClickListener {
-		private int position;
-
-		public ConfirmDeleteListener(int position) {
-			this.position = position;
-		}
-
-		@Override
-		public void onClick(DialogInterface dialog, int which) {
-			if (which == DialogInterface.BUTTON_POSITIVE) {
-				MonthlyActivity.this.deleteTransaction(this.position);
-			}
-
-		}
-	}
-
-	private class TouchListener implements View.OnTouchListener {
-
-		@Override
-		public boolean onTouch(View v, MotionEvent event) {
-			return MonthlyActivity.this.gestureDetector.onTouchEvent(event);
-		}
-
-	}
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -163,12 +63,7 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 
 		this.loadList(this.currentMonth.getYear(), this.currentMonth.getMonth());
 
-		ViewConfiguration vc = ViewConfiguration.get(this);
-		SwipeDetector swipeDetector = new SwipeDetector(
-				vc.getScaledPagingTouchSlop(),
-				vc.getScaledMinimumFlingVelocity());
-		this.gestureDetector = new GestureDetector(this, swipeDetector);
-		this.gestureListener = new TouchListener();
+		this.initSwipe();
 
 		ListView lv = (ListView) findViewById(R.id.listViewMonthly);
 		lv.setOnItemClickListener(this);
@@ -185,20 +80,108 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 		getMenuInflater().inflate(R.menu.monthly, menu);
 		return true;
 	}
+	private void initSwipe() {
+		class SwipeDetector extends SimpleOnGestureListener {
+			private int swipeMinDistance;
+			private int swipeThresholdVerocity;
+
+			public SwipeDetector(int minDistance, int thresholdVerocity) {
+				this.swipeMinDistance = minDistance;
+				this.swipeThresholdVerocity = thresholdVerocity;
+			}
+
+			@Override
+			public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+					float velocityY) {
+				try {
+					if (Math.abs(velocityX) <= this.swipeThresholdVerocity) {
+						return false;
+					}
+					// right to left swipe
+					if (e1.getX() - e2.getX() > this.swipeMinDistance) {
+						MonthlyActivity.this.changeMonth("next");
+					} else if (e2.getX() - e1.getX() > this.swipeMinDistance) {
+						MonthlyActivity.this.changeMonth("prev");
+					} else {
+						Log.d(Constants.APPNAME, "fail");
+					}
+				} catch (Exception e) {
+					// nothing
+				}
+				return false;
+			}
+
+		}
+		class TouchListener implements View.OnTouchListener {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				return MonthlyActivity.this.gestureDetector.onTouchEvent(event);
+			}
+
+		}
+		ViewConfiguration vc = ViewConfiguration.get(this);
+		SwipeDetector swipeDetector = new SwipeDetector(
+				vc.getScaledPagingTouchSlop(),
+				vc.getScaledMinimumFlingVelocity());
+		this.gestureDetector = new GestureDetector(this, swipeDetector);
+		this.gestureListener = new TouchListener();
+		
+	}
 
 	private void initEntryButton() {
+		class EntryButtonClickListener implements View.OnClickListener {
+
+			@Override
+			public void onClick(View v) {
+				setResult(RESULT_OK);
+				finish();
+
+			}
+
+		}
 		Button btn = (Button) findViewById(R.id.buttonEntry);
 		btn.setOnClickListener(new EntryButtonClickListener());
 
 	}
 
 	private void initSumButton() {
+		class SumButtonClickListener implements View.OnClickListener {
+
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(MonthlyActivity.this,
+						MonthlySummaryActivity.class);
+				Month m = MonthlyActivity.this.currentMonth;
+				i.putExtra("year", m.getYear());
+				i.putExtra("month", m.getMonth());
+				startActivity(i);
+
+			}
+
+		}
 		Button btn = (Button) findViewById(R.id.buttonSum);
 		btn.setOnClickListener(new SumButtonClickListener());
 
 	}
 
 	private void initMonthButton() {
+		class MonthButtonClickListener implements View.OnClickListener {
+			private String direction;
+
+			public MonthButtonClickListener(String direction) {
+				this.direction = direction;
+
+			}
+
+			@Override
+			public void onClick(View v) {
+				MonthlyActivity.this.changeMonth(this.direction);
+			}
+
+		}
+
+
 		Button btnPrev = (Button) findViewById(R.id.buttonPrev);
 		btnPrev.setOnClickListener(new MonthButtonClickListener("prev"));
 
@@ -358,6 +341,23 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 	}
 
 	public boolean onContextItemSelected(MenuItem item) {
+
+		class ConfirmDeleteListener implements
+				DialogInterface.OnClickListener {
+			private int position;
+
+			public ConfirmDeleteListener(int position) {
+				this.position = position;
+			}
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				if (which == DialogInterface.BUTTON_POSITIVE) {
+					MonthlyActivity.this.deleteTransaction(this.position);
+				}
+
+			}
+		}
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 				.getMenuInfo();
 

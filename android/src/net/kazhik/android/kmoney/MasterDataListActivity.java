@@ -28,52 +28,6 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 public abstract class MasterDataListActivity extends FragmentActivity implements OnItemClickListener {
-	private class AddButtonClickListener implements View.OnClickListener {
-
-		@Override
-		public void onClick(View v) {
-			showEditDialog("");
-
-		}
-
-	}
-	private class CancelButtonClickListener implements View.OnClickListener {
-
-		@Override
-		public void onClick(View v) {
-			finish();
-
-		}
-
-	}
-	private class ConfirmDeleteListener implements DialogInterface.OnClickListener {
-		private int position;
-		
-		public ConfirmDeleteListener(int position) {
-			this.position = position;
-		}
-
-		@Override
-		public void onClick(DialogInterface dialog, int which) {
-			if (which == DialogInterface.BUTTON_POSITIVE) {
-				delete(this.position);
-			}
-			
-		}
-	}
-    private class EditOkButtonListener implements OnClickListener {
-    	private View dialogview;
-
-    	public EditOkButtonListener(View dialogview) {
-    		this.dialogview = dialogview;
-    	}
-		@Override
-		public void onClick(DialogInterface dialog, int which) {
-			EditText editText = (EditText)this.dialogview.findViewById(R.id.editTextMaster);
-			String text = editText.getText().toString();
-			editOk(text);
-		}
-    }
 	
 	private int titleId;
 	private SimpleAdapter listAdapter = null;
@@ -82,7 +36,6 @@ public abstract class MasterDataListActivity extends FragmentActivity implements
 	protected abstract void delete(int position);	
 	protected abstract void editOk(String text1);
 	
-
 	public int getTitleId() {
 		return titleId;
 	}
@@ -110,6 +63,21 @@ public abstract class MasterDataListActivity extends FragmentActivity implements
 		return true;
 	}	
 	private void showConfirmDeleteDialog(int itemPos) {
+		class ConfirmDeleteListener implements DialogInterface.OnClickListener {
+			private int position;
+			
+			public ConfirmDeleteListener(int position) {
+				this.position = position;
+			}
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				if (which == DialogInterface.BUTTON_POSITIVE) {
+					delete(this.position);
+				}
+				
+			}
+		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		// Add the buttons
 		builder.setPositiveButton(android.R.string.ok,
@@ -123,11 +91,29 @@ public abstract class MasterDataListActivity extends FragmentActivity implements
 	}		
 	
 	private void initAddButton() {
+		class AddButtonClickListener implements View.OnClickListener {
+
+			@Override
+			public void onClick(View v) {
+				showEditDialog("");
+
+			}
+
+		}
 		Button btn = (Button) findViewById(R.id.buttonAdd);
 		btn.setOnClickListener(new AddButtonClickListener());
 
 	}	
 	private void initCancelButton() {
+		class CancelButtonClickListener implements View.OnClickListener {
+
+			@Override
+			public void onClick(View v) {
+				finish();
+
+			}
+
+		}
 		Button btn = (Button) findViewById(R.id.buttonCancel);
 		btn.setOnClickListener(new CancelButtonClickListener());
 
@@ -165,6 +151,19 @@ public abstract class MasterDataListActivity extends FragmentActivity implements
 		
 	}
 	public void showEditDialog(String selectedStr) {
+	    class EditOkButtonListener implements OnClickListener {
+	    	private View dialogview;
+
+	    	public EditOkButtonListener(View dialogview) {
+	    		this.dialogview = dialogview;
+	    	}
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				EditText editText = (EditText)this.dialogview.findViewById(R.id.editTextMaster);
+				String text = editText.getText().toString();
+				editOk(text);
+			}
+	    }
 		LayoutInflater inflater = LayoutInflater.from(this);
 		View dialogview = inflater.inflate(R.layout.masteredit1, null);
 
