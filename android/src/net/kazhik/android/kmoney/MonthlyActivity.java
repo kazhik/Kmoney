@@ -80,6 +80,17 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 		getMenuInflater().inflate(R.menu.monthly, menu);
 		return true;
 	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_settings:
+			startActivity(new Intent(this, SettingsActivity.class));
+			break;
+		default:
+			break;
+		}
+		return true;
+	}
 	private void initSwipe() {
 		class SwipeDetector extends SimpleOnGestureListener {
 			private int swipeMinDistance;

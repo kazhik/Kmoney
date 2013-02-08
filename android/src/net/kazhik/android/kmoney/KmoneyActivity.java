@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -74,7 +73,7 @@ import com.dropbox.client2.session.AppKeyPair;
 import com.dropbox.client2.session.Session.AccessType;
 
 public class KmoneyActivity extends FragmentActivity {
-	private Calendar currentDay;
+	private Day currentDay;
 	private int userId;
 	private int transactionType;
 	private Map<String, List<Item>> transactionTypeDetail;
@@ -110,8 +109,8 @@ public class KmoneyActivity extends FragmentActivity {
 
 		this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-		this.currentDay = Calendar.getInstance();
-
+		this.currentDay = new Day(this);
+		
 		this.initCurrentUser();
 
 		this.initDatabase();
@@ -128,7 +127,6 @@ public class KmoneyActivity extends FragmentActivity {
 		this.initPhotoButton();
 		this.initCopyButton();
 		this.initTransactionTypeDetal();
-		this.initExport();
 
 		this.updateId = 0;
 		this.updateType = TransactionType.NONE;
@@ -163,12 +161,9 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 
 	private void setField(Transaction trn) {
-		this.currentDay.setTime(trn.getTransactionDate());
+		this.currentDay.set(trn.getTransactionDate());
 
-		int year = this.currentDay.get(Calendar.YEAR);
-		int month = this.currentDay.get(Calendar.MONTH);
-		int day = this.currentDay.get(Calendar.DAY_OF_MONTH);
-		this.setDateText(year, month, day);
+		this.setDateText();
 
 		TextView tv = (TextView) findViewById(R.id.textViewAmount);
 		ToggleButton tglButton = (ToggleButton) findViewById(R.id.toggleButtonIncomeExpense);
@@ -255,29 +250,12 @@ public class KmoneyActivity extends FragmentActivity {
 
 	}
 
-	private String formatDate(int year, int month, int day) {
-		Calendar cal = Calendar.getInstance();
-		cal.set(year, month, day);
-
-		// 曜日
-		SimpleDateFormat sdfDayOfWeek = new SimpleDateFormat("E",
-				Locale.getDefault());
-		// 月名
-		SimpleDateFormat sdfMonthName = new SimpleDateFormat("MMM",
-				Locale.getDefault());
-
-		return String.format(getString(R.string.date_format), year, month + 1,
-				day, sdfDayOfWeek.format(cal.getTime()),
-				sdfMonthName.format(cal.getTime()));
-
-	}
-
-	private void setDateText(int year, int month, int day) {
+	private void setDateText() {
 		TextView tv = (TextView) findViewById(R.id.textViewDate);
-		tv.setText(this.formatDate(year, month, day));
+		tv.setText(this.currentDay.getText());
 	}
 
-	private void initExport() {
+	private void executeExport() {
 		
 		String exportType = this.prefs.getString("export_type", "sdcard");
 		String dbPath = this.getDatabasePath(KmDatabase.DATABASE_NAME)
@@ -285,6 +263,7 @@ public class KmoneyActivity extends FragmentActivity {
 		if (exportType.equals("sdcard")) {
 			this.mDBApi = null;
 			this.exportTask = new ExportDatabaseTask(Mode.SDCARD, this, dbPath);
+			this.exportTask.execute();
 		} else if (exportType.equals("dropbox")) {
 			final String APP_KEY = "kuyk8nn6g6osz3s";
 			final String APP_SECRET = "58pm6zl92rcg5i9";
@@ -307,6 +286,7 @@ public class KmoneyActivity extends FragmentActivity {
 			
 			if (this.mDBApi.getSession().isLinked()) {
 				this.exportTask = new ExportDatabaseTask(Mode.DROPBOX, this.mDBApi, this, dbPath);
+				this.exportTask.execute();
 			} else {
 				this.mDBApi.getSession().startAuthentication(this);
 			}
@@ -344,22 +324,22 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 
 	private void initDateText(boolean initListener) {
-		class DateSetListener implements DatePickerDialog.OnDateSetListener {
+		class DateLongClickListener implements View.OnLongClickListener {
+			class DateSetListener implements DatePickerDialog.OnDateSetListener {
 
-			@Override
-			public void onDateSet(DatePicker view, int year, int monthOfYear,
-					int dayOfMonth) {
+				@Override
+				public void onDateSet(DatePicker view, int year, int monthOfYear,
+						int dayOfMonth) {
 
-				KmoneyActivity.this.setCurrentDay(year, monthOfYear, dayOfMonth);
+					KmoneyActivity.this.setCurrentDay(year, monthOfYear, dayOfMonth);
+				}
+
 			}
-
-		}
-		class DateClickListener implements View.OnLongClickListener {
 			private int year;
 			private int month;
 			private int day;
 
-			public DateClickListener(int year, int month, int day) {
+			public DateLongClickListener(int year, int month, int day) {
 				this.year = year;
 				this.month = month;
 				this.day = day;
@@ -368,7 +348,10 @@ public class KmoneyActivity extends FragmentActivity {
 			@Override
 			public boolean onLongClick(View v) {
 				DatePickerDialog datePickerDialog = new DatePickerDialog(
-						KmoneyActivity.this, new DateSetListener(), this.year, this.month,
+						KmoneyActivity.this,
+						new DateSetListener(),
+						this.year,
+						this.month,
 						this.day);
 				datePickerDialog.show();
 				return false;
@@ -376,15 +359,15 @@ public class KmoneyActivity extends FragmentActivity {
 
 		}
 
-		int year = this.currentDay.get(Calendar.YEAR);
-		int month = this.currentDay.get(Calendar.MONTH);
-		int day = this.currentDay.get(Calendar.DAY_OF_MONTH);
-		this.setDateText(year, month, day);
+		this.setDateText();
 
 		if (initListener) {
 			// 長押し設定
 			TextView tv = (TextView) findViewById(R.id.textViewDate);
-			tv.setOnLongClickListener(new DateClickListener(year, month, day));
+			tv.setOnLongClickListener(new DateLongClickListener(
+					this.currentDay.getYear(),
+					this.currentDay.getMonth(),
+					this.currentDay.getDay()));
 		}
 
 	}
@@ -696,21 +679,21 @@ public class KmoneyActivity extends FragmentActivity {
 
 		List<Item> trnsTypeList = new ArrayList<Item>();
 		if (id == TransactionType.CASH) {
-			this.transactionType = TransactionType.CASH;
 			spinner.setVisibility(View.INVISIBLE);
 		} else if (id == TransactionType.BANK) {
-			this.transactionType = TransactionType.BANK;
 			trnsTypeList = this.transactionTypeDetail.get("bank");
 			spinner.setVisibility(View.VISIBLE);
 		} else if (id == TransactionType.CREDITCARD) {
-			this.transactionType = TransactionType.CREDITCARD;
 			trnsTypeList = this.transactionTypeDetail.get("creditcard");
 			spinner.setVisibility(View.VISIBLE);
 		} else if (id == TransactionType.EMONEY) {
-			this.transactionType = TransactionType.EMONEY;
 			trnsTypeList = this.transactionTypeDetail.get("emoney");
 			spinner.setVisibility(View.VISIBLE);
+		} else {
+			// ありえないケース
+			return;
 		}
+		this.transactionType = id;
 		if (trnsTypeList.isEmpty()) {
 			return;
 		}
@@ -764,16 +747,12 @@ public class KmoneyActivity extends FragmentActivity {
 	 */
 	private void changeDay(String direction) {
 		if (direction.equals("prev")) {
-			this.currentDay.add(Calendar.DATE, -1);
+			this.currentDay.prevDay();
 		} else {
-			this.currentDay.add(Calendar.DATE, 1);
+			this.currentDay.nextDay();
 		}
 
-		int year = this.currentDay.get(Calendar.YEAR);
-		int month = this.currentDay.get(Calendar.MONTH);
-		int day = this.currentDay.get(Calendar.DATE);
-
-		this.setDateText(year, month, day);
+		this.setDateText();
 	}
 
 	/**
@@ -783,10 +762,8 @@ public class KmoneyActivity extends FragmentActivity {
 	 * @param day
 	 */
 	private void setCurrentDay(int year, int month, int day) {
-		this.setDateText(year, month, day);
-		this.currentDay.set(Calendar.YEAR, year);
-		this.currentDay.set(Calendar.MONTH, month);
-		this.currentDay.set(Calendar.DAY_OF_MONTH, day);
+		this.currentDay.set(year, month, day);
+		this.setDateText();
 	}
 
 	private void deleteTransaction(int type, int id) {
@@ -852,12 +829,10 @@ public class KmoneyActivity extends FragmentActivity {
 		}
 
 	}
-
-	private void writeCashTransaction(int id) throws ParseException {
-		CashTransaction tran = new CashTransaction();
-
-		tran.setTransactionDate(this.currentDay.getTime());
-		Log.d("Kmoney", this.currentDay.toString());
+	private Transaction getField() {
+		Transaction tran = new Transaction();
+		
+		tran.setTransactionDate(this.currentDay.getDate());
 
 		ToggleButton tglButton = (ToggleButton) findViewById(R.id.toggleButtonIncomeExpense);
 		TextView tv = (TextView) findViewById(R.id.textViewAmount);
@@ -879,6 +854,11 @@ public class KmoneyActivity extends FragmentActivity {
 		tran.setInternal(0);
 		tran.setUserId(this.userId);
 		tran.setSource(1);
+		return tran;
+	}
+
+	private void writeCashTransaction(int id) throws ParseException {
+		CashTransaction tran = new CashTransaction(this.getField());
 
 		KmCashTrns cash = new KmCashTrns(this);
 		cash.open(false);
@@ -892,35 +872,11 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 
 	private void writeBankTransaction(int id) throws ParseException {
-		BankTransaction tran = new BankTransaction();
+		BankTransaction tran = new BankTransaction(this.getField());
 
-		tran.setTransactionDate(this.currentDay.getTime());
-
-		ToggleButton tglButton = (ToggleButton) findViewById(R.id.toggleButtonIncomeExpense);
-		TextView tv = (TextView) findViewById(R.id.textViewAmount);
-		// トグルボタンON(checked)なら収入、OFFなら支出
-		if (tglButton.isChecked()) {
-			tran.setIncome(this.amount.getValue());
-			tran.setExpense(new BigDecimal("0"));
-		} else {
-			tran.setIncome(new BigDecimal("0"));
-			tran.setExpense(this.amount.getValue());
-		}
-		Item item;
 		Spinner bankSpinner = (Spinner) findViewById(R.id.spinnerTypeDetail);
-		item = (Item) bankSpinner.getSelectedItem();
+		Item item = (Item) bankSpinner.getSelectedItem();
 		tran.setBankId(item.getId());
-
-		Spinner itemSpinner = (Spinner) findViewById(R.id.spinnerCategory);
-		item = (Item) itemSpinner.getSelectedItem();
-		tran.setCategoryId(item.getId());
-
-		tv = (TextView) findViewById(R.id.editTextDetail);
-		tran.setDetail(tv.getText().toString());
-
-		tran.setInternal(0);
-		tran.setUserId(this.userId);
-		tran.setSource(1);
 
 		KmBankTrns bankTrn = new KmBankTrns(this);
 		bankTrn.open(false);
@@ -935,35 +891,11 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 
 	private void writeCreditCardTransaction(int id) throws ParseException {
-		CreditCardTransaction tran = new CreditCardTransaction();
+		CreditCardTransaction tran = new CreditCardTransaction(this.getField());
 
-		tran.setTransactionDate(this.currentDay.getTime());
-
-		ToggleButton tglButton = (ToggleButton) findViewById(R.id.toggleButtonIncomeExpense);
-		TextView tv = (TextView) findViewById(R.id.textViewAmount);
-		// トグルボタンON(checked)なら収入、OFFなら支出
-		if (tglButton.isChecked()) {
-			tran.setIncome(this.amount.getValue());
-			tran.setExpense(new BigDecimal("0"));
-		} else {
-			tran.setIncome(new BigDecimal("0"));
-			tran.setExpense(this.amount.getValue());
-		}
-		Item item;
 		Spinner cardSpinner = (Spinner) findViewById(R.id.spinnerTypeDetail);
-		item = (Item) cardSpinner.getSelectedItem();
+		Item item = (Item) cardSpinner.getSelectedItem();
 		tran.setCardId(item.getId());
-
-		Spinner itemSpinner = (Spinner) findViewById(R.id.spinnerCategory);
-		item = (Item) itemSpinner.getSelectedItem();
-		tran.setCategoryId(item.getId());
-
-		tv = (TextView) findViewById(R.id.editTextDetail);
-		tran.setDetail(tv.getText().toString());
-
-		tran.setInternal(0);
-		tran.setUserId(this.userId);
-		tran.setSource(1);
 
 		KmCreditCardTrns cardTrn = new KmCreditCardTrns(this);
 		cardTrn.open(false);
@@ -978,35 +910,11 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 
 	private void writeEMoneyTransaction(int id) throws ParseException {
-		EMoneyTransaction tran = new EMoneyTransaction();
+		EMoneyTransaction tran = new EMoneyTransaction(this.getField());
 
-		tran.setTransactionDate(this.currentDay.getTime());
-
-		ToggleButton tglButton = (ToggleButton) findViewById(R.id.toggleButtonIncomeExpense);
-		TextView tv = (TextView) findViewById(R.id.textViewAmount);
-		// トグルボタンON(checked)なら収入、OFFなら支出
-		if (tglButton.isChecked()) {
-			tran.setIncome(this.amount.getValue());
-			tran.setExpense(new BigDecimal("0"));
-		} else {
-			tran.setIncome(new BigDecimal("0"));
-			tran.setExpense(this.amount.getValue());
-		}
-		Item item;
 		Spinner emoneySpinner = (Spinner) findViewById(R.id.spinnerTypeDetail);
-		item = (Item) emoneySpinner.getSelectedItem();
+		Item item = (Item) emoneySpinner.getSelectedItem();
 		tran.setEmoneyId(item.getId());
-
-		Spinner itemSpinner = (Spinner) findViewById(R.id.spinnerCategory);
-		item = (Item) itemSpinner.getSelectedItem();
-		tran.setCategoryId(item.getId());
-
-		tv = (TextView) findViewById(R.id.editTextDetail);
-		tran.setDetail(tv.getText().toString());
-
-		tran.setInternal(0);
-		tran.setUserId(this.userId);
-		tran.setSource(1);
 
 		KmEMoneyTrns emoneyTrn = new KmEMoneyTrns(this);
 		emoneyTrn.open(false);
@@ -1046,7 +954,6 @@ public class KmoneyActivity extends FragmentActivity {
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		
-		this.initExport();
 	}
 
 	private void storeKeys(String key, String secret) {
@@ -1114,7 +1021,7 @@ public class KmoneyActivity extends FragmentActivity {
 		Intent i;
 		switch (item.getItemId()) {
 		case R.id.menu_export:
-			this.exportTask.execute();
+			this.executeExport();
 			break;
 		case R.id.menu_settings:
 			startActivity(new Intent(this, SettingsActivity.class));
@@ -1123,26 +1030,26 @@ public class KmoneyActivity extends FragmentActivity {
 			this.switchUser();
 			break;
 		case R.id.master_category:
-			i = new Intent(KmoneyActivity.this, CategoryListActivity.class);
+			i = new Intent(this, CategoryListActivity.class);
 			startActivity(i);
 			break;
 		case R.id.master_bank:
-			i = new Intent(KmoneyActivity.this, BankListActivity.class);
+			i = new Intent(this, BankListActivity.class);
 			i.putExtra("userId", this.userId);
 			startActivity(i);
 			break;
 		case R.id.master_creditcard:
-			i = new Intent(KmoneyActivity.this, CreditCardListActivity.class);
+			i = new Intent(this, CreditCardListActivity.class);
 			i.putExtra("userId", this.userId);
 			startActivity(i);
 			break;
 		case R.id.master_emoney:
-			i = new Intent(KmoneyActivity.this, EMoneyListActivity.class);
+			i = new Intent(this, EMoneyListActivity.class);
 			i.putExtra("userId", this.userId);
 			startActivity(i);
 			break;
 		case R.id.master_user:
-			i = new Intent(KmoneyActivity.this, UserListActivity.class);
+			i = new Intent(this, UserListActivity.class);
 			startActivity(i);
 			break;
 		default:

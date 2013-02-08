@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public abstract class Transaction {
+public class Transaction {
 	private int id;
 	private Date transactionDate;
 	private BigDecimal income;
@@ -17,6 +17,20 @@ public abstract class Transaction {
 	private int userId;
 	private int source;
 	
+	public Transaction() {
+		
+	}
+	public Transaction(Transaction o) {
+		this.id = o.id;
+		this.transactionDate = o.transactionDate;
+		this.income = o.income;
+		this.expense = o.expense;
+		this.categoryId = o.categoryId;
+		this.detail = o.detail;
+		this.internal = o.internal;
+		this.userId = o.userId;
+		this.source = o.source;
+	}
 	public int getId() {
 		return id;
 	}
