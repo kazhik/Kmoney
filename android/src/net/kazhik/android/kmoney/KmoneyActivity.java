@@ -264,18 +264,14 @@ public class KmoneyActivity extends FragmentActivity {
 				public void onDateSet(DatePicker view, int year, int monthOfYear,
 						int dayOfMonth) {
 
-					KmoneyActivity.this.setCurrentDay(year, monthOfYear, dayOfMonth);
+					KmoneyActivity.this.setCurrentDay(year, monthOfYear + 1, dayOfMonth);
 				}
 
 			}
-			private int year;
-			private int month;
-			private int day;
+			private Day currentDay;
 
-			public DateLongClickListener(int year, int month, int day) {
-				this.year = year;
-				this.month = month;
-				this.day = day;
+			public DateLongClickListener(Day currentDay) {
+				this.currentDay = currentDay;
 			}
 
 			@Override
@@ -283,9 +279,9 @@ public class KmoneyActivity extends FragmentActivity {
 				DatePickerDialog datePickerDialog = new DatePickerDialog(
 						KmoneyActivity.this,
 						new DateSetListener(),
-						this.year,
-						this.month,
-						this.day);
+						this.currentDay.getYear(),
+						this.currentDay.getMonth() - 1,
+						this.currentDay.getDay());
 				datePickerDialog.show();
 				return false;
 			}
@@ -297,10 +293,7 @@ public class KmoneyActivity extends FragmentActivity {
 		if (initListener) {
 			// 長押し設定
 			TextView tv = (TextView) findViewById(R.id.textViewDate);
-			tv.setOnLongClickListener(new DateLongClickListener(
-					this.currentDay.getYear(),
-					this.currentDay.getMonth(),
-					this.currentDay.getDay()));
+			tv.setOnLongClickListener(new DateLongClickListener(this.currentDay));
 		}
 
 	}

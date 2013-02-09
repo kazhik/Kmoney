@@ -33,7 +33,7 @@ public class Day {
 	}
 	public void set(int year, int month, int dayOfMonth) {
 		this.day.set(Calendar.YEAR, year);
-		this.day.set(Calendar.MONTH, month);
+		this.day.set(Calendar.MONTH, month - 1);
 		this.day.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 	}
 	public int getYear() {

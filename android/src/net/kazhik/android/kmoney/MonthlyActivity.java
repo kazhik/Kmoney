@@ -42,7 +42,7 @@ import android.widget.TextView;
 public class MonthlyActivity extends Activity implements OnItemClickListener {
 	private GestureDetector gestureDetector;
 	private View.OnTouchListener gestureListener;
-	private Month currentMonth = new Month();
+	private Month currentMonth;
 
 	private SimpleAdapter listAdapter;
 	private ArrayList<HashMap<String, String>> mapList = new ArrayList<HashMap<String, String>>();
@@ -55,6 +55,8 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 		} catch (Exception e) {
 			Log.e(Constants.APPNAME, e.getMessage());
 		}
+		
+		this.currentMonth = new Month(this);
 
 		this.initEntryButton();
 		this.initSumButton();
@@ -202,15 +204,10 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 	}
 
 	private void initMonthText() {
-		// 今月をセット
-		Calendar calToday = Calendar.getInstance();
 
-		int year = calToday.get(Calendar.YEAR);
-		int month = calToday.get(Calendar.MONTH);
-
-		this.currentMonth.set(year, month);
+		this.currentMonth.thisMonth();
 		TextView tv = (TextView) findViewById(R.id.textViewDate);
-		tv.setText(this.formatMonth(year, month));
+		tv.setText(this.currentMonth.getText());
 
 	}
 
@@ -239,7 +236,7 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 		// DBからデータを読み込む
 		KmvTransactions trns = new KmvTransactions(this);
 		trns.open(true);
-		List<TransactionView> trnList = trns.getList(year, month + 1);
+		List<TransactionView> trnList = trns.getList(year, month);
 		trns.close();
 
 		// 読み込んだデータをHashMapに保持
@@ -274,33 +271,18 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 		lv.setAdapter(this.listAdapter);
 	}
 
-	private String formatMonth(int year, int month) {
-		Calendar calToday = Calendar.getInstance();
-		calToday.set(Calendar.YEAR, year);
-		calToday.set(Calendar.MONTH, month);
-
-		// 月名
-		SimpleDateFormat sdfMonthName = new SimpleDateFormat("MMM",
-				Locale.getDefault());
-
-		String monthFormat = getString(R.string.month_format);
-
-		return String.format(monthFormat, year, month + 1,
-				sdfMonthName.format(calToday.getTime()));
-
-	}
 
 	private void changeMonth(String direction) {
 		if (direction.equals("prev")) {
-			this.currentMonth.shiftMonth(-1);
+			this.currentMonth.prevMonth();
 		} else {
-			this.currentMonth.shiftMonth(1);
+			this.currentMonth.nextMonth();
 		}
 		int year = this.currentMonth.getYear();
 		int month = this.currentMonth.getMonth();
 
 		TextView tv = (TextView) findViewById(R.id.textViewDate);
-		tv.setText(this.formatMonth(year, month));
+		tv.setText(this.currentMonth.getText());
 
 		this.loadList(year, month);
 	}

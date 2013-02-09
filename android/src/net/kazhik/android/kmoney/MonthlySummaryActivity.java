@@ -20,7 +20,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 public class MonthlySummaryActivity extends Activity {
-	private Month currentMonth = new Month();
+	private Month currentMonth;
 
 	private SimpleAdapter listAdapter;
 	private ArrayList<HashMap<String, String>> mapList = new ArrayList<HashMap<String, String>>();
@@ -43,6 +43,7 @@ public class MonthlySummaryActivity extends Activity {
 
 		int year = b.getInt("year");
 		int month = b.getInt("month");
+		this.currentMonth = new Month(this);
 		this.currentMonth.set(year, month);
 
 		this.initEntryButton();
@@ -164,9 +165,9 @@ public class MonthlySummaryActivity extends Activity {
 
 	private void changeMonth(String direction) {
 		if (direction.equals("prev")) {
-			this.currentMonth.shiftMonth(-1);
+			this.currentMonth.prevMonth();
 		} else {
-			this.currentMonth.shiftMonth(1);
+			this.currentMonth.nextMonth();
 		}
 		int year = this.currentMonth.getYear();
 		int month = this.currentMonth.getMonth();

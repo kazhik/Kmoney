@@ -27,7 +27,10 @@ public class TransactionPhoto {
 		this.imageFileUri = null;
 	}
 	public String getPath() {
-		return this.imageFileUri.getPath();
+		if (this.imageFileUri != null) {
+			return this.imageFileUri.getPath();
+		}
+		return "";
 	}
 	public Uri getUri() {
 		return this.imageFileUri;
