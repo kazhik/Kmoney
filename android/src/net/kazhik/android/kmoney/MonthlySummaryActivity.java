@@ -76,8 +76,6 @@ public class MonthlySummaryActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				startActivity(new Intent(MonthlySummaryActivity.this,
-						MonthlyActivity.class));
 				finish();
 
 			}

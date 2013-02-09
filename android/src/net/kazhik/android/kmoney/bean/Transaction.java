@@ -13,6 +13,7 @@ public class Transaction {
 	private BigDecimal expense;
 	private int categoryId;
 	private String detail;
+	private String imageUri;
 	private int internal;
 	private int userId;
 	private int source;
@@ -27,6 +28,7 @@ public class Transaction {
 		this.expense = o.expense;
 		this.categoryId = o.categoryId;
 		this.detail = o.detail;
+		this.imageUri = o.imageUri;
 		this.internal = o.internal;
 		this.userId = o.userId;
 		this.source = o.source;
@@ -74,6 +76,12 @@ public class Transaction {
 	}
 	public void setDetail(String detail) {
 		this.detail = detail;
+	}
+	public String getImageUri() {
+		return imageUri;
+	}
+	public void setImageUri(String imageUri) {
+		this.imageUri = imageUri;
 	}
 	public int getInternal() {
 		return internal;

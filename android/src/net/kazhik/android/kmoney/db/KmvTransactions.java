@@ -3,6 +3,7 @@ package net.kazhik.android.kmoney.db;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.kazhik.android.kmoney.TransactionType;
 import net.kazhik.android.kmoney.bean.TransactionSummary;
 import net.kazhik.android.kmoney.bean.TransactionView;
 import android.content.Context;
@@ -74,14 +75,14 @@ public class KmvTransactions extends KmTable {
 		db.execSQL(CREATE_VIEW);
 	}
 
-	public List<String> getDetailHistory(String type, int max) {
+	public List<String> getDetailHistory(int type, int max) {
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 		qb.setTables(VIEW_NAME);
 		
 
 		String[] columns = { "detail", "count(*) as cnt" };
 		String selection = "type = ?";
-		String[] selectionArgs = {type};
+		String[] selectionArgs = {TransactionType.getTypeStr(type)};
 		String sortOrder = "cnt desc";
 		String groupBy = "detail";
 		String limit = (max == 0)? null: Integer.toString(max);

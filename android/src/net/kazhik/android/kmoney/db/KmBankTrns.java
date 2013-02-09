@@ -18,6 +18,7 @@ public class KmBankTrns extends KmTable {
 			+ "expense REAL,"
 			+ "category_id INTEGER,"
 			+ "detail TEXT,"
+			+ "image_uri TEXT,"
 			+ "internal INTEGER,"
 			+ "user_id INTEGER,"
 			+ "source INTEGER,"
@@ -42,7 +43,7 @@ public class KmBankTrns extends KmTable {
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 		qb.setTables(TABLE_NAME);
 
-		String[] columns = { "transaction_date", "category_id", "detail",
+		String[] columns = { "transaction_date", "category_id", "detail", "image_uri",
 				"income", "expense", "bank_id" };
 		String selection = "id = ?";
 		String[] selectionArgs = { String.valueOf(id) };
@@ -61,6 +62,7 @@ public class KmBankTrns extends KmTable {
 		trn.setTransactionDate(cursor.getString(idx++));
 		trn.setCategoryId(cursor.getInt(idx++));
 		trn.setDetail(cursor.getString(idx++));
+		trn.setImageUri(cursor.getString(idx++));
 		trn.setIncome(new BigDecimal(cursor.getString(idx++)));
 		trn.setExpense(new BigDecimal(cursor.getString(idx++)));
 		trn.setBankId(cursor.getInt(idx++));
@@ -78,6 +80,7 @@ public class KmBankTrns extends KmTable {
 		values.put("expense", trn.getExpense().toPlainString());
 		values.put("category_id", trn.getCategoryId());
 		values.put("detail", trn.getDetail());
+		values.put("image_uri", trn.getImageUri());
 		values.put("internal", trn.getInternal());
 		values.put("user_id", trn.getUserId());
 		values.put("source", trn.getSource());
@@ -96,6 +99,7 @@ public class KmBankTrns extends KmTable {
 		values.put("expense", trn.getExpense().toPlainString());
 		values.put("category_id", trn.getCategoryId());
 		values.put("detail", trn.getDetail());
+		values.put("image_uri", trn.getImageUri());
 		values.put("internal", trn.getInternal());
 		values.put("user_id", trn.getUserId());
 		values.put("source", trn.getSource());

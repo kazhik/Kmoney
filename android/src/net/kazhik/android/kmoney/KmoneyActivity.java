@@ -1,18 +1,13 @@
 package net.kazhik.android.kmoney;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
-import net.kazhik.android.kmoney.ExportDatabaseTask.Mode;
 import net.kazhik.android.kmoney.bean.BankTransaction;
 import net.kazhik.android.kmoney.bean.CashTransaction;
 import net.kazhik.android.kmoney.bean.Category;
@@ -20,7 +15,6 @@ import net.kazhik.android.kmoney.bean.CreditCardTransaction;
 import net.kazhik.android.kmoney.bean.EMoneyTransaction;
 import net.kazhik.android.kmoney.bean.Item;
 import net.kazhik.android.kmoney.bean.Transaction;
-import net.kazhik.android.kmoney.bean.TransactionView;
 import net.kazhik.android.kmoney.db.KmBankInfo;
 import net.kazhik.android.kmoney.db.KmBankTrns;
 import net.kazhik.android.kmoney.db.KmCashTrns;
@@ -35,7 +29,6 @@ import net.kazhik.android.kmoney.db.KmvTransactions;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -43,12 +36,10 @@ import android.content.res.Configuration;
 import android.database.SQLException;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -59,18 +50,11 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-
-import com.dropbox.client2.DropboxAPI;
-import com.dropbox.client2.android.AndroidAuthSession;
-import com.dropbox.client2.session.AccessTokenPair;
-import com.dropbox.client2.session.AppKeyPair;
-import com.dropbox.client2.session.Session.AccessType;
 
 public class KmoneyActivity extends FragmentActivity {
 	private Day currentDay;
@@ -78,13 +62,12 @@ public class KmoneyActivity extends FragmentActivity {
 	private int transactionType;
 	private Map<String, List<Item>> transactionTypeDetail;
 	private Money amount;
+	private TransactionPhoto photo = null;
 
 	private int updateType;
 	private int updateId;
-	private Uri imageFileUri = null;
 
 	private ExportDatabaseTask exportTask;
-	private DropboxAPI<AndroidAuthSession> mDBApi = null;
 
 	private static final int REQUEST_CAMERA = 100;
 	private static final int REQUEST_MONTHLY = 101;
@@ -136,7 +119,7 @@ public class KmoneyActivity extends FragmentActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 		
-		this.deletePhoto();
+		this.photo.delete();
 	}
 
 
@@ -157,6 +140,7 @@ public class KmoneyActivity extends FragmentActivity {
 
 	private void copyAsNew() {
 		this.updateId = 0;
+		this.currentDay.today();
 		this.initDateText(false);
 	}
 
@@ -189,54 +173,42 @@ public class KmoneyActivity extends FragmentActivity {
 	private void loadTransaction(int type, int id) {
 		int typeDetailId = 0;
 
-		if (type == TransactionType.CASH) {
-			KmCashTrns trn = new KmCashTrns(this);
-			trn.open(true);
-			try {
+		try {
+			if (type == TransactionType.CASH) {
+				KmCashTrns trn = new KmCashTrns(this);
+				trn.open(true);
 				CashTransaction trnInfo = trn.select(id);
 				this.setField(trnInfo);
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-			trn.close();
-		} else if (type == TransactionType.BANK) {
-			KmBankTrns trn = new KmBankTrns(this);
-			trn.open(true);
-			try {
+				trn.close();
+			} else if (type == TransactionType.BANK) {
+				KmBankTrns trn = new KmBankTrns(this);
+				trn.open(true);
 				BankTransaction trnInfo = trn.select(id);
 				this.setField(trnInfo);
 				typeDetailId = trnInfo.getBankId();
-
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-			trn.close();
-		} else if (type == TransactionType.CREDITCARD) {
-			KmCreditCardTrns trn = new KmCreditCardTrns(this);
-			trn.open(true);
-			try {
+				trn.close();
+			} else if (type == TransactionType.CREDITCARD) {
+				KmCreditCardTrns trn = new KmCreditCardTrns(this);
+				trn.open(true);
 				CreditCardTransaction trnInfo = trn.select(id);
 				this.setField(trnInfo);
 				typeDetailId = trnInfo.getCardId();
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-			trn.close();
-		} else if (type == TransactionType.EMONEY) {
-			KmEMoneyTrns trn = new KmEMoneyTrns(this);
-			trn.open(true);
-			try {
+				trn.close();
+			} else if (type == TransactionType.EMONEY) {
+				KmEMoneyTrns trn = new KmEMoneyTrns(this);
+				trn.open(true);
 				EMoneyTransaction trnInfo = trn.select(id);
 				this.setField(trnInfo);
 				typeDetailId = trnInfo.getEmoneyId();
-			} catch (ParseException e) {
-				e.printStackTrace();
+				trn.close();
 			}
-			trn.close();
+		} catch (ParseException e) {
+			Log.e(Constants.APPNAME, e.getMessage());
+			return;
 		}
 		if (typeDetailId > 0) {
+			this.initTransactionTypeDetail(type);
 			Spinner spinner = (Spinner) findViewById(R.id.spinnerTypeDetail);
-			this.onChangeTransactionType(type);
 			int pos = this.getSpinnerPosition(spinner, typeDetailId);
 			spinner.setSelection(pos);
 		}
@@ -261,51 +233,12 @@ public class KmoneyActivity extends FragmentActivity {
 		String dbPath = this.getDatabasePath(KmDatabase.DATABASE_NAME)
 				.toString();
 		if (exportType.equals("sdcard")) {
-			this.mDBApi = null;
-			this.exportTask = new ExportDatabaseTask(Mode.SDCARD, this, dbPath);
-			this.exportTask.execute();
+			this.exportTask = new ExportSdCardTask(this, dbPath);
 		} else if (exportType.equals("dropbox")) {
-			final String APP_KEY = "kuyk8nn6g6osz3s";
-			final String APP_SECRET = "58pm6zl92rcg5i9";
-			final AccessType ACCESS_TYPE = AccessType.APP_FOLDER;
-			
-			AppKeyPair appKeyPair = new AppKeyPair(APP_KEY, APP_SECRET);
-			AndroidAuthSession session;
-
-			String[] stored = getKeys();
-			if (stored != null) {
-				AccessTokenPair accessToken = new AccessTokenPair(stored[0],
-						stored[1]);
-				session = new AndroidAuthSession(appKeyPair, ACCESS_TYPE,
-						accessToken);
-			} else {
-				session = new AndroidAuthSession(appKeyPair, ACCESS_TYPE);
-			}
-
-			this.mDBApi = new DropboxAPI<AndroidAuthSession>(session);
-			
-			if (this.mDBApi.getSession().isLinked()) {
-				this.exportTask = new ExportDatabaseTask(Mode.DROPBOX, this.mDBApi, this, dbPath);
-				this.exportTask.execute();
-			} else {
-				this.mDBApi.getSession().startAuthentication(this);
-			}
+			this.exportTask = new ExportDropboxTask(this, dbPath);
 		}
-		
+		this.exportTask.start();
 
-	}
-
-	private String[] getKeys() {
-		String key = this.prefs.getString("dropbox_key", null);
-		String secret = this.prefs.getString("dropbox_secret", null);
-		if (key != null && secret != null) {
-			String[] ret = new String[2];
-			ret[0] = key;
-			ret[1] = secret;
-			return ret;
-		} else {
-			return null;
-		}
 	}
 
 	private void initCurrentUser() {
@@ -507,18 +440,17 @@ public class KmoneyActivity extends FragmentActivity {
 
 	private void initPhotoButton() {
 		class PhotoButtonClickListener implements View.OnClickListener {
-
 			@Override
 			public void onClick(View v) {
 				KmoneyActivity.this.photo();
 
 			}
-
 		}
 
 		ImageButton btn = (ImageButton) findViewById(R.id.buttonPhoto);
 		btn.setOnClickListener(new PhotoButtonClickListener());
 
+		this.photo = new TransactionPhoto(this);
 	}
 
 	private void initOkButton() {
@@ -528,7 +460,6 @@ public class KmoneyActivity extends FragmentActivity {
 			public void onClick(View v) {
 				KmoneyActivity.this.writeTransaction();
 				KmoneyActivity.this.monthly();
-
 			}
 
 		}
@@ -645,7 +576,7 @@ public class KmoneyActivity extends FragmentActivity {
 
 				Spinner spinner = (Spinner) parent;
 				Item item = (Item) spinner.getSelectedItem();
-				KmoneyActivity.this.onChangeTransactionType(item.getId());
+				KmoneyActivity.this.initTransactionTypeDetail(item.getId());
 
 			}
 
@@ -673,7 +604,7 @@ public class KmoneyActivity extends FragmentActivity {
 		spinner.setOnItemSelectedListener(new SelectTypeListener());
 	}
 
-	private void onChangeTransactionType(int id) {
+	private void initTransactionTypeDetail(int id) {
 		
 		Spinner spinner = (Spinner) findViewById(R.id.spinnerTypeDetail);
 
@@ -825,7 +756,7 @@ public class KmoneyActivity extends FragmentActivity {
 				this.writeEMoneyTransaction(this.updateId);
 			}
 		} catch (ParseException e) {
-			e.printStackTrace();
+			Log.e(Constants.APPNAME, e.getMessage());
 		}
 
 	}
@@ -851,6 +782,8 @@ public class KmoneyActivity extends FragmentActivity {
 		tv = (TextView) findViewById(R.id.editTextDetail);
 		tran.setDetail(tv.getText().toString());
 
+		tran.setImageUri(this.photo.getPath());
+		
 		tran.setInternal(0);
 		tran.setUserId(this.userId);
 		tran.setSource(1);
@@ -932,35 +865,16 @@ public class KmoneyActivity extends FragmentActivity {
 	protected void onResume() {
 		super.onResume();
 		
-		if (this.mDBApi != null && this.mDBApi.getSession().authenticationSuccessful()) {
-			try {
-				// MANDATORY call to complete auth.
-				// Sets the access token on the session
-				this.mDBApi.getSession().finishAuthentication();
-
-				AccessTokenPair tokens = this.mDBApi.getSession()
-						.getAccessTokenPair();
-
-				// Provide your own storeKeys to persist the access token pair
-				// A typical way to store tokens is using SharedPreferences
-				storeKeys(tokens.key, tokens.secret);
-			} catch (IllegalStateException e) {
-				Log.i("Kmoney", "Error authenticating", e);
-			}
+		if (this.exportTask instanceof ExportDropboxTask) {
+			((ExportDropboxTask)this.exportTask).finishAuthentication();
 		}
+		
 	}
 
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		
-	}
-
-	private void storeKeys(String key, String secret) {
-		Editor editor = this.prefs.edit();
-		editor.putString("dropbox_key", key);
-		editor.putString("dropbox_secret", secret);
-		editor.commit();
 	}
 
 	@Override
@@ -1069,23 +983,10 @@ public class KmoneyActivity extends FragmentActivity {
 			}
 
 		}		
-		String type;
-		if (this.transactionType == TransactionType.CASH) {
-			type = TransactionView.CASH;
-		} else if (this.transactionType == TransactionType.BANK) {
-			type = TransactionView.BANK;
-		} else if (this.transactionType == TransactionType.CREDITCARD) {
-			type = TransactionView.CREDITCARD;
-		} else if (this.transactionType == TransactionType.EMONEY) {
-			type = TransactionView.EMONEY;
-		} else {
-			// ありえないケース
-			return;
-		}
 
 		KmvTransactions trans = new KmvTransactions(this);
 		trans.open(true);
-		List<String> detailList = trans.getDetailHistory(type, 10);
+		List<String> detailList = trans.getDetailHistory(this.transactionType, 10);
 		trans.close();
 
 		if (detailList.isEmpty()) {
@@ -1105,91 +1006,25 @@ public class KmoneyActivity extends FragmentActivity {
 
 	}
 
-	private static Uri getOutputMediaFileUri() {
-		return Uri.fromFile(getOutputMediaFile());
-	}
-
-	/** Create a File for saving an image or video */
-	private static File getOutputMediaFile() {
-		// To be safe, you should check that the SDCard is mounted
-		// using Environment.getExternalStorageState() before doing this.
-
-		File mediaStorageDir = new File(
-				Environment
-						.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-				"Kmoney");
-		// This location works best if you want the created images to be shared
-		// between applications and persist after your app has been uninstalled.
-
-		// Create the storage directory if it does not exist
-		if (!mediaStorageDir.exists()) {
-			if (!mediaStorageDir.mkdirs()) {
-				Log.d("Kmoney", "failed to create directory");
-				return null;
-			}
-		}
-
-		// Create a media file name
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss",
-				Locale.getDefault());
-		String timeStamp = sdf.format(new Date());
-		File mediaFile = new File(mediaStorageDir.getPath() + File.separator
-				+ "IMG_" + timeStamp + ".jpg");
-
-		return mediaFile;
-	}
-
 	private void photo() {
-		if (this.imageFileUri != null) {
-			this.showPhoto(this.imageFileUri);
+		if (this.photo.getUri() != null) {
+			this.photo.show();
 		} else {
 			this.takePicture();
 		}
 	}
 
-	private void showPhoto(Uri imageFile) {
-		class DeletePhotoButtonListener implements OnClickListener {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				KmoneyActivity.this.deletePhoto();
-				
-			}
-		}
-		
-		LayoutInflater inflater = LayoutInflater.from(this);
-		View dialogview = inflater.inflate(R.layout.photo, null);
-
-		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setView(dialogview);
-		builder.setNegativeButton(android.R.string.cancel, null);
-		builder.setPositiveButton(R.string.delete,
-				new DeletePhotoButtonListener());
-
-		ImageView photoView = (ImageView) dialogview.findViewById(R.id.photo);
-		photoView.setImageURI(imageFile);
-
-		builder.show();
-
-	}
-	private void deletePhoto() {
-		if (this.imageFileUri == null) {
-			return;
-		}
-		File file = new File(this.imageFileUri.getPath());
-		file.delete();
-		this.imageFileUri = null;
-	}
-
 	private void cancel() {
-		this.deletePhoto();
+		this.photo.delete();
 		this.monthly();
 	}
 
 	private void takePicture() {
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-		this.imageFileUri = getOutputMediaFileUri();
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, this.imageFileUri);
+		Uri imageFileUri = ExternalStorage.getImageFileUri();
+		this.photo.setUri(imageFileUri);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, imageFileUri);
 		startActivityForResult(intent, REQUEST_CAMERA);
 	}
 	private void monthly() {
@@ -1206,18 +1041,19 @@ public class KmoneyActivity extends FragmentActivity {
 				Uri imageUri;
 				if (data.getData() != null) {
 					imageUri = data.getData();
+					this.photo.setUri(imageUri);
 				} else {
-					imageUri = this.imageFileUri;
+					imageUri = this.photo.getUri();
 					if (imageUri == null) {
 						Toast.makeText(this, R.string.error_photo, Toast.LENGTH_SHORT)
 						.show();
 					}
 				}
 				if (imageUri != null) {
-					this.showPhoto(imageUri);
+					this.photo.show();
 				}
 			} else {
-				this.imageFileUri = null;
+				this.photo.setUri(null);
 			}
 		} else if (requestCode == REQUEST_MONTHLY) {
 			if (data == null) {
