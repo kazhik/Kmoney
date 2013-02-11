@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Locale;
 
 import net.kazhik.android.kmoney.StringUtils;
+import net.kazhik.android.kmoney.bean.Transaction;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -72,6 +74,40 @@ public abstract class KmTable {
 	            c.close();
 	    }
 	    return ar;
+	}
+	public ContentValues makeContentValues(Transaction transaction) {
+        ContentValues values = new ContentValues();
+
+        if (transaction.getTransactionDate() != null) {
+            values.put("transaction_date", transaction.getTransactionDateStr());
+        }
+        if (transaction.getIncome() != null) {
+            values.put("income", transaction.getIncome().toPlainString());
+        }
+        if (transaction.getExpense() != null) {
+            values.put("expense", transaction.getExpense().toPlainString());
+        }
+        if (transaction.getCategoryId() != 0) {
+            values.put("category_id", transaction.getCategoryId());
+        }
+        if (transaction.getDetail() != null) {
+            values.put("detail", transaction.getDetail());
+        }
+        if (transaction.getImageUri() != null) {
+    		values.put("image_uri", transaction.getImageUri());
+        }
+        if (transaction.getInternal() != 0) {
+            values.put("internal", transaction.getInternal());
+        }
+        if (transaction.getUserId() != 0) {
+            values.put("user_id", transaction.getUserId());
+        }
+        if (transaction.getSource() != 0) {
+            values.put("source", transaction.getSource());
+        }
+        values.put("last_update_date", this.getLastUpdateDateString());
+
+        return values;
 	}
 	
 	public String getLastUpdateDateString() {

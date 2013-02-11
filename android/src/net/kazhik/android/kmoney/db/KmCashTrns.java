@@ -42,7 +42,7 @@ public class KmCashTrns extends KmTable {
 		qb.setTables(TABLE_NAME);
 		
 		String[] columns = { "transaction_date", "category_id", "detail", "image_uri",
-				"income", "expense" };
+				"income", "expense", "internal", "user_id", "source" };
 		String selection = "id = ?";
 		String[] selectionArgs = {String.valueOf(id)};
 		
@@ -63,42 +63,23 @@ public class KmCashTrns extends KmTable {
 		trn.setImageUri(cursor.getString(idx++));
     	trn.setIncome(new BigDecimal(cursor.getString(idx++)));
     	trn.setExpense(new BigDecimal(cursor.getString(idx++)));
+    	trn.setInternal(cursor.getInt(idx++));
+    	trn.setUserId(cursor.getInt(idx++));
+    	trn.setSource(cursor.getInt(idx++));
     	
 		cursor.close();
 		
     	
     	return trn;
     }
-    public void insert(CashTransaction trn) {
-        ContentValues values = new ContentValues();
+    public int insert(CashTransaction trn) {
+        ContentValues values = this.makeContentValues(trn);
         
-        values.put("transaction_date", trn.getTransactionDateStr());
-        values.put("income", trn.getIncome().toPlainString());
-        values.put("expense", trn.getExpense().toPlainString());
-        values.put("category_id", trn.getCategoryId());
-        values.put("detail", trn.getDetail());
-		values.put("image_uri", trn.getImageUri());
-        values.put("internal", trn.getInternal());
-        values.put("user_id", trn.getUserId());
-        values.put("source", trn.getSource());
-        values.put("last_update_date", this.getLastUpdateDateString());
-        
-        this.db.insert(TABLE_NAME, null, values);
+        return (int)this.db.insert(TABLE_NAME, null, values);
     	
     }
     public void update(CashTransaction trn) {
-        ContentValues values = new ContentValues();
-        
-        values.put("transaction_date", trn.getTransactionDateStr());
-        values.put("income", trn.getIncome().toPlainString());
-        values.put("expense", trn.getExpense().toPlainString());
-        values.put("category_id", trn.getCategoryId());
-        values.put("detail", trn.getDetail());
-		values.put("image_uri", trn.getImageUri());
-        values.put("internal", trn.getInternal());
-        values.put("user_id", trn.getUserId());
-        values.put("source", trn.getSource());
-        values.put("last_update_date", this.getLastUpdateDateString());
+        ContentValues values = this.makeContentValues(trn);
 
         this.db.update(TABLE_NAME, values, "id = " + trn.getId(), null);
     	

@@ -43,7 +43,7 @@ public class KmEMoneyTrns extends KmTable {
 		qb.setTables(TABLE_NAME);
 		
 		String[] columns = { "transaction_date", "category_id", "detail", "image_uri",
-				"income", "expense", "money_id" };
+				"income", "expense", "money_id", "internal", "user_id", "source" };
 		String selection = "id = ?";
 		String[] selectionArgs = {String.valueOf(id)};
 		
@@ -65,43 +65,24 @@ public class KmEMoneyTrns extends KmTable {
     	trn.setIncome(new BigDecimal(cursor.getString(idx++)));
     	trn.setExpense(new BigDecimal(cursor.getString(idx++)));
     	trn.setEmoneyId(cursor.getInt(idx++));
+    	trn.setInternal(cursor.getInt(idx++));
+    	trn.setUserId(cursor.getInt(idx++));
+    	trn.setSource(cursor.getInt(idx++));
     	
 		cursor.close();
 		    	
     	return trn;
     }
     public void insert(EMoneyTransaction trn) {
-        ContentValues values = new ContentValues();
-        
-        values.put("transaction_date", trn.getTransactionDateStr());
-        values.put("income", trn.getIncome().toPlainString());
-        values.put("expense", trn.getExpense().toPlainString());
-        values.put("category_id", trn.getCategoryId());
-        values.put("detail", trn.getDetail());
-		values.put("image_uri", trn.getImageUri());
-        values.put("internal", trn.getInternal());
-        values.put("user_id", trn.getUserId());
-        values.put("source", trn.getSource());
+        ContentValues values = this.makeContentValues(trn);
         values.put("money_id", trn.getEmoneyId());
-        values.put("last_update_date", this.getLastUpdateDateString());
         
         this.db.insert(TABLE_NAME, null, values);
     	
     }
     public void update(EMoneyTransaction trn) {
-        ContentValues values = new ContentValues();
-        
-        values.put("transaction_date", trn.getTransactionDateStr());
-        values.put("income", trn.getIncome().toPlainString());
-        values.put("expense", trn.getExpense().toPlainString());
-        values.put("category_id", trn.getCategoryId());
-        values.put("detail", trn.getDetail());
-		values.put("image_uri", trn.getImageUri());
-        values.put("internal", trn.getInternal());
-        values.put("user_id", trn.getUserId());
-        values.put("source", trn.getSource());
+        ContentValues values = this.makeContentValues(trn);
         values.put("money_id", trn.getEmoneyId());
-        values.put("last_update_date", this.getLastUpdateDateString());
 
         this.db.update(TABLE_NAME, values, "id = " + trn.getId(), null);
     	

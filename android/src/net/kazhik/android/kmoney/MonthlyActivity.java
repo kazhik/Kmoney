@@ -278,12 +278,12 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 		} else {
 			this.currentMonth.nextMonth();
 		}
-		int year = this.currentMonth.getYear();
-		int month = this.currentMonth.getMonth();
 
 		TextView tv = (TextView) findViewById(R.id.textViewDate);
 		tv.setText(this.currentMonth.getText());
 
+		int year = this.currentMonth.getYear();
+		int month = this.currentMonth.getMonth();
 		this.loadList(year, month);
 	}
 

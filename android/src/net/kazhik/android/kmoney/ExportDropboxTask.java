@@ -19,13 +19,13 @@ import com.dropbox.client2.session.AppKeyPair;
 import com.dropbox.client2.session.Session.AccessType;
 
 public class ExportDropboxTask extends ExportDatabaseTask {
-	private DropboxAPI<AndroidAuthSession> dDBApi;
+	private DropboxAPI<AndroidAuthSession> dbApi = null;
 
 	public ExportDropboxTask(Context ctx, String dbPath) {
 		super(ctx, dbPath);
 	}
 	
-	public void start() {
+	private void createInstance() {
 		final String APP_KEY = "kuyk8nn6g6osz3s";
 		final String APP_SECRET = "58pm6zl92rcg5i9";
 		final AccessType ACCESS_TYPE = AccessType.APP_FOLDER;
@@ -43,23 +43,27 @@ public class ExportDropboxTask extends ExportDatabaseTask {
 			session = new AndroidAuthSession(appKeyPair, ACCESS_TYPE);
 		}
 
-		this.dDBApi = new DropboxAPI<AndroidAuthSession>(session);
+		this.dbApi = new DropboxAPI<AndroidAuthSession>(session);
+		
+	}
+	public void start() {
+		this.createInstance();
 
-		if (!this.dDBApi.getSession().isLinked()) {
-			this.dDBApi.getSession().startAuthentication(this.getContext());
+		if (!this.dbApi.getSession().isLinked()) {
+			this.dbApi.getSession().startAuthentication(this.getContext());
 			return;
 		}
 			
 		this.execute();
 	}
 	public void finishAuthentication() {
-		if (this.dDBApi != null && this.dDBApi.getSession().authenticationSuccessful()) {
+		if (this.dbApi != null && this.dbApi.getSession().authenticationSuccessful()) {
 			try {
 				// MANDATORY call to complete auth.
 				// Sets the access token on the session
-				this.dDBApi.getSession().finishAuthentication();
+				this.dbApi.getSession().finishAuthentication();
 
-				AccessTokenPair tokens = this.dDBApi.getSession()
+				AccessTokenPair tokens = this.dbApi.getSession()
 						.getAccessTokenPair();
 
 				// Provide your own storeKeys to persist the access token pair
@@ -97,9 +101,9 @@ public class ExportDropboxTask extends ExportDatabaseTask {
 		try {
 		    File file = new File(this.getDbPath());
 		    inputStream = new FileInputStream(file);
-		    Entry newEntry = this.dDBApi.putFile(KmDatabase.DATABASE_NAME, inputStream,
+		    Entry newEntry = this.dbApi.putFile(KmDatabase.DATABASE_NAME, inputStream,
 		            file.length(), null, null);
-		    this.dDBApi.move(newEntry.path, this.targetFileName(file.getName()));
+		    this.dbApi.move(newEntry.path, this.targetFileName(file.getName()));
 		    Log.i("Kmoney", "The uploaded file's rev is: " + newEntry.rev);
 		    return true;
 		} catch (DropboxUnlinkedException e) {

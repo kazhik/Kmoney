@@ -974,7 +974,6 @@ public class KmoneyActivity extends FragmentActivity {
 				EditText detail = (EditText) findViewById(R.id.editTextDetail);
 				detail.setText(str);
 			}
-
 		}		
 
 		KmvTransactions trans = new KmvTransactions(this);

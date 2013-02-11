@@ -1,12 +1,9 @@
 package net.kazhik.android.kmoney;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 import net.kazhik.android.kmoney.bean.TransactionSummary;
 import net.kazhik.android.kmoney.db.KmvTransactions;
@@ -114,7 +111,7 @@ public class MonthlySummaryActivity extends Activity {
 
 	private void initMonthText(int year, int month) {
 		TextView tv = (TextView) findViewById(R.id.textViewDate);
-		tv.setText(this.formatMonth(year, month));
+		tv.setText(this.currentMonth.getText());
 
 	}
 
@@ -122,7 +119,7 @@ public class MonthlySummaryActivity extends Activity {
 		// DBからデータを読み込む
 		KmvTransactions trns = new KmvTransactions(this);
 		trns.open(true);
-		List<TransactionSummary> trnList = trns.getSummary(year, month + 1);
+		List<TransactionSummary> trnList = trns.getSummary(year, month);
 		trns.close();
 
 		// 読み込んだデータをHashMapに保持
@@ -147,34 +144,18 @@ public class MonthlySummaryActivity extends Activity {
 		lv.setAdapter(this.listAdapter);
 	}
 
-	private String formatMonth(int year, int month) {
-		Calendar calToday = Calendar.getInstance();
-		calToday.set(Calendar.YEAR, year);
-		calToday.set(Calendar.MONTH, month);
-
-		// 月名
-		SimpleDateFormat sdfMonthName = new SimpleDateFormat("MMM",
-				Locale.getDefault());
-
-		String monthFormat = getString(R.string.month_format);
-
-		return String.format(monthFormat, year, month + 1,
-				sdfMonthName.format(calToday.getTime()));
-
-	}
-
 	private void changeMonth(String direction) {
 		if (direction.equals("prev")) {
 			this.currentMonth.prevMonth();
 		} else {
 			this.currentMonth.nextMonth();
 		}
-		int year = this.currentMonth.getYear();
-		int month = this.currentMonth.getMonth();
 
 		TextView tv = (TextView) findViewById(R.id.textViewDate);
-		tv.setText(this.formatMonth(year, month));
+		tv.setText(this.currentMonth.getText());
 
+		int year = this.currentMonth.getYear();
+		int month = this.currentMonth.getMonth();
 		this.loadList(year, month);
 	}
 

@@ -7,16 +7,16 @@ import java.util.Date;
 import java.util.Locale;
 
 public class Transaction {
-	private int id;
-	private Date transactionDate;
-	private BigDecimal income;
-	private BigDecimal expense;
-	private int categoryId;
-	private String detail;
-	private String imageUri;
-	private int internal;
-	private int userId;
-	private int source;
+	private int id = 0;
+	private Date transactionDate = null;
+	private BigDecimal income = null;
+	private BigDecimal expense = null;
+	private int categoryId = 0;
+	private String detail = null;
+	private String imageUri = null;
+	private int internal = 0;
+	private int userId = 0;
+	private int source = 0;
 	
 	public Transaction() {
 		
