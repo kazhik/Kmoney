@@ -58,6 +58,11 @@ KantanKakeibo.prototype.importDb = function (name, kantanDbFile, userId, importC
             }
             this.mDb.cashTrns.import(newRecordArray, insertCallback.bind(this));
         }
+        if (this.importItemArray.length === 0) {
+            km_alert(km_getLStr("error.title"),
+                     km_getLStr("error.import.noConf"));
+            return;
+        }        
         var kantanDb = new KantanKakeiboDb();
         kantanDb.load(kantanDbFile, loadCallback.bind(this));
         

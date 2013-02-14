@@ -116,6 +116,11 @@ Suica.prototype.importDb = function (name, suicaHtmlFile, userId, importCallback
             this.mDb.emoneyTrns.import(newRecordArray, insertCallback.bind(this));
             
         }
+        if (this.importItemArray.length === 0) {
+            km_alert(km_getLStr("error.title"),
+                     km_getLStr("error.import.noConf"));
+            return;
+        }
         NetUtil.asyncFetch(suicaHtmlFile, onFileOpen.bind(this));
     }
     emoneyId = this.mDb.emoneyInfo.getMoneyId(this.type, userId);

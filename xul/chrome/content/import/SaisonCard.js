@@ -100,6 +100,11 @@ SaisonCard.prototype.importDb = function (name, csvFile, userId, importCallback)
             this.mDb.creditCardTrns.import(newRecordArray,
                 insertCallback.bind(this));
         }
+        if (this.importItemArray.length === 0) {
+            km_alert(km_getLStr("error.title"),
+                     km_getLStr("error.import.noConf"));
+            return;
+        }
         NetUtil.asyncFetch(csvFile, onFileOpen.bind(this));
     }
 

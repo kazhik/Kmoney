@@ -39,6 +39,7 @@ KmDatabase.prototype.newDatabase = function (dbFile) {
 // 既存のデータベースファイルを開く
 KmDatabase.prototype.openDatabase = function (dbFile) {
     this.openDatabaseFile(dbFile, false);
+    this.addNewSource();
     return true;
 };
 
@@ -97,6 +98,7 @@ KmDatabase.prototype.openLastDb = function () {
     }
     //assign the new file (nsIFile) to the current database
     this.openDatabaseFile(newfile, false);
+    this.addNewSource();
 
     return true;    
 };
@@ -362,7 +364,21 @@ KmDatabase.prototype.createNewTables = function() {
   this.mDb.executeTransaction(sql);
 };
     
+KmDatabase.prototype.addNewSource = function() {
+    function insertCallback(id) {
+        
+    }
+    var sources = [
+        {"name": km_getLStr("data.source.kmoneys"),
+         "import": 1,
+         "enabled": 1,
+         "file_ext": "sqlite"}
+    ];
+    for (var i = 0; i < sources.length; i++) {
+        this.source.insert(sources[i], insertCallback.bind(this));
+    }
 
+}
     
 KmDatabase.prototype.createInitialRecords = function() {
     function insertCallback(id) {
@@ -414,6 +430,10 @@ KmDatabase.prototype.createInitialRecords = function() {
          "import": 1,
          "enabled": 1,
          "file_ext": "db"},
+        {"name": km_getLStr("data.source.kmoneys"),
+         "import": 1,
+         "enabled": 1,
+         "file_ext": "sqlite"},
         {"name": km_getLStr("data.bank.mizuho"),
          "import": 1,
          "enabled": 1,

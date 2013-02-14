@@ -81,6 +81,11 @@ CreditCardImport.prototype.importDb = function (name, csvFile, userId, importCal
                                            insertCallback.bind(this));
         
         }
+        if (this.importItemArray.length === 0) {
+            km_alert(km_getLStr("error.title"),
+                     km_getLStr("error.import.noConf"));
+            return;
+        }        
         NetUtil.asyncFetch(csvFile, onFileOpen.bind(this));
     }
     cardId = this.mDb.creditCardInfo.getCardId(name, userId);

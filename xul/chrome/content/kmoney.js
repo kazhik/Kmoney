@@ -629,6 +629,7 @@ Kmoney.prototype.getImportModule = function (importType) {
         MizuhoBank,
         ShinseiBank,
         Suica,
+        KmoneysImport,
         KantanKakeibo
     ];
     var importer;

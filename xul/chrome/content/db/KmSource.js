@@ -38,11 +38,15 @@ KmSource.prototype.insert = function(params, insertCallback) {
       + "import, "
       + "enabled, "
       + "file_ext "
-      + ") values ( "
+      + ") "
+      + "select "
       + ":name, "
       + ":import, "
       + ":enabled, "
-      + ":file_ext)";
+      + ":file_ext "
+      + "where not exists "
+      + "(select 1 from km_source "
+      + "where name = :name)";
 
     km_log(sql);
     var sqlStatement = this.mDb.createStatementWithParams(sql, params);

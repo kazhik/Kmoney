@@ -25,6 +25,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
     <script type="application/x-javascript" src="db/KmAsset.js" />
     <script type="application/x-javascript" src="db/KmvTransactions.js" />
     <script type="application/x-javascript" src="db/KantanKakeiboDb.js" />
+    <script type="application/x-javascript" src="db/KmoneysDb.js" />
 
     <script type="application/x-javascript" src="transaction/Transaction.js" />
     <script type="application/x-javascript" src="transaction/AllTransaction.js" />
@@ -48,6 +49,7 @@ xmlns:html="http://www.w3.org/1999/xhtml" xmlns:h="http://www.w3.org/1999/xhtml"
     <script type="application/x-javascript" src="import/ViewCard.js" />
     <script type="application/x-javascript" src="import/KantanKakeibo.js" />
     <script type="application/x-javascript" src="import/Suica.js" />
+    <script type="application/x-javascript" src="import/KmoneysImport.js" />
 
     <script type="application/x-javascript" src="kmoney.js" />
 	

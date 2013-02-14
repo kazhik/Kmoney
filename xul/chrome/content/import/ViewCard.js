@@ -95,6 +95,12 @@ ViewCard.prototype.importDb = function (name, htmlFile, userId, importCallback) 
             this.mDb.creditCardTrns.import(newRecordArray,
                                            insertCallback.bind(this));
         }
+
+        if (this.importItemArray.length === 0) {
+            km_alert(km_getLStr("error.title"),
+                     km_getLStr("error.import.noConf"));
+            return;
+        }        
         NetUtil.asyncFetch(htmlFile, onFileOpen.bind(this));
     }
     cardId = this.mDb.creditCardInfo.getCardId(this.type, userId);

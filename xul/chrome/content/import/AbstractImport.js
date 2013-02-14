@@ -17,7 +17,7 @@ AbstractImport.prototype.loadImportConf = function (userId, srcName, loadCallbac
                 }
                 this.importItemArray.push(importItem);
             }
-            loadCallback(sourceType, this.importItemArray);
+            loadCallback(sourceType);
         }
         this.mDb.import.load(userId, sourceType, srcName, onLoad.bind(this));
     }
