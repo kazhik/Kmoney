@@ -23,7 +23,7 @@ public class KmBankTrns extends KmTable {
 			+ "user_id INTEGER,"
 			+ "source INTEGER,"
 			+ "bank_id INTEGER,"
-			+ "last_update_time DATETIME)";
+			+ "last_update_date DATETIME)";
 	public static final String TABLE_NAME = "km_bank_trns";
 
 	public KmBankTrns(Context context) {
