@@ -15,8 +15,14 @@ KmSource.prototype.loadSourceType = function (srcName, loadCallback) {
 };
 
 KmSource.prototype.load = function(loadCallback) {
-    this.mDb.selectQuery("select A.id, A.name, A.file_ext from km_source A " +
-                         "where A.import = 1 and A.enabled = 1");
+    var sql = ["select A.id, A.name, A.file_ext, count(B.id) as cnt",
+               "from km_source A",
+               "left join km_import_history B",
+               "on A.id = B.source_type",
+               "where A.import = 1 and A.enabled = 1",
+               "group by A.id",
+               "order by cnt desc"].join(" ");
+    this.mDb.selectQuery(sql);
     loadCallback(this.mDb.getRecords());
 };
 KmSource.prototype.loadMaster = function(loadCallback) {

@@ -4,7 +4,13 @@ function KmCategory(db) {
 }
 
 KmCategory.prototype.loadItemList = function(loadCallback) {
-    this.mDb.selectQuery("select id, name from km_category");
+    var sql = ["select A.id, A.name, count(B.id) as cnt",
+               "from km_category A",
+               "left join kmv_transactions B",
+               "on A.id = B.category_id",
+               "group by A.id",
+               "order by cnt desc"].join(" ");
+    this.mDb.selectQuery(sql);
     this.mItemList = this.mDb.getRecords();
     loadCallback(this.mItemList);
 
