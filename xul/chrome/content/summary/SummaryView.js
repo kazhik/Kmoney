@@ -109,15 +109,21 @@ SummaryView.prototype.drawGraph = function () {
             bar_labels: true
         });
     }
-    $$('km_box_summary_panel').hidden = false;
-    $$('km_tree_summary').hidden = true;
-    $$('km_box_summary_condition_period').hidden = false;
-    
     
     var monthfromY = $$('km_list_summary_monthfromY').value;
     var monthfromM = $$('km_list_summary_monthfromM').value;
     var monthtoY = $$('km_list_summary_monthtoY').value;
     var monthtoM = $$('km_list_summary_monthtoM').value;
+    
+    if (monthfromY == 0 || monthfromM == 0 || monthtoY == 0 || monthtoM == 0) {
+        KmGlobals.$empty($$('km_box_summary_panel'));
+        return;
+    }
+    
+    $$('km_box_summary_panel').hidden = false;
+    $$('km_tree_summary').hidden = true;
+    $$('km_box_summary_condition_period').hidden = false;
+    
     var params = {
         "periodFrom": monthfromY + "/" + monthfromM,
         "periodTo": monthtoY + "/" + monthtoM,

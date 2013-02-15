@@ -341,9 +341,9 @@ Kmoney.prototype.removeEventListeners = function () {
     
     $$('kmc-asset').removeEventListener("command", this.listeners['kmc-asset']);
 
-    $$('km_tree_all').remoteEventListener("dblclick", this.listeners['km_tree_all.dblclick']);
+    $$('km_tree_all').removeEventListener("dblclick", this.listeners['km_tree_all.dblclick']);
 
-    $$('km_list_summary_user').remoteEventListener("command",
+    $$('km_list_summary_user').removeEventListener("command",
                                               this.listeners['km_list_summary_user.command']);
     $$('km_list_summary_monthfromY').removeEventListener("command",
                                                  this.listeners['km_list_summary_monthfromY.command']);
@@ -763,26 +763,35 @@ Kmoney.prototype.populateSummaryPeriodList = function () {
     // レコードが存在する最も古い年から今年までをリストに入れる
 
     function getCallback(oldestYear, oldestMonth) {
-        var thisYear = (new Date()).getFullYear();
+        $$('km_list_summary_monthfromY').removeAllItems();
+        $$('km_list_summary_monthfromM').removeAllItems();
+        $$('km_list_summary_monthtoY').removeAllItems();
+        $$('km_list_summary_monthtoM').removeAllItems();
+    
+        $$('km_list_summary_monthfromY').appendItem("-", 0);
+        $$('km_list_summary_monthfromM').appendItem("-", 0);
+        $$('km_list_summary_monthtoY').appendItem("-", 0);
+        $$('km_list_summary_monthtoM').appendItem("-", 0);
+        
+        // レコード0件
         if (isNaN(oldestYear)) {
-            // レコード0件の場合は今年
-            oldestYear = thisYear;
+            $$('km_list_summary_monthfromY').value = 0;
+            $$('km_list_summary_monthfromM').value = 0;
+            $$('km_list_summary_monthtoY').value = 0;
+            $$('km_list_summary_monthtoM').value = 0;
+            return;
         }
+        var today = new Date();
+        
         // デフォルトは前月までの12ヶ月間
         var monthToDefault = new Date();
-        monthToDefault.setMonth(monthToDefault.getMonth() - 1);
+        monthToDefault.setMonth(today.getMonth() - 1);
         var monthFromDefault = new Date(monthToDefault.getFullYear(),
                                         monthToDefault.getMonth() - 11,
                                         1);
-        var idx;
-    
-        $$('km_list_summary_monthfromY').removeAllItems();
-        $$('km_list_summary_monthtoY').removeAllItems();
-    
-        $$('km_list_summary_monthfromY').appendItem("-", 0);
-        $$('km_list_summary_monthtoY').appendItem("-", 0);
+        // 年をセット
         var defaultFromYear = oldestYear;
-        for (var year = oldestYear; year <= thisYear; year++) {
+        for (var year = oldestYear; year <= today.getFullYear(); year++) {
             $$('km_list_summary_monthfromY').appendItem(year, year);
             $$('km_list_summary_monthtoY').appendItem(year, year);
             if (year === monthFromDefault.getFullYear()) {
@@ -792,10 +801,7 @@ Kmoney.prototype.populateSummaryPeriodList = function () {
         $$('km_list_summary_monthfromY').value = defaultFromYear;
         $$('km_list_summary_monthtoY').value = monthToDefault.getFullYear();
         
-        $$('km_list_summary_monthfromM').removeAllItems();
-        $$('km_list_summary_monthfromM').appendItem("-", 0);
-        $$('km_list_summary_monthtoM').removeAllItems();
-        $$('km_list_summary_monthtoM').appendItem("-", 0);
+        // 月をセット
         for (var i = 0; i < 12; i++) {
             var monthValue = zeroFill(i + 1, 2);
             $$('km_list_summary_monthfromM').appendItem(i + 1, monthValue);
@@ -810,6 +816,7 @@ Kmoney.prototype.populateSummaryPeriodList = function () {
         $$('km_list_summary_monthtoM').value = zeroFill(monthToDefault.getMonth() + 1, 2);
         
     }
+    
     this.mDb.transactions.getOldestYear(getCallback.bind(this));
 
 };
@@ -1032,7 +1039,7 @@ Kmoney.prototype.onSummaryPeriodChanged = function() {
         
     }
     
-}
+};
 
 Kmoney.prototype.initQueryCondition = function (tabId) {
     var qcond1 = $$('km_list_query_condition1').selectedIndex;

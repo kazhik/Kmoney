@@ -88,6 +88,11 @@ BalanceView.prototype.drawGraph = function () {
     var monthfromM = $$('km_list_summary_monthfromM').value;
     var monthtoY = $$('km_list_summary_monthtoY').value;
     var monthtoM = $$('km_list_summary_monthtoM').value;
+    
+    if (monthfromY == 0 || monthfromM == 0 || monthtoY == 0 || monthtoM == 0) {
+        KmGlobals.$empty($$('km_box_balance_panel'));
+        return;
+    }
 
     var params = {
         "periodFrom": monthfromY + "/" + monthfromM,
