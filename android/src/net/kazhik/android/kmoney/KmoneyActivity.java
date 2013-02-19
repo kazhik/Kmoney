@@ -1073,5 +1073,10 @@ public class KmoneyActivity extends FragmentActivity {
 			
 		}
 	}
+	@Override
+	public void onBackPressed() {
+		moveTaskToBack(true);
+	}
+
 
 }
