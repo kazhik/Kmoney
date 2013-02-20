@@ -3,7 +3,13 @@ function KmSource(db) {
 }
 
 KmSource.prototype.loadSourceType = function (srcName, loadCallback) {
-    this.mDb.selectQuery("select id from km_source where name = '" + srcName + "'");
+    var sql = "select id from km_source where name = :srcname";
+     var params = {
+        "srcname": srcName
+    };
+    var sqlStatement = this.mDb.createStatementWithParams(sql, params);
+    this.mDb.execTransaction([sqlStatement]);
+   
     var records = this.mDb.getRecords();
     var sourceType;
     if (records.length === 1) {
