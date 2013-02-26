@@ -92,7 +92,7 @@ public class KmvTransactions extends KmTable {
 		
     	List<String> detailList = new ArrayList<String>();
 		
-		if (cursor == null) {
+		if (cursor.getCount() == 0) {
 			return detailList;
 		}
 		
@@ -125,7 +125,7 @@ public class KmvTransactions extends KmTable {
 		
 		List<TransactionSummary> trnsList = new ArrayList<TransactionSummary>();
 		
-		if (cursor == null) {
+		if (cursor.getCount() == 0) {
 			return trnsList;
 		}
 		
@@ -161,7 +161,7 @@ public class KmvTransactions extends KmTable {
 		
 		List<TransactionView> trnsList = new ArrayList<TransactionView>();
 		
-		if (cursor == null) {
+		if (cursor.getCount() == 0) {
 			return trnsList;
 		}
 		

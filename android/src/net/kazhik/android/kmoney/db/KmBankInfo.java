@@ -40,26 +40,26 @@ public class KmBankInfo extends KmTable {
     public KmBankInfo(Context context) {
     	super(context);
     }
-    public void insert(String name, int userId) {
+    public int insert(String name, int userId) {
         ContentValues values = new ContentValues();
         
         values.put("name", name);
         values.put("user_id", userId);
         
-        this.db.insert(TABLE_NAME, null, values);
+        return (int)this.db.insert(TABLE_NAME, null, values);
     	
     }
-    public void update(int id, String name) {
+    public boolean update(int id, String name) {
         ContentValues values = new ContentValues();
         
         values.put("name", name);
 
-        this.db.update(TABLE_NAME, values, "id = " + id, null);
-    	
+        int updated = this.db.update(TABLE_NAME, values, "id = " + id, null);
+    	return (updated > 0);
     }
-    public void delete(int id) {
-    	this.db.delete(TABLE_NAME, "id = " + id, null);
-    	
+    public boolean delete(int id) {
+    	int deleted = this.db.delete(TABLE_NAME, "id = " + id, null);
+    	return (deleted > 0);
     }
     
 	public List<Item> getBankNameList(int userId) {
@@ -91,7 +91,7 @@ public class KmBankInfo extends KmTable {
 		
 		List<BankInfo> bankList = new ArrayList<BankInfo>();
 		
-		if (cursor == null) {
+		if (cursor.getCount() == 0) {
 			return bankList;
 		}
 		

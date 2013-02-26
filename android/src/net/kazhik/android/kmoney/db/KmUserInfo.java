@@ -36,25 +36,25 @@ public class KmUserInfo extends KmTable {
     public KmUserInfo(Context context) {
     	super(context);
     }
-    public void insert(String name) {
+    public int insert(String name) {
         ContentValues values = new ContentValues();
         
         values.put("name", name);
         
-        this.db.insert(TABLE_NAME, null, values);
+        return (int)this.db.insert(TABLE_NAME, null, values);
     	
     }
-    public void update(int id, String name) {
+    public boolean update(int id, String name) {
         ContentValues values = new ContentValues();
         
         values.put("name", name);
 
-        this.db.update(TABLE_NAME, values, "id = " + id, null);
-    	
+        int updated = this.db.update(TABLE_NAME, values, "id = " + id, null);
+    	return (updated > 0);
     }
-    public void delete(int id) {
-    	this.db.delete(TABLE_NAME, "id = " + id, null);
-    	
+    public boolean delete(int id) {
+    	int deleted = this.db.delete(TABLE_NAME, "id = " + id, null);
+    	return (deleted > 0);
     }
     
 	public List<Item> getUserNameList() {
@@ -81,7 +81,7 @@ public class KmUserInfo extends KmTable {
 		
 		List<UserInfo> userList = new ArrayList<UserInfo>();
 		
-		if (cursor == null) {
+		if (cursor.getCount() == 0) {
 			return userList;
 		}
 		

@@ -51,7 +51,7 @@ public class KmBankTrns extends KmTable {
 		Cursor cursor = qb.query(this.db, columns, selection, selectionArgs,
 				null, null, null, null);
 
-		if (cursor == null) {
+		if (cursor.getCount() == 0) {
 			return null;
 		}
 
@@ -75,24 +75,26 @@ public class KmBankTrns extends KmTable {
 		return trn;
 	}
 
-	public void insert(BankTransaction trn) {
+	public int insert(BankTransaction trn) {
         ContentValues values = this.makeContentValues(trn);
 		values.put("bank_id", trn.getBankId());
 
-		this.db.insert(TABLE_NAME, null, values);
+		return (int)this.db.insert(TABLE_NAME, null, values);
 
 	}
 
-	public void update(BankTransaction trn) {
+	public boolean update(BankTransaction trn) {
         ContentValues values = this.makeContentValues(trn);
 		values.put("bank_id", trn.getBankId());
 
-		this.db.update(TABLE_NAME, values, "id = " + trn.getId(), null);
+		int updated = this.db.update(TABLE_NAME, values, "id = " + trn.getId(), null);
+		return (updated > 0);
 
 	}
 
-	public void delete(int id) {
-		this.db.delete(TABLE_NAME, "id = " + id, null);
+	public boolean delete(int id) {
+		int deleted = this.db.delete(TABLE_NAME, "id = " + id, null);
+		return (deleted > 0);
 	}
 
 }

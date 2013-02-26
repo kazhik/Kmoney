@@ -34,27 +34,27 @@ public class KmCategory extends KmTable {
 	public static void upgrade(SQLiteDatabase db) {
 		KmTable.upgrade(db, TABLE_NAME, CREATE_TABLE);
 	}
-	public void insert(String name) {
+	public int insert(String name) {
 	    ContentValues values = new ContentValues();
 	    
 	    values.put("name", name);
 	    
-	    this.db.insert(TABLE_NAME, null, values);
+	    return (int)this.db.insert(TABLE_NAME, null, values);
 		
 	}
 
-	public void update(int id, String name) {
+	public boolean update(int id, String name) {
 	    ContentValues values = new ContentValues();
 	    
 	    values.put("name", name);
 	
-	    this.db.update(TABLE_NAME, values, "id = " + id, null);
-		
+	    int updated = this.db.update(TABLE_NAME, values, "id = " + id, null);
+		return (updated > 0);
 	}
 
-	public void delete(int id) {
-		this.db.delete(TABLE_NAME, "id = " + id, null);
-		
+	public boolean delete(int id) {
+		int deleted = this.db.delete(TABLE_NAME, "id = " + id, null);
+		return (deleted > 0);
 	}
     public List<Item> getNameList() {
 		List<Item> itemList = new ArrayList<Item>();
@@ -89,7 +89,7 @@ public class KmCategory extends KmTable {
 		
 		List<Category> categoryList = new ArrayList<Category>();
 		
-		if (cursor == null) {
+		if (cursor.getCount() == 0) {
 			return categoryList;
 		}
 		

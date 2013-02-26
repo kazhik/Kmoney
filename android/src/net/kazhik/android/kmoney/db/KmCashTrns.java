@@ -37,7 +37,7 @@ public class KmCashTrns extends KmTable {
 		KmTable.upgrade(db, TABLE_NAME, CREATE_TABLE);
 	}
 
-    public CashTransaction select(int id) throws ParseException {
+    public CashTransaction select(long id) throws ParseException {
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 		qb.setTables(TABLE_NAME);
 		
@@ -49,7 +49,7 @@ public class KmCashTrns extends KmTable {
 		Cursor cursor = qb.query(this.db, columns, selection, selectionArgs, null,
 				null, null, null);
 		
-		if (cursor == null) {
+		if (cursor.getCount() == 0) {
 			return null;
 		}
 		
@@ -78,14 +78,15 @@ public class KmCashTrns extends KmTable {
         return (int)this.db.insert(TABLE_NAME, null, values);
     	
     }
-    public void update(CashTransaction trn) {
+    public boolean update(CashTransaction trn) {
         ContentValues values = this.makeContentValues(trn);
 
-        this.db.update(TABLE_NAME, values, "id = " + trn.getId(), null);
-    	
+        int updated = this.db.update(TABLE_NAME, values, "id = " + trn.getId(), null);
+    	return (updated > 0);
     }
-    public void delete(int id) {
-    	this.db.delete(TABLE_NAME, "id = " + id, null);
+    public boolean delete(int id) {
+    	int deleted = this.db.delete(TABLE_NAME, "id = " + id, null);
+    	return (deleted > 0);
     }
 
 }
