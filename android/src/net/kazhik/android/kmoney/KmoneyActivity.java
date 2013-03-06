@@ -74,9 +74,6 @@ public class KmoneyActivity extends FragmentActivity {
 
 	private SharedPreferences prefs;
 
-	private int getDefaultUser() {
-		return this.prefs.getInt("default_user", 0);
-	}
 	private void setUser(int userId) {
 		Editor editor = this.prefs.edit();
 		editor.putInt("default_user", userId);
@@ -85,32 +82,37 @@ public class KmoneyActivity extends FragmentActivity {
 		this.userId = userId;
 	}
 	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.entry);
-
-		this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-		this.currentDay = new Day(this);
-		
-		this.initCurrentUser();
-
-		this.initDatabase();
-
-		this.initCategoryList();
+	private void initUI() {
+		this.initDateText();
 		this.initTypeList();
+		this.initTransactionTypeDetail();
+		this.initCategoryList();
+		
 		this.initAmountInput();
 		this.initClearButton();
-		this.initDateText(true);
 		this.initDateButton();
 		this.initOkButton();
 		this.initCancelButton();
 		this.initHistoryButton();
 		this.initPhotoButton();
 		this.initCopyButton();
-		this.initTransactionTypeDetal();
 
+	}
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.entry);
+
+		this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		this.initDatabase();
+		
+		this.loadDefaultUser();
+
+		this.initUI();
+		
+		this.setToday();
+		
 		this.updateId = 0;
 		this.updateType = TransactionType.NONE;
 
@@ -141,9 +143,25 @@ public class KmoneyActivity extends FragmentActivity {
 	private void copyAsNew() {
 		this.updateId = 0;
 		this.currentDay.today();
-		this.initDateText(false);
+		this.setDateText();
 	}
 
+	private void clearAll() {
+		this.updateId = 0;
+		this.currentDay.today();
+		this.setDateText();
+		this.initAmount();
+
+		EditText detail = (EditText) findViewById(R.id.editTextDetail);
+		detail.setText("");
+		
+		this.photo.delete();
+		
+		Spinner spinnerType = (Spinner) findViewById(R.id.spinnerType);
+		spinnerType.setSelection(0);
+
+	}
+	
 	private void setField(Transaction trn) {
 		this.currentDay.set(trn.getTransactionDate());
 
@@ -241,8 +259,8 @@ public class KmoneyActivity extends FragmentActivity {
 
 	}
 
-	private void initCurrentUser() {
-		this.userId = this.getDefaultUser();
+	private void loadDefaultUser() {
+		this.userId = this.prefs.getInt("default_user", 0);
 	}
 
 	private void initDatabase() {
@@ -256,7 +274,7 @@ public class KmoneyActivity extends FragmentActivity {
 
 	}
 
-	private void initDateText(boolean initListener) {
+	private void initDateText() {
 		class DateLongClickListener implements View.OnLongClickListener {
 			class DateSetListener implements DatePickerDialog.OnDateSetListener {
 
@@ -287,14 +305,9 @@ public class KmoneyActivity extends FragmentActivity {
 			}
 
 		}
-
-		this.setDateText();
-
-		if (initListener) {
-			// 長押し設定
-			TextView tv = (TextView) findViewById(R.id.textViewDate);
-			tv.setOnLongClickListener(new DateLongClickListener(this.currentDay));
-		}
+		// 長押し設定
+		TextView tv = (TextView) findViewById(R.id.textViewDate);
+		tv.setOnLongClickListener(new DateLongClickListener(this.currentDay));
 
 	}
 
@@ -552,7 +565,7 @@ public class KmoneyActivity extends FragmentActivity {
 		return itemList;
 	}
 
-	private void initTransactionTypeDetal() {
+	private void initTransactionTypeDetail() {
 		this.transactionTypeDetail = new HashMap<String, List<Item>>();
 		this.transactionTypeDetail.put("bank", this.getBankList());
 		this.transactionTypeDetail.put("creditcard", this.getCreditCardList());
@@ -677,6 +690,11 @@ public class KmoneyActivity extends FragmentActivity {
 		}
 
 		this.setDateText();
+	}
+	private void setToday() {
+		this.currentDay = new Day(this);
+		this.setDateText();
+		
 	}
 
 	/**
@@ -1007,7 +1025,7 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 
 	private void cancel() {
-		this.photo.delete();
+		this.clearAll();
 		this.monthly();
 	}
 

@@ -12,5 +12,10 @@
             android:summary="@string/pref_export_type_summary"
             android:title="@string/pref_export_type_title" />
     </PreferenceCategory>
-
+    <CheckBoxPreference
+        android:key="swipe"
+        android:title="@string/pref_swipe_title"
+        android:summary="@string/pref_swipe_summary"
+        android:defaultValue="true" />
+    
 </PreferenceScreen>

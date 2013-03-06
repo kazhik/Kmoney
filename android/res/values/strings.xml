@@ -57,7 +57,9 @@
     <string name="pref_export_type">Export Type</string>
     <string name="pref_export_type_summary">SD Card or Dropbox</string>
     <string name="pref_export_type_title">Export Type</string>
-
+    <string name="pref_swipe_summary">Enable swipe in Monthly view</string>
+    <string name="pref_swipe_title">Swipe</string>
+    
     <string name="error_photo">Couldn\'t take picture. Try once more</string>
     
 </resources>

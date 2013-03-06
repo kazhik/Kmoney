@@ -20,7 +20,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -65,7 +67,11 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 
 		this.loadList(this.currentMonth.getYear(), this.currentMonth.getMonth());
 
-		this.initSwipe();
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		
+		if (prefs.getBoolean("swipe", true) == true) {
+			this.initSwipe();
+		}
 
 		ListView lv = (ListView) findViewById(R.id.listViewMonthly);
 		lv.setOnItemClickListener(this);

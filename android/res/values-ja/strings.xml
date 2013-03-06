@@ -40,7 +40,9 @@
     <string name="pref_export_type">エクスポート種別</string>
     <string name="pref_export_type_summary">SDカード/Dropbox</string>
     <string name="pref_export_type_title">エクスポート種別</string>
-
+    <string name="pref_swipe_summary">月別表示画面でスワイプを有効にする</string>
+    <string name="pref_swipe_title">スワイプ</string>
+    
     <string name="error_photo">写真を撮れませんでした。もう一度試してください</string>
     
 </resources>
