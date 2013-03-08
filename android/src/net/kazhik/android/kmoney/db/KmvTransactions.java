@@ -3,6 +3,7 @@ package net.kazhik.android.kmoney.db;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.kazhik.android.kmoney.R;
 import net.kazhik.android.kmoney.TransactionType;
 import net.kazhik.android.kmoney.bean.TransactionSummary;
 import net.kazhik.android.kmoney.bean.TransactionView;
@@ -105,6 +106,37 @@ public class KmvTransactions extends KmTable {
 		
     	return detailList;
     }
+	public TransactionSummary getTotal(int year, int month) {
+		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+		qb.setTables(VIEW_NAME);
+		
+		String[] columns = { "strftime('%Y/%m', transaction_date) as transaction_month",
+				"sum(expense) as sum"};
+
+		String selection =  "transaction_month = ?";
+		String[] selectionArgs = {String.format("%04d/%02d", year, month)};
+		
+		String sortOrder = null;
+		String groupBy = null;
+		
+		Cursor cursor = qb.query(this.db, columns, selection, selectionArgs, groupBy,
+				null, sortOrder, null);
+		
+		
+		if (cursor.getCount() == 0) {
+			return null;
+		}
+		
+		cursor.moveToFirst();
+		TransactionSummary info = new TransactionSummary();
+
+		info.setCategoryName(this.context.getString(R.string.total));
+		info.setSum(cursor.getString(1));
+		cursor.close();
+		
+		return info;		
+		
+	}
 	
 	public List<TransactionSummary> getSummary(int year, int month) {
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();

@@ -120,6 +120,10 @@ public class MonthlySummaryActivity extends Activity {
 		KmvTransactions trns = new KmvTransactions(this);
 		trns.open(true);
 		List<TransactionSummary> trnList = trns.getSummary(year, month);
+		TransactionSummary total = trns.getTotal(year, month);
+		if (total != null) {
+			trnList.add(total);
+		}
 		trns.close();
 
 		// 読み込んだデータをHashMapに保持

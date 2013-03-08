@@ -76,6 +76,9 @@ public class Money {
 		return this.currencyFormat.format(this.value);
 		
 	}
+	public boolean isZero() {
+		return (this.value.compareTo(new BigDecimal(0)) == 0);
+	}
 	public BigDecimal getValue() {
 		return this.value;
 	}

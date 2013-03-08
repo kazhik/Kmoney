@@ -459,13 +459,23 @@ public class KmoneyActivity extends FragmentActivity {
 		this.photo = new TransactionPhoto(this);
 	}
 
+	private void onClickOk() {
+		if (this.amount.isZero()) {
+			Toast.makeText(this, R.string.error_zero, Toast.LENGTH_SHORT)
+					.show();
+			return;
+		}
+		this.writeTransaction();
+		this.monthly();
+
+	}
+
 	private void initOkButton() {
 		class OkButtonClickListener implements View.OnClickListener {
 
 			@Override
 			public void onClick(View v) {
-				KmoneyActivity.this.writeTransaction();
-				KmoneyActivity.this.monthly();
+				KmoneyActivity.this.onClickOk();
 			}
 
 		}
@@ -769,6 +779,7 @@ public class KmoneyActivity extends FragmentActivity {
 		} catch (ParseException e) {
 			Log.e(Constants.APPNAME, e.getMessage());
 		}
+		this.clearAll();
 
 	}
 	private Transaction getField() {
