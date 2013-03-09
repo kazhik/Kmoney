@@ -15,17 +15,18 @@ import net.kazhik.android.kmoney.bean.CreditCardTransaction;
 import net.kazhik.android.kmoney.bean.EMoneyTransaction;
 import net.kazhik.android.kmoney.bean.Item;
 import net.kazhik.android.kmoney.bean.Transaction;
-import net.kazhik.android.kmoney.db.KmBankInfo;
+import net.kazhik.android.kmoney.db.BankTransactionWriter;
+import net.kazhik.android.kmoney.db.CashTransactionWriter;
+import net.kazhik.android.kmoney.db.CreditCardTransactionWriter;
+import net.kazhik.android.kmoney.db.EMoneyTransactionWriter;
 import net.kazhik.android.kmoney.db.KmBankTrns;
 import net.kazhik.android.kmoney.db.KmCashTrns;
-import net.kazhik.android.kmoney.db.KmCategory;
-import net.kazhik.android.kmoney.db.KmCreditCardInfo;
 import net.kazhik.android.kmoney.db.KmCreditCardTrns;
 import net.kazhik.android.kmoney.db.KmDatabase;
-import net.kazhik.android.kmoney.db.KmEMoneyInfo;
 import net.kazhik.android.kmoney.db.KmEMoneyTrns;
-import net.kazhik.android.kmoney.db.KmUserInfo;
 import net.kazhik.android.kmoney.db.KmvTransactions;
+import net.kazhik.android.kmoney.db.MasterDataReader;
+import net.kazhik.android.kmoney.db.TransactionWriter;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
@@ -189,7 +190,6 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 
 	private void loadTransaction(int type, int id) {
-		int typeDetailId = 0;
 
 		try {
 			if (type == TransactionType.CASH) {
@@ -198,37 +198,40 @@ public class KmoneyActivity extends FragmentActivity {
 				CashTransaction trnInfo = trn.select(id);
 				this.setField(trnInfo);
 				trn.close();
-			} else if (type == TransactionType.BANK) {
-				KmBankTrns trn = new KmBankTrns(this);
-				trn.open(true);
-				BankTransaction trnInfo = trn.select(id);
-				this.setField(trnInfo);
-				typeDetailId = trnInfo.getBankId();
-				trn.close();
-			} else if (type == TransactionType.CREDITCARD) {
-				KmCreditCardTrns trn = new KmCreditCardTrns(this);
-				trn.open(true);
-				CreditCardTransaction trnInfo = trn.select(id);
-				this.setField(trnInfo);
-				typeDetailId = trnInfo.getCardId();
-				trn.close();
-			} else if (type == TransactionType.EMONEY) {
-				KmEMoneyTrns trn = new KmEMoneyTrns(this);
-				trn.open(true);
-				EMoneyTransaction trnInfo = trn.select(id);
-				this.setField(trnInfo);
-				typeDetailId = trnInfo.getEmoneyId();
-				trn.close();
+			} else {
+				int typeDetailId = 0;
+				if (type == TransactionType.BANK) {
+					KmBankTrns trn = new KmBankTrns(this);
+					trn.open(true);
+					BankTransaction trnInfo = trn.select(id);
+					this.setField(trnInfo);
+					typeDetailId = trnInfo.getBankId();
+					trn.close();
+				} else if (type == TransactionType.CREDITCARD) {
+					KmCreditCardTrns trn = new KmCreditCardTrns(this);
+					trn.open(true);
+					CreditCardTransaction trnInfo = trn.select(id);
+					this.setField(trnInfo);
+					typeDetailId = trnInfo.getCardId();
+					trn.close();
+				} else if (type == TransactionType.EMONEY) {
+					KmEMoneyTrns trn = new KmEMoneyTrns(this);
+					trn.open(true);
+					EMoneyTransaction trnInfo = trn.select(id);
+					this.setField(trnInfo);
+					typeDetailId = trnInfo.getEmoneyId();
+					trn.close();
+				} else {
+					return;
+				}
+				this.initTransactionTypeDetail(type);
+				Spinner spinner = (Spinner) findViewById(R.id.spinnerTypeDetail);
+				int pos = this.getSpinnerPosition(spinner, typeDetailId);
+				spinner.setSelection(pos);
 			}
 		} catch (ParseException e) {
 			Log.e(Constants.APPNAME, e.getMessage());
 			return;
-		}
-		if (typeDetailId > 0) {
-			this.initTransactionTypeDetail(type);
-			Spinner spinner = (Spinner) findViewById(R.id.spinnerTypeDetail);
-			int pos = this.getSpinnerPosition(spinner, typeDetailId);
-			spinner.setSelection(pos);
 		}
 
 	}
@@ -527,10 +530,7 @@ public class KmoneyActivity extends FragmentActivity {
 
 	private void initCategoryList() {
 		// DBから費目のリストを取得
-		KmCategory dbCategory = new KmCategory(this);
-		dbCategory.open(true);
-		List<Category> categoryList = dbCategory.getCategoryList(0);
-		dbCategory.close();
+		List<Category> categoryList = MasterDataReader.getCategoryList(this);
 
 		// Spinnerに費目のリストをセット
 		ArrayAdapter<Item> adapter = new ArrayAdapter<Item>(this,
@@ -548,38 +548,11 @@ public class KmoneyActivity extends FragmentActivity {
 		spinnerCategory.setAdapter(adapter);
 	}
 
-	private List<Item> getBankList() {
-		KmBankInfo bankInfo = new KmBankInfo(this);
-		bankInfo.open(true);
-		List<Item> itemList = bankInfo.getBankNameList(this.userId);
-		bankInfo.close();
-
-		return itemList;
-	}
-
-	private List<Item> getCreditCardList() {
-		KmCreditCardInfo cardInfo = new KmCreditCardInfo(this);
-		cardInfo.open(true);
-		List<Item> itemList = cardInfo.getCreditCardNameList(this.userId);
-		cardInfo.close();
-
-		return itemList;
-	}
-
-	private List<Item> getEMoneyList() {
-		KmEMoneyInfo emoneyInfo = new KmEMoneyInfo(this);
-		emoneyInfo.open(true);
-		List<Item> itemList = emoneyInfo.getEMoneyNameList(this.userId);
-		emoneyInfo.close();
-
-		return itemList;
-	}
-
 	private void initTransactionTypeDetail() {
 		this.transactionTypeDetail = new HashMap<String, List<Item>>();
-		this.transactionTypeDetail.put("bank", this.getBankList());
-		this.transactionTypeDetail.put("creditcard", this.getCreditCardList());
-		this.transactionTypeDetail.put("emoney", this.getEMoneyList());
+		this.transactionTypeDetail.put("bank", MasterDataReader.getBankList(this, this.userId));
+		this.transactionTypeDetail.put("creditcard", MasterDataReader.getCreditCardList(this, this.userId));
+		this.transactionTypeDetail.put("emoney", MasterDataReader.getEMoneyList(this, this.userId));
 
 	}
 
@@ -719,43 +692,19 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 
 	private void deleteTransaction(int type, int id) {
+		TransactionWriter writer;
 		if (type == TransactionType.CASH) {
-			this.deleteCashTransaction(id);
+			writer = new CashTransactionWriter(this);
 		} else if (type == TransactionType.BANK) {
-			this.deleteBankTransaction(id);
+			writer = new BankTransactionWriter(this);
 		} else if (type == TransactionType.CREDITCARD) {
-			this.deleteCreditCardTransaction(id);
+			writer = new CreditCardTransactionWriter(this);
 		} else if (type == TransactionType.EMONEY) {
-			this.deleteEMoneyTransaction(id);
+			writer = new EMoneyTransactionWriter(this);
+		} else {
+			return;
 		}
-	}
-
-	private void deleteCashTransaction(int id) {
-		KmCashTrns trn = new KmCashTrns(this);
-		trn.open(false);
-		trn.delete(id);
-		trn.close();
-	}
-
-	private void deleteBankTransaction(int id) {
-		KmBankTrns trn = new KmBankTrns(this);
-		trn.open(false);
-		trn.delete(id);
-		trn.close();
-	}
-
-	private void deleteCreditCardTransaction(int id) {
-		KmCreditCardTrns trn = new KmCreditCardTrns(this);
-		trn.open(false);
-		trn.delete(id);
-		trn.close();
-	}
-
-	private void deleteEMoneyTransaction(int id) {
-		KmEMoneyTrns trn = new KmEMoneyTrns(this);
-		trn.open(false);
-		trn.delete(id);
-		trn.close();
+		writer.delete(id);
 	}
 
 	private void writeTransaction() {
@@ -766,18 +715,41 @@ public class KmoneyActivity extends FragmentActivity {
 				this.updateId = 0;
 			}
 		}
-		try {
-			if (this.transactionType == TransactionType.CASH) {
-				this.writeCashTransaction(this.updateId);
-			} else if (this.transactionType == TransactionType.BANK) {
-				this.writeBankTransaction(this.updateId);
+		TransactionWriter writer;
+		
+		if (this.transactionType == TransactionType.CASH) {
+			CashTransaction tran = new CashTransaction(this.getField());
+
+			writer = new CashTransactionWriter(this, tran);
+		} else {
+			Spinner spinner = (Spinner) findViewById(R.id.spinnerTypeDetail);
+			Item item = (Item) spinner.getSelectedItem();
+			if (this.transactionType == TransactionType.BANK) {
+				BankTransaction tran = new BankTransaction(this.getField());
+				tran.setBankId(item.getId());
+
+				writer = new BankTransactionWriter(this, tran);
 			} else if (this.transactionType == TransactionType.CREDITCARD) {
-				this.writeCreditCardTransaction(this.updateId);
+				CreditCardTransaction tran = new CreditCardTransaction(this.getField());
+				tran.setCardId(item.getId());
+
+				writer = new CreditCardTransactionWriter(this, tran);
 			} else if (this.transactionType == TransactionType.EMONEY) {
-				this.writeEMoneyTransaction(this.updateId);
+				EMoneyTransaction tran = new EMoneyTransaction(this.getField());
+				tran.setEmoneyId(item.getId());
+
+				writer = new EMoneyTransactionWriter(this, tran);
+			} else {
+				// ありえないケース
+				return;
 			}
-		} catch (ParseException e) {
-			Log.e(Constants.APPNAME, e.getMessage());
+		}
+			
+		
+		if (this.updateId > 0) {
+			writer.update();
+		} else {
+			writer.insert();
 		}
 		this.clearAll();
 
@@ -809,78 +781,8 @@ public class KmoneyActivity extends FragmentActivity {
 		tran.setInternal(0);
 		tran.setUserId(this.userId);
 		tran.setSource(1);
+		tran.setId(this.updateId);
 		return tran;
-	}
-
-	private void writeCashTransaction(int id) throws ParseException {
-		CashTransaction tran = new CashTransaction(this.getField());
-
-		KmCashTrns cash = new KmCashTrns(this);
-		cash.open(false);
-		if (id > 0) {
-			tran.setId(id);
-			cash.update(tran);
-		} else {
-			cash.insert(tran);
-		}
-		cash.close();
-	}
-
-	private void writeBankTransaction(int id) throws ParseException {
-		BankTransaction tran = new BankTransaction(this.getField());
-
-		Spinner bankSpinner = (Spinner) findViewById(R.id.spinnerTypeDetail);
-		Item item = (Item) bankSpinner.getSelectedItem();
-		tran.setBankId(item.getId());
-
-		KmBankTrns bankTrn = new KmBankTrns(this);
-		bankTrn.open(false);
-		if (id > 0) {
-			tran.setId(id);
-			bankTrn.update(tran);
-		} else {
-			bankTrn.insert(tran);
-		}
-		bankTrn.close();
-
-	}
-
-	private void writeCreditCardTransaction(int id) throws ParseException {
-		CreditCardTransaction tran = new CreditCardTransaction(this.getField());
-
-		Spinner cardSpinner = (Spinner) findViewById(R.id.spinnerTypeDetail);
-		Item item = (Item) cardSpinner.getSelectedItem();
-		tran.setCardId(item.getId());
-
-		KmCreditCardTrns cardTrn = new KmCreditCardTrns(this);
-		cardTrn.open(false);
-		if (id > 0) {
-			tran.setId(id);
-			cardTrn.update(tran);
-		} else {
-			cardTrn.insert(tran);
-		}
-		cardTrn.close();
-
-	}
-
-	private void writeEMoneyTransaction(int id) throws ParseException {
-		EMoneyTransaction tran = new EMoneyTransaction(this.getField());
-
-		Spinner emoneySpinner = (Spinner) findViewById(R.id.spinnerTypeDetail);
-		Item item = (Item) emoneySpinner.getSelectedItem();
-		tran.setEmoneyId(item.getId());
-
-		KmEMoneyTrns emoneyTrn = new KmEMoneyTrns(this);
-		emoneyTrn.open(false);
-		if (id > 0) {
-			tran.setId(id);
-			emoneyTrn.update(tran);
-		} else {
-			emoneyTrn.insert(tran);
-		}
-		emoneyTrn.close();
-
 	}
 
 	@Override
@@ -930,10 +832,7 @@ public class KmoneyActivity extends FragmentActivity {
 			}
 			
 		}
-		KmUserInfo user = new KmUserInfo(this);
-		user.open(true);
-		List<Item> userList = user.getUserNameList();
-		user.close();
+		List<Item> userList = MasterDataReader.getUserNameList(this);
 
 		if (userList.isEmpty()) {
 			Toast.makeText(this, R.string.detail_nothing, Toast.LENGTH_SHORT)
