@@ -7,11 +7,15 @@ import java.util.List;
 
 import net.kazhik.android.kmoney.bean.TransactionSummary;
 import net.kazhik.android.kmoney.db.KmvTransactions;
+
+import org.achartengine.GraphicalView;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -49,6 +53,7 @@ public class MonthlySummaryActivity extends Activity {
 		this.initMonthText(year, month);
 
 		this.loadList(year, month);
+		
 
 	}
 
@@ -120,13 +125,14 @@ public class MonthlySummaryActivity extends Activity {
 		KmvTransactions trns = new KmvTransactions(this);
 		trns.open(true);
 		List<TransactionSummary> trnList = trns.getSummary(year, month);
-		TransactionSummary total = trns.getTotal(year, month);
-		if (total != null) {
-			trnList.add(total);
+		if (trnList.isEmpty()) {
+			return;
 		}
+		TransactionSummary total = trns.getTotal(year, month);
 		trns.close();
 
-		// 読み込んだデータをHashMapに保持
+		// リスト用のデータとグラフ用のデータを作成
+		PieChart pieChart = new PieChart(this);
 		Money amount = new Money();
 		this.mapList.clear();
 		Iterator<TransactionSummary> it = trnList.iterator();
@@ -137,9 +143,22 @@ public class MonthlySummaryActivity extends Activity {
 			map.put("category_name", tv.getCategoryName());
 			map.put("sum", amount.setValue(tv.getSum().toPlainString()));
 			this.mapList.add(map);
+			
+			pieChart.addValue(tv.getCategoryName(), tv.getSum());
 		}
+		
+		TextView categoryText = (TextView)findViewById(R.id.textViewTotal);
+		categoryText.setText(total.getCategoryName());
+		TextView sumText = (TextView)findViewById(R.id.textViewTotalValue);
+		sumText.setText(amount.setValue(total.getSum().toPlainString()));
 
-		// 画面上のリストに表示
+		// グラフを表示
+		GraphicalView v = pieChart.getPieChartView();
+		LinearLayout layoutChart = (LinearLayout) findViewById(R.id.pieChart);
+		layoutChart.removeAllViews();
+		layoutChart.addView(v);
+		
+		// リストを表示
 		this.listAdapter = new SimpleAdapter(this, this.mapList,
 				R.layout.monthly_summary_row, new String[] { "category_name",
 						"sum" }, new int[] { R.id.textViewCategory,
