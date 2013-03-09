@@ -142,9 +142,14 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 
 	private void copyAsNew() {
+		if (this.updateId == 0) {
+			return;
+		}
 		this.updateId = 0;
 		this.currentDay.today();
 		this.setDateText();
+		Toast.makeText(this, R.string.info_copyasnew, Toast.LENGTH_SHORT)
+				.show();
 	}
 
 	private void clearAll() {

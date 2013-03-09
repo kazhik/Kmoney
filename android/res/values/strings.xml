@@ -63,5 +63,6 @@
     
     <string name="error_photo">Couldn\'t take picture. Try once more</string>
     <string name="error_zero">Please enter income or expense</string>
+    <string name="info_copyasnew">Copied as new data</string>
     
 </resources>

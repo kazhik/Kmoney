@@ -12,6 +12,9 @@ public class TransactionSummary {
 		this.sum = sum;
 	}
 	public void setSum(String sum) {
+		if (sum == null) {
+			sum = "0";
+		}
 		this.sum = new BigDecimal(sum);
 	}
 	public String getCategoryName() {

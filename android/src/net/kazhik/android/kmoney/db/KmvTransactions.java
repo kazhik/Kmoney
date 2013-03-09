@@ -123,12 +123,12 @@ public class KmvTransactions extends KmTable {
 				null, sortOrder, null);
 		
 		
+		TransactionSummary info = new TransactionSummary();
 		if (cursor.getCount() == 0) {
-			return null;
+			return info;		
 		}
 		
 		cursor.moveToFirst();
-		TransactionSummary info = new TransactionSummary();
 
 		info.setCategoryName(this.context.getString(R.string.total));
 		info.setSum(cursor.getString(1));

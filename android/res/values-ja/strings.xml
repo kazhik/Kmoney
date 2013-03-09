@@ -46,5 +46,6 @@
     
     <string name="error_photo">写真を撮れませんでした。もう一度試してください</string>
     <string name="error_zero">金額が入力されていません</string>
+    <string name="info_copyasnew">新規のデータとしてコピーしました</string>
     
 </resources>

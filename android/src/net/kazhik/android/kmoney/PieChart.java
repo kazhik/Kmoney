@@ -60,6 +60,10 @@ public class PieChart {
 			r.setColor(itColor.next());
 			renderer.addSeriesRenderer(r);
 		}
+		
+		renderer.setPanEnabled(false);
+		renderer.setShowLegend(false);
+		renderer.setLabelsTextSize(renderer.getLabelsTextSize() * 2);
 		return ChartFactory.getPieChartView(this.context, categorySeries,
 				renderer);
 	}
