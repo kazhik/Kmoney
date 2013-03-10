@@ -284,39 +284,38 @@ public class KmoneyActivity extends FragmentActivity {
 
 	private void initDateText() {
 		class DateLongClickListener implements View.OnLongClickListener {
-			class DateSetListener implements DatePickerDialog.OnDateSetListener {
-
-				@Override
-				public void onDateSet(DatePicker view, int year, int monthOfYear,
-						int dayOfMonth) {
-
-					KmoneyActivity.this.setCurrentDay(year, monthOfYear + 1, dayOfMonth);
-				}
-
-			}
-			private Day currentDay;
-
-			public DateLongClickListener(Day currentDay) {
-				this.currentDay = currentDay;
-			}
-
 			@Override
 			public boolean onLongClick(View v) {
-				DatePickerDialog datePickerDialog = new DatePickerDialog(
-						KmoneyActivity.this,
-						new DateSetListener(),
-						this.currentDay.getYear(),
-						this.currentDay.getMonth() - 1,
-						this.currentDay.getDay());
-				datePickerDialog.show();
+				KmoneyActivity.this.onLongClickDate();
 				return false;
 			}
 
 		}
 		// 長押し設定
 		TextView tv = (TextView) findViewById(R.id.textViewDate);
-		tv.setOnLongClickListener(new DateLongClickListener(this.currentDay));
+		tv.setOnLongClickListener(new DateLongClickListener());
 
+	}
+	
+	private void onLongClickDate() {
+		class DateSetListener implements DatePickerDialog.OnDateSetListener {
+
+			@Override
+			public void onDateSet(DatePicker view, int year, int monthOfYear,
+					int dayOfMonth) {
+
+				KmoneyActivity.this.setCurrentDay(year, monthOfYear + 1, dayOfMonth);
+			}
+
+		}
+		DatePickerDialog datePickerDialog = new DatePickerDialog(
+				KmoneyActivity.this,
+				new DateSetListener(),
+				this.currentDay.getYear(),
+				this.currentDay.getMonth() - 1,
+				this.currentDay.getDay());
+		datePickerDialog.show();
+		
 	}
 
 	private void initDateButton() {
