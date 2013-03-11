@@ -16,6 +16,8 @@ import net.kazhik.android.kmoney.db.KmCashTrns;
 import net.kazhik.android.kmoney.db.KmCreditCardTrns;
 import net.kazhik.android.kmoney.db.KmEMoneyTrns;
 import net.kazhik.android.kmoney.db.KmvTransactions;
+import net.kazhik.android.kmoney.ui.Money;
+import net.kazhik.android.kmoney.ui.Month;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;

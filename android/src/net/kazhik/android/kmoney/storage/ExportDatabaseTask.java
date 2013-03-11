@@ -1,4 +1,4 @@
-package net.kazhik.android.kmoney;
+package net.kazhik.android.kmoney.storage;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import net.kazhik.android.kmoney.R;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;

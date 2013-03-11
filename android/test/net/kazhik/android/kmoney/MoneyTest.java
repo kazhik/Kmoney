@@ -4,6 +4,8 @@ package net.kazhik.android.kmoney;
 import java.text.ParseException;
 import java.util.Locale;
 
+import net.kazhik.android.kmoney.ui.Money;
+
 import android.test.AndroidTestCase;
 
 public class MoneyTest extends AndroidTestCase {

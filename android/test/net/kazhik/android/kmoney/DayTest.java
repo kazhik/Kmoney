@@ -3,6 +3,8 @@ package net.kazhik.android.kmoney;
 import java.util.Calendar;
 import java.util.Locale;
 
+import net.kazhik.android.kmoney.ui.Day;
+
 import android.test.AndroidTestCase;
 
 public class DayTest extends AndroidTestCase {

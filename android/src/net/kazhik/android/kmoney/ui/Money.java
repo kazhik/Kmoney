@@ -1,4 +1,4 @@
-package net.kazhik.android.kmoney;
+package net.kazhik.android.kmoney.ui;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

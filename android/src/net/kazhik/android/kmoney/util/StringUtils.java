@@ -1,4 +1,4 @@
-package net.kazhik.android.kmoney;
+package net.kazhik.android.kmoney.util;
 
 import java.util.List;
 

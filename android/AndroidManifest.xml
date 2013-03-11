@@ -60,23 +60,23 @@
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="net.kazhik.android.kmoney.CategoryListActivity"
+            android:name="net.kazhik.android.kmoney.masterdata.CategoryListActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="net.kazhik.android.kmoney.BankListActivity"
+            android:name="net.kazhik.android.kmoney.masterdata.BankListActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="net.kazhik.android.kmoney.CreditCardListActivity"
+            android:name="net.kazhik.android.kmoney.masterdata.CreditCardListActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="net.kazhik.android.kmoney.EMoneyListActivity"
+            android:name="net.kazhik.android.kmoney.masterdata.EMoneyListActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="net.kazhik.android.kmoney.UserListActivity"
+            android:name="net.kazhik.android.kmoney.masterdata.UserListActivity"
             android:label="@string/app_name" >
         </activity>
         <activity

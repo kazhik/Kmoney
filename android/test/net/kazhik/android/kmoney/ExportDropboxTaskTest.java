@@ -1,6 +1,7 @@
 package net.kazhik.android.kmoney;
 
 import net.kazhik.android.kmoney.db.KmDatabase;
+import net.kazhik.android.kmoney.storage.ExportDropboxTask;
 import android.content.Context;
 import android.test.AndroidTestCase;
 

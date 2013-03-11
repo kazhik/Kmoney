@@ -1,28 +1,28 @@
-package net.kazhik.android.kmoney;
+package net.kazhik.android.kmoney.masterdata;
 
 import java.util.HashMap;
 import java.util.List;
 
+import net.kazhik.android.kmoney.R;
 import net.kazhik.android.kmoney.bean.Item;
-import net.kazhik.android.kmoney.db.KmEMoneyInfo;
+import net.kazhik.android.kmoney.db.KmCreditCardInfo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-public class EMoneyListActivity extends MasterDataListActivity {
+public class CreditCardListActivity extends MasterDataListActivity {
     private int updateId;
-    private KmEMoneyInfo tbl;
+    private KmCreditCardInfo tbl;
     private int userId;
     
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		this.setTitleId(R.string.emoney);
+		this.setTitleId(R.string.creditcard);
 		
 		super.onCreate(savedInstanceState);
-
+		
 		// MonthlyActivityから渡されるidを取得
 		Intent i = this.getIntent();
 		if (i == null) {
@@ -35,7 +35,7 @@ public class EMoneyListActivity extends MasterDataListActivity {
 
 		this.userId = b.getInt("userId");
 		
-		this.tbl = new KmEMoneyInfo(this);
+		this.tbl = new KmCreditCardInfo(this);
 		tbl.open(false);
 		this.loadList(this.userId);
 		
@@ -47,17 +47,17 @@ public class EMoneyListActivity extends MasterDataListActivity {
 	}
 	
 	private void loadList(int userId) {
-		List<Item> itemList = this.tbl.getEMoneyNameList(userId);
+		List<Item> itemList = this.tbl.getCreditCardNameList(userId);
 		
 		this.initList(itemList);
 		
 	}
 	private void reloadList(int userId) {
-		List<Item> itemList = this.tbl.getEMoneyNameList(userId);
+		List<Item> itemList = this.tbl.getCreditCardNameList(userId);
 		this.resetItemList(itemList);
 		
 	}
-	public void editOk(String text1) {
+	protected void editOk(String text1) {
 		if (this.updateId > 0) {
 			this.tbl.update(this.updateId, text1);
 		} else {
@@ -66,7 +66,7 @@ public class EMoneyListActivity extends MasterDataListActivity {
 		this.reloadList(this.userId);
 	}
 	
-	public void delete(int position) {
+	protected void delete(int position) {
 		
 		int id = this.getItemId(position);
 		this.tbl.delete(id);
@@ -85,6 +85,5 @@ public class EMoneyListActivity extends MasterDataListActivity {
 		this.showEditDialog(map.get("name"));
 
 	}
-
 
 }

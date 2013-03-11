@@ -7,6 +7,9 @@ import java.util.List;
 
 import net.kazhik.android.kmoney.bean.TransactionSummary;
 import net.kazhik.android.kmoney.db.KmvTransactions;
+import net.kazhik.android.kmoney.ui.Money;
+import net.kazhik.android.kmoney.ui.Month;
+import net.kazhik.android.kmoney.ui.PieChart;
 
 import org.achartengine.GraphicalView;
 

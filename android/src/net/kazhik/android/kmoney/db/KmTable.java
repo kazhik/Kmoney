@@ -7,8 +7,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import net.kazhik.android.kmoney.StringUtils;
 import net.kazhik.android.kmoney.bean.Transaction;
+import net.kazhik.android.kmoney.util.StringUtils;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;

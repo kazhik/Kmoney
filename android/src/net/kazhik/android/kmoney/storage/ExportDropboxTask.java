@@ -1,4 +1,4 @@
-package net.kazhik.android.kmoney;
+package net.kazhik.android.kmoney.storage;
 
 import java.io.File;
 import java.io.FileInputStream;

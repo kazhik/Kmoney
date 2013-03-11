@@ -1,4 +1,4 @@
-package net.kazhik.android.kmoney;
+package net.kazhik.android.kmoney.masterdata;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.kazhik.android.kmoney.Constants.ContextMenuItem;
+import net.kazhik.android.kmoney.R;
 import net.kazhik.android.kmoney.bean.Item;
 import android.app.AlertDialog;
 import android.content.DialogInterface;

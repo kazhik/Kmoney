@@ -27,6 +27,19 @@ import net.kazhik.android.kmoney.db.KmEMoneyTrns;
 import net.kazhik.android.kmoney.db.KmvTransactions;
 import net.kazhik.android.kmoney.db.MasterDataReader;
 import net.kazhik.android.kmoney.db.TransactionWriter;
+import net.kazhik.android.kmoney.masterdata.BankListActivity;
+import net.kazhik.android.kmoney.masterdata.CategoryListActivity;
+import net.kazhik.android.kmoney.masterdata.CreditCardListActivity;
+import net.kazhik.android.kmoney.masterdata.EMoneyListActivity;
+import net.kazhik.android.kmoney.masterdata.UserListActivity;
+import net.kazhik.android.kmoney.storage.ExportDatabaseTask;
+import net.kazhik.android.kmoney.storage.ExportDropboxTask;
+import net.kazhik.android.kmoney.storage.ExportSdCardTask;
+import net.kazhik.android.kmoney.storage.ExternalStorage;
+import net.kazhik.android.kmoney.ui.AutoResizeTextView;
+import net.kazhik.android.kmoney.ui.Day;
+import net.kazhik.android.kmoney.ui.Money;
+import net.kazhik.android.kmoney.ui.TransactionPhoto;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
@@ -66,6 +79,7 @@ public class KmoneyActivity extends FragmentActivity {
 	private TransactionPhoto photo = null;
 
 	private int updateType;
+	private int updateTypeDetail;
 	private int updateId;
 
 	private ExportDatabaseTask exportTask;
@@ -86,7 +100,7 @@ public class KmoneyActivity extends FragmentActivity {
 	private void initUI() {
 		this.initDateText();
 		this.initTypeList();
-		this.initTransactionTypeDetail();
+		this.loadTransactionTypeDetail();
 		this.initCategoryList();
 		
 		this.initAmountInput();
@@ -116,6 +130,7 @@ public class KmoneyActivity extends FragmentActivity {
 		
 		this.updateId = 0;
 		this.updateType = TransactionType.NONE;
+		this.updateTypeDetail = 0;
 
 	}
 	@Override
@@ -154,6 +169,7 @@ public class KmoneyActivity extends FragmentActivity {
 
 	private void clearAll() {
 		this.updateId = 0;
+		this.updateTypeDetail = 0;
 		this.currentDay.today();
 		this.setDateText();
 		this.initAmount();
@@ -196,6 +212,9 @@ public class KmoneyActivity extends FragmentActivity {
 
 	private void loadTransaction(int type, int id) {
 
+		Spinner spinner = (Spinner) findViewById(R.id.spinnerType);
+		int pos = this.getSpinnerPosition(spinner, type);
+		spinner.setSelection(pos);
 		try {
 			if (type == TransactionType.CASH) {
 				KmCashTrns trn = new KmCashTrns(this);
@@ -230,9 +249,8 @@ public class KmoneyActivity extends FragmentActivity {
 					return;
 				}
 				this.initTransactionTypeDetail(type);
-				Spinner spinner = (Spinner) findViewById(R.id.spinnerTypeDetail);
-				int pos = this.getSpinnerPosition(spinner, typeDetailId);
-				spinner.setSelection(pos);
+				this.setTransactionTypeDetail(typeDetailId);
+				this.updateTypeDetail = typeDetailId;
 			}
 		} catch (ParseException e) {
 			Log.e(Constants.APPNAME, e.getMessage());
@@ -240,7 +258,6 @@ public class KmoneyActivity extends FragmentActivity {
 		}
 
 	}
-
 	private void backspace() {
 		String str = this.amount.backspace();
 		TextView tv = (TextView) findViewById(R.id.textViewAmount);
@@ -552,14 +569,66 @@ public class KmoneyActivity extends FragmentActivity {
 		spinnerCategory.setAdapter(adapter);
 	}
 
-	private void initTransactionTypeDetail() {
+	private void loadTransactionTypeDetail() {
 		this.transactionTypeDetail = new HashMap<String, List<Item>>();
 		this.transactionTypeDetail.put("bank", MasterDataReader.getBankList(this, this.userId));
 		this.transactionTypeDetail.put("creditcard", MasterDataReader.getCreditCardList(this, this.userId));
 		this.transactionTypeDetail.put("emoney", MasterDataReader.getEMoneyList(this, this.userId));
 
 	}
+	private void initTransactionTypeDetail(int typeId) {
+		
+		Spinner spinner = (Spinner) findViewById(R.id.spinnerTypeDetail);
 
+		List<Item> trnsTypeList = new ArrayList<Item>();
+		if (typeId == TransactionType.CASH) {
+			spinner.setVisibility(View.INVISIBLE);
+		} else if (typeId == TransactionType.BANK) {
+			trnsTypeList = this.transactionTypeDetail.get("bank");
+			spinner.setVisibility(View.VISIBLE);
+		} else if (typeId == TransactionType.CREDITCARD) {
+			trnsTypeList = this.transactionTypeDetail.get("creditcard");
+			spinner.setVisibility(View.VISIBLE);
+		} else if (typeId == TransactionType.EMONEY) {
+			trnsTypeList = this.transactionTypeDetail.get("emoney");
+			spinner.setVisibility(View.VISIBLE);
+		} else {
+			// ありえないケース
+			return;
+		}
+		if (trnsTypeList.isEmpty()) {
+			return;
+		}
+		ArrayAdapter<Item> adapter = new ArrayAdapter<Item>(this,
+				android.R.layout.simple_spinner_item);
+
+		Iterator<Item> it = trnsTypeList.iterator();
+		while (it.hasNext()) {
+			adapter.add(it.next());
+		}
+
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+		spinner.setAdapter(adapter);
+
+	}
+
+	private void setTransactionTypeDetail(int id) {
+		Spinner spinnerDetail = (Spinner) findViewById(R.id.spinnerTypeDetail);
+		int pos = this.getSpinnerPosition(spinnerDetail, id);
+		if (pos != -1) {
+			spinnerDetail.setSelection(pos, true);
+		}
+		
+	}
+
+	private void onSelectedTransactionType(int typeId) {
+		KmoneyActivity.this.initTransactionTypeDetail(typeId);
+		if (this.updateTypeDetail != 0) {
+			this.setTransactionTypeDetail(this.updateTypeDetail);
+		}
+		
+	}
 	private void initTypeList() {
 		class SelectTypeListener implements OnItemSelectedListener {
 
@@ -567,10 +636,10 @@ public class KmoneyActivity extends FragmentActivity {
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int position, long id) {
 
+
 				Spinner spinner = (Spinner) parent;
 				Item item = (Item) spinner.getSelectedItem();
-				KmoneyActivity.this.initTransactionTypeDetail(item.getId());
-
+				KmoneyActivity.this.onSelectedTransactionType(item.getId());
 			}
 
 			@Override
@@ -595,44 +664,6 @@ public class KmoneyActivity extends FragmentActivity {
 		Spinner spinner = (Spinner) findViewById(R.id.spinnerType);
 		spinner.setAdapter(adapter);
 		spinner.setOnItemSelectedListener(new SelectTypeListener());
-	}
-
-	private void initTransactionTypeDetail(int id) {
-		
-		Spinner spinner = (Spinner) findViewById(R.id.spinnerTypeDetail);
-
-		List<Item> trnsTypeList = new ArrayList<Item>();
-		if (id == TransactionType.CASH) {
-			spinner.setVisibility(View.INVISIBLE);
-		} else if (id == TransactionType.BANK) {
-			trnsTypeList = this.transactionTypeDetail.get("bank");
-			spinner.setVisibility(View.VISIBLE);
-		} else if (id == TransactionType.CREDITCARD) {
-			trnsTypeList = this.transactionTypeDetail.get("creditcard");
-			spinner.setVisibility(View.VISIBLE);
-		} else if (id == TransactionType.EMONEY) {
-			trnsTypeList = this.transactionTypeDetail.get("emoney");
-			spinner.setVisibility(View.VISIBLE);
-		} else {
-			// ありえないケース
-			return;
-		}
-		this.transactionType = id;
-		if (trnsTypeList.isEmpty()) {
-			return;
-		}
-		ArrayAdapter<Item> adapter = new ArrayAdapter<Item>(this,
-				android.R.layout.simple_spinner_item);
-
-		Iterator<Item> it = trnsTypeList.iterator();
-		while (it.hasNext()) {
-			adapter.add(it.next());
-		}
-
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-		spinner.setAdapter(adapter);
-
 	}
 
 	private void addNumber(int number) {
@@ -1000,6 +1031,7 @@ public class KmoneyActivity extends FragmentActivity {
 
 			this.updateId = Integer.parseInt(idStr);
 			this.updateType = TransactionType.getType(typeStr);
+			this.transactionType = this.updateType;
 
 			this.loadTransaction(this.updateType, this.updateId);
 			

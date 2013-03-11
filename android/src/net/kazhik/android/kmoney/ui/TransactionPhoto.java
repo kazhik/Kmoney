@@ -1,7 +1,8 @@
-package net.kazhik.android.kmoney;
+package net.kazhik.android.kmoney.ui;
 
 import java.io.File;
 
+import net.kazhik.android.kmoney.R;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;

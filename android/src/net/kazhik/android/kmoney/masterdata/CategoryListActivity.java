@@ -1,42 +1,28 @@
-package net.kazhik.android.kmoney;
+package net.kazhik.android.kmoney.masterdata;
 
 import java.util.HashMap;
 import java.util.List;
 
+import net.kazhik.android.kmoney.R;
 import net.kazhik.android.kmoney.bean.Item;
-import net.kazhik.android.kmoney.db.KmBankInfo;
-import android.content.Intent;
+import net.kazhik.android.kmoney.db.KmCategory;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-public class BankListActivity extends MasterDataListActivity {
+public class CategoryListActivity extends MasterDataListActivity {
     private int updateId;
-    private KmBankInfo tbl;
-    private int userId;
-    
+    KmCategory tbl;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		this.setTitleId(R.string.bank);
+		this.setTitleId(R.string.category);
 		super.onCreate(savedInstanceState);
 		
-		// MonthlyActivityから渡されるidを取得
-		Intent i = this.getIntent();
-		if (i == null) {
-			return;
-		}
-		Bundle b = i.getExtras();
-		if (b == null) {
-			return;
-		}
-
-		this.userId = b.getInt("userId");
-		
-		this.tbl = new KmBankInfo(this);
+		this.tbl = new KmCategory(this);
 		tbl.open(false);
-		this.loadList(this.userId);
+		this.loadList();
 		
 	}
 	@Override
@@ -45,14 +31,13 @@ public class BankListActivity extends MasterDataListActivity {
 		super.onDestroy();
 	}
 	
-	private void loadList(int userId) {
-		List<Item> itemList = this.tbl.getBankNameList(userId);
+	private void loadList() {
+		List<Item> itemList = this.tbl.getNameList();
 		
 		this.initList(itemList);
-		
 	}
-	private void reloadList(int userId) {
-		List<Item> itemList = this.tbl.getBankNameList(userId);
+	private void reloadList() {
+		List<Item> itemList = this.tbl.getNameList();
 		this.resetItemList(itemList);
 		
 	}
@@ -60,16 +45,16 @@ public class BankListActivity extends MasterDataListActivity {
 		if (this.updateId > 0) {
 			this.tbl.update(this.updateId, text1);
 		} else {
-			this.tbl.insert(text1, this.userId);
+			this.tbl.insert(text1);
 		}
-		this.reloadList(this.userId);
+		this.reloadList();
 	}
 	
 	protected void delete(int position) {
 		
 		int id = this.getItemId(position);
 		this.tbl.delete(id);
-		this.reloadList(this.userId);
+		this.reloadList();
 		
 	}
 	@Override
@@ -84,6 +69,5 @@ public class BankListActivity extends MasterDataListActivity {
 		this.showEditDialog(map.get("name"));
 
 	}
-	
 
 }

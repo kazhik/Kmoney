@@ -1,9 +1,10 @@
-package net.kazhik.android.kmoney;
+package net.kazhik.android.kmoney.ui;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+import net.kazhik.android.kmoney.R;
 import android.content.Context;
 
 

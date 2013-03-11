@@ -1,25 +1,26 @@
-package net.kazhik.android.kmoney;
+package net.kazhik.android.kmoney.masterdata;
 
 import java.util.HashMap;
 import java.util.List;
 
+import net.kazhik.android.kmoney.R;
 import net.kazhik.android.kmoney.bean.Item;
-import net.kazhik.android.kmoney.db.KmCreditCardInfo;
+import net.kazhik.android.kmoney.db.KmBankInfo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-public class CreditCardListActivity extends MasterDataListActivity {
+public class BankListActivity extends MasterDataListActivity {
     private int updateId;
-    private KmCreditCardInfo tbl;
+    private KmBankInfo tbl;
     private int userId;
     
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		this.setTitleId(R.string.creditcard);
-		
+		this.setTitleId(R.string.bank);
 		super.onCreate(savedInstanceState);
 		
 		// MonthlyActivityから渡されるidを取得
@@ -34,7 +35,7 @@ public class CreditCardListActivity extends MasterDataListActivity {
 
 		this.userId = b.getInt("userId");
 		
-		this.tbl = new KmCreditCardInfo(this);
+		this.tbl = new KmBankInfo(this);
 		tbl.open(false);
 		this.loadList(this.userId);
 		
@@ -46,13 +47,13 @@ public class CreditCardListActivity extends MasterDataListActivity {
 	}
 	
 	private void loadList(int userId) {
-		List<Item> itemList = this.tbl.getCreditCardNameList(userId);
+		List<Item> itemList = this.tbl.getBankNameList(userId);
 		
 		this.initList(itemList);
 		
 	}
 	private void reloadList(int userId) {
-		List<Item> itemList = this.tbl.getCreditCardNameList(userId);
+		List<Item> itemList = this.tbl.getBankNameList(userId);
 		this.resetItemList(itemList);
 		
 	}
@@ -84,5 +85,6 @@ public class CreditCardListActivity extends MasterDataListActivity {
 		this.showEditDialog(map.get("name"));
 
 	}
+	
 
 }

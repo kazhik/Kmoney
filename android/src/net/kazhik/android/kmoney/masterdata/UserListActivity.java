@@ -1,8 +1,9 @@
-package net.kazhik.android.kmoney;
+package net.kazhik.android.kmoney.masterdata;
 
 import java.util.HashMap;
 import java.util.List;
 
+import net.kazhik.android.kmoney.R;
 import net.kazhik.android.kmoney.bean.Item;
 import net.kazhik.android.kmoney.db.KmUserInfo;
 import android.os.Bundle;

@@ -121,7 +121,7 @@
                 android:textOff="@string/expense"
                 android:textOn="@string/income" />
 
-            <net.kazhik.android.kmoney.AutoResizeTextView
+            <net.kazhik.android.kmoney.ui.AutoResizeTextView
                 android:id="@+id/textViewAmount"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
