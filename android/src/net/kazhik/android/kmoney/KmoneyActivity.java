@@ -131,6 +131,7 @@ public class KmoneyActivity extends FragmentActivity {
 		this.updateId = 0;
 		this.updateType = TransactionType.NONE;
 		this.updateTypeDetail = 0;
+		this.transactionType = TransactionType.CASH;
 
 	}
 	@Override
