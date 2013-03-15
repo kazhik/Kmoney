@@ -1,7 +1,11 @@
 package net.kazhik.android.kmoney.db;
 
+import java.io.File;
+import java.io.IOException;
+
 import net.kazhik.android.kmoney.Constants;
 import net.kazhik.android.kmoney.R;
+import net.kazhik.android.kmoney.util.FileUtil;
 import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -16,7 +20,6 @@ public class KmDatabase {
 
     private final Context context; 
     private DatabaseHelper DBHelper;
-    @SuppressWarnings("unused")
 	private SQLiteDatabase db;
 
     /**
@@ -120,5 +123,14 @@ public class KmDatabase {
     public void close() 
     {
         this.DBHelper.close();
+    }
+    public void importDatabase(String src) {
+    	this.DBHelper.close();
+		try {
+			FileUtil.copyFile(new File(src), new File(this.db.getPath()));
+			this.DBHelper.getWritableDatabase().close();
+		} catch (IOException e) {
+			Log.e("kmoney", e.getMessage(), e);
+		}
     }
 }

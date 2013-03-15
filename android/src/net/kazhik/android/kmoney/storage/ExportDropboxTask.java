@@ -21,8 +21,8 @@ import com.dropbox.client2.session.Session.AccessType;
 public class ExportDropboxTask extends ExportDatabaseTask {
 	private DropboxAPI<AndroidAuthSession> dbApi = null;
 
-	public ExportDropboxTask(Context ctx, String dbPath) {
-		super(ctx, dbPath);
+	public ExportDropboxTask(Context ctx) {
+		super(ctx);
 	}
 	
 	private void createInstance() {
@@ -99,7 +99,7 @@ public class ExportDropboxTask extends ExportDatabaseTask {
 		// Uploading content.
 		FileInputStream inputStream = null;
 		try {
-		    File file = new File(this.getDbPath());
+		    File file = this.getDbFile();
 		    inputStream = new FileInputStream(file);
 		    Entry newEntry = this.dbApi.putFile(KmDatabase.DATABASE_NAME, inputStream,
 		            file.length(), null, null);
@@ -125,5 +125,7 @@ public class ExportDropboxTask extends ExportDatabaseTask {
 		}		
 
 	}
-
+	public static File[] getFileList() {
+		return null;
+	}
 }

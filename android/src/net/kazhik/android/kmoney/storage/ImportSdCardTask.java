@@ -7,26 +7,17 @@ import net.kazhik.android.kmoney.util.FileUtil;
 import android.content.Context;
 import android.util.Log;
 
-public class ExportSdCardTask extends ExportDatabaseTask {
-	public ExportSdCardTask(Context ctx) {
-		super(ctx);
+public class ImportSdCardTask extends ImportDatabaseTask {
+	public ImportSdCardTask(Context ctx, String src) {
+		super(ctx, src);
 	}
 	
 	// automatically done on worker thread (separate from UI thread)
 	@Override
 	protected Boolean doInBackground(Void... params) {
-		
-		File dbFile = this.getDbFile();
-
-		File exportDir = new File(ExternalStorage.getDbDirectory(), "");
-		if (!exportDir.exists()) {
-			exportDir.mkdirs();
-		}
-		File exportFile = new File(exportDir, this.targetFileName(dbFile.getName()));
 
 		try {
-			exportFile.createNewFile();
-			FileUtil.copyFile(dbFile, exportFile);
+			FileUtil.copyFile(new File(this.getSrc()), this.getDbFile());
 			return true;
 		} catch (IOException e) {
 			Log.e("kmoney", e.getMessage(), e);
@@ -34,6 +25,10 @@ public class ExportSdCardTask extends ExportDatabaseTask {
 		}
 
 	}
-
+	
+	public static File[] getFileList() {
+		return ExternalStorage.getDbDirectory().listFiles();
+		
+	}
 
 }

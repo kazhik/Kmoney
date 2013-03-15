@@ -32,9 +32,6 @@ import net.kazhik.android.kmoney.masterdata.CategoryListActivity;
 import net.kazhik.android.kmoney.masterdata.CreditCardListActivity;
 import net.kazhik.android.kmoney.masterdata.EMoneyListActivity;
 import net.kazhik.android.kmoney.masterdata.UserListActivity;
-import net.kazhik.android.kmoney.storage.ExportDatabaseTask;
-import net.kazhik.android.kmoney.storage.ExportDropboxTask;
-import net.kazhik.android.kmoney.storage.ExportSdCardTask;
 import net.kazhik.android.kmoney.storage.ExternalStorage;
 import net.kazhik.android.kmoney.ui.AutoResizeTextView;
 import net.kazhik.android.kmoney.ui.Day;
@@ -81,8 +78,6 @@ public class KmoneyActivity extends FragmentActivity {
 	private int updateType;
 	private int updateTypeDetail;
 	private int updateId;
-
-	private ExportDatabaseTask exportTask;
 
 	private static final int REQUEST_CAMERA = 100;
 	private static final int REQUEST_MONTHLY = 101;
@@ -269,20 +264,6 @@ public class KmoneyActivity extends FragmentActivity {
 	private void setDateText() {
 		TextView tv = (TextView) findViewById(R.id.textViewDate);
 		tv.setText(this.currentDay.getText());
-	}
-
-	private void executeExport() {
-		
-		String exportType = this.prefs.getString("export_type", "sdcard");
-		String dbPath = this.getDatabasePath(KmDatabase.DATABASE_NAME)
-				.toString();
-		if (exportType.equals("sdcard")) {
-			this.exportTask = new ExportSdCardTask(this, dbPath);
-		} else if (exportType.equals("dropbox")) {
-			this.exportTask = new ExportDropboxTask(this, dbPath);
-		}
-		this.exportTask.start();
-
 	}
 
 	private void loadDefaultUser() {
@@ -822,16 +803,6 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 
 	@Override
-	protected void onResume() {
-		super.onResume();
-		
-		if (this.exportTask instanceof ExportDropboxTask) {
-			((ExportDropboxTask)this.exportTask).finishAuthentication();
-		}
-		
-	}
-
-	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		
@@ -891,9 +862,6 @@ public class KmoneyActivity extends FragmentActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent i;
 		switch (item.getItemId()) {
-		case R.id.menu_export:
-			this.executeExport();
-			break;
 		case R.id.menu_settings:
 			startActivity(new Intent(this, SettingsActivity.class));
 			break;
