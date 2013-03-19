@@ -191,7 +191,7 @@ public class MonthlyActivity extends Activity implements OnItemClickListener, Ta
 				Month m = MonthlyActivity.this.currentMonth;
 				i.putExtra("year", m.getYear());
 				i.putExtra("month", m.getMonth());
-				startActivity(i);
+				startActivityForResult(i, Constants.REQUEST_SUM);
 
 			}
 
@@ -486,10 +486,24 @@ public class MonthlyActivity extends Activity implements OnItemClickListener, Ta
 	}
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == DropboxTask.REQUEST_EXECUTE) {
+        if (requestCode == Constants.REQUEST_DROPBOX) {
             if (resultCode == Activity.RESULT_OK) {
             	this.importExportTask.exec();
-            }            
+            }       
+        } else if (requestCode == Constants.REQUEST_SUM) {
+    		Bundle b = data.getExtras();
+    		if (b == null) {
+    			return;
+    		}
+
+    		int year = b.getInt("year");
+    		int month = b.getInt("month");
+    		this.currentMonth = new Month(this);
+    		this.currentMonth.set(year, month);
+    		TextView tv = (TextView) findViewById(R.id.textViewDate);
+    		tv.setText(this.currentMonth.getText());
+        	
+    		this.loadList(this.currentMonth.getYear(), this.currentMonth.getMonth());
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }

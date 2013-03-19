@@ -82,6 +82,12 @@ public class MonthlySummaryActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
+				Intent i = new Intent(MonthlySummaryActivity.this,
+						MonthlyActivity.class);
+				Month m = MonthlySummaryActivity.this.currentMonth;
+				i.putExtra("year", m.getYear());
+				i.putExtra("month", m.getMonth());
+				setResult(RESULT_OK, i);
 				finish();
 
 			}

@@ -23,7 +23,6 @@ import com.dropbox.sync.android.DbxPath;
 import com.dropbox.sync.android.DbxPath.InvalidPathException;
 
 public class DropboxTask extends AbstractImportExportTask {
-	public static final int REQUEST_EXECUTE = 100;
 	private DbxAccountManager accountMgr;
 
 	public DropboxTask(Context ctx, ImportExportBridge taskBridge,
@@ -107,7 +106,7 @@ public class DropboxTask extends AbstractImportExportTask {
 	@Override
 	public void start() {
 		if (!this.accountMgr.hasLinkedAccount()) {
-			this.accountMgr.startLink((Activity)this.context, REQUEST_EXECUTE);
+			this.accountMgr.startLink((Activity)this.context, Constants.REQUEST_DROPBOX);
 			return;
 		}
 			
