@@ -1,6 +1,5 @@
 package net.kazhik.android.kmoney;
 
-import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,10 +17,13 @@ import net.kazhik.android.kmoney.db.KmCashTrns;
 import net.kazhik.android.kmoney.db.KmCreditCardTrns;
 import net.kazhik.android.kmoney.db.KmEMoneyTrns;
 import net.kazhik.android.kmoney.db.KmvTransactions;
-import net.kazhik.android.kmoney.storage.ExportDropboxTask;
-import net.kazhik.android.kmoney.storage.ExportSdCardTask;
+import net.kazhik.android.kmoney.storage.DropboxTask;
+import net.kazhik.android.kmoney.storage.ExportBridge;
+import net.kazhik.android.kmoney.storage.ImportBridge;
+import net.kazhik.android.kmoney.storage.ImportExportBridge;
 import net.kazhik.android.kmoney.storage.ImportExportTask;
-import net.kazhik.android.kmoney.storage.ImportSdCardTask;
+import net.kazhik.android.kmoney.storage.ImportExportTask.TaskListener;
+import net.kazhik.android.kmoney.storage.SdCardTask;
 import net.kazhik.android.kmoney.ui.Money;
 import net.kazhik.android.kmoney.ui.Month;
 import android.app.Activity;
@@ -50,8 +52,8 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MonthlyActivity extends Activity implements OnItemClickListener {
-	private ImportExportTask exportTask;
+public class MonthlyActivity extends Activity implements OnItemClickListener, TaskListener {
+	private ImportExportTask importExportTask;
 
 	private SharedPreferences prefs;
 
@@ -61,7 +63,7 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 
 	private SimpleAdapter listAdapter;
 	private ArrayList<HashMap<String, String>> mapList = new ArrayList<HashMap<String, String>>();
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -90,16 +92,6 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 		registerForContextMenu(lv);
 
 	}
-	@Override
-	protected void onResume() {
-		super.onResume();
-		
-		if (this.exportTask instanceof ExportDropboxTask) {
-			((ExportDropboxTask)this.exportTask).finishAuthentication();
-		}
-		
-	}
-
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -114,7 +106,7 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 			this.executeExport();
 			break;
 		case R.id.menu_import:
-			this.executeImport();
+			this.showExportedFileList();
 			break;
 		case R.id.menu_settings:
 			startActivity(new Intent(this, SettingsActivity.class));
@@ -417,84 +409,95 @@ public class MonthlyActivity extends Activity implements OnItemClickListener {
 
 	}
 	private void executeExport() {
-		
-		String exportType = this.prefs.getString("export_type", "sdcard");
-		if (exportType.equals("sdcard")) {
-			this.exportTask = new ExportSdCardTask(this);
-		} else if (exportType.equals("dropbox")) {
-			this.exportTask = new ExportDropboxTask(this);
-		}
-		this.exportTask.start();
+		this.importExportTask = this.createImportExportTask(new ExportBridge());
+		this.importExportTask.start();
 
 	}
-	private void importDatabase(File srcFile) {
-		// TODO: 確認ダイアログを出す
-		
-		// TODO: ImportTaskを実装
-		
-		/*
-		String dbPath = this.getDatabasePath(KmDatabase.DATABASE_NAME)
-				.toString();
-		File dbFile = new File(dbPath);
-		
-		try {
-			FileUtil.copyFile(srcFile, dbFile);
-		} catch (IOException e) {
-			Log.e("Kmoney", e.getMessage(), e);
+	private ImportExportTask createImportExportTask(ImportExportBridge imexBridge) {
+		ImportExportTask task = null;
+		String exportType = this.prefs.getString("export_type", "sdcard");
+		if (exportType.equals("sdcard")) {
+			task = new SdCardTask(this, imexBridge, this);
+		} else if (exportType.equals("dropbox")) {
+			task = new DropboxTask(this, imexBridge, this);
 		}
-		*/
+		return task;
+	}
+	
+	private void executeImport(String srcFile) {
+		this.importExportTask = this.createImportExportTask(new ImportBridge(srcFile));
+		this.importExportTask.start();
 		
 	}
-	private void executeImport() {
+	private void showExportedFileList() {
 		class FileListListener implements DialogInterface.OnClickListener {
-			private File[] fileList;
-			public FileListListener(File[] fileList) {
+			private String[] fileList;
+			public FileListListener(String[] fileList) {
 				this.fileList = fileList;
 			}
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				MonthlyActivity.this.importDatabase(fileList[which]);
+				MonthlyActivity.this.executeImport(fileList[which]);
 			}
 			
 		}
+		List<String> fileDateList = new ArrayList<String>();
+		
 		// エクスポートされたファイルのリストを作成
-		String exportType = this.prefs.getString("export_type", "sdcard");
-		File[] fileList;
-		if (exportType.equals("sdcard")) {
-			fileList = ImportSdCardTask.getFileList();
-		} else if (exportType.equals("dropbox")) {
-			fileList = ExportDropboxTask.getFileList();
-		} else {
-			// ありえないケース
+		ImportExportTask imexTask = this.createImportExportTask(new ExportBridge());
+		if (imexTask == null) {
+			return;
+		}
+
+		String[] fileList;
+		try {
+			fileList = imexTask.getFileList();
+		} catch (Exception e1) {
+			Log.e(Constants.APPNAME, e1.getMessage());
 			return;
 		}
 		
+		// ファイル名から日時をとりだして選択ダイアログに表示
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss",
 				Locale.getDefault());
-		List<String> itemList = new ArrayList<String>();
-		for (File f: fileList) {
+		for (String f: fileList) {
 			try {
-				Date fileDate = ImportExportTask.getFileDate(f.getName());
-				itemList.add(dateFormat.format(fileDate));
+				Date fileDate = imexTask.getFileDate(f);
+				fileDateList.add(dateFormat.format(fileDate));
 				
 			} catch (ParseException e) {
 				continue;
 			}
 			
 		}
-		if (itemList.isEmpty()) {
+		if (fileDateList.isEmpty()) {
 			Toast.makeText(this, R.string.no_files, Toast.LENGTH_SHORT).show();
 			return;
 		}
 
-		// インポート元選択ダイアログ
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(R.string.import_source);
-		builder.setItems(itemList.toArray(new CharSequence[itemList.size()]),
+		builder.setItems(fileDateList.toArray(new CharSequence[fileDateList.size()]),
 				new FileListListener(fileList));
 		
 		AlertDialog alert = builder.create();
 		alert.show();
+		
+	}
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == DropboxTask.REQUEST_EXECUTE) {
+            if (resultCode == Activity.RESULT_OK) {
+            	this.importExportTask.exec();
+            }            
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+	}
+
+	@Override
+	public void onCompleted() {
+		this.loadList(this.currentMonth.getYear(), this.currentMonth.getMonth());
 		
 	}
 

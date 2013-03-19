@@ -1,6 +1,8 @@
 package net.kazhik.android.kmoney.db;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import net.kazhik.android.kmoney.Constants;
@@ -20,7 +22,6 @@ public class KmDatabase {
 
     private final Context context; 
     private DatabaseHelper DBHelper;
-	private SQLiteDatabase db;
 
     /**
      * Constructor
@@ -112,7 +113,7 @@ public class KmDatabase {
      */
     public KmDatabase open() throws SQLException 
     {
-        this.db = this.DBHelper.getWritableDatabase();
+        this.DBHelper.getWritableDatabase();
         return this;
     }
 
@@ -124,13 +125,26 @@ public class KmDatabase {
     {
         this.DBHelper.close();
     }
-    public void importDatabase(String src) {
+    public void importDatabase(File src) {
+		try {
+			FileInputStream in = new FileInputStream(src);
+			this.importDatabase(in);
+			FileUtil.close(in);
+		} catch (FileNotFoundException e) {
+			Log.e(Constants.APPNAME, e.getMessage());
+		}
+    	
+    }
+    public void importDatabase(FileInputStream fis) {
+        SQLiteDatabase db = this.DBHelper.getWritableDatabase();
+    	String dbPath = db.getPath();
     	this.DBHelper.close();
 		try {
-			FileUtil.copyFile(new File(src), new File(this.db.getPath()));
-			this.DBHelper.getWritableDatabase().close();
+			FileUtil.copyFile(fis, new File(dbPath));
+			db.close();
 		} catch (IOException e) {
-			Log.e("kmoney", e.getMessage(), e);
+			Log.e(Constants.APPNAME, e.getMessage());
 		}
+    	
     }
 }
