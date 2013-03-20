@@ -12,7 +12,7 @@
 
 ## <a id="init"></a>初期設定
 
-### データーベースファイルの作成
+### データベースファイルの作成
 
 <img src="screenshots/Kmoney_Firefox_001.png" style="float:right" alt="初回起動時" />
 
