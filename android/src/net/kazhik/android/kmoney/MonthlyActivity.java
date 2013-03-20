@@ -456,6 +456,9 @@ public class MonthlyActivity extends Activity implements OnItemClickListener, Ta
 			Log.e(Constants.APPNAME, e1.getMessage());
 			return;
 		}
+		if (fileList == null) {
+			return;
+		}
 		
 		// ファイル名から日時をとりだして選択ダイアログに表示
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss",
@@ -486,11 +489,14 @@ public class MonthlyActivity extends Activity implements OnItemClickListener, Ta
 	}
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.REQUEST_DROPBOX) {
+        if (requestCode == Constants.REQUEST_DROPBOX_EXPORT) {
             if (resultCode == Activity.RESULT_OK) {
             	this.importExportTask.exec();
             }       
         } else if (requestCode == Constants.REQUEST_SUM) {
+        	if (data == null) {
+        		return;
+        	}
     		Bundle b = data.getExtras();
     		if (b == null) {
     			return;

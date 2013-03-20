@@ -4,7 +4,7 @@
 <item>Dropbox</item>
 <item>SD Card</item>
 </string-array>
-<string-array name="export_type_value">
+<string-array translatable="false" name="export_type_value">
 <item>dropbox</item>
 <item>sdcard</item>
 </string-array>

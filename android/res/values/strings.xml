@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Kmoney</string>
-    <string name="zero">0</string>
-    <string name="one">1</string>
-    <string name="two">2</string>
-    <string name="three">3</string>
-    <string name="four">4</string>
-    <string name="five">5</string>
-    <string name="six">6</string>
-    <string name="seven">7</string>
-    <string name="eight">8</string>
-    <string name="nine">9</string>
-    <string name="doublezero">00</string>
-    <string name="clear">C</string>
-    <string name="backspace">BS</string>
-    <string name="copy">CP</string>
-    <string name="decimal_mark">.</string>
+    <string name="app_name" translatable="false">Kmoney</string>
+    <string name="zero" translatable="false">0</string>
+    <string name="one" translatable="false">1</string>
+    <string name="two" translatable="false">2</string>
+    <string name="three" translatable="false">3</string>
+    <string name="four" translatable="false">4</string>
+    <string name="five" translatable="false">5</string>
+    <string name="six" translatable="false">6</string>
+    <string name="seven" translatable="false">7</string>
+    <string name="eight" translatable="false">8</string>
+    <string name="nine" translatable="false">9</string>
+    <string name="doublezero" translatable="false">00</string>
+    <string name="clear" translatable="false">C</string>
+    <string name="backspace" translatable="false">BS</string>
+    <string name="copy" translatable="false">CP</string>
+    <string name="decimal_mark" translatable="false">.</string>
     
     <string name="menu_settings">Settings</string>
     <string name="menu_import">Import</string>
     <string name="menu_export">Export</string>
     <string name="menu_master">Master Data</string>
     <string name="menu_user">Switch User</string>
+    <string name="menu_about">About Kmoney</string>
     <string name="please_select">Please select</string>
     <string name="income">Income</string>
     <string name="expense">Expense</string>
@@ -58,12 +59,13 @@
     <string name="import_source">Import source file</string>
     <string name="detail_nothing">No history</string>
     <string name="no_files">No files</string>
+    <string name="dropbox_linked">Linked to Dropbox account. Please repeat last operation</string>
     
     <string name="pref_settings_title">Settings</string>
-    <string name="pref_export_settings_title">Export</string>
-    <string name="pref_export_type">Export Type</string>
+    <string name="pref_export_settings_title">Import/Export</string>
+    <string name="pref_export_type">Import/Export Type</string>
     <string name="pref_export_type_summary">SD Card or Dropbox</string>
-    <string name="pref_export_type_title">Export Type</string>
+    <string name="pref_export_type_title">Import/Export Type</string>
     <string name="pref_swipe_summary">Enable swipe in Monthly view</string>
     <string name="pref_swipe_title">Swipe</string>
     

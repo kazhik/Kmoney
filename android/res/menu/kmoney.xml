@@ -27,5 +27,11 @@
             <item android:id="@+id/master_user" android:title="@string/user"/>
         </menu>
     </item>
-
+    <item
+        android:id="@+id/menu_about"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/menu_about"/>
+    
 </menu>

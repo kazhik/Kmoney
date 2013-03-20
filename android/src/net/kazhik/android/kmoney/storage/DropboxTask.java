@@ -83,6 +83,10 @@ public class DropboxTask extends AbstractImportExportTask {
 	}
 	@Override
 	public String[] getFileList() throws DbxException {
+		if (!this.accountMgr.hasLinkedAccount()) {
+			this.accountMgr.startLink((Activity)this.context, Constants.REQUEST_DROPBOX_FILELIST);
+			return null;
+		}
 		DbxFileSystem dbxFs = DbxFileSystem.forAccount(this.accountMgr.getLinkedAccount());
 
 	    List<DbxFileInfo> fileInfoList = dbxFs.listFolder(DbxPath.ROOT);
@@ -106,7 +110,7 @@ public class DropboxTask extends AbstractImportExportTask {
 	@Override
 	public void start() {
 		if (!this.accountMgr.hasLinkedAccount()) {
-			this.accountMgr.startLink((Activity)this.context, Constants.REQUEST_DROPBOX);
+			this.accountMgr.startLink((Activity)this.context, Constants.REQUEST_DROPBOX_EXPORT);
 			return;
 		}
 			

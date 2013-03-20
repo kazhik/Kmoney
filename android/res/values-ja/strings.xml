@@ -6,6 +6,7 @@
     <string name="menu_import">インポート</string>
     <string name="menu_master">基本データ</string>
     <string name="menu_user">ユーザー切り替え</string>
+    <string name="menu_about">Kmoneyについて</string>
     <string name="please_select">選択してください</string>
     <string name="income">収入</string>
     <string name="expense">支出</string>
@@ -41,12 +42,13 @@
     <string name="import_source">インポート元ファイル</string>
     <string name="detail_nothing">履歴がありません</string>
     <string name="no_files">ファイルがありません</string>
+    <string name="dropbox_linked">Dropboxのアカウントとリンクしました。もういちど処理を行ってください</string>
     
     <string name="pref_settings_title">設定</string>
-    <string name="pref_export_settings_title">エクスポート</string>
-    <string name="pref_export_type">エクスポート種別</string>
+    <string name="pref_export_settings_title">インポート／エクスポート</string>
+    <string name="pref_export_type">インポート／エクスポート</string>
     <string name="pref_export_type_summary">SDカード/Dropbox</string>
-    <string name="pref_export_type_title">エクスポート種別</string>
+    <string name="pref_export_type_title">インポート／エクスポート</string>
     <string name="pref_swipe_summary">月別表示画面でスワイプを有効にする</string>
     <string name="pref_swipe_title">スワイプ</string>
     

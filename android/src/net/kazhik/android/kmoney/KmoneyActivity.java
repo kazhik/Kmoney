@@ -39,17 +39,25 @@ import net.kazhik.android.kmoney.ui.Money;
 import net.kazhik.android.kmoney.ui.TransactionPhoto;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.database.SQLException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -267,7 +275,7 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 
 	private void loadDefaultUser() {
-		this.userId = this.prefs.getInt("default_user", 0);
+		this.userId = this.prefs.getInt("default_user", 1);
 	}
 
 	private void initDatabase() {
@@ -891,6 +899,9 @@ public class KmoneyActivity extends FragmentActivity {
 			i = new Intent(this, UserListActivity.class);
 			startActivity(i);
 			break;
+		case R.id.menu_about:
+			this.createAboutDialog();
+			break;
 		default:
 			break;
 		}
@@ -1011,5 +1022,37 @@ public class KmoneyActivity extends FragmentActivity {
 		moveTaskToBack(true);
 	}
 
+	private Dialog createAboutDialog() {
+		PackageInfo pkgInfo = null;
+		try {
+			pkgInfo = getPackageManager().getPackageInfo(getPackageName(),
+					PackageManager.GET_META_DATA);
+		} catch (NameNotFoundException e) {
+			Log.e(Constants.APPNAME, e.getMessage());
+			return null;
+		}
+
+		Resources res = getResources();
+		StringBuffer aboutText = new StringBuffer();
+		aboutText.append(res.getString(R.string.app_name));
+		aboutText.append("\n\n");
+		aboutText.append("Version: " + pkgInfo.versionName);
+		aboutText.append("\n");
+		aboutText.append("Website: kazhik.github.com/Kmoney");
+		final SpannableString sstr = new SpannableString(aboutText.toString());
+		Linkify.addLinks(sstr, Linkify.ALL);
+
+		final AlertDialog d = new AlertDialog.Builder(this)
+				.setPositiveButton(android.R.string.ok, null).setMessage(sstr)
+				.create();
+
+		d.show();
+
+		// Make the textview clickable. Must be called after show()
+		((TextView) d.findViewById(android.R.id.message))
+				.setMovementMethod(LinkMovementMethod.getInstance());
+
+		return d;
+	}
 
 }
