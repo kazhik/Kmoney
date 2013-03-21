@@ -8,7 +8,7 @@ KmSource.prototype.loadSourceType = function (srcName, loadCallback) {
         "srcname": srcName
     };
     var sqlStatement = this.mDb.createStatementWithParams(sql, params);
-    this.mDb.execTransaction([sqlStatement]);
+    this.mDb.execSelect(sqlStatement);
    
     var records = this.mDb.getRecords();
     var sourceType;
