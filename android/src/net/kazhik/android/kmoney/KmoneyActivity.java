@@ -586,6 +586,7 @@ public class KmoneyActivity extends FragmentActivity {
 			// ありえないケース
 			return;
 		}
+		this.transactionType = typeId;
 		if (trnsTypeList.isEmpty()) {
 			return;
 		}
