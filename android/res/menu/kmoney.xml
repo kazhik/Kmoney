@@ -4,19 +4,16 @@
         android:id="@+id/menu_settings"
         android:icon="@android:drawable/ic_menu_preferences"
         android:orderInCategory="100"
-        android:showAsAction="never"
         android:title="@string/menu_settings"/>
     <item
         android:id="@+id/menu_user"
         android:icon="@drawable/ic_menu_cc"
         android:orderInCategory="100"
-        android:showAsAction="never"
         android:title="@string/menu_user"/>
     <item
         android:id="@+id/menu_master"
         android:icon="@android:drawable/ic_menu_manage"
         android:orderInCategory="100"
-        android:showAsAction="never"
         android:title="@string/menu_master">
         
         <menu>
@@ -31,7 +28,6 @@
         android:id="@+id/menu_about"
         android:icon="@android:drawable/ic_menu_info_details"
         android:orderInCategory="100"
-        android:showAsAction="never"
         android:title="@string/menu_about"/>
     
 </menu>

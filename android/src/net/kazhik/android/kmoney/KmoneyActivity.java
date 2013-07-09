@@ -193,7 +193,7 @@ public class KmoneyActivity extends FragmentActivity {
 
 		this.setDateText();
 
-		TextView tv = (TextView) findViewById(R.id.textViewAmount);
+		AutoResizeTextView tv = (AutoResizeTextView) findViewById(R.id.textViewAmount);
 		ToggleButton tglButton = (ToggleButton) findViewById(R.id.toggleButtonIncomeExpense);
 		String str;
 		if (trn.getIncome() != null
@@ -205,12 +205,13 @@ public class KmoneyActivity extends FragmentActivity {
 			str = this.amount.setValue(trn.getExpense().toPlainString());
 		}
 		tv.setText(str);
+		tv.resizeText();
 		Spinner spinner = (Spinner) findViewById(R.id.spinnerCategory);
 		int pos = this.getSpinnerPosition(spinner, trn.getCategoryId());
 		spinner.setSelection(pos);
 
-		tv = (TextView) findViewById(R.id.editTextDetail);
-		tv.setText(trn.getDetail());
+		TextView tvDetail = (TextView) findViewById(R.id.editTextDetail);
+		tvDetail.setText(trn.getDetail());
 
 	}
 
@@ -364,6 +365,7 @@ public class KmoneyActivity extends FragmentActivity {
 	private void initAmount() {
 		AutoResizeTextView tv = (AutoResizeTextView) findViewById(R.id.textViewAmount);
 		tv.setText(this.amount.setValue("0"));
+		tv.resizeText();
 	}
 
 	private void initAmountInput() {
@@ -434,7 +436,8 @@ public class KmoneyActivity extends FragmentActivity {
 		this.amount = new Money();
 		AutoResizeTextView tv = (AutoResizeTextView) findViewById(R.id.textViewAmount);
 		tv.setText(this.amount.setValue("0"));
-
+		tv.resizeText();
+		
 		int idArray[] = { R.id.button0, R.id.button1, R.id.button2,
 				R.id.button3, R.id.button4, R.id.button5, R.id.button6,
 				R.id.button7, R.id.button8, R.id.button9 };
