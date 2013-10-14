@@ -129,14 +129,19 @@ public class KmoneyActivity extends FragmentActivity {
 
 		this.initUI();
 		
-		this.setToday();
-		
+		this.currentDay = new Day(this);
 		this.updateId = 0;
 		this.updateType = TransactionType.NONE;
 		this.updateTypeDetail = 0;
 		this.transactionType = TransactionType.CASH;
 
 	}
+	@Override
+	protected void onResume() {
+		this.setDateText();
+		super.onResume();
+	}
+
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
@@ -165,8 +170,6 @@ public class KmoneyActivity extends FragmentActivity {
 			return;
 		}
 		this.updateId = 0;
-		this.currentDay.today();
-		this.setDateText();
 		Toast.makeText(this, R.string.info_copyasnew, Toast.LENGTH_SHORT)
 				.show();
 	}
@@ -265,9 +268,9 @@ public class KmoneyActivity extends FragmentActivity {
 	}
 	private void backspace() {
 		String str = this.amount.backspace();
-		TextView tv = (TextView) findViewById(R.id.textViewAmount);
+		AutoResizeTextView tv = (AutoResizeTextView) findViewById(R.id.textViewAmount);
 		tv.setText(str);
-
+		tv.resizeText();
 	}
 
 	private void setDateText() {
@@ -702,11 +705,6 @@ public class KmoneyActivity extends FragmentActivity {
 		}
 
 		this.setDateText();
-	}
-	private void setToday() {
-		this.currentDay = new Day(this);
-		this.setDateText();
-		
 	}
 
 	/**
