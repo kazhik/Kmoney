@@ -8,7 +8,7 @@ import android.content.Context;
 
 public class MasterDataReader {
 	public static List<Item> getBankList(Context context, int userId) {
-		KmBankInfo bankInfo = new KmBankInfo(context);
+		KmvBanks bankInfo = new KmvBanks(context);
 		bankInfo.open(true);
 		List<Item> itemList = bankInfo.getBankNameList(userId);
 		bankInfo.close();
@@ -26,7 +26,7 @@ public class MasterDataReader {
 	}
 
 	public static List<Item> getCreditCardList(Context context, int userId) {
-		KmCreditCardInfo cardInfo = new KmCreditCardInfo(context);
+		KmvCreditcards cardInfo = new KmvCreditcards(context);
 		cardInfo.open(true);
 		List<Item> itemList = cardInfo.getCreditCardNameList(userId);
 		cardInfo.close();
@@ -35,7 +35,7 @@ public class MasterDataReader {
 	}
 
 	public static List<Item> getEMoneyList(Context context, int userId) {
-		KmEMoneyInfo emoneyInfo = new KmEMoneyInfo(context);
+		KmvEMoneys emoneyInfo = new KmvEMoneys(context);
 		emoneyInfo.open(true);
 		List<Item> itemList = emoneyInfo.getEMoneyNameList(userId);
 		emoneyInfo.close();

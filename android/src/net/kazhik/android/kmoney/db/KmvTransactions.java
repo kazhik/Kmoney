@@ -77,6 +77,13 @@ public class KmvTransactions extends KmTable {
 	}
 
 	public List<String> getDetailHistory(int type, int max) {
+		// select detail, count(*) as cnt
+		// from kmv_transactions
+		// where type = ?
+		// order by cnt desc
+		// group by detail
+		// limit ?
+		
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 		qb.setTables(VIEW_NAME);
 		
