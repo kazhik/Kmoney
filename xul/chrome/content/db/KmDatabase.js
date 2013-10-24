@@ -369,6 +369,10 @@ KmDatabase.prototype.addNewSource = function() {
         
     }
     var sources = [
+        {"name": km_getLStr("data.bank.SBISumishin"),
+         "import": 1,
+         "enabled": 1,
+         "file_ext": "csv"},
         {"name": km_getLStr("data.source.kmoneys"),
          "import": 1,
          "enabled": 1,
@@ -439,6 +443,10 @@ KmDatabase.prototype.createInitialRecords = function() {
          "enabled": 1,
          "file_ext": "ofx"},
         {"name": km_getLStr("data.bank.shinsei"),
+         "import": 1,
+         "enabled": 1,
+         "file_ext": "csv"},
+        {"name": km_getLStr("data.bank.SBISumishin"),
          "import": 1,
          "enabled": 1,
          "file_ext": "csv"},

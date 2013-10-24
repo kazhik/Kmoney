@@ -628,6 +628,7 @@ Kmoney.prototype.getImportModule = function (importType) {
         UCCard,
         MizuhoBank,
         ShinseiBank,
+        SBISumishinNetBank,
         Suica,
         KmoneysImport,
         KantanKakeibo
